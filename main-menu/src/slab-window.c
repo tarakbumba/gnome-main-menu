@@ -81,8 +81,8 @@ slab_window_set_contents (SlabWindow * slab, GtkWidget * left_pane, GtkWidget * 
 	slab->_left_pane = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
 	slab->_right_pane = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
 
-	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_left_pane), 15, 15, 15, 15);
-	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_right_pane), 15, 15, 15, 15);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_left_pane), 6, 18, 6, 12);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_right_pane), 6, 18, 18, 6);
 
 	gtk_box_pack_start (slab->_hbox, slab->_left_pane, FALSE, FALSE, 0);
 	gtk_box_pack_start (slab->_hbox, slab->_right_pane, FALSE, FALSE, 0);

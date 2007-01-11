@@ -1,7 +1,7 @@
 /*
  * This file is part of the Main Menu.
  *
- * Copyright (c) 2006 Novell, Inc.
+ * Copyright (c) 2006, 2007 Novell, Inc.
  *
  * The Main Menu is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -49,8 +49,6 @@
 #include "slab-window.h"
 #include "tomboykeybinder.h"
 
-#include "file-area-widget.h"
-
 #define N_FILE_AREA_COLS             2
 #define FILE_AREA_TABLE_COL_SPACINGS 6
 #define FILE_AREA_TABLE_ROW_SPACINGS 6
@@ -59,11 +57,19 @@
 
 #define SYSTEM_TILE_SPACING 0
 
+#define CURRENT_PAGE_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/file_class"
+
 #define DISABLE_LOCK_SCREEN_GCONF_KEY  "/apps/panel/global/disable_lock_screen"
 #define DISABLE_LOG_OUT_GCONF_KEY      "/apps/panel/global/disable_log_out"
 
+enum {
+	APPS_PAGE     = 0,
+	DOCS_PAGE     = 1,
+	DIRS_PAGE     = 2,
+	PAGE_SENTINEL = 3
+};
+
 static const gchar *main_menu_authors[] = {
-	"Rodney Dawes <dobey@novell.com>",
 	"Jim Krehl <jimmyk@novell.com>",
 	"Scott Reeves <sreeves@novell.com>",
 	"Dan Winship <danw@novell.com>",
@@ -111,7 +117,12 @@ static void tile_drag_data_rcv_cb (GtkWidget *, GdkDragContext *, gint, gint, Gt
 static gboolean panel_button_button_press_cb (GtkWidget *, GdkEventButton *, gpointer);
 static gboolean panel_button_enter_notify_cb (GtkWidget *, GdkEventButton *, gpointer);
 
-static GtkWidget *create_search_widget (MainMenuUI *, GtkSizeGroup *);
+static GtkWidget *create_search_widget     (MainMenuUI *);
+static void       search_entry_activate_cb (GtkEntry *, gpointer);
+
+static GtkWidget *create_page_buttons    (MainMenuUI *);
+static void       select_page            (MainMenuUI *, gint);
+static void       page_button_clicked_cb (GtkButton *, gpointer);
 
 static GtkWidget *create_system_table_widget (MainMenuUI *, GtkSizeGroup *, GtkSizeGroup *);
 
@@ -122,12 +133,10 @@ static void grab_focus (MainMenuUI *, GdkEvent *);
 static GtkWidget *get_section_header_label (const gchar *);
 static void section_header_label_style_set (GtkWidget *, GtkStyle *, gpointer);
 
-static void search_entry_activate_cb (GtkEntry *, gpointer);
 
 static void tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
-typedef struct
-{
+typedef struct {
 	PanelApplet *applet;
 	MainMenuConf *conf;
 	MainMenuEngine *engine;
@@ -138,15 +147,17 @@ typedef struct
 	GtkWidget *panel_button;
 
 	GtkWidget *search_section;
-	GtkEntry *search_entry;
+	GtkEntry  *search_entry;
 
-	FileAreaWidget *file_area;
+	GtkNotebook     *file_area_nb;
+	gint             file_area_nb_ids [PAGE_SENTINEL];
+	GtkToggleButton *page_btns        [PAGE_SENTINEL];
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
 } MainMenuUIPrivate;
 
-#define MAIN_MENU_UI_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
+#define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
 
 static const BonoboUIVerb applet_bonobo_verbs[] = {
 	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen", bonobo_menu_menu_open_cb),
@@ -221,7 +232,7 @@ main_menu_ui_new (PanelApplet * applet, MainMenuConf * conf, MainMenuEngine * en
 	GdkAtom gdk_atom_slab_action;
 
 	ui = g_object_new (MAIN_MENU_UI_TYPE, NULL);
-	priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	priv = PRIVATE (ui);
 
 	priv->applet = applet;
 	priv->conf = conf;
@@ -262,7 +273,7 @@ main_menu_ui_dispose (GObject * obj)
 void
 main_menu_ui_release (MainMenuUI * ui)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	gtk_widget_show_all (GTK_WIDGET (priv->applet));
 }
@@ -270,7 +281,7 @@ main_menu_ui_release (MainMenuUI * ui)
 void
 main_menu_ui_close (MainMenuUI * ui, gboolean assured)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	if (assured || priv->conf->urgent_close)
 		hide_main_window (ui);
@@ -279,7 +290,7 @@ main_menu_ui_close (MainMenuUI * ui, gboolean assured)
 void
 main_menu_ui_reset_search (MainMenuUI * ui)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	gtk_entry_set_text (priv->search_entry, "");
 }
@@ -294,7 +305,7 @@ static void
 bonobo_menu_menu_about_cb (BonoboUIComponent * component, gpointer user_data, const gchar * verb)
 {
 	MainMenuUI *main_menu_ui = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (main_menu_ui);
+	MainMenuUIPrivate *priv = PRIVATE (main_menu_ui);
 
 	if (! priv->about_dialog) {
 		priv->about_dialog = gtk_about_dialog_new ();
@@ -330,7 +341,7 @@ applet_change_background_cb (PanelApplet * applet, PanelAppletBackgroundType typ
 	GdkPixmap * pixmap, gpointer user_data)
 {
 	MainMenuUI *ui = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	GtkRcStyle *rc_style;
 	GtkStyle *style;
@@ -373,17 +384,16 @@ tomboy_bindkey_cb (gchar * key_string, gpointer user_data)
 }
 
 static void
-build_main_menu_window (MainMenuUI * ui)
+build_main_menu_window (MainMenuUI *this)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkWidget *window;
 
 	GtkWidget *left_pane;
 
-	GtkSizeGroup *search_show_label_group;
-
 	GtkWidget *search_widget;
+	GtkWidget *page_buttons;
 
 	GtkWidget *right_pane;
 
@@ -398,22 +408,32 @@ build_main_menu_window (MainMenuUI * ui)
 	GtkWidget *hd_tile;
 	GtkWidget *net_tile;
 
-	priv->file_area = FILE_AREA_WIDGET (file_area_widget_new (ui, priv->engine));
-
-	search_show_label_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
-	search_widget = create_search_widget (ui, search_show_label_group);
-
-	gtk_size_group_add_widget (search_show_label_group, priv->file_area->selector_label);
 
 	window = slab_window_new ();
 
+/*	priv->file_area = FILE_AREA_WIDGET (file_area_widget_new (this, priv->engine)); */
+
 	left_pane = gtk_vbox_new (FALSE, 12);
 
-	if (priv->conf->lock_down_conf->search_area_visible)
-		gtk_box_pack_start (GTK_BOX (left_pane), search_widget, FALSE, FALSE, 0);
+	search_widget = create_search_widget (this);
+	page_buttons  = create_page_buttons  (this);
 
-	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area), FALSE, FALSE, 0);
+	priv->file_area_nb = GTK_NOTEBOOK (gtk_notebook_new ());
+	gtk_notebook_set_show_tabs   (priv->file_area_nb, FALSE);
+	gtk_notebook_set_show_border (priv->file_area_nb, FALSE);
+
+	priv->file_area_pages [APPS_PAGE] = gtk_notebook_append_page (
+		priv->file_area_nb, gtk_label_new ("Apps!!"), NULL);
+	priv->file_area_pages [DOCS_PAGE] = gtk_notebook_append_page (
+		priv->file_area_nb, gtk_label_new ("Docs!!"), NULL);
+	priv->file_area_pages [DIRS_PAGE] = gtk_notebook_append_page (
+		priv->file_area_nb, gtk_label_new ("Dirs!!"), NULL);
+
+	gtk_box_pack_start (GTK_BOX (left_pane), search_widget, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (left_pane), page_buttons, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area_nb), FALSE, FALSE, 0);
+
+/*	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area), FALSE, FALSE, 0); */
 
 	right_pane_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -428,7 +448,7 @@ build_main_menu_window (MainMenuUI * ui)
 	icon_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	label_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
-	system_table_widget = create_system_table_widget (ui, icon_group, label_group);
+	system_table_widget = create_system_table_widget (this, icon_group, label_group);
 	gtk_size_group_add_widget (right_pane_group, system_table_widget);
 
 	status_section = gtk_vbox_new (TRUE, 6);
@@ -438,7 +458,7 @@ build_main_menu_window (MainMenuUI * ui)
 	if (hd_tile)
 	{
 		g_signal_connect (G_OBJECT (hd_tile), "tile-action-triggered",
-			G_CALLBACK (tile_action_triggered_cb), ui);
+			G_CALLBACK (tile_action_triggered_cb), this);
 
 		gtk_box_pack_start (GTK_BOX (status_section), hd_tile, FALSE, FALSE, 0);
 	}
@@ -448,7 +468,7 @@ build_main_menu_window (MainMenuUI * ui)
 	if (net_tile)
 	{
 		g_signal_connect (G_OBJECT (net_tile), "tile-action-triggered",
-			G_CALLBACK (tile_action_triggered_cb), ui);
+			G_CALLBACK (tile_action_triggered_cb), this);
 
 		gtk_box_pack_start (GTK_BOX (status_section), net_tile, FALSE, FALSE, 0);
 	}
@@ -473,27 +493,27 @@ build_main_menu_window (MainMenuUI * ui)
 		NULL);
 
 	g_signal_connect (G_OBJECT (window), "key-press-event",
-		G_CALLBACK (main_window_key_press_cb), ui);
+		G_CALLBACK (main_window_key_press_cb), this);
 
 	g_signal_connect (G_OBJECT (window), "button_press_event",
-		G_CALLBACK (main_window_button_press_cb), ui);
+		G_CALLBACK (main_window_button_press_cb), this);
 
 	g_signal_connect (G_OBJECT (window), "size_allocate", G_CALLBACK (main_window_resize_cb),
-		ui);
+		this);
 
 	g_signal_connect (G_OBJECT (window), "grab-broken-event",
-		G_CALLBACK (main_window_grab_broken_cb), ui);
+		G_CALLBACK (main_window_grab_broken_cb), this);
 
-	g_signal_connect (G_OBJECT (window), "map_event", G_CALLBACK (main_window_map_cb), ui);
+	g_signal_connect (G_OBJECT (window), "map_event", G_CALLBACK (main_window_map_cb), this);
 
-	g_signal_connect (G_OBJECT (window), "unmap_event", G_CALLBACK (main_window_unmap_cb), ui);
+	g_signal_connect (G_OBJECT (window), "unmap_event", G_CALLBACK (main_window_unmap_cb), this);
 
 	gtk_drag_dest_set (GTK_WIDGET (window), GTK_DEST_DEFAULT_ALL, NULL, 0,
 		GDK_ACTION_COPY | GDK_ACTION_MOVE);
 	gtk_drag_dest_add_uri_targets (GTK_WIDGET (window));
 
 	g_signal_connect (G_OBJECT (window), "drag-data-received",
-		G_CALLBACK (tile_drag_data_rcv_cb), ui);
+		G_CALLBACK (tile_drag_data_rcv_cb), this);
 
 	priv->main_window = window;
 	priv->search_section = search_widget;
@@ -502,7 +522,7 @@ build_main_menu_window (MainMenuUI * ui)
 static void
 build_panel_button (MainMenuUI * ui)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	priv->panel_button = gtk_toggle_button_new ();
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
@@ -532,7 +552,7 @@ build_panel_button (MainMenuUI * ui)
 static void
 reorient_panel_button (MainMenuUI * ui)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	PanelAppletOrient orientation;
 
@@ -631,7 +651,7 @@ main_window_map_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
 static void
 main_window_unmap_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (user_data);
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	if (priv->ptr_is_grabbed)
 	{
@@ -685,7 +705,7 @@ static void
 tile_drag_data_rcv_cb (GtkWidget * widget, GdkDragContext * drag_context, gint x, gint y,
 	GtkSelectionData * selection, guint info, guint time, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (user_data);
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	gchar **uris;
 
@@ -717,7 +737,7 @@ static gboolean
 main_window_button_press_cb (GtkWidget * widget, GdkEventButton * event, gpointer user_data)
 {
 	MainMenuUI *ui = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	GdkWindow *ptr_window = gdk_window_at_pointer (NULL, NULL);
 
@@ -767,7 +787,7 @@ panel_button_enter_notify_cb (GtkWidget * button, GdkEventButton * event, gpoint
 static void
 hide_main_window (MainMenuUI * ui)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 
@@ -777,7 +797,7 @@ hide_main_window (MainMenuUI * ui)
 static void
 show_main_window (MainMenuUI * ui, guint32 timestamp)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	position_main_window (ui);
 
@@ -786,7 +806,7 @@ show_main_window (MainMenuUI * ui, guint32 timestamp)
 	gtk_widget_show_all (priv->main_window);
 	gtk_window_present_with_time (GTK_WINDOW (priv->main_window), timestamp);
 
-	if (!main_menu_engine_search_available (priv->engine))
+	if (! main_menu_engine_search_available (priv->engine))
 		gtk_widget_hide_all (priv->search_section);
 	else
 		gtk_widget_grab_focus (GTK_WIDGET (priv->search_entry));
@@ -795,7 +815,7 @@ show_main_window (MainMenuUI * ui, guint32 timestamp)
 static void
 position_main_window (MainMenuUI * ui)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	GtkWidget *panel_widget;
 	GtkWidget *main_menu_widget;
@@ -869,20 +889,29 @@ position_main_window (MainMenuUI * ui)
 	gtk_window_move (GTK_WINDOW (main_menu_widget), x_new, y_new);
 }
 
+/*** BEGIN SEARCH WIDGET ***/
+
 static GtkWidget *
-create_search_widget (MainMenuUI * ui, GtkSizeGroup * label_group)
+create_search_widget (MainMenuUI *this)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+/* TODO: add lock-down */
+
+	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkWidget *hbox;
 	GtkWidget *search_label;
 	GtkWidget *search_entry;
 
-	hbox = gtk_hbox_new (FALSE, 12);
 
-	search_label = get_section_header_label (_("_Search:"));
+	hbox = gtk_hbox_new (FALSE, 3);
+
+	gtk_box_pack_start (
+		GTK_BOX (hbox),
+		gtk_image_new_from_icon_name ("system-search", GTK_ICON_SIZE_DND),
+		TRUE, TRUE, 0);
+
+	search_label = gtk_label_new_with_mnemonic (_("_Search:"));
 	gtk_misc_set_alignment (GTK_MISC (search_label), 0.0, 0.5);
-	gtk_size_group_add_widget (label_group, search_label);
 	gtk_box_pack_start (GTK_BOX (hbox), search_label, FALSE, FALSE, 0);
 
 	search_entry = gtk_entry_new ();
@@ -891,17 +920,100 @@ create_search_widget (MainMenuUI * ui, GtkSizeGroup * label_group)
 	gtk_label_set_mnemonic_widget (GTK_LABEL (search_label), search_entry);
 
 	g_signal_connect (G_OBJECT (search_entry), "activate",
-		G_CALLBACK (search_entry_activate_cb), ui);
+		G_CALLBACK (search_entry_activate_cb), this);
 
 	priv->search_entry = GTK_ENTRY (search_entry);
 
 	return hbox;
 }
 
+static void
+search_entry_activate_cb (GtkEntry *entry_widget, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	main_menu_engine_execute_search (priv->engine, gtk_entry_get_text (entry_widget));
+}
+
+/*** END SEARCH WIDGET ***/
+
+/*** BEGIN PAGE BUTTONS ***/
+
+static GtkWidget *
+create_page_buttons (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkWidget *hbox;
+
+	gint i;
+
+
+	priv->page_btns [APPS_PAGE] = GTK_TOGGLE_BUTTON (
+		gtk_toggle_button_new_with_mnemonic (_("_Applications")));
+	priv->page_btns [DOCS_PAGE] = GTK_TOGGLE_BUTTON (
+		gtk_toggle_button_new_with_mnemonic (_("Doc_uments")));
+	priv->page_btns [DIRS_PAGE] = GTK_TOGGLE_BUTTON (
+		gtk_toggle_button_new_with_mnemonic (_("_Places")));
+
+	hbox = gtk_hbox_new (FALSE, 6);
+
+	for (i = 0; i < PAGE_SENTINEL; ++i) {
+		g_object_set_data (
+			G_OBJECT (priv->page_btns [i]), "page-id", GINT_TO_POINTER (i));
+
+		g_signal_connect (
+			G_OBJECT (priv->page_btns [i]), "clicked",
+			G_CALLBACK (page_button_clicked_cb), this);
+
+		gtk_box_pack_start (
+			GTK_BOX (hbox), GTK_WIDGET (priv->page_btns [i]), TRUE, TRUE, 0);
+	}
+
+	return hbox;
+}
+
+static void
+select_page (MainMenuUI *this, gint page_id)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gtk_notebook_set_current_page (
+		priv->file_area_nb, priv->file_area_nb_ids [page_id]);
+
+	gtk_toggle_button_set_active (priv->apps_button, (page_id == APPS_PAGE));
+	gtk_toggle_button_set_active (priv->docs_button, (page_id == DOCS_PAGE));
+	gtk_toggle_button_set_active (priv->dirs_button, (page_id == DIRS_PAGE));
+}
+
+static void
+page_button_clicked_cb (GtkButton *button, gpointer user_data)
+{
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
+
+	gint page_id_new;
+	gint page_id_curr;
+
+
+	page_id_new  = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button), "page-id"));
+	page_id_curr = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
+
+	if (page_id_new == page_id_curr)
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+
+	if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
+		return;
+
+	select_page (this, page_id);
+}
+
+/*** END PAGE BUTTONS ***/
+
 static GtkWidget *
 create_system_table_widget (MainMenuUI * ui, GtkSizeGroup * icon_group, GtkSizeGroup * label_group)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	GtkWidget *table;
 
@@ -956,10 +1068,11 @@ create_system_table_widget (MainMenuUI * ui, GtkSizeGroup * icon_group, GtkSizeG
 }
 
 static GtkWidget *
-get_section_header_label (const gchar * markup)
+get_section_header_label (const gchar *markup)
 {
 	GtkWidget *label;
 	gchar *text;
+
 
 	text = g_strdup_printf ("<span size=\"large\">%s</span>", markup);
 
@@ -977,20 +1090,22 @@ get_section_header_label (const gchar * markup)
 }
 
 static void
-section_header_label_style_set (GtkWidget * widget, GtkStyle * prev_style, gpointer user_data)
+section_header_label_style_set (GtkWidget *widget, GtkStyle *prev_style, gpointer user_data)
 {
-	if (prev_style
-		&& widget->style->fg[GTK_STATE_SELECTED].green ==
-		prev_style->fg[GTK_STATE_SELECTED].green)
+	if (
+		prev_style &&
+		widget->style->fg [GTK_STATE_SELECTED].green ==
+		prev_style->fg [GTK_STATE_SELECTED].green
+	)
 		return;
 
-	gtk_widget_modify_fg (widget, GTK_STATE_NORMAL, &widget->style->bg[GTK_STATE_SELECTED]);
+	gtk_widget_modify_fg (widget, GTK_STATE_NORMAL, & widget->style->bg [GTK_STATE_SELECTED]);
 }
 
 static void
 grab_focus (MainMenuUI * ui, GdkEvent * event)
 {
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	GdkGrabStatus status;
 	guint32 time;
@@ -1030,18 +1145,10 @@ grab_focus (MainMenuUI * ui, GdkEvent * event)
 }
 
 static void
-search_entry_activate_cb (GtkEntry * entry_widget, gpointer user_data)
-{
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (user_data);
-
-	main_menu_engine_execute_search (priv->engine, gtk_entry_get_text (entry_widget));
-}
-
-static void
 tile_action_triggered_cb (Tile * tile, TileEvent * event, TileAction * action, gpointer user_data)
 {
 	MainMenuUI *ui = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = MAIN_MENU_UI_GET_PRIVATE (ui);
+	MainMenuUIPrivate *priv = PRIVATE (ui);
 
 	if (!priv->conf->urgent_close)
 		return;

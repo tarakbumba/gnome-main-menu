@@ -12,7 +12,7 @@ AM_CPPFLAGS =								\
 
 main_menu_SOURCES =							\
 	eggaccelerators.c		eggaccelerators.h		\
-	file-area-widget.c		file-area-widget.h		\
+	file-area.c			file-area.h			\
 	hard-drive-status-tile.c	hard-drive-status-tile.h	\
 	main-menu.c							\
 	main-menu-common.h						\

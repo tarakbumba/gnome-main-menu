@@ -18,6 +18,8 @@ libslab_la_SOURCES =				\
 	egg-recent-model.c			\
 	egg-recent-model.h			\
 	gnome-utils.c				\
+	libslab-utils.c				\
+	libslab-utils.h				\
 	nameplate-tile.c			\
 	recent-files.c				\
 	recent-files.h				\
