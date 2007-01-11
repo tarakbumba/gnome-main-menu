@@ -14,6 +14,7 @@ gboolean          libslab_gnome_desktop_item_open_help (GnomeDesktopItem *item);
 guint32           libslab_get_current_time_millis (void);
 gint              libslab_strcmp (const gchar *a, const gchar *b);
 gpointer          libslab_get_gconf_value (const gchar *key);
+void              libslab_set_gconf_value (const gchar *key, gconstpointer data);
 void              libslab_handle_g_error (GError **error, const gchar *msg_format, ...);
 
 typedef void (* libslab_marshal_func_VOID__POINTER_POINTER) (gpointer, gpointer, gpointer, gpointer);

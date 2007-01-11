@@ -33,6 +33,8 @@
 #include <string.h>
 #include <X11/Xlib.h>
 
+#include "libslab-utils.h"
+
 #include "application-tile.h"
 #include "nameplate-tile.h"
 #include "system-tile.h"
@@ -422,11 +424,11 @@ build_main_menu_window (MainMenuUI *this)
 	gtk_notebook_set_show_tabs   (priv->file_area_nb, FALSE);
 	gtk_notebook_set_show_border (priv->file_area_nb, FALSE);
 
-	priv->file_area_pages [APPS_PAGE] = gtk_notebook_append_page (
+	priv->file_area_nb_ids [APPS_PAGE] = gtk_notebook_append_page (
 		priv->file_area_nb, gtk_label_new ("Apps!!"), NULL);
-	priv->file_area_pages [DOCS_PAGE] = gtk_notebook_append_page (
+	priv->file_area_nb_ids [DOCS_PAGE] = gtk_notebook_append_page (
 		priv->file_area_nb, gtk_label_new ("Docs!!"), NULL);
-	priv->file_area_pages [DIRS_PAGE] = gtk_notebook_append_page (
+	priv->file_area_nb_ids [DIRS_PAGE] = gtk_notebook_append_page (
 		priv->file_area_nb, gtk_label_new ("Dirs!!"), NULL);
 
 	gtk_box_pack_start (GTK_BOX (left_pane), search_widget, FALSE, FALSE, 0);
@@ -959,6 +961,8 @@ create_page_buttons (MainMenuUI *this)
 	hbox = gtk_hbox_new (FALSE, 6);
 
 	for (i = 0; i < PAGE_SENTINEL; ++i) {
+		gtk_button_set_focus_on_click (GTK_BUTTON (priv->page_btns [i]), FALSE);
+
 		g_object_set_data (
 			G_OBJECT (priv->page_btns [i]), "page-id", GINT_TO_POINTER (i));
 
@@ -978,20 +982,21 @@ select_page (MainMenuUI *this, gint page_id)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	gint i;
+
+
+	libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_id));
+
 	gtk_notebook_set_current_page (
 		priv->file_area_nb, priv->file_area_nb_ids [page_id]);
 
-	gtk_toggle_button_set_active (priv->apps_button, (page_id == APPS_PAGE));
-	gtk_toggle_button_set_active (priv->docs_button, (page_id == DOCS_PAGE));
-	gtk_toggle_button_set_active (priv->dirs_button, (page_id == DIRS_PAGE));
+	for (i = 0; i < PAGE_SENTINEL; ++i)
+		gtk_toggle_button_set_active (priv->page_btns [i], (i == page_id));
 }
 
 static void
 page_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
-	MainMenuUI        *this = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = PRIVATE      (this);
-
 	gint page_id_new;
 	gint page_id_curr;
 
@@ -999,13 +1004,14 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 	page_id_new  = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button), "page-id"));
 	page_id_curr = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
 
-	if (page_id_new == page_id_curr)
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
-
-	if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
-		return;
-
-	select_page (this, page_id);
+	if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
+		if (page_id_new == page_id_curr)
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+		else
+			return;
+	}
+	else
+		select_page (MAIN_MENU_UI (user_data), page_id_new);
 }
 
 /*** END PAGE BUTTONS ***/
@@ -1032,8 +1038,8 @@ create_system_table_widget (MainMenuUI * ui, GtkSizeGroup * icon_group, GtkSizeG
 
 	table = gtk_vbox_new (TRUE, SYSTEM_TILE_SPACING);
 
-	disable_lock_screen = GPOINTER_TO_INT (get_gconf_value (DISABLE_LOCK_SCREEN_GCONF_KEY));
-	disable_log_out = GPOINTER_TO_INT (get_gconf_value (DISABLE_LOG_OUT_GCONF_KEY));
+	disable_lock_screen = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOCK_SCREEN_GCONF_KEY));
+	disable_log_out = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOG_OUT_GCONF_KEY));
 
 	for (node = type_list; node; node = node->next)
 	{

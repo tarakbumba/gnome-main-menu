@@ -324,6 +324,88 @@ libslab_get_gconf_value (const gchar *key)
 }
 
 void
+libslab_set_gconf_value (const gchar *key, gconstpointer data)
+{
+	GConfClient *client;
+	GConfValue  *value;
+
+	GConfValueType type;
+	GConfValueType list_type;
+
+	GSList *slist = NULL;
+
+	GError *error = NULL;
+
+	GConfValue *value_i;
+	GList      *node;
+
+
+	client = gconf_client_get_default ();
+	value  = gconf_client_get (client, key, & error);
+
+	if (error) {
+		libslab_handle_g_error (&error, "%s: error getting %s", G_GNUC_FUNCTION, key);
+
+		goto exit;
+	}
+
+	type = value->type;
+	list_type = ((type == GCONF_VALUE_LIST) ?
+		gconf_value_get_list_type (value) : GCONF_VALUE_INVALID);
+
+	gconf_value_free (value);
+	value = gconf_value_new (type);
+
+	if (type == GCONF_VALUE_LIST)
+		gconf_value_set_list_type (value, list_type);
+
+	switch (type) {
+		case GCONF_VALUE_STRING:
+			gconf_value_set_string (value, g_strdup ((gchar *) data));
+			break;
+
+		case GCONF_VALUE_INT:
+			gconf_value_set_int (value, GPOINTER_TO_INT (data));
+			break;
+
+		case GCONF_VALUE_BOOL:
+			gconf_value_set_bool (value, GPOINTER_TO_INT (data));
+			break;
+
+		case GCONF_VALUE_LIST:
+			for (node = (GList *) data; node; node = node->next) {
+				value_i = gconf_value_new (list_type);
+
+				if (list_type == GCONF_VALUE_STRING)
+					gconf_value_set_string (value_i, (const gchar *) node->data);
+				else if (list_type == GCONF_VALUE_INT)
+					gconf_value_set_int (value_i, GPOINTER_TO_INT (node->data));
+				else
+					g_assert_not_reached ();
+
+				slist = g_slist_append (slist, value_i);
+			}
+
+			gconf_value_set_list_nocopy (value, slist);
+
+			break;
+
+		default:
+			break;
+	}
+
+	gconf_client_set (client, key, value, & error);
+
+	if (error)
+		libslab_handle_g_error (&error, "%s: error setting %s", G_GNUC_FUNCTION, key);
+
+exit:
+
+	gconf_value_free (value);
+	g_object_unref (client);
+}
+
+void
 libslab_handle_g_error (GError **error, const gchar *msg_format, ...)
 {
 	gchar   *msg;
