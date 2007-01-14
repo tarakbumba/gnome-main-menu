@@ -19,6 +19,8 @@ main_menu_SOURCES =							\
 	main-menu-engine.c						\
 	main-menu-ui.c							\
 	main-menu-conf.c		main-menu-conf.h		\
+	main-menu-migration.c		main-menu-migration.h		\
+	main-menu-utils.c		main-menu-utils.h		\
 	network-status-tile.c		network-status-tile.h		\
 	network-status-agent.c		network-status-agent.h		\
 	network-status-info.c		network-status-info.h		\

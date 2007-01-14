@@ -51,6 +51,10 @@
 #include "slab-window.h"
 #include "tomboykeybinder.h"
 
+#include "tile-table.h"
+
+#include "main-menu-utils.h"
+
 #define N_FILE_AREA_COLS             2
 #define FILE_AREA_TABLE_COL_SPACINGS 6
 #define FILE_AREA_TABLE_ROW_SPACINGS 6
@@ -126,7 +130,10 @@ static GtkWidget *create_page_buttons    (MainMenuUI *);
 static void       select_page            (MainMenuUI *, gint);
 static void       page_button_clicked_cb (GtkButton *, gpointer);
 
-static GtkWidget *create_system_table_widget (MainMenuUI *, GtkSizeGroup *, GtkSizeGroup *);
+static GtkWidget *create_system_table_widget (void);
+static void       system_tile_activated_cb   (Tile *, TileEvent *, gpointer);
+static void       system_table_update_cb     (TileTable *, TileTableUpdateEvent *, gpointer);
+static void       system_table_uri_added_cb  (TileTable *, TileTableURIAddedEvent *, gpointer);
 
 static void bind_search_key (void);
 
@@ -450,7 +457,7 @@ build_main_menu_window (MainMenuUI *this)
 	icon_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	label_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
-	system_table_widget = create_system_table_widget (this, icon_group, label_group);
+	system_table_widget = create_system_table_widget ();
 	gtk_size_group_add_widget (right_pane_group, system_table_widget);
 
 	status_section = gtk_vbox_new (TRUE, 6);
@@ -1016,62 +1023,90 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 
 /*** END PAGE BUTTONS ***/
 
+/*** BEGIN SYSTEM AREA ***/
+
 static GtkWidget *
-create_system_table_widget (MainMenuUI * ui, GtkSizeGroup * icon_group, GtkSizeGroup * label_group)
+create_system_table_widget ()
 {
-	MainMenuUIPrivate *priv = PRIVATE (ui);
-
 	GtkWidget *table;
+	GList     *tiles;
 
-	GtkWidget *tile;
-	GtkWidget *alignment;
-
-	SystemTileType type;
-
-	gboolean disable_lock_screen;
-	gboolean disable_log_out;
-
-	GList *type_list;
 	GList *node;
 
-	type_list = main_menu_engine_get_system_list (priv->engine);
 
-	table = gtk_vbox_new (TRUE, SYSTEM_TILE_SPACING);
+	table = tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL);
+	g_object_set (G_OBJECT (table), "row-spacing", 3, NULL);
 
-	disable_lock_screen = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOCK_SCREEN_GCONF_KEY));
-	disable_log_out = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOG_OUT_GCONF_KEY));
+	g_signal_connect (
+		G_OBJECT (table), TILE_TABLE_UPDATE_SIGNAL,
+		G_CALLBACK (system_table_update_cb), NULL);
 
-	for (node = type_list; node; node = node->next)
-	{
-		type = GPOINTER_TO_INT (node->data);
+	g_signal_connect (
+		G_OBJECT (table), TILE_TABLE_URI_ADDED_SIGNAL,
+		G_CALLBACK (system_table_uri_added_cb), NULL);
 
-		if (disable_lock_screen && type == SYSTEM_TILE_TYPE_LOCK_SCREEN)
-			continue;
+	tiles = get_system_item_uris ();
 
-		if (disable_log_out && type == SYSTEM_TILE_TYPE_LOG_OUT)
-			continue;
+	for (node = tiles; node; node = node->next)
+		g_signal_connect (G_OBJECT (node->data), "tile-activated",
+			G_CALLBACK (system_tile_activated_cb), NULL);
 
-		tile = system_tile_new_with_type (type, priv->conf);
-
-		if (tile)
-		{
-			alignment = gtk_alignment_new (0.0, 0.5, 0.0, 0.0);
-			gtk_container_add (GTK_CONTAINER (alignment), GTK_WIDGET (tile));
-
-			gtk_box_pack_start (GTK_BOX (table), alignment, TRUE, TRUE, 0);
-
-			g_signal_connect (G_OBJECT (tile), "tile-action-triggered",
-				G_CALLBACK (tile_action_triggered_cb), ui);
-
-			gtk_size_group_add_widget (icon_group, NAMEPLATE_TILE (tile)->image);
-			gtk_size_group_add_widget (label_group, NAMEPLATE_TILE (tile)->header);
-		}
-	}
-
-	g_list_free (type_list);
+	g_object_set (G_OBJECT (table), TILE_TABLE_TILES_PROP, tiles, NULL);
 
 	return table;
 }
+
+static void
+system_tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
+{
+	if (event->type == TILE_EVENT_ACTIVATED_DOUBLE_CLICK)
+		return;
+
+	tile_trigger_action_with_time (tile, tile->default_action, event->time);
+}
+
+static void
+system_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer user_data)
+{
+	GList *tiles_new = NULL;
+
+	GList    *node_u;
+	GList    *node_v;
+	gboolean  equal = FALSE;
+
+	GList *node;
+
+
+	if (g_list_length (event->tiles_prev) == g_list_length (event->tiles_curr)) {
+		node_u = event->tiles_prev;
+		node_v = event->tiles_curr;
+		equal  = TRUE;
+
+		while (equal && node_u && node_v) {
+			if (tile_compare (node_u->data, node_v->data))
+                		equal = FALSE;
+
+			node_u = node_u->next;
+			node_v = node_v->next;
+		}
+	}
+
+	if (equal)
+		return;
+
+	for (node = event->tiles_curr; node; node = node->next)
+		tiles_new = g_list_append (tiles_new, TILE (node->data)->uri);
+
+	save_system_item_uris (tiles_new);
+}
+
+static void
+system_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpointer user_data)
+{
+	g_printf ("%s !!\n", __FUNCTION__);
+}
+
+/*** END SYSTEM AREA ***/
 
 static GtkWidget *
 get_section_header_label (const gchar *markup)

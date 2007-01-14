@@ -1,7 +1,7 @@
 /*
  * This file is part of the Main Menu.
  *
- * Copyright (c) 2006 Novell, Inc.
+ * Copyright (c) 2006, 2007 Novell, Inc.
  *
  * The Main Menu is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <glib/gi18n.h>
+#include <glib/gmacros.h>
 #include <gconf/gconf-client.h>
 #include <libgnomeui/gnome-client.h>
 
@@ -36,207 +37,170 @@ static void system_tile_style_set (GtkWidget *, GtkStyle *);
 static void load_image (SystemTile *);
 static GtkWidget *create_header (const gchar *);
 
-static void system_tile_activated (Tile *, TileEvent *);
+static void open_trigger   (Tile *, TileEvent *, TileAction *);
+static void remove_trigger (Tile *, TileEvent *, TileAction *);
 
-static void system_tile_open (Tile *, TileEvent *, TileAction *);
-static void system_tile_logout (Tile *, TileEvent *, TileAction *);
-static void system_tile_lock_screen (Tile *, TileEvent *, TileAction *);
-
-typedef struct
-{
-	SystemTileType type;
-	
+typedef struct {
 	GnomeDesktopItem *desktop_item;
 	
-	gchar *image_id;
-	gboolean image_is_broken;
-	
-	MainMenuConf *conf;
+	gchar    *image_id;
+	gboolean  image_is_broken;
 } SystemTilePrivate;
 
-#define SYSTEM_TILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), SYSTEM_TILE_TYPE, SystemTilePrivate))
-
-static void system_tile_class_init (SystemTileClass * sys_tile_class)
-{
-	GObjectClass *g_obj_class = G_OBJECT_CLASS (sys_tile_class);
-	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (sys_tile_class);
-	TileClass *tile_class = TILE_CLASS (sys_tile_class);
-
-	g_obj_class->finalize = system_tile_finalize;
-
-	widget_class->style_set = system_tile_style_set;
-
-	tile_class->tile_activated = system_tile_activated;
-
-	g_type_class_add_private (sys_tile_class, sizeof (SystemTilePrivate));
-}
+#define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), SYSTEM_TILE_TYPE, SystemTilePrivate))
 
 GtkWidget *
-system_tile_new_with_type (SystemTileType type, MainMenuConf * conf)
+system_tile_new (const gchar *desktop_item_id)
 {
-	SystemTile *tile;
+	SystemTile        *this;
 	SystemTilePrivate *priv;
 
-	gchar *uri = NULL;
+	gchar     *uri    = NULL;
 	GtkWidget *header = NULL;
 
+	GtkMenu *context_menu;
+
+	TileAction  **actions;
+	TileAction   *action;
+	GtkWidget    *menu_item;
+	GtkContainer *menu_ctnr;
+
 	GnomeDesktopItem *desktop_item = NULL;
-	gchar *image_id = NULL;
-	gchar *header_txt = NULL;
+	gchar            *image_id     = NULL;
+	gchar            *header_txt   = NULL;
+
+	gchar *markup;
 
 	AtkObject *accessible = NULL;
 
-	if (!(0 <= type && type < SYSTEM_TILE_TYPE_SENTINEL))
-		return NULL;
 
-	switch (type)
-	{
-	case SYSTEM_TILE_TYPE_HELP:
-		desktop_item = load_desktop_item_by_unknown_id (conf->system_area_conf->help_item);
+	desktop_item = load_desktop_item_by_unknown_id (desktop_item_id);
 
-		if (desktop_item)
-		{
-			image_id =
-				g_strdup (gnome_desktop_item_get_localestring (desktop_item,
-					"Icon"));
-			uri = g_strdup (gnome_desktop_item_get_location (desktop_item));
-			header_txt = g_strdup (_("_Help"));
-		}
-
-		break;
-
-	case SYSTEM_TILE_TYPE_CONTROL_CENTER:
-		desktop_item = load_desktop_item_by_unknown_id (
-			conf->system_area_conf->control_center_item);
-
-		if (desktop_item)
-		{
-			image_id = g_strdup (
-				gnome_desktop_item_get_localestring (desktop_item, "Icon"));
-			uri = g_strdup (gnome_desktop_item_get_location (desktop_item));
-			header_txt = g_strdup (_("_Control Center"));
-		}
-
-		break;
-
-	case SYSTEM_TILE_TYPE_PACKAGE_MANAGER:
-		desktop_item = load_desktop_item_by_unknown_id (
-			conf->system_area_conf->package_manager_item);
-
-		if (desktop_item)
-		{
-			image_id = g_strdup (
-				gnome_desktop_item_get_localestring (desktop_item, "Icon"));
-			uri = g_strdup (gnome_desktop_item_get_location (desktop_item));
-			header_txt = g_strdup (_("I_nstall Software"));
-		}
-
-		break;
-
-	case SYSTEM_TILE_TYPE_LOG_OUT:
-	        image_id = g_strdup ("gnome-logout");
-		header_txt = g_strdup (_("Log _Out ..."));
-		uri = g_strdup ("system-tile://logout");
-
-		break;
-
-	case SYSTEM_TILE_TYPE_LOCK_SCREEN:
-	        image_id = g_strdup ("gnome-lockscreen");
-		header_txt = g_strdup (_("_Lock Screen ..."));
-		uri = g_strdup ("system-tile://lockscreen");
-
-		break;
-
-	default:
-		break;
+	if (desktop_item) {
+		image_id   = g_strdup (gnome_desktop_item_get_localestring (desktop_item, "Icon"));
+		uri        = g_strdup (gnome_desktop_item_get_location (desktop_item));
+		header_txt = g_strdup (gnome_desktop_item_get_localestring (desktop_item, "Name"));
 	}
 
-	if (!uri)
+	if (! uri)
 		return NULL;
-
-	if (!header_txt)
-	{
-		g_warning ("Unable to make header for SystemTileType:%d\n", type);
-
-		header_txt = g_strdup (_("_Unknown"));
-	}
 
 	header = create_header (header_txt);
 
-	tile = g_object_new (SYSTEM_TILE_TYPE, "tile-uri", uri, "nameplate-image", gtk_image_new (),
-		"nameplate-header", header, "nameplate-subheader", NULL, NULL);
+	context_menu = GTK_MENU (gtk_menu_new ());
 
-	TILE (tile)->actions = g_new0 (TileAction *, 1);
-	TILE (tile)->n_actions = 1;
+	this = g_object_new (
+		SYSTEM_TILE_TYPE,
+		"tile-uri",            uri,
+		"context-menu",        context_menu,
+		"nameplate-image",     gtk_image_new (),
+		"nameplate-header",    header,
+		"nameplate-subheader", NULL,
+		NULL);
 
-	TILE (tile)->actions[SYSTEM_TILE_ACTION_OPEN] =
-		tile_action_new (TILE (tile), system_tile_open, NULL, TILE_ACTION_OPENS_NEW_WINDOW);
+	actions = g_new0 (TileAction *, 2);
 
-	TILE (tile)->default_action = TILE (tile)->actions[SYSTEM_TILE_ACTION_OPEN];
+	TILE (this)->actions   = actions;
+	TILE (this)->n_actions = 2;
 
-	priv = SYSTEM_TILE_GET_PRIVATE (tile);
-	priv->type = type;
+	menu_ctnr = GTK_CONTAINER (TILE (this)->context_menu);
+
+	markup = g_markup_printf_escaped (_("<b>Open %s</b>"), header_txt);
+	action = tile_action_new (TILE (this), open_trigger, markup, TILE_ACTION_OPENS_NEW_WINDOW);
+	actions [SYSTEM_TILE_ACTION_OPEN] = action;
+	g_free (markup);
+
+	menu_item = GTK_WIDGET (tile_action_get_menu_item (action));
+
+	gtk_container_add (menu_ctnr, menu_item);
+
+	TILE (this)->default_action = action;
+
+	gtk_container_add (menu_ctnr, gtk_separator_menu_item_new ());
+
+	markup = g_markup_printf_escaped (_("Remove from System Items"));
+	action = tile_action_new (TILE (this), remove_trigger, markup, TILE_ACTION_OPENS_NEW_WINDOW);
+	actions [SYSTEM_TILE_ACTION_REMOVE] = action;
+	g_free (markup);
+
+	menu_item = GTK_WIDGET (tile_action_get_menu_item (action));
+
+	gtk_container_add (menu_ctnr, menu_item);
+
+	gtk_widget_show_all (GTK_WIDGET (TILE (this)->context_menu));
+
+	priv = PRIVATE (this);
 	priv->desktop_item = desktop_item;
 	priv->image_id = g_strdup (image_id);
-	priv->conf = conf;
 
-	load_image (tile);
+	load_image (this);
 
 	/* Set up the mnemonic for the tile */
-	gtk_label_set_mnemonic_widget (GTK_LABEL (header), GTK_WIDGET (tile));
+	gtk_label_set_mnemonic_widget (GTK_LABEL (header), GTK_WIDGET (this));
 
 	/* Set up the accessible name for the tile */
-	accessible = gtk_widget_get_accessible (GTK_WIDGET (tile));
+	accessible = gtk_widget_get_accessible (GTK_WIDGET (this));
 	if (header_txt)
-	  atk_object_set_name (accessible, header_txt);
+		atk_object_set_name (accessible, header_txt);
 
 	g_free (header_txt);
 	g_free (image_id);
 	g_free (uri);
 
-	return GTK_WIDGET (tile);
+	return GTK_WIDGET (this);
 }
 
 static void
-system_tile_init (SystemTile * tile)
+system_tile_class_init (SystemTileClass *this_class)
 {
-	SystemTilePrivate *priv = SYSTEM_TILE_GET_PRIVATE (tile);
+	GObjectClass   *g_obj_class  = G_OBJECT_CLASS   (this_class);
+	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (this_class);
 
-	priv->desktop_item = NULL;
-	priv->image_id = NULL;
+	g_obj_class->finalize = system_tile_finalize;
+
+	widget_class->style_set = system_tile_style_set;
+
+	g_type_class_add_private (this_class, sizeof (SystemTilePrivate));
+}
+
+static void
+system_tile_init (SystemTile *this)
+{
+	SystemTilePrivate *priv = PRIVATE (this);
+
+	priv->desktop_item    = NULL;
+	priv->image_id        = NULL;
 	priv->image_is_broken = TRUE;
 }
 
 static void
-system_tile_finalize (GObject * g_object)
+system_tile_finalize (GObject *g_obj)
 {
-        SystemTile *tile = SYSTEM_TILE (g_object);
-        SystemTilePrivate *priv = SYSTEM_TILE_GET_PRIVATE (tile);
+        SystemTilePrivate *priv = PRIVATE (g_obj);
 
 	g_free (priv->image_id);
 	gnome_desktop_item_unref (priv->desktop_item);
 
-	/* FIXME - more to free ? */
-	(*G_OBJECT_CLASS (system_tile_parent_class)->finalize) (g_object);
+	G_OBJECT_CLASS (system_tile_parent_class)->finalize (g_obj);
 }
 
 static void
-system_tile_style_set (GtkWidget * widget, GtkStyle * prev_style)
+system_tile_style_set (GtkWidget *widget, GtkStyle *prev_style)
 {
 	load_image (SYSTEM_TILE (widget));
 }
 
 static void
-load_image (SystemTile * tile)
+load_image (SystemTile *this)
 {
-	SystemTilePrivate *priv = SYSTEM_TILE_GET_PRIVATE (tile);
+	SystemTilePrivate *priv = PRIVATE (this);
 
 	priv->image_is_broken = load_image_by_id (
-		GTK_IMAGE (NAMEPLATE_TILE (tile)->image), GTK_ICON_SIZE_MENU, priv->image_id);
+		GTK_IMAGE (NAMEPLATE_TILE (this)->image), GTK_ICON_SIZE_MENU, priv->image_id);
 }
 
 static GtkWidget *
-create_header (const gchar * name)
+create_header (const gchar *name)
 {
 	GtkWidget *header;
 
@@ -248,95 +212,13 @@ create_header (const gchar * name)
 }
 
 static void
-system_tile_activated (Tile * tile, TileEvent * event)
+open_trigger (Tile *this, TileEvent *event, TileAction *action)
 {
-	tile_trigger_action_with_time (tile, tile->default_action, event->time);
+	open_desktop_item_exec (PRIVATE (this)->desktop_item);
 }
 
 static void
-system_tile_open (Tile * tile, TileEvent * event, TileAction * action)
+remove_trigger (Tile *this, TileEvent *event, TileAction *action)
 {
-	SystemTilePrivate *priv = SYSTEM_TILE_GET_PRIVATE (tile);
-
-	switch (priv->type)
-	{
-	case SYSTEM_TILE_TYPE_HELP:
-	case SYSTEM_TILE_TYPE_CONTROL_CENTER:
-	case SYSTEM_TILE_TYPE_PACKAGE_MANAGER:
-		open_desktop_item_exec (SYSTEM_TILE_GET_PRIVATE (tile)->desktop_item);
-		break;
-
-	case SYSTEM_TILE_TYPE_LOG_OUT:
-		system_tile_logout (tile, event, action);
-		break;
-
-	case SYSTEM_TILE_TYPE_LOCK_SCREEN:
-		system_tile_lock_screen (tile, event, action);
-		break;
-
-	default:
-		break;
-	}
-}
-
-static void
-system_tile_logout (Tile * tile, TileEvent * event, TileAction * action)
-{
-	GnomeClient *client = gnome_master_client ();
-
-	if (!client)
-		return;
-
-	gnome_client_request_save (client, GNOME_SAVE_GLOBAL, TRUE, GNOME_INTERACT_ANY, FALSE,
-		TRUE);
-}
-
-static void
-system_tile_lock_screen (Tile * tile, TileEvent * event, TileAction * action)
-{
-	GSList *command_priority;
-
-	gchar *exec_string;
-	gchar *cmd_string;
-	gchar *arg_string;
-
-	GSList *node;
-	gint i;
-
-	command_priority = get_slab_gconf_slist (SLAB_LOCK_SCREEN_PRIORITY_KEY);
-
-	for (node = command_priority; node; node = node->next)
-	{
-		exec_string = (gchar *) node->data;
-
-		cmd_string = g_strdup (exec_string);
-		arg_string = NULL;
-
-		for (i = 0; i < strlen (exec_string); ++i)
-		{
-			if (g_ascii_isspace (exec_string[i]))
-			{
-				cmd_string = g_strndup (exec_string, i);
-				arg_string = g_strdup (&exec_string[i + 1]);
-			}
-		}
-
-		cmd_string = g_find_program_in_path (cmd_string);
-
-		if (cmd_string)
-		{
-			exec_string = g_strdup_printf ("%s %s", cmd_string, arg_string);
-
-			g_spawn_async (NULL, g_strsplit (exec_string, " ", 0), NULL, 0, NULL, NULL,
-				NULL, NULL);
-
-			g_free (cmd_string);
-			g_free (arg_string);
-			g_free (exec_string);
-
-			return;
-		}
-	}
-
-	g_warning ("could not find a command to lock screen\n");
+	g_printf ("%s !!\n", G_GNUC_FUNCTION);
 }

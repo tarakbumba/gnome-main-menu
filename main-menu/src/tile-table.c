@@ -427,13 +427,22 @@ tile_drag_data_rcv_cb (
 	TileTableUpdateEvent *update_event;
 	TileTableURIAddedEvent *uri_event;
 
+	gboolean new_uri;
+
 	gpointer tmp;
 	gint i;
 
 
 	src_widget = gtk_drag_get_source_widget (drag_context);
 
-	if (! src_widget || ! IS_TILE (src_widget) || ! tile_compare (src_widget, dst_widget)) {
+	new_uri = (! src_widget || ! IS_TILE (src_widget) || ! tile_compare (src_widget, dst_widget));
+
+	if (! new_uri)
+		src_node = g_list_find_custom (priv->tiles, src_widget, tile_compare);
+	else
+		src_node = NULL;
+
+	if (new_uri || ! src_node) {
 		uris = gtk_selection_data_get_uris (selection);
 
 		for (i = 0; uris && uris [i]; ++i) {
