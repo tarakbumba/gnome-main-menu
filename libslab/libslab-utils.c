@@ -84,6 +84,9 @@ libslab_gnome_desktop_item_new_from_unknown_id (const gchar *id)
 	GError *error = NULL;
 
 
+	if (! id)
+		return NULL;
+
 	item = gnome_desktop_item_new_from_uri (id, 0, & error);
 
 	if (! error)
