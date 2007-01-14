@@ -24,6 +24,9 @@
 #	include <config.h>
 #endif
 
+#include <string.h>
+#include <glib/gi18n.h>
+
 #include "libslab-utils.h"
 
 #define DEFAULT_USER_XDG_DIR     ".local/share"
@@ -34,7 +37,10 @@
 #define HELP_ITEM_GCONF_KEY      "/desktop/gnome/applications/main-menu/system-area/help_item"
 #define CC_ITEM_GCONF_KEY        "/desktop/gnome/applications/main-menu/system-area/control_center_item"
 #define PM_ITEM_GCONF_KEY        "/desktop/gnome/applications/main-menu/system-area/package_manager_item"
-#define LOGOUT_DESKTOP_ITEM_PATH "/home/jimmyk/.local/share/applications/gnome-session-save.desktop"
+#define LOCKSCREEN_GCONF_KEY     "/desktop/gnome/applications/main-menu/lock_screen_priority"
+
+#define LOGOUT_DESKTOP_ITEM      "gnome-session-logout.desktop"
+#define SHUTDOWN_DESKTOP_ITEM    "gnome-session-shutdown.desktop"
 
 static gchar *get_main_menu_user_data_path (void);
 
@@ -43,7 +49,6 @@ migrate_system_gconf_to_bookmark_file ()
 {
 	GList *user_dirs = NULL;
 	gchar *path;
-	GList *node;
 
 	gboolean need_migration = TRUE;
 
@@ -57,9 +62,19 @@ migrate_system_gconf_to_bookmark_file ()
 	const gchar      *loc;
 	gchar            *uri;
 
-	gchar *dir;
+	GList *screensavers;
+	gchar *exec_string;
+	gchar *cmd_string;
+	gchar *arg_string;
+
+	gchar *data_dir;
 
 	GError *error = NULL;
+
+	GList *node_i;
+	GList *node_j;
+
+	gint i;
 
 
 	path = g_build_filename (g_getenv ("XDG_DATA_HOME"), TOP_CONFIG_DIR, NULL);
@@ -102,8 +117,10 @@ migrate_system_gconf_to_bookmark_file ()
 
 	bm_file = g_bookmark_file_new ();
 
-	for (node = gconf_system_list; node; node = node->next) {
-		system_tile_type = GPOINTER_TO_INT (node->data);
+	data_dir = get_main_menu_user_data_path ();
+
+	for (node_i = gconf_system_list; node_i; node_i = node_i->next) {
+		system_tile_type = GPOINTER_TO_INT (node_i->data);
 
 		if (system_tile_type == 0)
 			ditem_id = (gchar *) libslab_get_gconf_value (HELP_ITEM_GCONF_KEY);
@@ -111,8 +128,71 @@ migrate_system_gconf_to_bookmark_file ()
 			ditem_id = (gchar *) libslab_get_gconf_value (CC_ITEM_GCONF_KEY);
 		else if (system_tile_type == 2)
 			ditem_id = (gchar *) libslab_get_gconf_value (PM_ITEM_GCONF_KEY);
-		else if (system_tile_type == 3)
-			ditem_id = g_strdup (LOGOUT_DESKTOP_ITEM_PATH);
+		else if (system_tile_type == 3) {
+			screensavers = libslab_get_gconf_value (LOCKSCREEN_GCONF_KEY);
+
+			for (node_j = screensavers; node_j; node_j = node_j->next) {
+				exec_string = (gchar *) node_j->data;
+	
+				cmd_string = g_strdup (exec_string);
+				arg_string = NULL;
+
+				for (i = 0; i < strlen (exec_string); ++i) {
+					if (g_ascii_isspace (exec_string [i])) {
+						cmd_string = g_strndup (exec_string, i);
+						arg_string = g_strdup (& exec_string [i + 1]);
+					}
+				}
+
+				cmd_string = g_find_program_in_path (cmd_string);
+
+				if (cmd_string) {
+					ditem = gnome_desktop_item_new ();
+
+					path = g_build_filename (
+						data_dir, "gnome-main-menu-lockscreen.desktop", NULL);
+
+					gnome_desktop_item_set_location_file (ditem, path);
+					gnome_desktop_item_set_string (
+						ditem, GNOME_DESKTOP_ITEM_NAME, _("Lock Screen"));
+					gnome_desktop_item_set_string (
+						ditem, GNOME_DESKTOP_ITEM_ICON, _("gnome-lockscreen"));
+					gnome_desktop_item_set_string (
+						ditem, GNOME_DESKTOP_ITEM_EXEC, exec_string);
+					gnome_desktop_item_set_boolean (
+						ditem, GNOME_DESKTOP_ITEM_TERMINAL, FALSE);
+					gnome_desktop_item_set_entry_type (
+						ditem, GNOME_DESKTOP_ITEM_TYPE_APPLICATION);
+					gnome_desktop_item_set_string (
+						ditem, GNOME_DESKTOP_ITEM_ENCODING, "UTF-8");
+					gnome_desktop_item_set_string (
+						ditem, GNOME_DESKTOP_ITEM_CATEGORIES, "GNOME;Application;");
+					gnome_desktop_item_set_string (
+						ditem, GNOME_DESKTOP_ITEM_ONLY_SHOW_IN, "GNOME;");
+
+					gnome_desktop_item_save (ditem, NULL, TRUE, NULL);
+
+					break;
+				}
+
+				g_free (cmd_string);
+				g_free (arg_string);
+				g_free (exec_string);
+			}
+
+			g_list_free (screensavers);
+
+			ditem_id = path;
+		}
+		else if (system_tile_type == 4) {
+			ditem_id = g_strdup (LOGOUT_DESKTOP_ITEM);
+
+			node_i->data = GINT_TO_POINTER (5);
+
+			node_i = node_i->prev;
+		}
+		else if (system_tile_type == 5)
+			ditem_id = g_strdup (SHUTDOWN_DESKTOP_ITEM);
 		else
 			ditem_id = NULL;
 
@@ -141,9 +221,7 @@ migrate_system_gconf_to_bookmark_file ()
 			gnome_desktop_item_unref (ditem);
 	}
 
-	dir = get_main_menu_user_data_path ();
-	path = g_build_filename (dir, SYSTEM_BOOKMARK_FILENAME, NULL);
-	g_free (dir);
+	path = g_build_filename (data_dir, SYSTEM_BOOKMARK_FILENAME, NULL);
 
 	g_bookmark_file_to_file (bm_file, path, & error);
 
@@ -154,6 +232,9 @@ migrate_system_gconf_to_bookmark_file ()
 			G_GNUC_FUNCTION, path);
 
 	g_bookmark_file_free (bm_file);
+	g_list_free (gconf_system_list);
+	g_free (data_dir);
+	g_free (path);
 }
 
 static gchar *
