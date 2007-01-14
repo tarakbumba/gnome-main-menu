@@ -169,7 +169,7 @@ tile_table_set_property (GObject *g_obj, guint prop_id, const GValue *value, GPa
 {
 	switch (prop_id) {
 		case PROP_TILES:
-			load_tiles (TILE_TABLE (g_obj), g_value_get_pointer (value));
+			load_tiles (TILE_TABLE (g_obj), (GList *) g_value_get_pointer (value));
 			break;
 
 		case PROP_LIMIT:
@@ -199,7 +199,7 @@ load_tiles (TileTable *this, GList *tiles)
 	GtkWidget *tile;
 	gulong     handler_id;
 
-	GList    *node;
+	GList *node;
 
 
 	for (node = priv->tiles; node; node = node->next)
@@ -207,9 +207,9 @@ load_tiles (TileTable *this, GList *tiles)
 
 	g_list_free (priv->tiles);
 
-	priv->tiles = tiles;
+	priv->tiles = NULL;
 
-	for (node = priv->tiles; node; node = node->next) {
+	for (node = tiles; node; node = node->next) {
 		g_assert (IS_TILE (node->data));
 
 		tile = GTK_WIDGET (node->data);
@@ -233,6 +233,8 @@ load_tiles (TileTable *this, GList *tiles)
 			g_signal_handler_disconnect (tile, handler_id);
 		else
 			/* do nothing */ ;
+
+		priv->tiles = g_list_append (priv->tiles, tile);
 	}
 
 	update_bins (this);
@@ -254,7 +256,7 @@ set_limit (TileTable *this, gint limit)
 }
 
 static void
-tile_table_update (TileTable * this, TileTableUpdateEvent * event)
+tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 

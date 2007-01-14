@@ -32,6 +32,7 @@
 #include <libxml/tree.h>
 #include <string.h>
 #include <X11/Xlib.h>
+#include <libgnomevfs/gnome-vfs.h>
 
 #include "libslab-utils.h"
 
@@ -130,10 +131,13 @@ static GtkWidget *create_page_buttons    (MainMenuUI *);
 static void       select_page            (MainMenuUI *, gint);
 static void       page_button_clicked_cb (GtkButton *, gpointer);
 
-static GtkWidget *create_system_table_widget (void);
-static void       system_tile_activated_cb   (Tile *, TileEvent *, gpointer);
-static void       system_table_update_cb     (TileTable *, TileTableUpdateEvent *, gpointer);
-static void       system_table_uri_added_cb  (TileTable *, TileTableURIAddedEvent *, gpointer);
+static void create_system_table_widget   (MainMenuUI *);
+static void reload_system_tile_table     (MainMenuUI *);
+static void system_tile_activated_cb     (Tile *, TileEvent *, gpointer);
+static void system_table_update_cb       (TileTable *, TileTableUpdateEvent *, gpointer);
+static void system_table_uri_added_cb    (TileTable *, TileTableURIAddedEvent *, gpointer);
+static void system_item_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
+                                          GnomeVFSMonitorEventType, gpointer);
 
 static void bind_search_key (void);
 
@@ -161,6 +165,9 @@ typedef struct {
 	GtkNotebook     *file_area_nb;
 	gint             file_area_nb_ids [PAGE_SENTINEL];
 	GtkToggleButton *page_btns        [PAGE_SENTINEL];
+
+	TileTable *system_table;
+	GnomeVFSMonitorHandle *system_item_monitor_handle;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -412,7 +419,6 @@ build_main_menu_window (MainMenuUI *this)
 
 	GtkWidget *system_header;
 	GtkWidget *status_header;
-	GtkWidget *system_table_widget;
 	GtkWidget *status_section;
 	GtkWidget *hd_tile;
 	GtkWidget *net_tile;
@@ -457,8 +463,8 @@ build_main_menu_window (MainMenuUI *this)
 	icon_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	label_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
-	system_table_widget = create_system_table_widget ();
-	gtk_size_group_add_widget (right_pane_group, system_table_widget);
+	create_system_table_widget (this);
+	gtk_size_group_add_widget (right_pane_group, GTK_WIDGET (priv->system_table));
 
 	status_section = gtk_vbox_new (TRUE, 6);
 
@@ -484,14 +490,12 @@ build_main_menu_window (MainMenuUI *this)
 
 	right_pane = gtk_vbox_new (FALSE, 12);
 
-	if (priv->conf->lock_down_conf->system_area_visible)
-	{
+	if (priv->conf->lock_down_conf->system_area_visible) {
 		gtk_box_pack_start (GTK_BOX (right_pane), system_header, FALSE, FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (right_pane), system_table_widget, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (right_pane), GTK_WIDGET (priv->system_table), FALSE, FALSE, 0);
 	}
 
-	if (priv->conf->lock_down_conf->status_area_visible)
-	{
+	if (priv->conf->lock_down_conf->status_area_visible) {
 		gtk_box_pack_end (GTK_BOX (right_pane), status_section, FALSE, FALSE, 0);
 		gtk_box_pack_end (GTK_BOX (right_pane), status_header, FALSE, FALSE, 0);
 	}
@@ -1025,13 +1029,15 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 
 /*** BEGIN SYSTEM AREA ***/
 
-static GtkWidget *
-create_system_table_widget ()
+static void
+create_system_table_widget (MainMenuUI *this)
 {
-	GtkWidget *table;
-	GList     *tiles;
+	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	GList *node;
+	GtkWidget *table;
+
+	gchar *path;
+	gchar *store_uri;
 
 
 	table = tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL);
@@ -1045,15 +1051,49 @@ create_system_table_widget ()
 		G_OBJECT (table), TILE_TABLE_URI_ADDED_SIGNAL,
 		G_CALLBACK (system_table_uri_added_cb), NULL);
 
-	tiles = get_system_item_uris ();
+	path      = get_system_bookmark_path ();
+	store_uri = g_filename_to_uri (path, NULL, NULL);
 
-	for (node = tiles; node; node = node->next)
-		g_signal_connect (G_OBJECT (node->data), "tile-activated",
-			G_CALLBACK (system_tile_activated_cb), NULL);
+	gnome_vfs_monitor_add (
+		& priv->system_item_monitor_handle, store_uri, GNOME_VFS_MONITOR_FILE,
+		system_item_store_monitor_cb, this);
 
-	g_object_set (G_OBJECT (table), TILE_TABLE_TILES_PROP, tiles, NULL);
+	priv->system_table = TILE_TABLE (table);
 
-	return table;
+	reload_system_tile_table (this);
+}
+
+static void
+reload_system_tile_table (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GList *uris;
+
+	GtkWidget *tile;
+	GList     *tiles = NULL;
+
+	GList *node;
+
+
+	uris = get_system_item_uris ();
+
+	for (node = uris; node; node = node->next) {
+		tile = system_tile_new ((gchar *) node->data);
+
+		if (tile) {
+			g_signal_connect (G_OBJECT (tile), "tile-activated",
+				G_CALLBACK (system_tile_activated_cb), NULL);
+
+			tiles = g_list_append (tiles, tile);
+		}
+
+		g_free (node->data);
+	}
+
+	g_object_set (G_OBJECT (priv->system_table), TILE_TABLE_TILES_PROP, tiles, NULL);
+
+	g_list_free (tiles);
 }
 
 static void
@@ -1103,7 +1143,28 @@ system_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer 
 static void
 system_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpointer user_data)
 {
-	g_printf ("%s !!\n", __FUNCTION__);
+	GList *uris;
+	gint uri_len;
+
+
+	if (! event->uri)
+		return;
+
+	uri_len = strlen (event->uri);
+
+	if (! strcmp (& event->uri [uri_len - 8], ".desktop")) {
+		uris = get_system_item_uris ();
+		uris = g_list_append (uris, event->uri);
+		save_system_item_uris (uris);
+	}
+}
+
+static void
+system_item_store_monitor_cb (
+	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
+	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
+{
+	reload_system_tile_table (MAIN_MENU_UI (user_data));
 }
 
 /*** END SYSTEM AREA ***/

@@ -27,7 +27,8 @@
 #include <libgnomeui/gnome-client.h>
 
 #include "slab-gnome-util.h"
-#include "gnome-utils.h"
+#include "libslab-utils.h"
+#include "main-menu-utils.h"
 
 G_DEFINE_TYPE (SystemTile, system_tile, NAMEPLATE_TILE_TYPE)
 
@@ -74,7 +75,7 @@ system_tile_new (const gchar *desktop_item_id)
 	AtkObject *accessible = NULL;
 
 
-	desktop_item = load_desktop_item_by_unknown_id (desktop_item_id);
+	desktop_item = libslab_gnome_desktop_item_new_from_unknown_id (desktop_item_id);
 
 	if (desktop_item) {
 		image_id   = g_strdup (gnome_desktop_item_get_localestring (desktop_item, "Icon"));
@@ -195,8 +196,12 @@ load_image (SystemTile *this)
 {
 	SystemTilePrivate *priv = PRIVATE (this);
 
-	priv->image_is_broken = load_image_by_id (
-		GTK_IMAGE (NAMEPLATE_TILE (this)->image), GTK_ICON_SIZE_MENU, priv->image_id);
+	GtkImage *image = GTK_IMAGE (NAMEPLATE_TILE (this)->image);
+
+
+	g_object_set (G_OBJECT (image), "icon-size", GTK_ICON_SIZE_MENU, NULL);
+
+	priv->image_is_broken = libslab_gtk_image_set_by_id (image, priv->image_id);
 }
 
 static GtkWidget *
@@ -220,5 +225,9 @@ open_trigger (Tile *this, TileEvent *event, TileAction *action)
 static void
 remove_trigger (Tile *this, TileEvent *event, TileAction *action)
 {
-	g_printf ("%s !!\n", G_GNUC_FUNCTION);
+	GList *tiles;
+
+	tiles = get_system_item_uris ();
+	tiles = g_list_remove_link (tiles, g_list_find_custom (tiles, this->uri, (GCompareFunc) libslab_strcmp));
+	save_system_item_uris (tiles);
 }

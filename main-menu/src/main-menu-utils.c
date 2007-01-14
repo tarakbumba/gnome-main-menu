@@ -25,7 +25,7 @@
 #endif
 
 #include "system-tile.h"
-#include "gnome-utils.h"
+#include "libslab-utils.h"
 
 #include "main-menu-migration.h"
 
@@ -44,8 +44,6 @@ get_system_item_uris ()
 	GList  *tiles = NULL;
 	gchar **uris;
 
-	GtkWidget *tile;
-
 	GError *error = NULL;
 
 	gint i;
@@ -61,19 +59,16 @@ get_system_item_uris ()
 	if (! error) {
 		uris = g_bookmark_file_get_uris (bm_file, NULL);
 
-		for (i = 0; uris [i]; ++i) {
-			tile = system_tile_new (uris [i]);
-
-			if (tile)
-				tiles = g_list_append (tiles, tile);
-		}
+		for (i = 0; uris [i]; ++i)
+			tiles = g_list_append (tiles, g_strdup (uris [i]));
 	}
 	else
-		handle_g_error (
+		libslab_handle_g_error (
 			& error,
 			"%s: couldn't load bookmark file [%s]",
 			G_GNUC_FUNCTION, path);
 
+	g_strfreev (uris);
 	g_bookmark_file_free (bm_file);
 
 	return tiles;
@@ -141,6 +136,8 @@ save_system_item_uris (const GList *uris)
 
 	gchar *uri;
 
+	GnomeDesktopItem *ditem;
+
 	const GList *node;
 
 	GError *error = NULL;
@@ -156,14 +153,23 @@ save_system_item_uris (const GList *uris)
 	for (node = uris; node; node = node->next) {
 		uri = (gchar *) node->data;
 
-		g_bookmark_file_set_mime_type   (bm_file, uri, "application/x-desktop");
-		g_bookmark_file_add_application (bm_file, uri, NULL, NULL);
+		ditem = libslab_gnome_desktop_item_new_from_unknown_id (uri);
+
+		if (ditem) {
+			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			g_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+
+			gnome_desktop_item_unref (ditem);
+		}
 	}
 
 	g_bookmark_file_to_file (bm_file, path, & error);
 
 	if (error)
-		handle_g_error (
+		libslab_handle_g_error (
 			& error, "%s: cannot save system item list [%s]",
 			G_GNUC_FUNCTION, path);
 

@@ -211,7 +211,10 @@ migrate_system_gconf_to_bookmark_file ()
 
 		if (uri) {
 			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
-			g_bookmark_file_add_application (bm_file, uri, NULL, NULL);
+			g_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
 		}
 
 		g_free (uri);
