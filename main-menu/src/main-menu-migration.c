@@ -34,6 +34,7 @@
 #define TOP_CONFIG_DIR           PACKAGE
 #define SYSTEM_BOOKMARK_FILENAME "system-items.xbel"
 #define APPS_BOOKMARK_FILENAME   "applications.xbel"
+#define DOCS_BOOKMARK_FILENAME   "documents.xbel"
 
 #define SYSTEM_ITEM_GCONF_KEY    "/desktop/gnome/applications/main-menu/system-area/system_item_list"
 #define HELP_ITEM_GCONF_KEY      "/desktop/gnome/applications/main-menu/system-area/help_item"

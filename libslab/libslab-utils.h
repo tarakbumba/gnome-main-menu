@@ -21,13 +21,17 @@ void              libslab_handle_g_error (GError **error, const gchar *msg_forma
 
 GList *libslab_get_system_item_uris (void);
 GList *libslab_get_user_app_uris    (void);
+GList *libslab_get_user_doc_uris    (void);
 
 void libslab_save_system_item_uris (const GList *);
 void libslab_save_app_uris         (const GList *);
+void libslab_save_doc_uris         (const GList *);
 
 GnomeVFSMonitorHandle *libslab_add_system_item_monitor (GnomeVFSMonitorCallback callback,
                                                         gpointer                user_data);
 GnomeVFSMonitorHandle *libslab_add_apps_monitor        (GnomeVFSMonitorCallback callback,
+                                                        gpointer                user_data);
+GnomeVFSMonitorHandle *libslab_add_docs_monitor        (GnomeVFSMonitorCallback callback,
                                                         gpointer                user_data);
 
 typedef void (* libslab_marshal_func_VOID__POINTER_POINTER) (gpointer, gpointer, gpointer, gpointer);

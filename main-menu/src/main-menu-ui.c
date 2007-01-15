@@ -144,6 +144,7 @@ static void       file_area_store_monitor_cb (GnomeVFSMonitorHandle *, const gch
 
 static void recent_files_store_changed_cb (MainMenuRecentMonitor *, gpointer);
 static void reload_recent_apps_table (MainMenuUI *);
+static void reload_recent_docs_table (MainMenuUI *);
 
 static void create_system_table_widget   (MainMenuUI *);
 static void reload_system_tile_table     (MainMenuUI *);
@@ -186,8 +187,12 @@ typedef struct {
 	GnomeVFSMonitorHandle *file_area_monitor_handles [PAGE_SENTINEL];
 
 	TileTable *user_apps_table;
+	TileTable *user_docs_table;
+	TileTable *user_dirs_table;
 
 	TileTable *recent_apps_table;
+	TileTable *recent_docs_table;
+	TileTable *recent_dirs_table;
 	MainMenuRecentMonitor *recent_monitor;
 
 	gboolean ptr_is_grabbed;
@@ -556,6 +561,8 @@ build_main_menu_window (MainMenuUI *this)
 
 	priv->main_window = window;
 	priv->search_section = search_widget;
+
+	select_page (this, GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY)));
 }
 
 static void
@@ -1105,6 +1112,9 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			if (! priv->recent_monitor)
 				priv->recent_monitor = main_menu_recent_monitor_new ();
 
+			priv->user_docs_table   = FILE_AREA (file_area)->user_spec_table;
+			priv->recent_docs_table = FILE_AREA (file_area)->recent_table;
+
 			break;
 
 		case DIRS_PAGE:
@@ -1147,6 +1157,10 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			reload_recent_apps_table (this);
 			break;
 
+		case DOCS_PAGE:
+			reload_recent_docs_table (this);
+			break;
+
 		default:
 			break;
 	}
@@ -1165,36 +1179,48 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 static void
 reload_user_table (TileTable *table, PageID page_id)
 {
-	GList *uris;
+	GList *uris = NULL;
 
 	GtkWidget *tile;
 	GList     *tiles = NULL;
 
 	GtkWidget   *image;
-	GtkIconSize  icon_size;
 	gint         icon_width;
 
 	GList *node;
 
 
 	switch (page_id) {
-		default:
+		case APPS_PAGE:
 			uris = libslab_get_user_app_uris ();
+			break;
+
+		case DOCS_PAGE:
+			uris = libslab_get_user_doc_uris ();
+			break;
+
+		default:
 			break;
 	}
 
 	for (node = uris; node; node = node->next) {
 		switch (page_id) {
-			default:
+			case APPS_PAGE:
 				tile = application_tile_new ((gchar *) node->data);
+				break;
+
+			case DOCS_PAGE:
+				tile = document_tile_new ((gchar *) node->data, "text/plain", 0);
+				break;
+
+			default:
 				break;
 		}
 
 		if (tile) {
 			image = NAMEPLATE_TILE (tile)->image;
 
-			g_object_get (G_OBJECT (image), "icon-size", & icon_size, NULL);
-			gtk_icon_size_lookup (icon_size, & icon_width, NULL);
+			gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
 
 			gtk_widget_set_size_request (tile, 6 * icon_width, -1);
 
@@ -1278,6 +1304,36 @@ reload_recent_apps_table (MainMenuUI *this)
 }
 
 static void
+reload_recent_docs_table (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GList *files;
+	GList *tiles = NULL;
+
+	MainMenuRecentFile *file;
+
+	GList *node;
+
+
+	files = main_menu_get_recent_files (priv->recent_monitor);
+
+	for (node = files; node; node = node->next) {
+		file = (MainMenuRecentFile *) node->data;
+
+		tiles = g_list_append (tiles,
+			document_tile_new (
+				main_menu_recent_file_get_uri       (file),
+				main_menu_recent_file_get_mime_type (file),
+				main_menu_recent_file_get_modified  (file)));
+
+		g_object_unref (file);
+	}
+
+	g_object_set (G_OBJECT (priv->recent_docs_table), TILE_TABLE_TILES_PROP, tiles, NULL);
+}
+
+static void
 tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer user_data)
 {
 	GList *tiles_new = NULL;
@@ -1312,6 +1368,10 @@ tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer us
 	switch (GPOINTER_TO_INT (user_data)) {
 		case APPS_PAGE:
 			libslab_save_app_uris (tiles_new);
+			break;
+
+		case DOCS_PAGE:
+			libslab_save_doc_uris (tiles_new);
 			break;
 
 		default:
@@ -1365,6 +1425,9 @@ recent_files_store_changed_cb (MainMenuRecentMonitor *manager, gpointer user_dat
 
 	reload_user_table (priv->user_apps_table, APPS_PAGE);
 	reload_recent_apps_table (MAIN_MENU_UI (user_data));
+
+	reload_user_table (priv->user_docs_table, DOCS_PAGE);
+	reload_recent_docs_table (MAIN_MENU_UI (user_data));
 }
 
 /*** END FILE AREA ***/

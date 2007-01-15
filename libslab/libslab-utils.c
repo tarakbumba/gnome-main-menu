@@ -485,6 +485,21 @@ libslab_get_user_app_uris ()
 	return uris;
 }
 
+GList *
+libslab_get_user_doc_uris ()
+{
+	GList *uris;
+	gchar *path;
+
+
+	path = get_data_file_path (DOCS_BOOKMARK_FILENAME);
+	uris = get_uri_list (path);
+
+	g_free (path);
+
+	return uris;
+}
+
 void
 libslab_save_system_item_uris (const GList *uris)
 {
@@ -497,6 +512,12 @@ libslab_save_app_uris (const GList *uris)
 	save_uri_list (APPS_BOOKMARK_FILENAME, uris);
 }
 
+void
+libslab_save_doc_uris (const GList *uris)
+{
+	save_uri_list (DOCS_BOOKMARK_FILENAME, uris);
+}
+
 GnomeVFSMonitorHandle *
 libslab_add_system_item_monitor (GnomeVFSMonitorCallback callback, gpointer user_data)
 {
@@ -507,6 +528,12 @@ GnomeVFSMonitorHandle *
 libslab_add_apps_monitor (GnomeVFSMonitorCallback callback, gpointer user_data)
 {
 	return add_store_file_monitor (APPS_BOOKMARK_FILENAME, callback, user_data);
+}
+
+GnomeVFSMonitorHandle *
+libslab_add_docs_monitor (GnomeVFSMonitorCallback callback, gpointer user_data)
+{
+	return add_store_file_monitor (DOCS_BOOKMARK_FILENAME, callback, user_data);
 }
 
 static GList *
