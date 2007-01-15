@@ -30,6 +30,7 @@ libslab_la_SOURCES =				\
 	shell-window.c				\
 	slab-gnome-util.c			\
 	slab-section.c				\
+	system-tile.c				\
 	themed-icon.c				\
 	themed-icon.h				\
 	tile-action.c				\
@@ -51,6 +52,7 @@ libslab_include_HEADERS =			\
 	shell-window.h				\
 	slab-gnome-util.h			\
 	slab-section.h				\
+	system-tile.h				\
 	tile.h
 
 libslab_la_LIBADD =				\

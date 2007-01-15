@@ -20,12 +20,10 @@ main_menu_SOURCES =							\
 	main-menu-ui.c							\
 	main-menu-conf.c		main-menu-conf.h		\
 	main-menu-migration.c		main-menu-migration.h		\
-	main-menu-utils.c		main-menu-utils.h		\
 	network-status-tile.c		network-status-tile.h		\
 	network-status-agent.c		network-status-agent.h		\
 	network-status-info.c		network-status-info.h		\
 	slab-window.c			slab-window.h			\
-	system-tile.c			system-tile.h			\
 	text-button.c			text-button.h			\
 	tile-table.c			tile-table.h			\
 	tomboykeybinder.c		tomboykeybinder.h

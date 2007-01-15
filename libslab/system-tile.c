@@ -28,7 +28,6 @@
 
 #include "slab-gnome-util.h"
 #include "libslab-utils.h"
-#include "main-menu-utils.h"
 
 G_DEFINE_TYPE (SystemTile, system_tile, NAMEPLATE_TILE_TYPE)
 
@@ -227,7 +226,7 @@ remove_trigger (Tile *this, TileEvent *event, TileAction *action)
 {
 	GList *tiles;
 
-	tiles = get_system_item_uris ();
+	tiles = libslab_get_system_item_uris ();
 	tiles = g_list_remove_link (tiles, g_list_find_custom (tiles, this->uri, (GCompareFunc) libslab_strcmp));
-	save_system_item_uris (tiles);
+	libslab_save_system_item_uris (tiles);
 }

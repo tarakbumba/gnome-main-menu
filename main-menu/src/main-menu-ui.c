@@ -55,7 +55,7 @@
 #include "file-area.h"
 #include "tile-table.h"
 
-#include "main-menu-utils.h"
+#include "main-menu-migration.h"
 
 #define N_FILE_AREA_COLS             2
 #define FILE_AREA_TABLE_COL_SPACINGS 6
@@ -132,8 +132,12 @@ static GtkWidget *create_page_buttons    (MainMenuUI *);
 static void       select_page            (MainMenuUI *, PageID);
 static void       page_button_clicked_cb (GtkButton *, gpointer);
 
-static GtkWidget *create_file_area_page (PageID);
-static void       reload_user_table     (TileTable *, PageID);
+static GtkWidget *create_file_area_page      (MainMenuUI *, PageID);
+static void       reload_user_table          (TileTable *, PageID);
+static void       tile_table_update_cb       (TileTable *, TileTableUpdateEvent *, gpointer);
+static void       tile_table_uri_added_cb    (TileTable *, TileTableURIAddedEvent *, gpointer);
+static void       file_area_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
+                                              GnomeVFSMonitorEventType, gpointer);
 
 static void create_system_table_widget   (MainMenuUI *);
 static void reload_system_tile_table     (MainMenuUI *);
@@ -150,7 +154,6 @@ static void grab_focus (MainMenuUI *, GdkEvent *);
 
 static GtkWidget *get_section_header_label (const gchar *);
 static void section_header_label_style_set (GtkWidget *, GtkStyle *, gpointer);
-
 
 static void tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
@@ -173,6 +176,8 @@ typedef struct {
 
 	TileTable *system_table;
 	GnomeVFSMonitorHandle *system_item_monitor_handle;
+
+	GnomeVFSMonitorHandle *file_area_monitor_handles [PAGE_SENTINEL];
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -258,6 +263,9 @@ main_menu_ui_new (PanelApplet * applet, MainMenuConf * conf, MainMenuEngine * en
 	priv->applet = applet;
 	priv->conf = conf;
 	priv->engine = engine;
+
+	migrate_system_gconf_to_bookmark_file    ();
+	migrate_user_apps_gconf_to_bookmark_file ();
 
 	build_main_menu_window (ui);
 	build_panel_button (ui);
@@ -446,7 +454,7 @@ build_main_menu_window (MainMenuUI *this)
 
 	for (i = 0; i < PAGE_SENTINEL; ++i)
 		priv->file_area_nb_ids [i] = gtk_notebook_append_page (
-			priv->file_area_nb, create_file_area_page (i), NULL);
+			priv->file_area_nb, create_file_area_page (this, i), NULL);
 
 	gtk_box_pack_start (GTK_BOX (left_pane), search_widget, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (left_pane), page_buttons, FALSE, FALSE, 0);
@@ -1034,8 +1042,10 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 /*** BEGIN FILE AREA ***/
 
 static GtkWidget *
-create_file_area_page (PageID page_id)
+create_file_area_page (MainMenuUI *this, PageID page_id)
 {
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
 	GtkWidget *file_area;
 	GtkWidget *user_hdr;
 	GtkWidget *recent_hdr;
@@ -1054,6 +1064,9 @@ create_file_area_page (PageID page_id)
 
 			more_button = gtk_button_new_with_label (_("More Applications"));
 
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
+
 			break;
 	}
 
@@ -1064,6 +1077,16 @@ create_file_area_page (PageID page_id)
 		FILE_AREA_MAX_TOTAL_ITEMS_PROP,  8,
 		FILE_AREA_MIN_RECENT_ITEMS_PROP, 2,
 		NULL);
+
+	g_object_set_data (G_OBJECT (file_area), "page-id", GINT_TO_POINTER (page_id));
+
+	g_signal_connect (
+		G_OBJECT (FILE_AREA (file_area)->user_spec_table), TILE_TABLE_UPDATE_SIGNAL,
+		G_CALLBACK (tile_table_update_cb), GINT_TO_POINTER (page_id));
+
+	g_signal_connect (
+		G_OBJECT (FILE_AREA (file_area)->user_spec_table), TILE_TABLE_URI_ADDED_SIGNAL,
+		G_CALLBACK (tile_table_uri_added_cb), GINT_TO_POINTER (page_id));
 
 	reload_user_table (FILE_AREA (file_area)->user_spec_table, page_id);
 
@@ -1095,7 +1118,7 @@ reload_user_table (TileTable *table, PageID page_id)
 
 	switch (page_id) {
 		default:
-			uris = get_app_uris ();
+			uris = libslab_get_app_uris ();
 			break;
 	}
 
@@ -1129,6 +1152,87 @@ reload_user_table (TileTable *table, PageID page_id)
 	g_list_free (tiles);
 }
 
+static void
+tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer user_data)
+{
+	GList *tiles_new = NULL;
+
+	GList    *node_u;
+	GList    *node_v;
+	gboolean  equal = FALSE;
+
+	GList *node;
+
+
+	if (g_list_length (event->tiles_prev) == g_list_length (event->tiles_curr)) {
+		node_u = event->tiles_prev;
+		node_v = event->tiles_curr;
+		equal  = TRUE;
+
+		while (equal && node_u && node_v) {
+			if (tile_compare (node_u->data, node_v->data))
+                		equal = FALSE;
+
+			node_u = node_u->next;
+			node_v = node_v->next;
+		}
+	}
+
+	if (equal)
+		return;
+
+	for (node = event->tiles_curr; node; node = node->next)
+		tiles_new = g_list_append (tiles_new, TILE (node->data)->uri);
+
+	switch (GPOINTER_TO_INT (user_data)) {
+		case APPS_PAGE:
+			libslab_save_app_uris (tiles_new);
+			break;
+
+		default:
+			break;
+	}
+}
+
+static void
+tile_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpointer user_data)
+{
+	GList *uris;
+	gint uri_len;
+
+
+	if (! event->uri)
+		return;
+
+	uri_len = strlen (event->uri);
+
+	if (! strcmp (& event->uri [uri_len - 8], ".desktop")) {
+		uris = libslab_get_system_item_uris ();
+		uris = g_list_append (uris, event->uri);
+
+		switch (GPOINTER_TO_INT (user_data)) {
+			case APPS_PAGE:
+				libslab_save_app_uris (uris);
+				break;
+
+			default:
+				break;
+		}
+	}
+}
+
+static void
+file_area_store_monitor_cb (
+	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
+	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
+{
+	gint page_id;
+
+	page_id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (user_data), "page-id"));
+
+	reload_user_table (TILE_TABLE (user_data), page_id);
+}
+
 /*** END FILE AREA ***/
 
 /*** BEGIN SYSTEM AREA ***/
@@ -1152,7 +1256,8 @@ create_system_table_widget (MainMenuUI *this)
 		G_OBJECT (table), TILE_TABLE_URI_ADDED_SIGNAL,
 		G_CALLBACK (system_table_uri_added_cb), NULL);
 
-	priv->system_item_monitor_handle = add_system_item_monitor (system_item_store_monitor_cb, this);
+	priv->system_item_monitor_handle = libslab_add_system_item_monitor (
+		system_item_store_monitor_cb, this);
 
 	priv->system_table = TILE_TABLE (table);
 
@@ -1172,7 +1277,7 @@ reload_system_tile_table (MainMenuUI *this)
 	GList *node;
 
 
-	uris = get_system_item_uris ();
+	uris = libslab_get_system_item_uris ();
 
 	for (node = uris; node; node = node->next) {
 		tile = system_tile_new ((gchar *) node->data);
@@ -1224,7 +1329,7 @@ system_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer 
 	for (node = event->tiles_curr; node; node = node->next)
 		tiles_new = g_list_append (tiles_new, TILE (node->data)->uri);
 
-	save_system_item_uris (tiles_new);
+	libslab_save_system_item_uris (tiles_new);
 }
 
 static void
@@ -1240,9 +1345,9 @@ system_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpoi
 	uri_len = strlen (event->uri);
 
 	if (! strcmp (& event->uri [uri_len - 8], ".desktop")) {
-		uris = get_system_item_uris ();
+		uris = libslab_get_system_item_uris ();
 		uris = g_list_append (uris, event->uri);
-		save_system_item_uris (uris);
+		libslab_save_system_item_uris (uris);
 	}
 }
 
