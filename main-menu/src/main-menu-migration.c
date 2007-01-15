@@ -30,25 +30,27 @@
 #include "libslab-utils.h"
 
 #define DEFAULT_USER_XDG_DIR     ".local/share"
+#define DEFAULT_GLOBAL_XDG_PATH  "/usr/local/share:/usr/share"
 #define TOP_CONFIG_DIR           PACKAGE
 #define SYSTEM_BOOKMARK_FILENAME "system-items.xbel"
+#define APPS_BOOKMARK_FILENAME   "applications.xbel"
 
 #define SYSTEM_ITEM_GCONF_KEY    "/desktop/gnome/applications/main-menu/system-area/system_item_list"
 #define HELP_ITEM_GCONF_KEY      "/desktop/gnome/applications/main-menu/system-area/help_item"
 #define CC_ITEM_GCONF_KEY        "/desktop/gnome/applications/main-menu/system-area/control_center_item"
 #define PM_ITEM_GCONF_KEY        "/desktop/gnome/applications/main-menu/system-area/package_manager_item"
 #define LOCKSCREEN_GCONF_KEY     "/desktop/gnome/applications/main-menu/lock_screen_priority"
+#define USER_APPS_GCONF_KEY      "/desktop/gnome/applications/main-menu/file-area/user_specified_apps"
 
 #define LOGOUT_DESKTOP_ITEM      "gnome-session-logout.desktop"
 #define SHUTDOWN_DESKTOP_ITEM    "gnome-session-shutdown.desktop"
 
-static gchar *get_main_menu_user_data_path (void);
+static gboolean get_main_menu_user_data_file_path (gchar **, const gchar *, gboolean);
 
 void
 migrate_system_gconf_to_bookmark_file ()
 {
-	GList *user_dirs = NULL;
-	gchar *path;
+	gchar *bookmark_path;
 
 	gboolean need_migration = TRUE;
 
@@ -56,6 +58,8 @@ migrate_system_gconf_to_bookmark_file ()
 	gint   system_tile_type;
 
 	GBookmarkFile *bm_file;
+
+	gchar *path;
 
 	GnomeDesktopItem *ditem;
 	gchar            *ditem_id;
@@ -77,47 +81,19 @@ migrate_system_gconf_to_bookmark_file ()
 	gint i;
 
 
-	path = g_build_filename (g_getenv ("XDG_DATA_HOME"), TOP_CONFIG_DIR, NULL);
-	user_dirs = g_list_append (user_dirs, path);
-
-	path = g_build_filename (
-		g_get_home_dir (), DEFAULT_USER_XDG_DIR,
-		TOP_CONFIG_DIR, NULL);
-	user_dirs = g_list_append (user_dirs, path);
-
-
-	path = g_build_filename (
-		g_getenv ("XDG_DATA_HOME"), TOP_CONFIG_DIR,
-		SYSTEM_BOOKMARK_FILENAME, NULL);
-
-	if (g_file_test (path, G_FILE_TEST_EXISTS))
-		need_migration = FALSE;
-
-	g_free (path);
+	need_migration = ! get_main_menu_user_data_file_path (& bookmark_path, SYSTEM_BOOKMARK_FILENAME, TRUE);
 
 	if (! need_migration)
-		return;
-
-	path = g_build_filename (
-		g_get_home_dir (), DEFAULT_USER_XDG_DIR, TOP_CONFIG_DIR,
-		SYSTEM_BOOKMARK_FILENAME, NULL);
-
-	if (g_file_test (path, G_FILE_TEST_EXISTS))
-		need_migration = FALSE;
-
-	g_free (path);
-
-	if (! need_migration)
-		return;
+		goto exit;
 
 	gconf_system_list = (GList *) libslab_get_gconf_value (SYSTEM_ITEM_GCONF_KEY);
 
 	if (! gconf_system_list)
-		return;
+		goto exit;
 
 	bm_file = g_bookmark_file_new ();
 
-	data_dir = get_main_menu_user_data_path ();
+	get_main_menu_user_data_file_path (& data_dir, NULL, TRUE);
 
 	for (node_i = gconf_system_list; node_i; node_i = node_i->next) {
 		system_tile_type = GPOINTER_TO_INT (node_i->data);
@@ -150,7 +126,7 @@ migrate_system_gconf_to_bookmark_file ()
 					ditem = gnome_desktop_item_new ();
 
 					path = g_build_filename (
-						data_dir, "gnome-main-menu-lockscreen.desktop", NULL);
+						data_dir, "lockscreen.desktop", NULL);
 
 					gnome_desktop_item_set_location_file (ditem, path);
 					gnome_desktop_item_set_string (
@@ -224,62 +200,219 @@ migrate_system_gconf_to_bookmark_file ()
 			gnome_desktop_item_unref (ditem);
 	}
 
-	path = g_build_filename (data_dir, SYSTEM_BOOKMARK_FILENAME, NULL);
-
-	g_bookmark_file_to_file (bm_file, path, & error);
+	g_bookmark_file_to_file (bm_file, bookmark_path, & error);
 
 	if (error)
 		libslab_handle_g_error (
 			& error,
 			"%s: cannot save migrated system item list [%s]",
-			G_GNUC_FUNCTION, path);
+			G_GNUC_FUNCTION, bookmark_path);
 
 	g_bookmark_file_free (bm_file);
 	g_list_free (gconf_system_list);
 	g_free (data_dir);
-	g_free (path);
+
+exit:
+
+	g_free (bookmark_path);
 }
 
-static gchar *
-get_main_menu_user_data_path ()
+void
+migrate_user_apps_gconf_to_bookmark_file ()
 {
-	GList *dirs = NULL;
+	gchar *bookmark_path;
 
-	gchar *dir;
-	gchar *path;
+	gboolean need_migration;
+
+	GList *user_apps_list;
+
+	GBookmarkFile *bm_file;
+
+	GnomeDesktopItem *ditem;
+	const gchar      *loc;
+	gchar            *uri;
+
+	GError *error = NULL;
 
 	GList *node;
 
 
-	dir = g_strdup (g_getenv ("XDG_DATA_HOME"));
-	if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-		dirs = g_list_append (dirs, dir);
+	need_migration = ! get_main_menu_user_data_file_path (& bookmark_path, APPS_BOOKMARK_FILENAME, TRUE);
 
-	dir = g_build_filename (g_get_home_dir (), DEFAULT_USER_XDG_DIR, NULL);
-	if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-		dirs = g_list_append (dirs, dir);
+	if (! need_migration)
+		goto exit;
+
+	user_apps_list = (GList *) libslab_get_gconf_value (USER_APPS_GCONF_KEY);
+
+	if (! user_apps_list)
+		goto exit;
+
+	bm_file = g_bookmark_file_new ();
+
+	for (node = user_apps_list; node; node = node->next) {
+		ditem = libslab_gnome_desktop_item_new_from_unknown_id ((gchar *) node->data);
+
+		if (ditem) {
+			loc = gnome_desktop_item_get_location (ditem);
+
+			if (g_path_is_absolute (loc))
+				uri = g_filename_to_uri (loc, NULL, NULL);
+			else
+				uri = g_strdup (loc);
+		}
+		else
+			uri = NULL;
+
+		if (uri) {
+			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			g_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+		}
+
+		g_free (uri);
+
+		if (ditem)
+			gnome_desktop_item_unref (ditem);
+	}
+
+	g_bookmark_file_to_file (bm_file, bookmark_path, & error);
+
+	if (error)
+		libslab_handle_g_error (
+			& error,
+			"%s: cannot save migrated user apps list [%s]",
+			G_GNUC_FUNCTION, bookmark_path);
+
+	g_bookmark_file_free (bm_file);
+	g_list_free (user_apps_list);
+
+exit:
+
+	g_free (bookmark_path);
+}
+
+static gboolean
+get_main_menu_user_data_file_path (gchar **path_out, const gchar *filename, gboolean user_only)
+{
+	GList *user_dirs   = NULL;
+	GList *global_dirs = NULL;
+
+	gchar **dirs;
+	gchar  *path;
+	gchar  *dir;
+
+	gboolean need_mkdir;
+	gboolean user_file_exists = FALSE;
+
+	GList *node;
+	gint   i;
+
+
+	path = (gchar *) g_getenv ("XDG_DATA_HOME");
+
+	if (path && g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+		dir = g_build_filename (path, TOP_CONFIG_DIR, NULL);
+		user_dirs = g_list_append (user_dirs, dir);
+	}
+
+	path = g_build_filename (g_get_home_dir (), DEFAULT_USER_XDG_DIR, NULL);
+
+	if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+		dir = g_build_filename (path, TOP_CONFIG_DIR, NULL);
+		user_dirs = g_list_append (user_dirs, dir);
+
+		g_free (path);
+	}
+
+	if (! user_only) {
+		dirs = g_strsplit (g_getenv ("XDG_DATA_DIRS"), ":", 0);
+
+		if (! dirs [0]) {
+			g_strfreev (dirs);
+			dirs = g_strsplit (DEFAULT_GLOBAL_XDG_PATH, ":", 0);
+		}
+
+		for (i = 0; dirs [i]; ++i) {
+			if (g_file_test (dirs [i], G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+				path = g_build_filename (dirs [i], TOP_CONFIG_DIR, NULL);
+				global_dirs = g_list_append (global_dirs, path);
+			}
+		}
+
+		g_strfreev (dirs);
+	}
 
 	path = NULL;
 
-	for (node = dirs; ! path && node; node = node->next) {
+	for (node = user_dirs; ! path && node; node = node->next) {
 		dir = (gchar *) node->data;
-		path = g_build_filename ((gchar *) node->data, TOP_CONFIG_DIR, NULL);
 
-		if (! g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			g_free (path);
-			path = NULL;
+		if (filename) {
+			path = g_build_filename (dir, filename, NULL);
+
+			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
+				g_free (path);
+				path = NULL;
+			}
+			else
+				user_file_exists = TRUE;
 		}
+		else
+			if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+				path = g_strdup (dir);
+	}
+
+	for (node = global_dirs; ! path && node; node = node->next) {
+		dir = (gchar *) node->data;
+
+		if (filename) {
+			path = g_build_filename (dir, filename, NULL);
+
+			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
+				g_free (path);
+				path = NULL;
+			}
+		}
+		else
+			if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+				path = g_strdup (dir);
 	}
 
 	if (! path) {
-		path = g_build_filename ((gchar *) dirs->data, TOP_CONFIG_DIR, NULL);
+		dir = NULL;
 
-		g_mkdir_with_parents (path, 0700);
+		need_mkdir = TRUE;
+
+		for (node = user_dirs; need_mkdir && node; node = node->next) {
+			dir = (gchar *) node->data;
+
+			if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+				need_mkdir = FALSE;
+		}
+
+		if (need_mkdir) {
+			dir = (gchar *) user_dirs->data;
+
+			g_mkdir_with_parents (dir, 0700);
+		}
+
+		if (filename)
+			path = g_build_filename (dir, filename, NULL);
+		else
+			path = g_strdup (dir);
 	}
 
-	for (node = dirs; node; node = node->next)
+	for (node = user_dirs; node; node = node->next)
 		g_free (node->data);
-	g_list_free (dirs);
+	g_list_free (user_dirs);
 
-	return path;
+	for (node = global_dirs; node; node = node->next)
+		g_free (node->data);
+	g_list_free (global_dirs);
+
+	*path_out = path;
+
+	return user_file_exists;
 }

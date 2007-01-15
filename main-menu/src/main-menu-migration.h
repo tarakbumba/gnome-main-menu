@@ -25,7 +25,8 @@
 
 G_BEGIN_DECLS
 
-void migrate_system_gconf_to_bookmark_file (void);
+void migrate_system_gconf_to_bookmark_file    (void);
+void migrate_user_apps_gconf_to_bookmark_file (void);
 
 G_END_DECLS
 

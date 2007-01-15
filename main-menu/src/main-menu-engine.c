@@ -1,7 +1,7 @@
 /*
  * This file is part of the Main Menu.
  *
- * Copyright (c) 2006 Novell, Inc.
+ * Copyright (c) 2006, 2007 Novell, Inc.
  *
  * The Main Menu is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -34,10 +34,9 @@ static void main_menu_engine_class_init (MainMenuEngineClass *);
 static void main_menu_engine_init (MainMenuEngine *);
 static void main_menu_engine_dispose (GObject *);
 
-typedef struct
-{
+typedef struct {
 	MainMenuConf *conf;
-	MainMenuUI *ui;
+	MainMenuUI   *ui;
 } MainMenuEnginePrivate;
 
 #define MAIN_MENU_ENGINE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_ENGINE_TYPE, MainMenuEnginePrivate))
@@ -239,14 +238,6 @@ main_menu_engine_execute_search (MainMenuEngine * engine, const gchar * search_s
 	main_menu_ui_close (priv->ui, FALSE);
 }
 
-GList *
-main_menu_engine_get_system_list (MainMenuEngine * engine)
-{
-	MainMenuEnginePrivate *priv = MAIN_MENU_ENGINE_GET_PRIVATE (engine);
-
-	return priv->conf->system_area_conf->system_list;
-}
-
 void
 main_menu_engine_add_user_app (MainMenuEngine * engine, const gchar * desktop_uri)
 {
@@ -261,4 +252,3 @@ main_menu_engine_add_user_app (MainMenuEngine * engine, const gchar * desktop_ur
 		main_menu_conf_sync (priv->conf, priv->conf->file_area_conf->user_specified_apps);
 	}
 }
-

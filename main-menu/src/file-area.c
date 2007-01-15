@@ -36,8 +36,8 @@ typedef struct {
 	GtkWidget *user_hdr;
 	GtkWidget *rcnt_hdr;
 
-	GtkContainer *user_hdr_ctnr;
-	GtkContainer *rcnt_hdr_ctnr;
+	GtkBin *user_hdr_ctnr;
+	GtkBin *rcnt_hdr_ctnr;
 
 	gint max_total_items;
 	gint min_recent_items;
@@ -68,9 +68,6 @@ file_area_new ()
 		tile_table_new (NUM_COLUMNS, TILE_TABLE_REORDERING_NONE));
 
 	priv = PRIVATE (this);
-
-	priv->user_hdr_ctnr = GTK_CONTAINER (gtk_alignment_new (0.0, 0.5, 1.0, 1.0));
-	priv->rcnt_hdr_ctnr = GTK_CONTAINER (gtk_alignment_new (0.0, 0.5, 1.0, 1.0));
 
 	gtk_box_pack_start (GTK_BOX (this), GTK_WIDGET (priv->user_hdr_ctnr),   TRUE, TRUE, 0);
 	gtk_box_pack_start (GTK_BOX (this), GTK_WIDGET (this->user_spec_table), TRUE, TRUE, 0);
@@ -106,7 +103,7 @@ file_area_class_init (FileAreaClass *this_class)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
 
 	rcnt_hdr_pspec = g_param_spec_object (
-		FILE_AREA_USER_HDR_PROP, FILE_AREA_USER_HDR_PROP,
+		FILE_AREA_RECENT_HDR_PROP, FILE_AREA_RECENT_HDR_PROP,
 		"the GtkWidget which serves as the header for the user-specified items table",
 		GTK_TYPE_WIDGET, G_PARAM_CONSTRUCT | G_PARAM_READWRITE |
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
@@ -138,6 +135,9 @@ file_area_init (FileArea *this)
 
 	this->user_spec_table = NULL;
 	this->recent_table    = NULL;
+
+	priv->user_hdr_ctnr = GTK_BIN (gtk_alignment_new (0.0, 0.5, 0.0, 0.0));
+	priv->rcnt_hdr_ctnr = GTK_BIN (gtk_alignment_new (0.0, 0.5, 0.0, 0.0));
 
 	priv->user_hdr = NULL;
 	priv->rcnt_hdr = NULL;
@@ -178,13 +178,42 @@ file_area_set_property (GObject *g_obj, guint prop_id, const GValue *value, GPar
 {
 	FileAreaPrivate *priv = PRIVATE (g_obj);
 
+	GtkWidget *child;
+
+
 	switch (prop_id) {
 		case PROP_USER_HDR_WIDGET:
 			priv->user_hdr = GTK_WIDGET (g_value_dup_object (value));
+
+			child = gtk_bin_get_child (priv->user_hdr_ctnr);
+
+			if (child)
+				gtk_widget_destroy (child);
+
+			if (priv->user_hdr) {
+				gtk_container_add (GTK_CONTAINER (priv->user_hdr_ctnr), priv->user_hdr);
+				gtk_widget_show_all (GTK_WIDGET (priv->user_hdr_ctnr));
+			}
+			else
+				gtk_widget_hide_all (GTK_WIDGET (priv->user_hdr_ctnr));
+
 			break;
 
 		case PROP_RCNT_HDR_WIDGET:
 			priv->rcnt_hdr = GTK_WIDGET (g_value_dup_object (value));
+
+			child = gtk_bin_get_child (priv->rcnt_hdr_ctnr);
+
+			if (child)
+				gtk_widget_destroy (child);
+
+			if (priv->rcnt_hdr) {
+				gtk_container_add (GTK_CONTAINER (priv->rcnt_hdr_ctnr), priv->rcnt_hdr);
+				gtk_widget_show_all (GTK_WIDGET (priv->rcnt_hdr_ctnr));
+			}
+			else
+				gtk_widget_hide_all (GTK_WIDGET (priv->rcnt_hdr_ctnr));
+
 			break;
 
 		case PROP_MAX_TOTAL_ITEMS:
@@ -221,6 +250,9 @@ update_limits (FileArea *this)
 	gint n_rows;
 	gint rcnt_limit_new;
 
+
+	if (! G_IS_OBJECT (this->user_spec_table))
+		return;
 
 	g_object_get (G_OBJECT (this->user_spec_table), "n-rows", & n_rows, NULL);
 

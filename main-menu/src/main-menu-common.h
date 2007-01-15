@@ -1,7 +1,7 @@
 /*
  * This file is part of the Main Menu.
  *
- * Copyright (c) 2006 Novell, Inc.
+ * Copyright (c) 2006, 2007 Novell, Inc.
  *
  * The Main Menu is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -68,7 +68,6 @@ MainMenuEngine *main_menu_engine_new (MainMenuConf * conf);
 void main_menu_engine_link_ui (MainMenuEngine * engine, MainMenuUI * ui);
 gboolean main_menu_engine_search_available (MainMenuEngine * engine);
 void main_menu_engine_execute_search (MainMenuEngine * engine, const gchar * search_string);
-GList *main_menu_engine_get_system_list (MainMenuEngine * engine);
 void main_menu_engine_add_user_app (MainMenuEngine * engine, const gchar * desktop_uri);
 
 GType main_menu_ui_get_type (void);

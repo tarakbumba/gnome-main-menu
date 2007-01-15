@@ -274,7 +274,7 @@ libslab_get_gconf_value (const gchar *key)
 
 
 	client = gconf_client_get_default ();
-	value  = gconf_client_get (client, key, &error);
+	value  = gconf_client_get (client, key, & error);
 
 	if (error || ! value)
 		libslab_handle_g_error (& error, "%s: error getting %s", G_GNUC_FUNCTION, key);

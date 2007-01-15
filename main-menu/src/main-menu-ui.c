@@ -52,6 +52,7 @@
 #include "slab-window.h"
 #include "tomboykeybinder.h"
 
+#include "file-area.h"
 #include "tile-table.h"
 
 #include "main-menu-utils.h"
@@ -69,12 +70,12 @@
 #define DISABLE_LOCK_SCREEN_GCONF_KEY  "/apps/panel/global/disable_lock_screen"
 #define DISABLE_LOG_OUT_GCONF_KEY      "/apps/panel/global/disable_log_out"
 
-enum {
+typedef enum {
 	APPS_PAGE     = 0,
 	DOCS_PAGE     = 1,
 	DIRS_PAGE     = 2,
 	PAGE_SENTINEL = 3
-};
+} PageID;
 
 static const gchar *main_menu_authors[] = {
 	"Jim Krehl <jimmyk@novell.com>",
@@ -128,16 +129,20 @@ static GtkWidget *create_search_widget     (MainMenuUI *);
 static void       search_entry_activate_cb (GtkEntry *, gpointer);
 
 static GtkWidget *create_page_buttons    (MainMenuUI *);
-static void       select_page            (MainMenuUI *, gint);
+static void       select_page            (MainMenuUI *, PageID);
 static void       page_button_clicked_cb (GtkButton *, gpointer);
+
+static GtkWidget *create_file_area_page (PageID);
+static void       reload_user_table     (TileTable *, PageID);
 
 static void create_system_table_widget   (MainMenuUI *);
 static void reload_system_tile_table     (MainMenuUI *);
-static void system_tile_activated_cb     (Tile *, TileEvent *, gpointer);
 static void system_table_update_cb       (TileTable *, TileTableUpdateEvent *, gpointer);
 static void system_table_uri_added_cb    (TileTable *, TileTableURIAddedEvent *, gpointer);
 static void system_item_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                                           GnomeVFSMonitorEventType, gpointer);
+
+static void tile_activated_cb (Tile *, TileEvent *, gpointer);
 
 static void bind_search_key (void);
 
@@ -423,6 +428,8 @@ build_main_menu_window (MainMenuUI *this)
 	GtkWidget *hd_tile;
 	GtkWidget *net_tile;
 
+	gint i;
+
 
 	window = slab_window_new ();
 
@@ -437,12 +444,9 @@ build_main_menu_window (MainMenuUI *this)
 	gtk_notebook_set_show_tabs   (priv->file_area_nb, FALSE);
 	gtk_notebook_set_show_border (priv->file_area_nb, FALSE);
 
-	priv->file_area_nb_ids [APPS_PAGE] = gtk_notebook_append_page (
-		priv->file_area_nb, gtk_label_new ("Apps!!"), NULL);
-	priv->file_area_nb_ids [DOCS_PAGE] = gtk_notebook_append_page (
-		priv->file_area_nb, gtk_label_new ("Docs!!"), NULL);
-	priv->file_area_nb_ids [DIRS_PAGE] = gtk_notebook_append_page (
-		priv->file_area_nb, gtk_label_new ("Dirs!!"), NULL);
+	for (i = 0; i < PAGE_SENTINEL; ++i)
+		priv->file_area_nb_ids [i] = gtk_notebook_append_page (
+			priv->file_area_nb, create_file_area_page (i), NULL);
 
 	gtk_box_pack_start (GTK_BOX (left_pane), search_widget, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (left_pane), page_buttons, FALSE, FALSE, 0);
@@ -921,7 +925,7 @@ create_search_widget (MainMenuUI *this)
 	gtk_box_pack_start (
 		GTK_BOX (hbox),
 		gtk_image_new_from_icon_name ("system-search", GTK_ICON_SIZE_DND),
-		TRUE, TRUE, 0);
+		FALSE, FALSE, 0);
 
 	search_label = gtk_label_new_with_mnemonic (_("_Search:"));
 	gtk_misc_set_alignment (GTK_MISC (search_label), 0.0, 0.5);
@@ -982,14 +986,14 @@ create_page_buttons (MainMenuUI *this)
 			G_CALLBACK (page_button_clicked_cb), this);
 
 		gtk_box_pack_start (
-			GTK_BOX (hbox), GTK_WIDGET (priv->page_btns [i]), TRUE, TRUE, 0);
+			GTK_BOX (hbox), GTK_WIDGET (priv->page_btns [i]), FALSE, FALSE, 0);
 	}
 
 	return hbox;
 }
 
 static void
-select_page (MainMenuUI *this, gint page_id)
+select_page (MainMenuUI *this, PageID page_id)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
@@ -1008,8 +1012,8 @@ select_page (MainMenuUI *this, gint page_id)
 static void
 page_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
-	gint page_id_new;
-	gint page_id_curr;
+	PageID page_id_new;
+	PageID page_id_curr;
 
 
 	page_id_new  = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button), "page-id"));
@@ -1027,6 +1031,106 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 
 /*** END PAGE BUTTONS ***/
 
+/*** BEGIN FILE AREA ***/
+
+static GtkWidget *
+create_file_area_page (PageID page_id)
+{
+	GtkWidget *file_area;
+	GtkWidget *user_hdr;
+	GtkWidget *recent_hdr;
+	GtkWidget *more_button;
+
+	GtkWidget *vbox;
+	GtkWidget *alignment;
+
+
+	file_area = file_area_new ();
+
+	switch (page_id) {
+		default:
+			user_hdr   = gtk_label_new (_("Favorite Applications"));
+			recent_hdr = gtk_label_new (_("Recent Applications"));
+
+			more_button = gtk_button_new_with_label (_("More Applications"));
+
+			break;
+	}
+
+	g_object_set (
+		G_OBJECT (file_area),
+		FILE_AREA_USER_HDR_PROP,         user_hdr,
+		FILE_AREA_RECENT_HDR_PROP,       recent_hdr,
+		FILE_AREA_MAX_TOTAL_ITEMS_PROP,  8,
+		FILE_AREA_MIN_RECENT_ITEMS_PROP, 2,
+		NULL);
+
+	reload_user_table (FILE_AREA (file_area)->user_spec_table, page_id);
+
+	alignment = gtk_alignment_new (1.0, 0.5, 0.0, 0.0);
+	gtk_container_add (GTK_CONTAINER (alignment), more_button);
+
+	vbox = gtk_vbox_new (FALSE, 18);
+
+	gtk_box_pack_start (GTK_BOX (vbox), file_area, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), alignment, TRUE, TRUE, 0);
+
+	return vbox;
+}
+
+static void
+reload_user_table (TileTable *table, PageID page_id)
+{
+	GList *uris;
+
+	GtkWidget *tile;
+	GList     *tiles = NULL;
+
+	GtkWidget   *image;
+	GtkIconSize  icon_size;
+	gint         icon_width;
+
+	GList *node;
+
+
+	switch (page_id) {
+		default:
+			uris = get_app_uris ();
+			break;
+	}
+
+	for (node = uris; node; node = node->next) {
+		switch (page_id) {
+			default:
+				tile = application_tile_new ((gchar *) node->data);
+				break;
+		}
+
+		if (tile) {
+			image = NAMEPLATE_TILE (tile)->image;
+
+			g_object_get (G_OBJECT (image), "icon-size", & icon_size, NULL);
+			gtk_icon_size_lookup (icon_size, & icon_width, NULL);
+
+			gtk_widget_set_size_request (tile, 6 * icon_width, -1);
+
+			g_signal_connect (G_OBJECT (tile), "tile-activated",
+				G_CALLBACK (tile_activated_cb), NULL);
+
+			tiles = g_list_append (tiles, tile);
+		}
+
+		g_free (node->data);
+	}
+
+	g_object_set (G_OBJECT (table), TILE_TABLE_TILES_PROP, tiles, NULL);
+
+	g_list_free (uris);
+	g_list_free (tiles);
+}
+
+/*** END FILE AREA ***/
+
 /*** BEGIN SYSTEM AREA ***/
 
 static void
@@ -1035,9 +1139,6 @@ create_system_table_widget (MainMenuUI *this)
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkWidget *table;
-
-	gchar *path;
-	gchar *store_uri;
 
 
 	table = tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL);
@@ -1051,12 +1152,7 @@ create_system_table_widget (MainMenuUI *this)
 		G_OBJECT (table), TILE_TABLE_URI_ADDED_SIGNAL,
 		G_CALLBACK (system_table_uri_added_cb), NULL);
 
-	path      = get_system_bookmark_path ();
-	store_uri = g_filename_to_uri (path, NULL, NULL);
-
-	gnome_vfs_monitor_add (
-		& priv->system_item_monitor_handle, store_uri, GNOME_VFS_MONITOR_FILE,
-		system_item_store_monitor_cb, this);
+	priv->system_item_monitor_handle = add_system_item_monitor (system_item_store_monitor_cb, this);
 
 	priv->system_table = TILE_TABLE (table);
 
@@ -1083,7 +1179,7 @@ reload_system_tile_table (MainMenuUI *this)
 
 		if (tile) {
 			g_signal_connect (G_OBJECT (tile), "tile-activated",
-				G_CALLBACK (system_tile_activated_cb), NULL);
+				G_CALLBACK (tile_activated_cb), NULL);
 
 			tiles = g_list_append (tiles, tile);
 		}
@@ -1094,15 +1190,6 @@ reload_system_tile_table (MainMenuUI *this)
 	g_object_set (G_OBJECT (priv->system_table), TILE_TABLE_TILES_PROP, tiles, NULL);
 
 	g_list_free (tiles);
-}
-
-static void
-system_tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
-{
-	if (event->type == TILE_EVENT_ACTIVATED_DOUBLE_CLICK)
-		return;
-
-	tile_trigger_action_with_time (tile, tile->default_action, event->time);
 }
 
 static void
@@ -1168,6 +1255,15 @@ system_item_store_monitor_cb (
 }
 
 /*** END SYSTEM AREA ***/
+
+static void
+tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
+{
+	if (event->type == TILE_EVENT_ACTIVATED_DOUBLE_CLICK)
+		return;
+
+	tile_trigger_action_with_time (tile, tile->default_action, event->time);
+}
 
 static GtkWidget *
 get_section_header_label (const gchar *markup)
