@@ -142,6 +142,7 @@ static void       tile_table_uri_added_cb    (TileTable *, TileTableURIAddedEven
 static void       file_area_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                                               GnomeVFSMonitorEventType, gpointer);
 
+static void recent_files_store_changed_cb (MainMenuRecentMonitor *, gpointer);
 static void reload_recent_apps_table (MainMenuUI *);
 
 static void create_system_table_widget   (MainMenuUI *);
@@ -183,6 +184,8 @@ typedef struct {
 	GnomeVFSMonitorHandle *system_item_monitor_handle;
 
 	GnomeVFSMonitorHandle *file_area_monitor_handles [PAGE_SENTINEL];
+
+	TileTable *user_apps_table;
 
 	TileTable *recent_apps_table;
 	MainMenuRecentMonitor *recent_monitor;
@@ -1081,7 +1084,12 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			if (! priv->recent_monitor)
 				priv->recent_monitor = main_menu_recent_monitor_new ();
 
+			priv->user_apps_table   = FILE_AREA (file_area)->user_spec_table;
 			priv->recent_apps_table = FILE_AREA (file_area)->recent_table;
+
+			g_signal_connect (
+				G_OBJECT (priv->recent_monitor), "changed",
+				G_CALLBACK (recent_files_store_changed_cb), this);
 
 			break;
 
@@ -1348,6 +1356,15 @@ file_area_store_monitor_cb (
 	page_id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (user_data), "page-id"));
 
 	reload_user_table (TILE_TABLE (user_data), page_id);
+}
+
+static void
+recent_files_store_changed_cb (MainMenuRecentMonitor *manager, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	reload_user_table (priv->user_apps_table, APPS_PAGE);
+	reload_recent_apps_table (MAIN_MENU_UI (user_data));
 }
 
 /*** END FILE AREA ***/
