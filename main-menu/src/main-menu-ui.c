@@ -43,6 +43,8 @@
 
 #include "egg-recent-item.h"
 
+#include "recent-files.h"
+
 #include "double-click-detector.h"
 #include "slab-gnome-util.h"
 #include "gnome-utils.h"
@@ -69,6 +71,7 @@
 
 #define DISABLE_LOCK_SCREEN_GCONF_KEY  "/apps/panel/global/disable_lock_screen"
 #define DISABLE_LOG_OUT_GCONF_KEY      "/apps/panel/global/disable_log_out"
+#define DISABLE_TERMINAL_GCONF_KEY     "/desktop/gnome/lockdown/disable_command_line"
 
 typedef enum {
 	APPS_PAGE     = 0,
@@ -139,6 +142,8 @@ static void       tile_table_uri_added_cb    (TileTable *, TileTableURIAddedEven
 static void       file_area_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                                               GnomeVFSMonitorEventType, gpointer);
 
+static void reload_recent_apps_table (MainMenuUI *);
+
 static void create_system_table_widget   (MainMenuUI *);
 static void reload_system_tile_table     (MainMenuUI *);
 static void system_table_update_cb       (TileTable *, TileTableUpdateEvent *, gpointer);
@@ -178,6 +183,9 @@ typedef struct {
 	GnomeVFSMonitorHandle *system_item_monitor_handle;
 
 	GnomeVFSMonitorHandle *file_area_monitor_handles [PAGE_SENTINEL];
+
+	TileTable *recent_apps_table;
+	MainMenuRecentMonitor *recent_monitor;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -229,8 +237,11 @@ main_menu_ui_class_init (MainMenuUIClass * main_menu_ui_class)
 }
 
 static void
-main_menu_ui_init (MainMenuUI * main_menu_ui)
+main_menu_ui_init (MainMenuUI *this)
 {
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->recent_monitor = NULL;
 }
 
 static GdkFilterReturn
@@ -1058,7 +1069,7 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 	file_area = file_area_new ();
 
 	switch (page_id) {
-		default:
+		case APPS_PAGE:
 			user_hdr   = gtk_label_new (_("Favorite Applications"));
 			recent_hdr = gtk_label_new (_("Recent Applications"));
 
@@ -1067,6 +1078,39 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
 				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
 
+			if (! priv->recent_monitor)
+				priv->recent_monitor = main_menu_recent_monitor_new ();
+
+			priv->recent_apps_table = FILE_AREA (file_area)->recent_table;
+
+			break;
+
+		case DOCS_PAGE:
+			user_hdr   = gtk_label_new (_("Favorite Documents"));
+			recent_hdr = gtk_label_new (_("Recent Documents"));
+
+			more_button = gtk_button_new_with_label (_("More Documents"));
+
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
+
+			if (! priv->recent_monitor)
+				priv->recent_monitor = main_menu_recent_monitor_new ();
+
+			break;
+
+		case DIRS_PAGE:
+			user_hdr   = gtk_label_new (_("Favorite Places"));
+			recent_hdr = gtk_label_new (_("Recent Places"));
+
+			more_button = gtk_button_new_with_label (_("More Places"));
+
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
+
+			break;
+
+		default:
 			break;
 	}
 
@@ -1089,6 +1133,15 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 		G_CALLBACK (tile_table_uri_added_cb), GINT_TO_POINTER (page_id));
 
 	reload_user_table (FILE_AREA (file_area)->user_spec_table, page_id);
+
+	switch (page_id) {
+		case APPS_PAGE:
+			reload_recent_apps_table (this);
+			break;
+
+		default:
+			break;
+	}
 
 	alignment = gtk_alignment_new (1.0, 0.5, 0.0, 0.0);
 	gtk_container_add (GTK_CONTAINER (alignment), more_button);
@@ -1118,7 +1171,7 @@ reload_user_table (TileTable *table, PageID page_id)
 
 	switch (page_id) {
 		default:
-			uris = libslab_get_app_uris ();
+			uris = libslab_get_user_app_uris ();
 			break;
 	}
 
@@ -1150,6 +1203,70 @@ reload_user_table (TileTable *table, PageID page_id)
 
 	g_list_free (uris);
 	g_list_free (tiles);
+}
+
+static void
+reload_recent_apps_table (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GList *files;
+	GList *tiles = NULL;
+	GList *user_uris;
+
+	MainMenuRecentFile *file;
+	const gchar *desktop_item_url;
+
+	gboolean is_user_app;
+	gboolean disable_term;
+
+	GnomeDesktopItem *ditem;
+	const gchar *categories;
+
+	GtkWidget *tile;
+
+	GList *node_i;
+	GList *node_j;
+
+
+	files = main_menu_get_recent_apps (priv->recent_monitor);
+	user_uris = libslab_get_user_app_uris ();
+
+	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+
+	for (node_i = files; node_i; node_i = node_i->next) {
+		file = (MainMenuRecentFile *) node_i->data;
+
+		desktop_item_url = main_menu_recent_file_get_uri (file);
+
+		is_user_app = FALSE;
+
+		for (node_j = user_uris; !is_user_app && node_j; node_j = node_j->next)
+			if (! strcmp (desktop_item_url, (gchar *) node_j->data))
+				is_user_app = TRUE;
+
+		if (! is_user_app) {
+			tile = application_tile_new (desktop_item_url);
+
+			if (disable_term) {
+				ditem = application_tile_get_desktop_item (APPLICATION_TILE (tile));
+				categories = gnome_desktop_item_get_string (
+						ditem, GNOME_DESKTOP_ITEM_CATEGORIES);
+
+				if (categories && strstr (categories, "TerminalEmulator")) {
+					gtk_widget_destroy (tile);
+					tile = NULL;
+				}
+			}
+
+			if (tile)
+				tiles = g_list_append (tiles, tile);
+		}
+
+		g_object_unref (file);
+	}
+
+	g_object_set (G_OBJECT (priv->recent_apps_table), TILE_TABLE_TILES_PROP, tiles, NULL);
 }
 
 static void
@@ -1207,12 +1324,12 @@ tile_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpoint
 	uri_len = strlen (event->uri);
 
 	if (! strcmp (& event->uri [uri_len - 8], ".desktop")) {
-		uris = libslab_get_system_item_uris ();
-		uris = g_list_append (uris, event->uri);
-
 		switch (GPOINTER_TO_INT (user_data)) {
 			case APPS_PAGE:
+				uris = libslab_get_user_app_uris ();
+				uris = g_list_append (uris, event->uri);
 				libslab_save_app_uris (uris);
+
 				break;
 
 			default:

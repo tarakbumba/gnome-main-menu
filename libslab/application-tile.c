@@ -30,6 +30,7 @@
 #include <libgnomevfs/gnome-vfs-monitor.h>
 
 #include "slab-gnome-util.h"
+#include "libslab-utils.h"
 
 #include "themed-icon.h"
 
@@ -467,80 +468,34 @@ static void
 add_to_user_list (ApplicationTile *this)
 {
 	ApplicationTilePrivate *priv = APPLICATION_TILE_GET_PRIVATE (this);
-
-	GSList *app_list;
-	gchar  *loc;
-
-	GConfClient *gconf_client;
-	GError      *error;
+	GList *tiles;
 
 
-	loc = (gchar *) gnome_desktop_item_get_location (priv->desktop_item);
+	tiles = libslab_get_user_app_uris ();
+	if (! g_list_find_custom (tiles, TILE (this)->uri, (GCompareFunc) libslab_strcmp)) {
+		tiles = g_list_append (tiles, TILE (this)->uri);
+		libslab_save_app_uris (tiles);
+	}
 
-	app_list = get_slab_gconf_slist (SLAB_USER_SPECIFIED_APPS_KEY);
-	app_list = g_slist_append (app_list, loc);
+	priv->is_in_user_list = FALSE;
 
-	gconf_client = gconf_client_get_default ();
-	error        = NULL;
-
-	gconf_client_set_list (gconf_client, SLAB_USER_SPECIFIED_APPS_KEY, GCONF_VALUE_STRING,
-		app_list, &error);
-
-	if (error)
-		g_warning (
-			"error adding %s to %s [%s]\n",
-			loc, SLAB_USER_SPECIFIED_APPS_KEY, error->message);
-
-	priv->is_in_user_list = TRUE;
+	g_list_free (tiles);
 }
 
 static void
 remove_from_user_list (ApplicationTile *this)
 {
 	ApplicationTilePrivate *priv = APPLICATION_TILE_GET_PRIVATE (this);
-
-	GSList      *app_list;
-	GSList      *new_app_list;
-	const gchar *loc;
-	gint         offset;
-
-	GConfClient *gconf_client;
-	GError      *error;
-
-	GSList *node;
+	GList *tiles;
 
 
-	app_list = get_slab_gconf_slist (SLAB_USER_SPECIFIED_APPS_KEY);
-
-	if (! app_list)
-		return;
-
-	loc = gnome_desktop_item_get_location (priv->desktop_item);
-
-	new_app_list = NULL;
-
-	for (node = app_list; node; node = node->next) {
-		offset = strlen (loc) - strlen ((gchar *) node->data);
-
-		if (offset < 0)
-			offset = 0;
-
-		if (strcmp (& loc [offset], (gchar *) node->data))
-			new_app_list = g_slist_append (new_app_list, node->data);
-	}
-
-	gconf_client = gconf_client_get_default ();
-	error = NULL;
-
-	gconf_client_set_list (gconf_client, SLAB_USER_SPECIFIED_APPS_KEY, GCONF_VALUE_STRING,
-		new_app_list, &error);
-
-	if (error)
-		g_warning (
-			"error removing %s from %s [%s]\n",
-			loc, SLAB_USER_SPECIFIED_APPS_KEY, error->message);
+	tiles = libslab_get_user_app_uris ();
+	tiles = g_list_remove_link (tiles, g_list_find_custom (tiles, TILE (this)->uri, (GCompareFunc) libslab_strcmp));
+	libslab_save_app_uris (tiles);
 
 	priv->is_in_user_list = FALSE;
+
+	g_list_free (tiles);
 }
 
 static void

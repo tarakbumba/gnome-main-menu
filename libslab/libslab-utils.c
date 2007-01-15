@@ -458,13 +458,31 @@ libslab_handle_g_error (GError **error, const gchar *msg_format, ...)
 GList *
 libslab_get_system_item_uris ()
 {
-	return get_uri_list (SYSTEM_BOOKMARK_FILENAME);
+	GList *uris;
+	gchar *path;
+
+
+	path = get_data_file_path (SYSTEM_BOOKMARK_FILENAME);
+	uris = get_uri_list (path);
+
+	g_free (path);
+
+	return uris;
 }
 
 GList *
-libslab_get_app_uris ()
+libslab_get_user_app_uris ()
 {
-	return get_uri_list (APPS_BOOKMARK_FILENAME);
+	GList *uris;
+	gchar *path;
+
+
+	path = get_data_file_path (APPS_BOOKMARK_FILENAME);
+	uris = get_uri_list (path);
+
+	g_free (path);
+
+	return uris;
 }
 
 void
@@ -492,10 +510,9 @@ libslab_add_apps_monitor (GnomeVFSMonitorCallback callback, gpointer user_data)
 }
 
 static GList *
-get_uri_list (const gchar *filename)
+get_uri_list (const gchar *path)
 {
 	GBookmarkFile *bm_file;
-	gchar         *path;
 
 	gchar **uris_array;
 	GList  *uris_list = NULL;
@@ -504,8 +521,6 @@ get_uri_list (const gchar *filename)
 
 	gint i;
 
-
-	path = get_data_file_path (filename);
 
 	if (! path)
 		return NULL;
@@ -525,7 +540,6 @@ get_uri_list (const gchar *filename)
 			"%s: couldn't load bookmark file [%s]",
 			G_GNUC_FUNCTION, path);
 
-	g_free (path);
 	g_strfreev (uris_array);
 	g_bookmark_file_free (bm_file);
 

@@ -20,7 +20,7 @@ void              libslab_set_gconf_value (const gchar *key, gconstpointer data)
 void              libslab_handle_g_error (GError **error, const gchar *msg_format, ...);
 
 GList *libslab_get_system_item_uris (void);
-GList *libslab_get_app_uris         (void);
+GList *libslab_get_user_app_uris    (void);
 
 void libslab_save_system_item_uris (const GList *);
 void libslab_save_app_uris         (const GList *);
