@@ -29,6 +29,12 @@
 
 #include "libslab-utils.h"
 
+#if GLIB_CHECK_VERSION (2, 12, 0)
+#	define USE_G_BOOKMARK
+#else
+#	include "eggbookmarkfile.h"
+#endif
+
 #define DEFAULT_USER_XDG_DIR     ".local/share"
 #define DEFAULT_GLOBAL_XDG_PATH  "/usr/local/share:/usr/share"
 #define TOP_CONFIG_DIR           PACKAGE
@@ -58,7 +64,11 @@ migrate_system_gconf_to_bookmark_file ()
 	GList *gconf_system_list;
 	gint   system_tile_type;
 
+#ifdef USE_G_BOOKMARK
 	GBookmarkFile *bm_file;
+#else
+	EggBookmarkFile *bm_file;
+#endif
 
 	gchar *path;
 
@@ -92,7 +102,11 @@ migrate_system_gconf_to_bookmark_file ()
 	if (! gconf_system_list)
 		goto exit;
 
+#ifdef USE_G_BOOKMARK
 	bm_file = g_bookmark_file_new ();
+#else
+	bm_file = egg_bookmark_file_new ();
+#endif
 
 	get_main_menu_user_data_file_path (& data_dir, NULL, TRUE);
 
@@ -187,11 +201,19 @@ migrate_system_gconf_to_bookmark_file ()
 			uri = NULL;
 
 		if (uri) {
+#ifdef USE_G_BOOKMARK
 			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
 			g_bookmark_file_add_application (
 				bm_file, uri,
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+#else
+			egg_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			egg_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+#endif
 		}
 
 		g_free (uri);
@@ -201,7 +223,11 @@ migrate_system_gconf_to_bookmark_file ()
 			gnome_desktop_item_unref (ditem);
 	}
 
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_to_file (bm_file, bookmark_path, & error);
+#else
+	egg_bookmark_file_to_file (bm_file, bookmark_path, & error);
+#endif
 
 	if (error)
 		libslab_handle_g_error (
@@ -209,7 +235,12 @@ migrate_system_gconf_to_bookmark_file ()
 			"%s: cannot save migrated system item list [%s]",
 			G_GNUC_FUNCTION, bookmark_path);
 
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_free (bm_file);
+#else
+	egg_bookmark_file_free (bm_file);
+#endif
+
 	g_list_free (gconf_system_list);
 	g_free (data_dir);
 
@@ -227,7 +258,11 @@ migrate_user_apps_gconf_to_bookmark_file ()
 
 	GList *user_apps_list;
 
+#ifdef USE_G_BOOKMARK
 	GBookmarkFile *bm_file;
+#else
+	EggBookmarkFile *bm_file;
+#endif
 
 	GnomeDesktopItem *ditem;
 	const gchar      *loc;
@@ -248,7 +283,11 @@ migrate_user_apps_gconf_to_bookmark_file ()
 	if (! user_apps_list)
 		goto exit;
 
+#ifdef USE_G_BOOKMARK
 	bm_file = g_bookmark_file_new ();
+#else
+	bm_file = egg_bookmark_file_new ();
+#endif
 
 	for (node = user_apps_list; node; node = node->next) {
 		ditem = libslab_gnome_desktop_item_new_from_unknown_id ((gchar *) node->data);
@@ -265,11 +304,19 @@ migrate_user_apps_gconf_to_bookmark_file ()
 			uri = NULL;
 
 		if (uri) {
+#ifdef USE_G_BOOKMARK
 			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
 			g_bookmark_file_add_application (
 				bm_file, uri,
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+#else
+			egg_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			egg_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+#endif
 		}
 
 		g_free (uri);
@@ -278,7 +325,11 @@ migrate_user_apps_gconf_to_bookmark_file ()
 			gnome_desktop_item_unref (ditem);
 	}
 
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_to_file (bm_file, bookmark_path, & error);
+#else
+	egg_bookmark_file_to_file (bm_file, bookmark_path, & error);
+#endif
 
 	if (error)
 		libslab_handle_g_error (
@@ -286,7 +337,12 @@ migrate_user_apps_gconf_to_bookmark_file ()
 			"%s: cannot save migrated user apps list [%s]",
 			G_GNUC_FUNCTION, bookmark_path);
 
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_free (bm_file);
+#else
+	egg_bookmark_file_free (bm_file);
+#endif
+
 	g_list_free (user_apps_list);
 
 exit:

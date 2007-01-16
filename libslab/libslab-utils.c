@@ -9,6 +9,12 @@
 #include <gconf/gconf-value.h>
 #include <libgnome/gnome-url.h>
 
+#if GLIB_CHECK_VERSION (2, 12, 0)
+#	define USE_G_BOOKMARK
+#else
+#	include "eggbookmarkfile.h"
+#endif
+
 #define GLOBAL_XDG_PATH_ENV_VAR  "XDG_DATA_DIRS"
 #define DEFAULT_GLOBAL_XDG_PATH  "/usr/local/share:/usr/share"
 #define DEFAULT_USER_XDG_DIR     ".local/share"
@@ -539,7 +545,11 @@ libslab_add_docs_monitor (GnomeVFSMonitorCallback callback, gpointer user_data)
 static GList *
 get_uri_list (const gchar *path)
 {
-	GBookmarkFile *bm_file;
+#ifdef USE_G_BOOKMARK
+	GBookmarkFile   *bm_file;
+#else
+	EggBookmarkFile *bm_file;
+#endif
 
 	gchar **uris_array;
 	GList  *uris_list = NULL;
@@ -552,11 +562,20 @@ get_uri_list (const gchar *path)
 	if (! path)
 		return NULL;
 
+#ifdef USE_G_BOOKMARK
 	bm_file = g_bookmark_file_new ();
 	g_bookmark_file_load_from_file (bm_file, path, & error);
+#else
+	bm_file = egg_bookmark_file_new ();
+	egg_bookmark_file_load_from_file (bm_file, path, & error);
+#endif
 
 	if (! error) {
+#ifdef USE_G_BOOKMARK
 		uris_array = g_bookmark_file_get_uris (bm_file, NULL);
+#else
+		uris_array = egg_bookmark_file_get_uris (bm_file, NULL);
+#endif
 
 		for (i = 0; uris_array [i]; ++i)
 			uris_list = g_list_append (uris_list, g_strdup (uris_array [i]));
@@ -568,7 +587,12 @@ get_uri_list (const gchar *path)
 			G_GNUC_FUNCTION, path);
 
 	g_strfreev (uris_array);
+
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_free (bm_file);
+#else
+	egg_bookmark_file_free (bm_file);
+#endif
 
 	return uris_list;
 }
@@ -576,7 +600,12 @@ get_uri_list (const gchar *path)
 static void
 save_uri_list (const gchar *filename, const GList *uris)
 {
+#ifdef USE_G_BOOKMARK
 	GBookmarkFile *bm_file;
+#else
+	EggBookmarkFile *bm_file;
+#endif
+
 	gchar         *path;
 
 	gchar *uri;
@@ -593,7 +622,11 @@ save_uri_list (const gchar *filename, const GList *uris)
 	if (! path)
 		return;
 
+#ifdef USE_G_BOOKMARK
 	bm_file = g_bookmark_file_new ();
+#else
+	bm_file = egg_bookmark_file_new ();
+#endif
 
 	for (node = uris; node; node = node->next) {
 		uri = (gchar *) node->data;
@@ -601,24 +634,40 @@ save_uri_list (const gchar *filename, const GList *uris)
 		ditem = libslab_gnome_desktop_item_new_from_unknown_id (uri);
 
 		if (ditem) {
+#ifdef USE_G_BOOKMARK
 			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
 			g_bookmark_file_add_application (
 				bm_file, uri,
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+#else
+			egg_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			egg_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+#endif
 
 			gnome_desktop_item_unref (ditem);
 		}
 	}
 
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_to_file (bm_file, path, & error);
+#else
+	egg_bookmark_file_to_file (bm_file, path, & error);
+#endif
 
 	if (error)
 		libslab_handle_g_error (
 			& error, "%s: cannot save system item list [%s]",
 			G_GNUC_FUNCTION, path);
 
+#ifdef USE_G_BOOKMARK
 	g_bookmark_file_free (bm_file);
+#else
+	egg_bookmark_file_free (bm_file);
+#endif
 }
 
 static gchar *
