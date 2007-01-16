@@ -142,6 +142,7 @@ static void       tile_table_update_cb       (TileTable *, TileTableUpdateEvent 
 static void       tile_table_uri_added_cb    (TileTable *, TileTableURIAddedEvent *, gpointer);
 static void       file_area_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                                               GnomeVFSMonitorEventType, gpointer);
+static void       more_button_clicked_cb     (GtkButton *, gpointer);
 
 static void recent_files_store_changed_cb (MainMenuRecentMonitor *, gpointer);
 static void reload_recent_apps_table (MainMenuUI *);
@@ -1151,6 +1152,10 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 		G_OBJECT (FILE_AREA (file_area)->user_spec_table), TILE_TABLE_URI_ADDED_SIGNAL,
 		G_CALLBACK (tile_table_uri_added_cb), GINT_TO_POINTER (page_id));
 
+	g_signal_connect (
+		G_OBJECT (more_button), "clicked",
+		G_CALLBACK (more_button_clicked_cb), GINT_TO_POINTER (page_id));
+
 	reload_user_table (FILE_AREA (file_area)->user_spec_table, page_id);
 
 	switch (page_id) {
@@ -1456,6 +1461,19 @@ recent_files_store_changed_cb (MainMenuRecentMonitor *manager, gpointer user_dat
 
 	reload_user_table (priv->user_docs_table, DOCS_PAGE);
 	reload_recent_docs_table (MAIN_MENU_UI (user_data));
+}
+
+static void
+more_button_clicked_cb (GtkButton *button, gpointer user_data)
+{
+	GnomeDesktopItem *ditem;
+
+	if (GPOINTER_TO_INT (user_data) == APPS_PAGE)
+		ditem = libslab_gnome_desktop_item_new_from_unknown_id ("application-browser.desktop");
+	else
+		ditem = libslab_gnome_desktop_item_new_from_unknown_id ("nautilus.desktop");
+
+	libslab_gnome_desktop_item_launch_default (ditem);
 }
 
 /*** END FILE AREA ***/
