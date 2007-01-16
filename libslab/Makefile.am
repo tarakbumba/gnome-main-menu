@@ -10,6 +10,7 @@ libslab_la_SOURCES =				\
 	app-shell.c				\
 	app-shell-startup.c			\
 	application-tile.c			\
+	directory-tile.c			\
 	document-tile.c				\
 	double-click-detector.c			\
 	double-click-detector.h			\
@@ -43,6 +44,7 @@ libslab_include_HEADERS =			\
 	app-shell.h				\
 	app-shell-startup.h			\
 	application-tile.h			\
+	directory-tile.h			\
 	document-tile.h				\
 	gnome-utils.h				\
 	nameplate-tile.h			\

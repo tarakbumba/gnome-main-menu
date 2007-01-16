@@ -40,6 +40,7 @@
 #include "nameplate-tile.h"
 #include "system-tile.h"
 #include "document-tile.h"
+#include "directory-tile.h"
 
 #include "egg-recent-item.h"
 
@@ -1187,7 +1188,12 @@ reload_user_table (TileTable *table, PageID page_id)
 	GtkWidget   *image;
 	gint         icon_width;
 
+	gchar  *buf;
+	gchar  *path;
+	gchar **folders;
+
 	GList *node;
+	gint   i;
 
 
 	switch (page_id) {
@@ -1197,6 +1203,24 @@ reload_user_table (TileTable *table, PageID page_id)
 
 		case DOCS_PAGE:
 			uris = libslab_get_user_doc_uris ();
+			break;
+
+		case DIRS_PAGE:
+			path = g_build_filename (g_get_home_dir (), ".gtk-bookmarks", NULL);
+
+			buf = g_new0 (gchar, 1024);
+
+			g_file_get_contents (path, & buf, NULL, NULL);
+
+			folders = g_strsplit (buf, "\n", -1);
+
+			for (i = 0; folders [i]; ++i)
+				uris = g_list_append (uris, g_strdup (folders [i]));
+
+			g_strfreev (folders);
+			g_free (path);
+			g_free (buf);
+
 			break;
 
 		default:
@@ -1211,6 +1235,10 @@ reload_user_table (TileTable *table, PageID page_id)
 
 			case DOCS_PAGE:
 				tile = document_tile_new ((gchar *) node->data, "text/plain", 0);
+				break;
+
+			case DIRS_PAGE:
+				tile = directory_tile_new ((gchar *) node->data);
 				break;
 
 			default:
