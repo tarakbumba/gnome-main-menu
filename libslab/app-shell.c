@@ -54,8 +54,9 @@ static GtkWidget *create_groups_section (AppShellData * app_data, const gchar * 
 static GtkWidget *create_actions_section (AppShellData * app_data, const gchar * title,
 	void (*actions_handler) (Tile *, TileEvent *, gpointer));
 
+static void generate_category (const char * category, GMenuTreeDirectory * root_dir, AppShellData * app_data, gboolean recursive);
 static void generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data,
-	CategoryData * cat_data);
+	CategoryData * cat_data, gboolean recursive);
 static void generate_new_apps (AppShellData * app_data);
 static void insert_launcher_into_category (CategoryData * cat_data, GnomeDesktopItem * desktop_item,
 	AppShellData * app_data);
@@ -168,8 +169,10 @@ static void
 launch_selected_app (AppShellData * app_data)
 {
 	GHashTable *app_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	guint num_apps;
+
 	g_list_foreach (app_data->categories_list, generate_potential_apps, app_hash);
-	guint num_apps = g_hash_table_size (app_hash);
+	num_apps = g_hash_table_size (app_hash);
 	if (num_apps == 1)
 	{
 		ApplicationTile *launcher =
@@ -188,10 +191,11 @@ main_keypress_callback (GtkWidget * widget, GdkEventKey * event, AppShellData * 
 	if (event->keyval == GDK_Return)
 	{
 		SlabSection *section = SLAB_SECTION (app_data->filter_section);
+		NldSearchBar *search_bar;
 
 		/* Make sure our implementation has not changed */
 		g_assert (NLD_IS_SEARCH_BAR (section->contents));
-		NldSearchBar *search_bar = NLD_SEARCH_BAR (section->contents);
+		search_bar = NLD_SEARCH_BAR (section->contents);
 		if (nld_search_bar_has_focus (search_bar))
 		{
 			launch_selected_app (app_data);
@@ -230,6 +234,9 @@ layout_shell (AppShellData * app_data, const gchar * filter_title, const gchar *
 	GtkWidget *right_vbox;
 	gint num_cols;
 
+	GtkWidget *sw;
+	GtkAdjustment *adjustment;
+
 	app_data->shell = shell_window_new (app_data);
 	app_data->static_actions = actions;
 
@@ -246,12 +253,12 @@ layout_shell (AppShellData * app_data, const gchar * filter_title, const gchar *
 	app_data->category_layout =
 		app_resizer_new (GTK_VBOX (right_vbox), num_cols, TRUE, app_data);
 
-	GtkWidget *sw = gtk_scrolled_window_new (NULL, NULL);
+	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), GTK_POLICY_AUTOMATIC,
 		GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
 	gtk_container_add (GTK_CONTAINER (sw), app_data->category_layout);
-	GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sw));
+	adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sw));
 	g_object_set (adjustment, "step-increment", (double) 20, NULL);
 
 	create_application_category_sections (app_data);
@@ -344,9 +351,7 @@ relayout_shell_incremental (AppShellData * app_data)
 static void
 relayout_shell (AppShellData * app_data)
 {
-	GtkWidget *shell;
-
-	shell = app_data->shell;
+	GtkWidget *shell = app_data->shell;
 	GtkVBox *vbox = APP_RESIZER (app_data->category_layout)->child;
 
 	populate_application_category_sections (app_data, GTK_WIDGET (vbox));
@@ -363,12 +368,12 @@ static GtkWidget *
 create_actions_section (AppShellData * app_data, const gchar * title,
 	void (*actions_handler) (Tile *, TileEvent *, gpointer))
 {
-	g_assert (app_data != NULL);
-
 	GtkWidget *section, *launcher;
 	GtkWidget *vbox;
 	GSList *actions;
 	AppAction *action;
+
+	g_assert (app_data != NULL);
 
 	section = slab_section_new (title, Style1);
 	g_object_ref (section);
@@ -380,8 +385,10 @@ create_actions_section (AppShellData * app_data, const gchar * title,
 	{
 		for (actions = app_data->static_actions; actions; actions = actions->next)
 		{
+			GtkWidget *header;
+
 			action = (AppAction *) actions->data;
-			GtkWidget *header = gtk_label_new (action->name);
+			header = gtk_label_new (action->name);
 			gtk_misc_set_alignment (GTK_MISC (header), 0, 0.5);
 			launcher = nameplate_tile_new (NULL, NULL, header, NULL);
 
@@ -398,10 +405,10 @@ create_actions_section (AppShellData * app_data, const gchar * title,
 static GtkWidget *
 create_groups_section (AppShellData * app_data, const gchar * title)
 {
-	g_assert (app_data != NULL);
-
 	GtkWidget *section;
 	GtkWidget *vbox;
+
+	g_assert (app_data != NULL);
 
 	section = slab_section_new (title, Style1);
 	g_object_ref (section);
@@ -416,13 +423,16 @@ static void
 populate_groups_section (AppShellData * app_data)
 {
 	SlabSection *section = SLAB_SECTION (app_data->groups_section);
+	GtkVBox *vbox;
+	GList *cat_list;
+
 	/* Make sure our implementation has not changed and it's still a GtkVBox */
 	g_assert (GTK_IS_VBOX (section->contents));
 
-	GtkVBox *vbox = GTK_VBOX (section->contents);
+	vbox = GTK_VBOX (section->contents);
 	remove_container_entries (GTK_CONTAINER (vbox));
 
-	GList *cat_list = app_data->categories_list;
+	cat_list = app_data->categories_list;
 	do
 	{
 		CategoryData *data = (CategoryData *) cat_list->data;
@@ -578,14 +588,16 @@ generate_filtered_lists (gpointer catdata, gpointer user_data)
 
 	do
 	{
+		ApplicationTile *launcher = APPLICATION_TILE (launcher_list->data);
+		const gchar *filename;
+
 		temp1 = NULL;
 		temp2 = NULL;
-		ApplicationTile *launcher = APPLICATION_TILE (launcher_list->data);
 
 		/* Since the filter may remove this entry from the
 		   container it will not get a mouse out event */
 		gtk_widget_set_state (GTK_WIDGET (launcher), GTK_STATE_NORMAL);
-		const gchar *filename = g_object_get_data (G_OBJECT (launcher), TILE_EXEC_NAME); /* do I need to free this */
+		filename = g_object_get_data (G_OBJECT (launcher), TILE_EXEC_NAME); /* do I need to free this */
 
 		temp1 = g_ascii_strdown (launcher->name, -1);
 		if (launcher->description)
@@ -609,11 +621,13 @@ generate_filtered_lists (gpointer catdata, gpointer user_data)
 static void
 delete_old_data (AppShellData * app_data)
 {
+	GList *temp;
+	GList *cat_list;
+
 	g_assert (app_data != NULL);
 	g_assert (app_data->categories_list != NULL);
 
-	GList *temp;
-	GList *cat_list = app_data->categories_list;
+	cat_list = app_data->categories_list;
 
 	do
 	{
@@ -644,17 +658,22 @@ delete_old_data (AppShellData * app_data)
 static void
 create_application_category_sections (AppShellData * app_data)
 {
+	GList *cat_list;
+	gint pos = 0;
+
 	g_assert (app_data != NULL);
 	g_assert (app_data->categories_list != NULL);	/* Fixme - pop up a dialog box and then close */
 
-	GList *cat_list = app_data->categories_list;
-	gint pos = 0;
+	cat_list = app_data->categories_list;
 
 	do
 	{
 		CategoryData *data = (CategoryData *) cat_list->data;
-
 		GtkWidget *header = gtk_label_new (data->category);
+		gchar *markup;
+		GtkWidget *hbox;
+		GtkWidget *table;
+
 		gtk_misc_set_alignment (GTK_MISC (header), 0, 0.5);
 		data->group_launcher = TILE (nameplate_tile_new (NULL, NULL, header, NULL));
 		g_object_ref (data->group_launcher);
@@ -665,8 +684,7 @@ create_application_category_sections (AppShellData * app_data)
 		g_signal_connect (data->group_launcher, "tile-activated",
 			G_CALLBACK (handle_group_clicked), app_data);
 
-		gchar *markup =
-			g_markup_printf_escaped ("<span size=\"x-large\" weight=\"bold\">%s</span>",
+		markup = g_markup_printf_escaped ("<span size=\"x-large\" weight=\"bold\">%s</span>",
 			data->category);
 		data->section = SLAB_SECTION (slab_section_new_with_markup (markup, Style2));
 
@@ -674,8 +692,8 @@ create_application_category_sections (AppShellData * app_data)
 		g_object_ref (data->section);
 		g_free (markup);
 
-		GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-		GtkWidget *table = gtk_table_new (0, 0, TRUE);
+		hbox = gtk_hbox_new (FALSE, 0);
+		table = gtk_table_new (0, 0, TRUE);
 		gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 		gtk_table_set_row_spacings (GTK_TABLE (table), 5);
 		gtk_box_pack_start (GTK_BOX (hbox), table, FALSE, FALSE, 15);
@@ -687,16 +705,22 @@ create_application_category_sections (AppShellData * app_data)
 static void
 show_no_results_message (AppShellData * app_data, GtkWidget * containing_vbox)
 {
+	gchar *markup;
+
 	if (!app_data->filtered_out_everything_widget)
 	{
+		GtkWidget *hbox;
+		GtkWidget *image;
+		GtkWidget *label;
+
 		app_data->filtered_out_everything_widget = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
 		g_object_ref (app_data->filtered_out_everything_widget);
 
-		GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-		GtkWidget *image = themed_icon_new ("face-surprise", GTK_ICON_SIZE_DIALOG);
+		hbox = gtk_hbox_new (FALSE, 0);
+		image = themed_icon_new ("face-surprise", GTK_ICON_SIZE_DIALOG);
 		gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
 
-		GtkWidget *label = gtk_label_new (NULL);
+		label = gtk_label_new (NULL);
 		gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 		gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 15);
 		app_data->filtered_out_everything_widget_label = GTK_LABEL (label);
@@ -704,7 +728,7 @@ show_no_results_message (AppShellData * app_data, GtkWidget * containing_vbox)
 		gtk_container_add (GTK_CONTAINER (app_data->filtered_out_everything_widget), hbox);
 	}
 
-	gchar *markup = g_strdup_printf (
+	markup = g_strdup_printf (
 		_("<span size=\"large\"><b>No matches found.</b> </span><span>\n\n Your filter \"<b>%s</b>\" does not match any items.</span>"),
 		app_data->filter_string);
 	gtk_label_set_text (app_data->filtered_out_everything_widget_label, markup);
@@ -746,10 +770,13 @@ static void
 populate_application_category_section (AppShellData * app_data, SlabSection * section,
 	GList * launcher_list)
 {
-	g_assert (GTK_IS_HBOX (section->contents));
-	GtkWidget *hbox = GTK_WIDGET (section->contents);
+	GtkWidget *hbox;
+	GtkTable *table;
 
-	GtkTable *table = gtk_container_get_children (GTK_CONTAINER (hbox))->data;
+	g_assert (GTK_IS_HBOX (section->contents));
+	hbox = GTK_WIDGET (section->contents);
+
+	table = gtk_container_get_children (GTK_CONTAINER (hbox))->data;
 	/* Make sure our implementation has not changed and it's still a GtkTable */
 	g_assert (GTK_IS_TABLE (table));
 
@@ -797,13 +824,13 @@ appshelldata_new (const gchar * menu_name, NewAppConfig * new_apps, const gchar 
 	return app_data;
 }
 
-/* FIXME If there are menu items at the top level we don't see them */
 void
 generate_categories (AppShellData * app_data)
 {
 	GMenuTreeDirectory *root_dir;
 	GSList *contents, *l;
-
+	gboolean need_misc = FALSE;
+	
 	if (!app_data->tree)
 	{
 		app_data->tree = gmenu_tree_lookup (app_data->menu_name, GMENU_TREE_FLAGS_NONE);
@@ -823,45 +850,64 @@ generate_categories (AppShellData * app_data)
 
 	for (l = contents; l; l = l->next)
 	{
-		if (gmenu_tree_item_get_type (l->data) == GMENU_TREE_ITEM_DIRECTORY)
+		const char *category;
+
+		switch (gmenu_tree_item_get_type (l->data))
 		{
-			CategoryData *data = NULL;
-			const char *category;
-			GList *list_entry;
-
+		case GMENU_TREE_ITEM_DIRECTORY:
 			category = gmenu_tree_directory_get_name (l->data);
-			list_entry =
-				g_list_find_custom (app_data->categories_list, category,
-				category_name_compare);
-			if (!list_entry)
-			{
-				data = g_new0 (CategoryData, 1);
-				data->category = g_strdup (category);
-				app_data->categories_list =
-					/* use the gmenu order instead of alphabetical */
-					g_list_insert (app_data->categories_list, data, -1);
-					/* g_list_insert_sorted (app_data->categories_list, data, category_data_compare); */
-			}
-			else
-			{
-				data = list_entry->data;
-			}
-
-			if (app_data->hash)	/* used to eliminate dups on a per category basis. */
-				g_hash_table_destroy (app_data->hash);
-			app_data->hash = g_hash_table_new (g_str_hash, g_str_equal);
-			generate_launchers (l->data, app_data, data);
+			generate_category(category, l->data, app_data, TRUE);
+			break;
+		case GMENU_TREE_ITEM_ENTRY:
+			need_misc = TRUE;
+			break;
+		default:
+			break;
 		}
 	}
+	if (need_misc)
+		generate_category (_("Other"), root_dir, app_data, FALSE);
+
 	if (app_data->hash)
 	{
 		g_hash_table_destroy (app_data->hash);
 		app_data->hash = NULL;
 	}
+	
 	gmenu_tree_item_unref (root_dir);
 
 	if (app_data->new_apps && (app_data->new_apps->max_items > 0))
 		generate_new_apps (app_data);
+}
+
+static void
+generate_category (const char * category, GMenuTreeDirectory * root_dir, AppShellData * app_data, gboolean recursive)
+{
+	CategoryData *data = NULL;
+	GList *list_entry;
+
+	list_entry =
+		g_list_find_custom (app_data->categories_list, category,
+		category_name_compare);
+	
+	if (!list_entry)
+	{
+		data = g_new0 (CategoryData, 1);
+		data->category = g_strdup (category);
+		app_data->categories_list =
+			/* use the gmenu order instead of alphabetical */
+			g_list_insert (app_data->categories_list, data, -1);
+			/* g_list_insert_sorted (app_data->categories_list, data, category_data_compare); */
+	}
+	else
+	{
+		data = list_entry->data;
+	}
+
+	if (app_data->hash)	/* used to eliminate dups on a per category basis. */
+		g_hash_table_destroy (app_data->hash);
+	app_data->hash = g_hash_table_new (g_str_hash, g_str_equal);
+	generate_launchers (root_dir, app_data, data, recursive);
 }
 
 static gboolean
@@ -873,6 +919,9 @@ check_specific_apps_hack (GnomeDesktopItem * item)
 	static gboolean got_lockdown_value = FALSE;
 	static gboolean command_line_lockdown;
 
+	gchar *path;
+	const char *exec;
+
 	if (!got_lockdown_value)
 	{
 		got_lockdown_value = TRUE;
@@ -880,8 +929,7 @@ check_specific_apps_hack (GnomeDesktopItem * item)
 	}
 
 	/* This seems like an ugly hack but it's the way it's currently done in the old control center */
-	gchar *path;
-	const char *exec = gnome_desktop_item_get_string (item, GNOME_DESKTOP_ITEM_EXEC);
+	exec = gnome_desktop_item_get_string (item, GNOME_DESKTOP_ITEM_EXEC);
 
 	/* discard xscreensaver if gnome-screensaver is installed */
 	if ((exec && !strcmp (exec, "xscreensaver-demo"))
@@ -915,7 +963,7 @@ check_specific_apps_hack (GnomeDesktopItem * item)
 }
 
 static void
-generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data, CategoryData * cat_data)
+generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data, CategoryData * cat_data, gboolean recursive)
 {
 	GnomeDesktopItem *desktop_item;
 	const gchar *desktop_file;
@@ -931,7 +979,8 @@ generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data, Cate
 		{
 		case GMENU_TREE_ITEM_DIRECTORY:
 			/* g_message ("Found sub-category %s", gmenu_tree_directory_get_name (l->data)); */
-			generate_launchers (l->data, app_data, cat_data);
+			if (recursive)
+				generate_launchers (l->data, app_data, cat_data, TRUE);
 			break;
 		case GMENU_TREE_ITEM_ENTRY:
 			/* g_message ("Found item name is:%s", gmenu_tree_entry_get_name (l->data)); */
@@ -977,8 +1026,17 @@ generate_new_apps (AppShellData * app_data)
 	gchar *separator = "\n";
 	gchar *gconf_key;
 
+	gchar *basename;
+	gchar *all_apps_file_name;
+	gchar **all_apps_split;
+	gint x;
+	gboolean got_new_apps;
+	CategoryData *new_apps_category = NULL;
+	GList *categories, *launchers;
+	GHashTable *new_apps_dups;
+
 	gconf_key = g_strdup_printf ("%s%s", app_data->gconf_prefix, NEW_APPS_FILE_KEY);
-	gchar *basename = get_slab_gconf_string (gconf_key);
+	basename = get_slab_gconf_string (gconf_key);
 	g_free (gconf_key);
 	if (!basename)
 	{
@@ -986,18 +1044,21 @@ generate_new_apps (AppShellData * app_data)
 		return;
 	}
 
-	gchar *all_apps_file_name = g_build_filename (g_get_home_dir (), basename, NULL);
+	all_apps_file_name = g_build_filename (g_get_home_dir (), basename, NULL);
 	g_free (basename);
 
 	if (!g_file_get_contents (all_apps_file_name, &all_apps, NULL, &error))
 	{
 		/* If file does not exist, this is the first time this user has run this, create the baseline file */
+		GList *categories, *launchers;
+		GString *gstr;
+		gchar *dirname;
+
 		g_error_free (error);
 		error = NULL;
-		GList *categories, *launchers;
 
 		/* best initial size determined by running on a couple different platforms */
-		GString *gstr = g_string_sized_new (10000);
+		gstr = g_string_sized_new (10000);
 
 		for (categories = app_data->categories_list; categories; categories = categories->next)
 		{
@@ -1013,7 +1074,7 @@ generate_new_apps (AppShellData * app_data)
 			}
 		}
 
-		gchar *dirname = g_path_get_dirname (all_apps_file_name);
+		dirname = g_path_get_dirname (all_apps_file_name);
 		g_mkdir_with_parents (dirname, 0700);	/* creates if does not exist */
 		g_free (dirname);
 
@@ -1026,17 +1087,14 @@ generate_new_apps (AppShellData * app_data)
 	}
 
 	all_apps_cache = g_hash_table_new (g_str_hash, g_str_equal);
-	gchar **all_apps_split = g_strsplit (all_apps, separator, -1);
-	gint x;
+	all_apps_split = g_strsplit (all_apps, separator, -1);
 	for (x = 0; all_apps_split[x]; x++)
 	{
 		g_hash_table_insert (all_apps_cache, all_apps_split[x], all_apps_split[x]);
 	}
 
-	gboolean got_new_apps = FALSE;
-	CategoryData *new_apps_category = NULL;
-	GList *categories, *launchers;
-	GHashTable *new_apps_dups = g_hash_table_new (g_str_hash, g_str_equal);
+	got_new_apps = FALSE;
+	new_apps_dups = g_hash_table_new (g_str_hash, g_str_equal);
 	for (categories = app_data->categories_list; categories; categories = categories->next)
 	{
 		CategoryData *cat_data = categories->data;
@@ -1048,6 +1106,9 @@ generate_new_apps (AppShellData * app_data)
 			const gchar *uri = gnome_desktop_item_get_location (item);
 			if (!g_hash_table_lookup (all_apps_cache, uri))
 			{
+				GnomeVFSFileInfo *info;
+				long filetime;
+
 				if (g_hash_table_lookup (new_apps_dups, uri))
 				{
 					/* if a desktop file is in 2 or more top level categories, only show it once */
@@ -1071,7 +1132,7 @@ generate_new_apps (AppShellData * app_data)
 					got_new_apps = TRUE;
 				}
 
-				GnomeVFSFileInfo *info = gnome_vfs_file_info_new ();
+				info = gnome_vfs_file_info_new ();
 				if (gnome_vfs_get_file_info (uri, info,
 						GNOME_VFS_FILE_INFO_DEFAULT) != GNOME_VFS_OK
 					|| !(info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MTIME))
@@ -1080,7 +1141,7 @@ generate_new_apps (AppShellData * app_data)
 					g_warning ("Cant get vfs info for %s\n", uri);
 					return;
 				}
-				long filetime = info->mtime;
+				filetime = info->mtime;
 				gnome_vfs_file_info_unref (info);
 
 				for (x = 0; x < app_data->new_apps->max_items; x++)
@@ -1136,6 +1197,8 @@ insert_launcher_into_category (CategoryData * cat_data, GnomeDesktopItem * deskt
 	GtkWidget *launcher;
 	static GtkSizeGroup *icon_group = NULL;
 
+	gchar *filepath;
+	gchar *filename;
 	GtkWidget *tile_icon;
 
 	if (!icon_group)
@@ -1146,10 +1209,10 @@ insert_launcher_into_category (CategoryData * cat_data, GnomeDesktopItem * deskt
 		app_data->icon_size);
 	gtk_widget_set_size_request (launcher, SIZING_TILE_WIDTH, -1);
 
-	gchar *filepath =
+	filepath =
 		g_strdup (gnome_desktop_item_get_string (desktop_item, GNOME_DESKTOP_ITEM_EXEC));
 	g_strdelimit (filepath, " ", '\0');	/* just want the file name - no args or replacements */
-	gchar *filename = g_strrstr (filepath, "/");
+	filename = g_strrstr (filepath, "/");
 	if (filename)
 		g_stpcpy (filepath, filename + 1);
 	filename = g_ascii_strdown (filepath, -1);
@@ -1242,10 +1305,10 @@ tile_activated_cb (Tile * tile, TileEvent * event, gpointer user_data)
 static void
 handle_launcher_single_clicked (Tile * launcher, gpointer data)
 {
-	tile_trigger_action (launcher, launcher->actions[APPLICATION_TILE_ACTION_START]);
-
 	AppShellData *app_data = (AppShellData *) data;
 	gchar *gconf_key;
+
+	tile_trigger_action (launcher, launcher->actions[APPLICATION_TILE_ACTION_START]);
 
 	gconf_key = g_strdup_printf ("%s%s", app_data->gconf_prefix, EXIT_SHELL_ON_ACTION_START);
 	if (get_slab_gconf_bool (gconf_key))
