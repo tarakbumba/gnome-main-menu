@@ -440,11 +440,11 @@ build_main_menu_window (MainMenuUI *this)
 
 	GtkWidget *window;
 
-	GtkWidget *left_pane;
-
 	GtkWidget *search_widget;
 	GtkWidget *page_buttons;
 
+	GtkWidget *top_pane;
+	GtkWidget *bottom_pane;
 	GtkWidget *right_pane;
 
 	GtkSizeGroup *right_pane_group;
@@ -457,15 +457,12 @@ build_main_menu_window (MainMenuUI *this)
 	GtkWidget *hd_tile;
 	GtkWidget *net_tile;
 
-	GtkWidget *top_pane_alignment;
 	GtkWidget *vbox;
 
 	gint i;
 
 
 	window = slab_window_new ();
-
-	left_pane = gtk_vbox_new (FALSE, 30);
 
 	search_widget = create_search_widget (this);
 	page_buttons  = create_page_buttons  (this);
@@ -478,17 +475,16 @@ build_main_menu_window (MainMenuUI *this)
 		priv->file_area_nb_ids [i] = gtk_notebook_append_page (
 			priv->file_area_nb, create_file_area_page (this, i), NULL);
 
-	top_pane_alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+	top_pane = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
 	vbox = gtk_vbox_new (FALSE, 6);
 
-	gtk_container_add (GTK_CONTAINER (top_pane_alignment), vbox);
+	gtk_container_add (GTK_CONTAINER (top_pane), vbox);
 	gtk_box_pack_start (GTK_BOX (vbox), search_widget, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), page_buttons,  FALSE, FALSE, 0);
 
-	gtk_widget_set_name (top_pane_alignment, "slab-search-page-selector-pane");
+	gtk_widget_set_name (top_pane, "slab-search-page-selector-pane");
 
-	gtk_box_pack_start (GTK_BOX (left_pane), top_pane_alignment, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area_nb), FALSE, FALSE, 0);
+	bottom_pane = GTK_WIDGET (priv->file_area_nb);
 
 	right_pane_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -540,7 +536,7 @@ build_main_menu_window (MainMenuUI *this)
 		gtk_box_pack_end (GTK_BOX (right_pane), status_header, FALSE, FALSE, 0);
 	}
 
-	slab_window_set_contents (SLAB_WINDOW (window), left_pane, right_pane);
+	slab_window_set_contents (SLAB_WINDOW (window), top_pane, bottom_pane, right_pane);
 
 	g_signal_connect (G_OBJECT (window), "delete-event", G_CALLBACK (gtk_widget_hide_on_delete),
 		NULL);
@@ -1095,7 +1091,7 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			user_hdr   = gtk_label_new (_("Favorite Applications"));
 			recent_hdr = gtk_label_new (_("Recent Applications"));
 
-			more_button = gtk_button_new_with_label (_("More Applications"));
+			more_button = gtk_button_new_with_label (_("More Applications..."));
 
 			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
 				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
@@ -1116,7 +1112,7 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			user_hdr   = gtk_label_new (_("Favorite Documents"));
 			recent_hdr = gtk_label_new (_("Recent Documents"));
 
-			more_button = gtk_button_new_with_label (_("More Documents"));
+			more_button = gtk_button_new_with_label (_("More Documents..."));
 
 			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
 				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
@@ -1133,7 +1129,7 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			user_hdr   = gtk_label_new (_("Favorite Places"));
 			recent_hdr = gtk_label_new (_("Recent Places"));
 
-			more_button = gtk_button_new_with_label (_("More Places"));
+			more_button = gtk_button_new_with_label (_("More Places..."));
 
 			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
 				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
@@ -1181,13 +1177,13 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			break;
 	}
 
-	alignment = gtk_alignment_new (1.0, 0.5, 0.0, 0.0);
+	alignment = gtk_alignment_new (1.0, 1.0, 0.0, 0.0);
 	gtk_container_add (GTK_CONTAINER (alignment), more_button);
 
 	vbox = gtk_vbox_new (FALSE, 18);
 
 	gtk_box_pack_start (GTK_BOX (vbox), file_area, TRUE, TRUE, 0);
-	gtk_box_pack_start (GTK_BOX (vbox), alignment, TRUE, TRUE, 0);
+	gtk_box_pack_end   (GTK_BOX (vbox), alignment, TRUE, TRUE, 0);
 
 	return vbox;
 }
@@ -1230,7 +1226,8 @@ reload_user_table (TileTable *table, PageID page_id)
 			folders = g_strsplit (buf, "\n", -1);
 
 			for (i = 0; folders && folders [i]; ++i)
-				uris = g_list_append (uris, g_strdup (folders [i]));
+				if (strlen (folders [i]) > 0)
+					uris = g_list_append (uris, g_strdup (folders [i]));
 
 			g_strfreev (folders);
 			g_free (path);
@@ -1336,8 +1333,13 @@ reload_recent_apps_table (MainMenuUI *this)
 				}
 			}
 
-			if (tile)
+			if (tile) {
 				tiles = g_list_append (tiles, tile);
+
+				g_signal_connect (
+					G_OBJECT (tile), "tile-activated",
+					G_CALLBACK (tile_activated_cb), NULL);
+			}
 		}
 
 		g_object_unref (file);
@@ -1356,6 +1358,8 @@ reload_recent_docs_table (MainMenuUI *this)
 
 	MainMenuRecentFile *file;
 
+	GtkWidget *tile;
+
 	GList *node;
 
 
@@ -1364,11 +1368,19 @@ reload_recent_docs_table (MainMenuUI *this)
 	for (node = files; node; node = node->next) {
 		file = (MainMenuRecentFile *) node->data;
 
-		tiles = g_list_append (tiles,
-			document_tile_new (
-				main_menu_recent_file_get_uri       (file),
-				main_menu_recent_file_get_mime_type (file),
-				main_menu_recent_file_get_modified  (file)));
+		tile = document_tile_new (
+			main_menu_recent_file_get_uri       (file),
+			main_menu_recent_file_get_mime_type (file),
+			main_menu_recent_file_get_modified  (file));
+
+
+		if (tile) {
+			tiles = g_list_append (tiles, tile);
+
+			g_signal_connect (
+				G_OBJECT (tile), "tile-activated",
+				G_CALLBACK (tile_activated_cb), NULL);
+		}
 
 		g_object_unref (file);
 	}
@@ -1536,7 +1548,8 @@ reload_system_tile_table (MainMenuUI *this)
 		tile = system_tile_new ((gchar *) node->data);
 
 		if (tile) {
-			g_signal_connect (G_OBJECT (tile), "tile-activated",
+			g_signal_connect (
+				G_OBJECT (tile), "tile-activated",
 				G_CALLBACK (tile_activated_cb), NULL);
 
 			tiles = g_list_append (tiles, tile);

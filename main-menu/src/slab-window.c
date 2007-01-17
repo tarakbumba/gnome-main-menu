@@ -51,7 +51,8 @@ static void
 slab_window_init (SlabWindow * window)
 {
 	window->_hbox = NULL;
-	window->_left_pane = NULL;
+	window->_top_pane = NULL;
+	window->_bottom_pane = NULL;
 	window->_right_pane = NULL;
 
 	gtk_window_set_title (GTK_WINDOW (window), _("Main Menu"));
@@ -67,8 +68,11 @@ slab_window_new ()
 		NULL);
 
 	this->_hbox = GTK_BOX (gtk_hbox_new (FALSE, 0));
+	this->_vbox = GTK_BOX (gtk_vbox_new (FALSE, 0));
+
 	gtk_container_set_border_width (GTK_CONTAINER (this->_hbox), SLAB_WINDOW_BORDER_WIDTH);
 	gtk_container_add (GTK_CONTAINER (this), GTK_WIDGET (this->_hbox));
+	gtk_container_add (GTK_CONTAINER (this->_hbox), GTK_WIDGET (this->_vbox));
 
 	g_signal_connect (G_OBJECT (this), "expose-event", G_CALLBACK (paint_window), NULL);
 
@@ -76,18 +80,22 @@ slab_window_new ()
 }
 
 void
-slab_window_set_contents (SlabWindow * slab, GtkWidget * left_pane, GtkWidget * right_pane)
+slab_window_set_contents (SlabWindow *slab, GtkWidget *top_pane, GtkWidget *bottom_pane, GtkWidget *right_pane)
 {
-	slab->_left_pane = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-	slab->_right_pane = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+	slab->_top_pane    = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+	slab->_bottom_pane = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+	slab->_right_pane  = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
 
-	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_left_pane), 6, 18, 6, 12);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_top_pane), 6, 6, 6, 12);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_bottom_pane), 30, 18, 12, 12);
 	gtk_alignment_set_padding (GTK_ALIGNMENT (slab->_right_pane), 6, 18, 18, 6);
 
-	gtk_box_pack_start (slab->_hbox, slab->_left_pane, FALSE, FALSE, 0);
+	gtk_box_pack_start (slab->_vbox, slab->_top_pane, FALSE, FALSE, 0);
+	gtk_box_pack_start (slab->_vbox, slab->_bottom_pane, FALSE, FALSE, 0);
 	gtk_box_pack_start (slab->_hbox, slab->_right_pane, FALSE, FALSE, 0);
 
-	gtk_container_add (GTK_CONTAINER (slab->_left_pane), left_pane);
+	gtk_container_add (GTK_CONTAINER (slab->_top_pane), top_pane);
+	gtk_container_add (GTK_CONTAINER (slab->_bottom_pane), bottom_pane);
 	gtk_container_add (GTK_CONTAINER (slab->_right_pane), right_pane);
 
 	gtk_widget_show_all (GTK_WIDGET (slab->_hbox));
@@ -132,7 +140,7 @@ gboolean
 paint_window (GtkWidget * widget, GdkEventExpose * event, gpointer data)
 {
 	GList *child;
-	GtkWidget *left_pane, *right_pane;
+	GtkWidget *top_pane, *bottom_pane, *right_pane;
 
 	/* draw colored border */
 
@@ -153,14 +161,21 @@ paint_window (GtkWidget * widget, GdkEventExpose * event, gpointer data)
 		widget->allocation.width - 2 * SLAB_WINDOW_BORDER_WIDTH + 1,
 		widget->allocation.height - 2 * SLAB_WINDOW_BORDER_WIDTH + 1);
 
-	left_pane = SLAB_WINDOW (widget)->_left_pane;
-	right_pane = SLAB_WINDOW (widget)->_right_pane;
+	top_pane    = SLAB_WINDOW (widget)->_top_pane;
+	bottom_pane = SLAB_WINDOW (widget)->_bottom_pane;
+	right_pane  = SLAB_WINDOW (widget)->_right_pane;
 
-	/* draw left pane background */
+	/* draw top pane background */
 
 	gdk_draw_rectangle (widget->window, widget->style->bg_gc[GTK_STATE_NORMAL], TRUE,
-		left_pane->allocation.x, left_pane->allocation.y, left_pane->allocation.width,
-		left_pane->allocation.height);
+		top_pane->allocation.x, top_pane->allocation.y, top_pane->allocation.width,
+		top_pane->allocation.height);
+
+	/* draw bottom pane background */
+
+	gdk_draw_rectangle (widget->window, widget->style->bg_gc[GTK_STATE_NORMAL], TRUE,
+		bottom_pane->allocation.x, bottom_pane->allocation.y, bottom_pane->allocation.width,
+		bottom_pane->allocation.height);
 
 	/* draw right pane background */
 
@@ -168,7 +183,14 @@ paint_window (GtkWidget * widget, GdkEventExpose * event, gpointer data)
 		right_pane->allocation.x, right_pane->allocation.y, right_pane->allocation.width,
 		right_pane->allocation.height);
 
-	/* draw pane separator */
+	/* draw top pane separator */
+
+	gdk_draw_line (widget->window, widget->style->dark_gc[GTK_STATE_NORMAL],
+		top_pane->allocation.x, top_pane->allocation.y + top_pane->allocation.height -1,
+		top_pane->allocation.x + top_pane->allocation.width - 1,
+		top_pane->allocation.y + top_pane->allocation.height - 1);
+
+	/* draw right pane separator */
 
 	gdk_draw_line (widget->window, widget->style->dark_gc[GTK_STATE_NORMAL],
 		right_pane->allocation.x, right_pane->allocation.y, right_pane->allocation.x,

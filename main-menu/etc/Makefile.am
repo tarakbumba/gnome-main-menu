@@ -13,7 +13,7 @@ desktopdir   = $(datadir)/applications
 desktop_DATA = main-menu-rug.desktop
 @INTLTOOL_DESKTOP_RULE@
 
-bookmarkdir = $(sysconfdir)/xdg/gnome-main-menu
+bookmarkdir = $(datadir)/gnome-main-menu
 bookmark_DATA = applications.xbel documents.xbel system-items.xbel
 
 $(server_DATA).in: $(server_DATA).in.in

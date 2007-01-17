@@ -31,6 +31,7 @@
 #include <gconf/gconf-client.h>
 
 #include "slab-gnome-util.h"
+#include "libslab-utils.h"
 
 #define GIGA (1024 * 1024 * 1024)
 #define MEGA (1024 * 1024)
@@ -451,7 +452,7 @@ tile_show_event_cb (GtkWidget * widget, gpointer user_data)
 static void
 open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 {
-	GnomeDesktopItem *desktop_item = load_desktop_item_from_gconf_key (SLAB_SYSTEM_MONITOR_KEY);
+	GnomeDesktopItem *desktop_item = libslab_gnome_desktop_item_new_from_unknown_id ("nautilus.desktop");
 
 	if (!open_desktop_item_exec (desktop_item))
 		g_warning ("open_hard_drive_tile: couldn't exec item\n");

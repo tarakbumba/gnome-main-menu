@@ -42,7 +42,9 @@ struct _SlabWindow
 	GtkWindow window;
 
 	GtkBox *_hbox;
-	GtkWidget *_left_pane;
+	GtkBox *_vbox;
+	GtkWidget *_top_pane;
+	GtkWidget *_bottom_pane;
 	GtkWidget *_right_pane;
 };
 
@@ -53,7 +55,7 @@ struct _SlabWindowClass
 
 GType slab_window_get_type (void);
 GtkWidget *slab_window_new (void);
-void slab_window_set_contents (SlabWindow * window, GtkWidget * left_pane, GtkWidget * right_pane);
+void slab_window_set_contents (SlabWindow *window, GtkWidget *top_pane, GtkWidget *bottom_pane, GtkWidget *right_pane);
 
 G_END_DECLS
 #endif /* __SLAB_WINDOW_H__ */
