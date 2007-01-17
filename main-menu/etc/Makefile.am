@@ -13,6 +13,9 @@ desktopdir   = $(datadir)/applications
 desktop_DATA = main-menu-rug.desktop
 @INTLTOOL_DESKTOP_RULE@
 
+bookmarkdir = $(sysconfdir)/xdg/gnome-main-menu
+bookmark_DATA = applications.xbel documents.xbel system-items.xbel
+
 $(server_DATA).in: $(server_DATA).in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
 
@@ -26,6 +29,6 @@ install-data-local:
 		done \
 	fi
 
-EXTRA_DIST = $(server_DATA).in.in $(schemas_DATA).in.in $(ui_DATA) $(desktop_DATA).in
+EXTRA_DIST = $(server_DATA).in.in $(schemas_DATA).in.in $(ui_DATA) $(desktop_DATA).in $(bookmark_DATA)
 
 CLEANFILES = $(server_DATA) $(desktop_DATA) $(schemas_DATA) $(server_DATA).in $(schemas_DATA).in

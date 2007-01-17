@@ -457,14 +457,15 @@ build_main_menu_window (MainMenuUI *this)
 	GtkWidget *hd_tile;
 	GtkWidget *net_tile;
 
+	GtkWidget *top_pane_alignment;
+	GtkWidget *vbox;
+
 	gint i;
 
 
 	window = slab_window_new ();
 
-/*	priv->file_area = FILE_AREA_WIDGET (file_area_widget_new (this, priv->engine)); */
-
-	left_pane = gtk_vbox_new (FALSE, 12);
+	left_pane = gtk_vbox_new (FALSE, 30);
 
 	search_widget = create_search_widget (this);
 	page_buttons  = create_page_buttons  (this);
@@ -477,11 +478,17 @@ build_main_menu_window (MainMenuUI *this)
 		priv->file_area_nb_ids [i] = gtk_notebook_append_page (
 			priv->file_area_nb, create_file_area_page (this, i), NULL);
 
-	gtk_box_pack_start (GTK_BOX (left_pane), search_widget, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (left_pane), page_buttons, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area_nb), FALSE, FALSE, 0);
+	top_pane_alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+	vbox = gtk_vbox_new (FALSE, 6);
 
-/*	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area), FALSE, FALSE, 0); */
+	gtk_container_add (GTK_CONTAINER (top_pane_alignment), vbox);
+	gtk_box_pack_start (GTK_BOX (vbox), search_widget, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), page_buttons,  FALSE, FALSE, 0);
+
+	gtk_widget_set_name (top_pane_alignment, "slab-search-page-selector-pane");
+
+	gtk_box_pack_start (GTK_BOX (left_pane), top_pane_alignment, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (left_pane), GTK_WIDGET (priv->file_area_nb), FALSE, FALSE, 0);
 
 	right_pane_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1007,6 +1014,7 @@ create_page_buttons (MainMenuUI *this)
 	hbox = gtk_hbox_new (FALSE, 6);
 
 	for (i = 0; i < PAGE_SENTINEL; ++i) {
+		gtk_widget_set_name (GTK_WIDGET (priv->page_btns [i]), "slab-page-selector-toggle-button");
 		gtk_button_set_focus_on_click (GTK_BUTTON (priv->page_btns [i]), FALSE);
 
 		g_object_set_data (
@@ -1620,7 +1628,7 @@ get_section_header_label (const gchar *markup)
 	gchar *text;
 
 
-	text = g_strdup_printf ("<span size=\"large\">%s</span>", markup);
+	text = g_strdup_printf ("%s", markup);
 
 	label = gtk_label_new (text);
 	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
