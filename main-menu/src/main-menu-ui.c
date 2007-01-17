@@ -1229,7 +1229,7 @@ reload_user_table (TileTable *table, PageID page_id)
 
 			folders = g_strsplit (buf, "\n", -1);
 
-			for (i = 0; folders [i]; ++i)
+			for (i = 0; folders && folders [i]; ++i)
 				uris = g_list_append (uris, g_strdup (folders [i]));
 
 			g_strfreev (folders);
