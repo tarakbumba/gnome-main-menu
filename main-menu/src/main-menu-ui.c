@@ -583,6 +583,8 @@ build_panel_button (MainMenuUI * ui)
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 	gtk_button_set_relief (GTK_BUTTON (priv->panel_button), GTK_RELIEF_NONE);
 
+	gtk_widget_set_name (priv->panel_button, "slab-main-menu-panel-button");
+
 	reorient_panel_button (ui);
 
 	g_object_set_data (G_OBJECT (priv->panel_button), "double-click-detector",
