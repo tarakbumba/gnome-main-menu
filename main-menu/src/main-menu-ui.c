@@ -137,12 +137,15 @@ static void       select_page            (MainMenuUI *, PageID);
 static void       page_button_clicked_cb (GtkButton *, gpointer);
 
 static GtkWidget *create_file_area_page      (MainMenuUI *, PageID);
-static void       reload_user_table          (TileTable *, PageID);
+static void       reload_user_table          (MainMenuUI *, TileTable *, PageID);
 static void       tile_table_update_cb       (TileTable *, TileTableUpdateEvent *, gpointer);
 static void       tile_table_uri_added_cb    (TileTable *, TileTableURIAddedEvent *, gpointer);
-static void       file_area_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
-                                              GnomeVFSMonitorEventType, gpointer);
 static void       more_button_clicked_cb     (GtkButton *, gpointer);
+
+static void user_apps_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
+                                        GnomeVFSMonitorEventType, gpointer);
+static void user_docs_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
+                                        GnomeVFSMonitorEventType, gpointer);
 
 static void recent_files_store_changed_cb (MainMenuRecentMonitor *, gpointer);
 static void reload_recent_apps_table (MainMenuUI *);
@@ -1103,6 +1106,9 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 				G_OBJECT (priv->recent_monitor), "changed",
 				G_CALLBACK (recent_files_store_changed_cb), this);
 
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				user_apps_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
+
 			break;
 
 		case DOCS_PAGE:
@@ -1116,6 +1122,9 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 
 			priv->user_docs_table   = FILE_AREA (file_area)->user_spec_table;
 			priv->recent_docs_table = FILE_AREA (file_area)->recent_table;
+
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				user_docs_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
 
 			break;
 
@@ -1154,10 +1163,7 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 		G_OBJECT (more_button), "clicked",
 		G_CALLBACK (more_button_clicked_cb), GINT_TO_POINTER (page_id));
 
-	priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
-		file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
-
-	reload_user_table (FILE_AREA (file_area)->user_spec_table, page_id);
+	reload_user_table (this, FILE_AREA (file_area)->user_spec_table, page_id);
 
 	switch (page_id) {
 		case APPS_PAGE:
@@ -1184,7 +1190,7 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 }
 
 static void
-reload_user_table (TileTable *table, PageID page_id)
+reload_user_table (MainMenuUI *this, TileTable *table, PageID page_id)
 {
 	GList *uris = NULL;
 
@@ -1261,6 +1267,9 @@ reload_user_table (TileTable *table, PageID page_id)
 
 			g_signal_connect (G_OBJECT (tile), "tile-activated",
 				G_CALLBACK (tile_activated_cb), NULL);
+
+			g_signal_connect (G_OBJECT (tile), "tile-action-triggered",
+				G_CALLBACK (tile_action_triggered_cb), this);
 
 			tiles = g_list_append (tiles, tile);
 		}
@@ -1340,6 +1349,10 @@ reload_recent_apps_table (MainMenuUI *this)
 				g_signal_connect (
 					G_OBJECT (tile), "tile-activated",
 					G_CALLBACK (tile_activated_cb), NULL);
+
+				g_signal_connect (
+					G_OBJECT (tile), "tile-action-triggered",
+					G_CALLBACK (tile_action_triggered_cb), this);
 			}
 		}
 
@@ -1381,6 +1394,10 @@ reload_recent_docs_table (MainMenuUI *this)
 			g_signal_connect (
 				G_OBJECT (tile), "tile-activated",
 				G_CALLBACK (tile_activated_cb), NULL);
+
+			g_signal_connect (
+				G_OBJECT (tile), "tile-action-triggered",
+				G_CALLBACK (tile_action_triggered_cb), this);
 		}
 
 		g_object_unref (file);
@@ -1427,24 +1444,29 @@ tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer us
 
 	page_id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (table), "page-id"));
 
+	if (priv->file_area_monitor_handles [page_id])
+		gnome_vfs_monitor_cancel (priv->file_area_monitor_handles [page_id]);
+
 	switch (page_id) {
 		case APPS_PAGE:
 			libslab_save_app_uris (tiles_new);
+
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				user_apps_store_monitor_cb, table);
+
 			break;
 
 		case DOCS_PAGE:
 			libslab_save_doc_uris (tiles_new);
+
+			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+				user_docs_store_monitor_cb, table);
+
 			break;
 
 		default:
 			break;
 	}
-
-	if (priv->file_area_monitor_handles [page_id])
-		gnome_vfs_monitor_cancel (priv->file_area_monitor_handles [page_id]);
-
-	priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
-		file_area_store_monitor_cb, table);
 }
 
 static void
@@ -1480,26 +1502,31 @@ tile_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpoint
 }
 
 static void
-file_area_store_monitor_cb (
+user_apps_store_monitor_cb (
 	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
 	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
 {
-	gint page_id;
+	reload_user_table (MAIN_MENU_UI (user_data), TILE_TABLE (user_data), APPS_PAGE);
+}
 
-	page_id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (user_data), "page-id"));
-
-	reload_user_table (TILE_TABLE (user_data), page_id);
+static void
+user_docs_store_monitor_cb (
+	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
+	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
+{
+	reload_user_table (MAIN_MENU_UI (user_data), TILE_TABLE (user_data), DOCS_PAGE);
 }
 
 static void
 recent_files_store_changed_cb (MainMenuRecentMonitor *manager, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
+	MainMenuUI *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	reload_user_table (priv->user_apps_table, APPS_PAGE);
+	reload_user_table (this, priv->user_apps_table, APPS_PAGE);
 	reload_recent_apps_table (MAIN_MENU_UI (user_data));
 
-	reload_user_table (priv->user_docs_table, DOCS_PAGE);
+	reload_user_table (this, priv->user_docs_table, DOCS_PAGE);
 	reload_recent_docs_table (MAIN_MENU_UI (user_data));
 }
 
@@ -1569,6 +1596,10 @@ reload_system_tile_table (MainMenuUI *this)
 			g_signal_connect (
 				G_OBJECT (tile), "tile-activated",
 				G_CALLBACK (tile_activated_cb), NULL);
+
+			g_signal_connect (
+				G_OBJECT (tile), "tile-action-triggered",
+				G_CALLBACK (tile_action_triggered_cb), this);
 
 			tiles = g_list_append (tiles, tile);
 		}
