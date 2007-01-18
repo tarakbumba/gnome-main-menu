@@ -85,6 +85,12 @@ system_tile_new (const gchar *desktop_item_id)
 	if (! uri)
 		return NULL;
 
+	if (! strcmp (header_txt, "Session Logout Dialog"))
+		header_txt = g_strdup ("Logout");
+
+	if (! strcmp (header_txt, "System Shutdown Dialog"))
+		header_txt = g_strdup ("Shutdown");
+
 	header = create_header (header_txt);
 
 	context_menu = GTK_MENU (gtk_menu_new ());

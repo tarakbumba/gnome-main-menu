@@ -1093,9 +1093,6 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 
 			more_button = gtk_button_new_with_label (_("More Applications..."));
 
-			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
-				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
-
 			if (! priv->recent_monitor)
 				priv->recent_monitor = main_menu_recent_monitor_new ();
 
@@ -1114,9 +1111,6 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 
 			more_button = gtk_button_new_with_label (_("More Documents..."));
 
-			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
-				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
-
 			if (! priv->recent_monitor)
 				priv->recent_monitor = main_menu_recent_monitor_new ();
 
@@ -1130,9 +1124,6 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 			recent_hdr = gtk_label_new (_("Recent Places"));
 
 			more_button = gtk_button_new_with_label (_("More Places..."));
-
-			priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
-				file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
 
 			break;
 
@@ -1149,10 +1140,11 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 		NULL);
 
 	g_object_set_data (G_OBJECT (file_area), "page-id", GINT_TO_POINTER (page_id));
+	g_object_set_data (G_OBJECT (FILE_AREA (file_area)->user_spec_table), "page-id", GINT_TO_POINTER (page_id));
 
 	g_signal_connect (
 		G_OBJECT (FILE_AREA (file_area)->user_spec_table), TILE_TABLE_UPDATE_SIGNAL,
-		G_CALLBACK (tile_table_update_cb), GINT_TO_POINTER (page_id));
+		G_CALLBACK (tile_table_update_cb), this);
 
 	g_signal_connect (
 		G_OBJECT (FILE_AREA (file_area)->user_spec_table), TILE_TABLE_URI_ADDED_SIGNAL,
@@ -1161,6 +1153,9 @@ create_file_area_page (MainMenuUI *this, PageID page_id)
 	g_signal_connect (
 		G_OBJECT (more_button), "clicked",
 		G_CALLBACK (more_button_clicked_cb), GINT_TO_POINTER (page_id));
+
+	priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+		file_area_store_monitor_cb, FILE_AREA (file_area)->user_spec_table);
 
 	reload_user_table (FILE_AREA (file_area)->user_spec_table, page_id);
 
@@ -1287,11 +1282,12 @@ reload_recent_apps_table (MainMenuUI *this)
 	GList *files;
 	GList *tiles = NULL;
 	GList *user_uris;
+	GList *sys_uris;
 
 	MainMenuRecentFile *file;
 	const gchar *desktop_item_url;
 
-	gboolean is_user_app;
+	gboolean blacklist;
 	gboolean disable_term;
 
 	GnomeDesktopItem *ditem;
@@ -1305,6 +1301,7 @@ reload_recent_apps_table (MainMenuUI *this)
 
 	files = main_menu_get_recent_apps (priv->recent_monitor);
 	user_uris = libslab_get_user_app_uris ();
+	sys_uris  = libslab_get_system_item_uris ();
 
 	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
 
@@ -1313,13 +1310,17 @@ reload_recent_apps_table (MainMenuUI *this)
 
 		desktop_item_url = main_menu_recent_file_get_uri (file);
 
-		is_user_app = FALSE;
+		blacklist = FALSE;
 
-		for (node_j = user_uris; !is_user_app && node_j; node_j = node_j->next)
+		for (node_j = user_uris; !blacklist && node_j; node_j = node_j->next)
 			if (! strcmp (desktop_item_url, (gchar *) node_j->data))
-				is_user_app = TRUE;
+				blacklist = TRUE;
 
-		if (! is_user_app) {
+		for (node_j = sys_uris; !blacklist && node_j; node_j = node_j->next)
+			if (! strcmp (desktop_item_url, (gchar *) node_j->data))
+				blacklist = TRUE;
+
+		if (! blacklist) {
 			tile = application_tile_new (desktop_item_url);
 
 			if (disable_term) {
@@ -1391,11 +1392,15 @@ reload_recent_docs_table (MainMenuUI *this)
 static void
 tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer user_data)
 {
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
 	GList *tiles_new = NULL;
 
 	GList    *node_u;
 	GList    *node_v;
 	gboolean  equal = FALSE;
+
+	gint page_id;
 
 	GList *node;
 
@@ -1420,7 +1425,9 @@ tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer us
 	for (node = event->tiles_curr; node; node = node->next)
 		tiles_new = g_list_append (tiles_new, TILE (node->data)->uri);
 
-	switch (GPOINTER_TO_INT (user_data)) {
+	page_id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (table), "page-id"));
+
+	switch (page_id) {
 		case APPS_PAGE:
 			libslab_save_app_uris (tiles_new);
 			break;
@@ -1432,6 +1439,12 @@ tile_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer us
 		default:
 			break;
 	}
+
+	if (priv->file_area_monitor_handles [page_id])
+		gnome_vfs_monitor_cancel (priv->file_area_monitor_handles [page_id]);
+
+	priv->file_area_monitor_handles [page_id] = libslab_add_apps_monitor (
+		file_area_store_monitor_cb, table);
 }
 
 static void
@@ -1446,18 +1459,23 @@ tile_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpoint
 
 	uri_len = strlen (event->uri);
 
-	if (! strcmp (& event->uri [uri_len - 8], ".desktop")) {
-		switch (GPOINTER_TO_INT (user_data)) {
-			case APPS_PAGE:
-				uris = libslab_get_user_app_uris ();
-				uris = g_list_append (uris, event->uri);
-				libslab_save_app_uris (uris);
+	switch (GPOINTER_TO_INT (user_data)) {
+		case APPS_PAGE:
+			uris = libslab_get_user_app_uris ();
+			uris = g_list_append (uris, event->uri);
+			libslab_save_app_uris (uris);
 
-				break;
+			break;
 
-			default:
-				break;
-		}
+		case DOCS_PAGE:
+			uris = libslab_get_user_doc_uris ();
+			uris = g_list_append (uris, event->uri);
+			libslab_save_doc_uris (uris);
+
+			break;
+
+		default:
+			break;
 	}
 }
 

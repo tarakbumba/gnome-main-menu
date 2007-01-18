@@ -74,7 +74,9 @@ static void     update_user_list_menu_item (ApplicationTile *);
 static StartupStatus get_desktop_item_startup_status (GnomeDesktopItem *);
 static void          update_startup_menu_item (ApplicationTile *);
 
-static void gconf_user_list_change_cb (GConfClient *, guint, GConfEntry *, gpointer);
+static void apps_store_monitor_cb (
+	GnomeVFSMonitorHandle *, const gchar *,
+	const gchar *, GnomeVFSMonitorEventType, gpointer);
 
 typedef struct {
 	GnomeDesktopItem *desktop_item;
@@ -86,8 +88,7 @@ typedef struct {
 	gboolean is_in_user_list;
 	StartupStatus startup_status;
 
-	GConfClient *gconf_client;
-	guint        gconf_conn_id;
+	GnomeVFSMonitorHandle *user_spec_monitor_handle;
 } ApplicationTilePrivate;
 
 #define APPLICATION_TILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), APPLICATION_TILE_TYPE, ApplicationTilePrivate))
@@ -171,8 +172,7 @@ application_tile_init (ApplicationTile *tile)
 
 	priv->is_in_user_list = FALSE;
 
-	priv->gconf_client  = NULL;
-	priv->gconf_conn_id = 0;
+	priv->user_spec_monitor_handle = NULL;
 }
 
 static void
@@ -191,10 +191,10 @@ application_tile_finalize (GObject *g_object)
 	if (priv->image_id)
 		g_free (priv->image_id);
 
-	gconf_client_notify_remove (priv->gconf_client, priv->gconf_conn_id);
-	g_object_unref (priv->gconf_client);
+	if (priv->user_spec_monitor_handle)
+		gnome_vfs_monitor_cancel (priv->user_spec_monitor_handle);
 
-	(* G_OBJECT_CLASS (application_tile_parent_class)->finalize) (g_object);
+	G_OBJECT_CLASS (application_tile_parent_class)->finalize (g_object);
 }
 
 static void
@@ -388,10 +388,7 @@ application_tile_setup (ApplicationTile *this)
 		gtk_container_add (menu_ctnr, menu_item);
 	}
 
-	priv->gconf_client = gconf_client_get_default ();
-	priv->gconf_conn_id = gconf_client_notify_add (
-		priv->gconf_client, SLAB_USER_SPECIFIED_APPS_KEY,
-		gconf_user_list_change_cb, this, NULL, &error);
+	priv->user_spec_monitor_handle = libslab_add_apps_monitor (apps_store_monitor_cb, this);
 
 	if (error) {
 		g_warning ("error monitoring %s [%s]\n", SLAB_USER_SPECIFIED_APPS_KEY, error->message);
@@ -700,17 +697,18 @@ application_tile_get_desktop_item (ApplicationTile *tile)
 static gboolean
 is_desktop_item_in_user_list (const gchar *uri)
 {
-	GSList *app_list;
+	GList *uris;
 
-	GSList *node;
+	GList *node;
 	gint offset;
 
-	app_list = get_slab_gconf_slist (SLAB_USER_SPECIFIED_APPS_KEY);
 
-	if (! app_list)
+	uris = libslab_get_user_app_uris ();
+
+	if (! uris)
 		return FALSE;
 
-	for (node = app_list; node; node = node->next) {
+	for (node = uris; node; node = node->next) {
 		offset = strlen (uri) - strlen ((gchar *) node->data);
 
 		if (offset < 0)
@@ -802,13 +800,15 @@ header_size_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 }
 
 static void
-gconf_user_list_change_cb (GConfClient *gconf_client, guint c_id, GConfEntry *entry,
-	gpointer user_data)
+apps_store_monitor_cb (
+	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
+	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
 {
 	ApplicationTile *this = APPLICATION_TILE (user_data);
 	ApplicationTilePrivate *priv = APPLICATION_TILE_GET_PRIVATE (this);
 
 	gboolean is_in_user_list_current;
+
 
 	is_in_user_list_current = is_desktop_item_in_user_list (TILE (this)->uri);
 
