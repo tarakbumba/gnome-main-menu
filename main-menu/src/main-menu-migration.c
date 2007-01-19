@@ -356,6 +356,8 @@ get_main_menu_user_data_file_path (gchar **path_out, const gchar *filename, gboo
 	GList *user_dirs   = NULL;
 	GList *global_dirs = NULL;
 
+	GList *potential_user_dirs = NULL;
+
 	gchar **dirs;
 	gchar  *path;
 	gchar  *dir;
@@ -371,17 +373,22 @@ get_main_menu_user_data_file_path (gchar **path_out, const gchar *filename, gboo
 
 	if (path && g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		dir = g_build_filename (path, TOP_CONFIG_DIR, NULL);
-		user_dirs = g_list_append (user_dirs, dir);
+
+		if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+			user_dirs = g_list_append (user_dirs, dir);
+
+		potential_user_dirs = g_list_append (potential_user_dirs, g_strdup (dir));
 	}
 
 	path = g_build_filename (g_get_home_dir (), DEFAULT_USER_XDG_DIR, NULL);
+	dir  = g_build_filename (path, TOP_CONFIG_DIR, NULL);
 
-	if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		dir = g_build_filename (path, TOP_CONFIG_DIR, NULL);
+	if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
 		user_dirs = g_list_append (user_dirs, dir);
 
-		g_free (path);
-	}
+	potential_user_dirs = g_list_append (potential_user_dirs, g_strdup (dir));
+
+	g_free (path);
 
 	if (! user_only) {
 		dirs = g_strsplit (g_getenv ("XDG_DATA_DIRS"), ":", 0);
@@ -450,7 +457,10 @@ get_main_menu_user_data_file_path (gchar **path_out, const gchar *filename, gboo
 		}
 
 		if (need_mkdir) {
-			dir = (gchar *) user_dirs->data;
+			if (user_dirs)
+				dir = (gchar *) user_dirs->data;
+			else
+				dir = (gchar *) potential_user_dirs->data;
 
 			g_mkdir_with_parents (dir, 0700);
 		}
@@ -464,6 +474,10 @@ get_main_menu_user_data_file_path (gchar **path_out, const gchar *filename, gboo
 	for (node = user_dirs; node; node = node->next)
 		g_free (node->data);
 	g_list_free (user_dirs);
+
+	for (node = potential_user_dirs; node; node = node->next)
+		g_free (node->data);
+	g_list_free (potential_user_dirs);
 
 	for (node = global_dirs; node; node = node->next)
 		g_free (node->data);
