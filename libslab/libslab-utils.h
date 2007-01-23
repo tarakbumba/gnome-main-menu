@@ -18,6 +18,7 @@
 #	define libslab_bookmark_file_to_file          g_bookmark_file_to_file
 
 #	define libslab_bookmark_file_has_item         g_bookmark_file_has_item
+#	define libslab_bookmark_file_remove_item      g_bookmark_file_remove_item
 #	define libslab_bookmark_file_get_uris         g_bookmark_file_get_uris
 #	define libslab_bookmark_file_get_title        g_bookmark_file_get_title
 #	define libslab_bookmark_file_set_title        g_bookmark_file_set_title
@@ -38,6 +39,7 @@
 #	define libslab_bookmark_file_to_file          egg_bookmark_file_to_file
 
 #	define libslab_bookmark_file_has_item         egg_bookmark_file_has_item
+#	define libslab_bookmark_file_remove_item      egg_bookmark_file_remove_item
 #	define libslab_bookmark_file_get_uris         egg_bookmark_file_get_uris
 #	define libslab_bookmark_file_get_title        egg_bookmark_file_get_title
 #	define libslab_bookmark_file_set_title        egg_bookmark_file_set_title
@@ -67,6 +69,7 @@ GList *libslab_get_user_app_uris    (void);
 GList *libslab_get_user_doc_uris    (void);
 
 gchar *libslab_get_system_item_store_path (gboolean writeable);
+void   libslab_remove_system_item         (const gchar *uri);
 
 void libslab_save_system_item_uris (const GList *);
 void libslab_save_app_uris         (const GList *);

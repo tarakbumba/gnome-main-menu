@@ -124,7 +124,7 @@ system_tile_new (const gchar *desktop_item_id, const gchar *title)
 	gtk_container_add (menu_ctnr, gtk_separator_menu_item_new ());
 
 	markup = g_markup_printf_escaped (_("Remove from System Items"));
-	action = tile_action_new (TILE (this), remove_trigger, markup, TILE_ACTION_OPENS_NEW_WINDOW);
+	action = tile_action_new (TILE (this), remove_trigger, markup, 0);
 	actions [SYSTEM_TILE_ACTION_REMOVE] = action;
 	g_free (markup);
 
@@ -229,9 +229,5 @@ open_trigger (Tile *this, TileEvent *event, TileAction *action)
 static void
 remove_trigger (Tile *this, TileEvent *event, TileAction *action)
 {
-	GList *tiles;
-
-	tiles = libslab_get_system_item_uris ();
-	tiles = g_list_remove_link (tiles, g_list_find_custom (tiles, this->uri, (GCompareFunc) libslab_strcmp));
-	libslab_save_system_item_uris (tiles);
+	libslab_remove_system_item (this->uri);
 }

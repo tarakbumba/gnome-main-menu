@@ -636,6 +636,48 @@ libslab_get_system_item_store_path (gboolean writeable)
 	return get_data_file_path (SYSTEM_BOOKMARK_FILENAME, writeable);
 }
 
+void
+libslab_remove_system_item (const gchar *uri)
+{
+	LibSlabBookmarkFile *bm_file;
+
+	gchar *path_old;
+	gchar *path_new;
+
+	GError *error = NULL;
+
+
+	path_old = libslab_get_system_item_store_path (FALSE);
+	bm_file  = libslab_bookmark_file_new ();
+	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
+
+	if (! error) {
+		libslab_bookmark_file_remove_item (bm_file, uri, NULL);
+
+		path_new = libslab_get_system_item_store_path (TRUE);
+		libslab_bookmark_file_to_file (bm_file, path_new, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error,
+				"%s: couldn't save bookmark file [%s]",
+				__FUNCTION__, path_new);
+
+		g_free (path_new);
+	}
+	else if (error)
+		libslab_handle_g_error (
+			& error,
+			"%s: couldn't open bookmark file [%s]",
+			__FUNCTION__, path_old);
+	else
+		;
+
+	libslab_bookmark_file_free (bm_file);
+
+	g_free (path_old);
+}
+
 static void
 save_uri_list (const gchar *filename, const GList *uris)
 {
