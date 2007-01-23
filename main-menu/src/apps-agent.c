@@ -21,6 +21,7 @@
 #include "apps-agent.h"
 
 #include <string.h>
+#include <libgnomevfs/gnome-vfs.h>
 
 #include "libslab-utils.h"
 #include "system-tile.h"
@@ -41,9 +42,14 @@ typedef struct {
 
 static void apps_agent_finalize (GObject *);
 
-static void reload_sys_table (AppsAgent *);
+static void load_sys_table     (AppsAgent *);
+static void update_sys_monitor (AppsAgent *);
 
-static void system_table_update_cb (TileTable *, TileTableUpdateEvent *, gpointer);
+static void system_table_update_cb    (TileTable *, TileTableUpdateEvent   *, gpointer);
+static void system_table_uri_added_cb (TileTable *, TileTableURIAddedEvent *, gpointer);
+
+static void system_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
+                                     GnomeVFSMonitorEventType, gpointer);
 
 static void tile_activated_cb (Tile *, TileEvent *, gpointer);
 
@@ -62,14 +68,18 @@ apps_agent_new (TileTable *system_table, TileTable *user_table, TileTable *recen
 	priv->rct_table = recent_table;
 
 	g_object_ref (priv->sys_table);
-	g_object_ref (priv->usr_table);
-	g_object_ref (priv->rct_table);
+/*	g_object_ref (priv->usr_table);
+	g_object_ref (priv->rct_table); */
 
 	g_signal_connect (
 		G_OBJECT (priv->sys_table), TILE_TABLE_UPDATE_SIGNAL,
 		G_CALLBACK (system_table_update_cb), NULL);
 
-	reload_sys_table (this);
+	g_signal_connect (
+		G_OBJECT (priv->sys_table), TILE_TABLE_URI_ADDED_SIGNAL,
+		G_CALLBACK (system_table_uri_added_cb), NULL);
+
+	load_sys_table (this);
 
 	return this;
 }
@@ -116,10 +126,11 @@ apps_agent_finalize (GObject *g_obj)
 }
 
 static void
-reload_sys_table (AppsAgent *this)
+load_sys_table (AppsAgent *this)
 {
 	AppsAgentPrivate *priv = PRIVATE (this);
 
+	gchar *path;
 	LibSlabBookmarkFile *bm_file;
 	gchar **uris = NULL;
 
@@ -133,10 +144,10 @@ reload_sys_table (AppsAgent *this)
 	gint i;
 
 
-	priv->sys_store_path = libslab_get_system_item_store_path (FALSE);
+	path = libslab_get_system_item_store_path (FALSE);
 
 	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, priv->sys_store_path, & error);
+	libslab_bookmark_file_load_from_file (bm_file, path, & error);
 
 	if (! error) {
 		uris = libslab_bookmark_file_get_uris (bm_file, NULL);
@@ -160,10 +171,40 @@ reload_sys_table (AppsAgent *this)
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't load bookmark file [%s]",
-			__FUNCTION__, priv->sys_store_path);
+			__FUNCTION__, path);
 
 	libslab_bookmark_file_free (bm_file);
 	g_list_free (tiles);
+
+	update_sys_monitor (this);
+}
+
+static void
+update_sys_monitor (AppsAgent *this)
+{
+	AppsAgentPrivate *priv = PRIVATE (this);
+
+	gchar *path;
+	gchar *uri;
+
+
+	path = libslab_get_system_item_store_path (FALSE);
+
+	if (libslab_strcmp (path, priv->sys_store_path)) {
+		g_free (priv->sys_store_path);
+		priv->sys_store_path = path;
+
+		uri = g_filename_to_uri (path, NULL, NULL);
+
+		if (priv->sys_store_monitor)
+			gnome_vfs_monitor_cancel (priv->sys_store_monitor);
+
+		gnome_vfs_monitor_add (
+			& priv->sys_store_monitor, uri, GNOME_VFS_MONITOR_FILE,
+			system_store_monitor_cb, this);
+
+		g_free (uri);
+	}
 }
 
 static void
@@ -271,4 +312,55 @@ tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
 		return;
 
 	tile_trigger_action_with_time (tile, tile->default_action, event->time);
+}
+
+static void
+system_table_uri_added_cb (TileTable *table, TileTableURIAddedEvent *event, gpointer user_data)
+{
+	LibSlabBookmarkFile *bm_file;
+
+	gchar *path_old;
+	gchar *path_new;
+
+	GError *error = NULL;
+
+
+	path_old = libslab_get_system_item_store_path (FALSE);
+	bm_file  = libslab_bookmark_file_new ();
+	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
+
+	if (! (error || libslab_bookmark_file_has_item (bm_file, event->uri))) {
+		libslab_bookmark_file_set_mime_type (bm_file, event->uri, "application/x-desktop");
+		libslab_bookmark_file_add_application (bm_file, event->uri, NULL, NULL);
+
+		path_new = libslab_get_system_item_store_path (TRUE);
+		libslab_bookmark_file_to_file (bm_file, path_new, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error,
+				"%s: couldn't save bookmark file [%s]",
+				__FUNCTION__, path_new);
+
+		g_free (path_new);
+	}
+	else if (error)
+		libslab_handle_g_error (
+			& error,
+			"%s: couldn't open bookmark file [%s]",
+			__FUNCTION__, path_old);
+	else
+		;
+
+	libslab_bookmark_file_free (bm_file);
+
+	g_free (path_old);
+}
+
+static void
+system_store_monitor_cb (
+	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
+	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
+{
+	load_sys_table (APPS_AGENT (user_data));
 }
