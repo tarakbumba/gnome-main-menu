@@ -31,6 +31,7 @@
 
 #define GLADE_FILE_PATH "/home/jimmyk/glade/projects/slab-window/slab-window.glade"
 
+#define CURRENT_PAGE_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/file_class"
 #define URGENT_CLOSE_GCONF_KEY "/desktop/gnome/applications/main-menu/urgent_close"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
@@ -45,6 +46,11 @@ typedef struct {
 	GtkWidget *top_pane;
 	GtkWidget *left_pane;
 
+	GtkNotebook     *file_area;
+	GtkToggleButton *apps_button;
+	GtkToggleButton *docs_button;
+	GtkToggleButton *dirs_button;
+
 	AppsAgent *apps_agent;
 
 	TileTable *sys_table;
@@ -58,12 +64,16 @@ static void main_menu_ui_finalize (GObject *);
 
 static void create_panel_button      (MainMenuUI *);
 static void create_slab_window       (MainMenuUI *);
-static void create_system_section    (MainMenuUI *);
+static void create_file_area         (MainMenuUI *);
 static void create_user_apps_section (MainMenuUI *);
 static void create_rct_apps_section  (MainMenuUI *);
+static void create_system_section    (MainMenuUI *);
+
+static void select_page (MainMenuUI *, gint);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
+static void     page_button_clicked_cb   (GtkButton *, gpointer);
 static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
@@ -82,12 +92,15 @@ main_menu_ui_new (PanelApplet *applet)
 
 	create_panel_button      (this);
 	create_slab_window       (this);
-	create_system_section    (this);
+	create_file_area         (this);
 	create_user_apps_section (this);
 	create_rct_apps_section  (this);
+	create_system_section    (this);
 
 	priv->apps_agent = apps_agent_new (
 		priv->sys_table, priv->user_apps_table, priv->rct_apps_table);
+
+	select_page (this, -1);
 
 	return this;
 }
@@ -174,6 +187,33 @@ create_slab_window (MainMenuUI *this)
 }
 
 static void
+create_file_area (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->file_area = GTK_NOTEBOOK (glade_xml_get_widget (
+		priv->main_menu_xml, "file-area-notebook"));
+	priv->apps_button = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->main_menu_xml, "slab-page-selector-button-applications"));
+	priv->docs_button = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->main_menu_xml, "slab-page-selector-button-documents"));
+	priv->dirs_button = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->main_menu_xml, "slab-page-selector-button-places"));
+
+	g_signal_connect (
+		G_OBJECT (priv->apps_button), "clicked",
+		G_CALLBACK (page_button_clicked_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->docs_button), "clicked",
+		G_CALLBACK (page_button_clicked_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->dirs_button), "clicked",
+		G_CALLBACK (page_button_clicked_cb), this);
+}
+
+static void
 create_system_section (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
@@ -231,6 +271,33 @@ create_rct_apps_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->rct_apps_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+}
+
+static void
+select_page (MainMenuUI *this, gint page_id)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkToggleButton *selectors [3];
+
+	gint i;
+
+
+/* TODO: make this instant apply */
+
+	if (page_id < 0)
+		page_id = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
+	else
+		libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_id));
+
+	gtk_notebook_set_current_page (priv->file_area, page_id);
+
+	selectors [0] = priv->apps_button;
+	selectors [1] = priv->docs_button;
+	selectors [2] = priv->dirs_button;
+
+	for (i = 0; i < 3; ++i)
+		gtk_toggle_button_set_active (selectors [i], (i == page_id));
 }
 
 static void
@@ -383,6 +450,38 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 	cairo_destroy (cr);
 
 	return FALSE;
+}
+
+static void
+page_button_clicked_cb (GtkButton *button, gpointer user_data)
+{
+	const gchar *name;
+
+	gint page_id_new = 0;
+	gint page_id_curr;
+
+
+	name = gtk_widget_get_name (GTK_WIDGET (button));
+
+	if (! libslab_strcmp (name, "slab-page-selector-button-applications"))
+		page_id_new = 0;
+	else if (! libslab_strcmp (name, "slab-page-selector-button-documents"))
+		page_id_new = 1;
+	else if (! libslab_strcmp (name, "slab-page-selector-button-places"))
+		page_id_new = 2;
+	else
+		g_warning ("Unknown page selector [%s]\n", name);
+
+	page_id_curr = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
+
+	if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
+		if (page_id_new == page_id_curr)
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+		else
+			return;
+	}
+	else
+		select_page (MAIN_MENU_UI (user_data), page_id_new);
 }
 
 static void
