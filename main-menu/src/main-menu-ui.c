@@ -24,10 +24,14 @@
 #include <cairo.h>
 
 #include "double-click-detector.h"
+#include "tile.h"
 #include "tile-table.h"
 #include "apps-agent.h"
+#include "libslab-utils.h"
 
 #define GLADE_FILE_PATH "/home/jimmyk/glade/projects/slab-window/slab-window.glade"
+
+#define URGENT_CLOSE_GCONF_KEY "/desktop/gnome/applications/main-menu/urgent_close"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -48,8 +52,10 @@ typedef struct {
 
 static void main_menu_ui_finalize (GObject *);
 
-static void     panel_button_clicked_cb (GtkButton *, gpointer);
-static gboolean slab_window_expose_cb   (GtkWidget *, GdkEventExpose *, gpointer);
+static void     panel_button_clicked_cb  (GtkButton *, gpointer);
+static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
+static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
+static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
 MainMenuUI *
 main_menu_ui_new (PanelApplet *applet)
@@ -87,6 +93,10 @@ main_menu_ui_new (PanelApplet *applet)
 	priv->sys_table = TILE_TABLE (tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL));
 
 	gtk_container_add (priv->sys_table_ctnr, GTK_WIDGET (priv->sys_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this);
 
 	priv->apps_agent = apps_agent_new (priv->sys_table, NULL, NULL);
 
@@ -292,6 +302,43 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 	cairo_destroy (cr);
 
 	return FALSE;
+}
+
+static void
+tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
+{
+	GList *tiles;
+	GList *node;
+
+	gulong handler_id;
+
+
+	g_object_get (g_obj, TILE_TABLE_TILES_PROP, & tiles, NULL);
+
+	for (node = tiles; node; node = node->next) {
+		handler_id = g_signal_handler_find (
+			G_OBJECT (node->data), G_SIGNAL_MATCH_FUNC, 0, 0,
+			NULL, tile_action_triggered_cb, NULL);
+
+		if (! handler_id)
+			g_signal_connect (
+				G_OBJECT (node->data), "tile-action-triggered",
+				G_CALLBACK (tile_action_triggered_cb), user_data);
+	}
+}
+
+static void
+tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
+		return;
+
+	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
+		return;
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 }
 
 
