@@ -49,6 +49,7 @@ typedef struct {
 
 	TileTable *sys_table;
 	TileTable *user_apps_table;
+	TileTable *rct_apps_table;
 } MainMenuUIPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
@@ -59,6 +60,7 @@ static void create_panel_button      (MainMenuUI *);
 static void create_slab_window       (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 static void create_user_apps_section (MainMenuUI *);
+static void create_rct_apps_section  (MainMenuUI *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
@@ -82,8 +84,10 @@ main_menu_ui_new (PanelApplet *applet)
 	create_slab_window       (this);
 	create_system_section    (this);
 	create_user_apps_section (this);
+	create_rct_apps_section  (this);
 
-	priv->apps_agent = apps_agent_new (priv->sys_table, priv->user_apps_table, NULL);
+	priv->apps_agent = apps_agent_new (
+		priv->sys_table, priv->user_apps_table, priv->rct_apps_table);
 
 	return this;
 }
@@ -119,6 +123,7 @@ main_menu_ui_init (MainMenuUI *this)
 
 	priv->sys_table       = NULL;
 	priv->user_apps_table = NULL;
+	priv->rct_apps_table  = NULL;
 }
 
 static void
@@ -205,6 +210,26 @@ create_user_apps_section (MainMenuUI *this)
 
 	g_signal_connect (
 		G_OBJECT (priv->user_apps_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this);
+}
+
+static void
+create_rct_apps_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "recent-apps-table-container"));
+
+	priv->rct_apps_table = TILE_TABLE (tile_table_new (2, TILE_TABLE_REORDERING_NONE));
+
+	gtk_container_add (ctnr, GTK_WIDGET (priv->rct_apps_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->rct_apps_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
 }
 

@@ -26,6 +26,11 @@
 #include "libslab-utils.h"
 #include "application-tile.h"
 #include "system-tile.h"
+#include "recent-files.h"
+
+#define APP_BLACKLIST_GCONF_KEY    "/desktop/gnome/applications/main-menu/file-area/file_blacklist"
+#define MAX_TOTAL_ITEMS_GCONF_KEY  "/desktop/gnome/applications/main-menu/file-area/max_total_items"
+#define MIN_RECENT_ITEMS_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/min_recent_items"
 
 G_DEFINE_TYPE (AppsAgent, apps_agent, G_TYPE_OBJECT)
 
@@ -39,6 +44,8 @@ typedef struct {
 
 	GnomeVFSMonitorHandle *sys_store_monitor;
 	GnomeVFSMonitorHandle *user_apps_store_monitor;
+
+	MainMenuRecentMonitor *recent_monitor;
 } AppsAgentPrivate;
 
 typedef void (*CreateBookmarkEntryFunc) (
@@ -50,6 +57,9 @@ static void apps_agent_finalize (GObject *);
 
 static void load_sys_table       (AppsAgent *);
 static void load_user_apps_table (AppsAgent *);
+static void load_rct_apps_table  (AppsAgent *);
+
+static void update_limits (AppsAgent *);
 
 static void update_sys_monitor       (AppsAgent *);
 static void update_user_apps_monitor (AppsAgent *);
@@ -64,6 +74,8 @@ static void create_sys_item_bookmark_entry (LibSlabBookmarkFile *, LibSlabBookma
 static void create_user_app_bookmark_entry (LibSlabBookmarkFile *, LibSlabBookmarkFile *,
                                             const gchar *);
 
+static gboolean uri_is_in_blacklist (const gchar *);
+
 static void system_table_update_cb    (TileTable *, TileTableUpdateEvent   *, gpointer);
 static void system_table_uri_added_cb (TileTable *, TileTableURIAddedEvent *, gpointer);
 
@@ -74,6 +86,7 @@ static void system_store_monitor_cb    (GnomeVFSMonitorHandle *, const gchar *, 
                                         GnomeVFSMonitorEventType, gpointer);
 static void user_apps_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                                         GnomeVFSMonitorEventType, gpointer);
+static void recent_monitor_changed_cb  (MainMenuRecentMonitor *, gpointer);
 
 static void tile_activated_cb (Tile *, TileEvent *, gpointer);
 
@@ -93,7 +106,7 @@ apps_agent_new (TileTable *system_table, TileTable *user_table, TileTable *recen
 
 	g_object_ref (priv->sys_table);
 	g_object_ref (priv->usr_table);
-/*	g_object_ref (priv->rct_table); */
+	g_object_ref (priv->rct_table);
 
 	g_signal_connect (
 		G_OBJECT (priv->sys_table), TILE_TABLE_UPDATE_SIGNAL,
@@ -111,10 +124,52 @@ apps_agent_new (TileTable *system_table, TileTable *user_table, TileTable *recen
 		G_OBJECT (priv->usr_table), TILE_TABLE_URI_ADDED_SIGNAL,
 		G_CALLBACK (user_apps_table_uri_added_cb), NULL);
 
+	priv->recent_monitor = main_menu_recent_monitor_new ();
+
+	g_signal_connect (
+		G_OBJECT (priv->recent_monitor), "changed",
+		G_CALLBACK (recent_monitor_changed_cb), this);
+
 	load_sys_table       (this);
 	load_user_apps_table (this);
 
 	return this;
+}
+
+static void
+update_limits (AppsAgent *this)
+{
+	AppsAgentPrivate *priv = PRIVATE (this);
+
+	gint max_total;
+	gint min_recent;
+
+	gint n_rows;
+	gint n_cols;
+	gint rcnt_limit_new;
+
+
+	if (! G_IS_OBJECT (priv->usr_table))
+		return;
+
+/* TODO: make these instant apply */
+
+	max_total  = GPOINTER_TO_INT (libslab_get_gconf_value (MAX_TOTAL_ITEMS_GCONF_KEY));
+	min_recent = GPOINTER_TO_INT (libslab_get_gconf_value (MIN_RECENT_ITEMS_GCONF_KEY));
+
+	g_object_get (
+		G_OBJECT (priv->usr_table),
+		"n-rows",    & n_rows,
+		"n-columns", & n_cols,
+		NULL);
+
+	rcnt_limit_new = max_total - n_cols * n_rows;
+
+	if (rcnt_limit_new < min_recent)
+		rcnt_limit_new = min_recent;
+
+	g_object_set (G_OBJECT (priv->usr_table), TILE_TABLE_LIMIT_PROP, -1, NULL);
+	g_object_set (G_OBJECT (priv->rct_table), TILE_TABLE_LIMIT_PROP, rcnt_limit_new, NULL);
 }
 
 static void
@@ -215,7 +270,8 @@ load_sys_table (AppsAgent *this)
 	libslab_bookmark_file_free (bm_file);
 	g_list_free (tiles);
 
-	update_sys_monitor (this);
+	update_sys_monitor  (this);
+	load_rct_apps_table (this);
 }
 
 static void
@@ -269,6 +325,60 @@ load_user_apps_table (AppsAgent *this)
 	g_list_free (tiles);
 
 	update_user_apps_monitor (this);
+	update_limits            (this);
+	load_rct_apps_table      (this);
+}
+
+static void
+load_rct_apps_table (AppsAgent *this)
+{
+	AppsAgentPrivate *priv = PRIVATE (this);
+
+	GList              *apps;
+	MainMenuRecentFile *app;
+
+	const gchar *uri;
+
+	gboolean blacklisted;
+
+	GList     *tiles = NULL;
+	GtkWidget *tile;
+
+	GList *node;
+
+
+	apps = main_menu_get_recent_apps (priv->recent_monitor);
+
+	for (node = apps; node; node = node->next) {
+		app = (MainMenuRecentFile *) node->data;
+
+		uri = main_menu_recent_file_get_uri (app);
+
+		blacklisted =
+			libslab_system_item_store_has_uri (uri) ||
+			libslab_user_apps_store_has_uri   (uri) ||
+			uri_is_in_blacklist               (uri);
+
+		if (! blacklisted) {
+			tile = application_tile_new (uri);
+
+			if (tile) {
+				g_signal_connect (
+					G_OBJECT (tile), "tile-activated",
+					G_CALLBACK (tile_activated_cb), NULL);
+
+				tiles = g_list_append (tiles, tile);
+			}
+		}
+
+		g_object_unref (app);
+	}
+
+	g_object_set (G_OBJECT (
+		priv->rct_table), TILE_TABLE_TILES_PROP, tiles, NULL);
+
+	g_list_free (apps);
+	g_list_free (tiles);
 }
 
 static void
@@ -468,6 +578,30 @@ add_bookmark_to_store (
 	libslab_bookmark_file_free (bm_file);
 }
 
+static gboolean
+uri_is_in_blacklist (const gchar *uri)
+{
+	GList *blacklist;
+
+	gboolean blacklisted = FALSE;
+
+	GList *node;
+
+
+	blacklist = libslab_get_gconf_value (APP_BLACKLIST_GCONF_KEY);
+
+	for (node = blacklist; node; node = node->next) {
+		if (! blacklisted && strstr (uri, (gchar *) node->data))
+			blacklisted = TRUE;
+
+		g_free (node->data);
+	}
+
+	g_list_free (blacklist);
+
+	return blacklisted;
+}
+
 static void
 system_store_monitor_cb (
 	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
@@ -482,6 +616,12 @@ user_apps_store_monitor_cb (
 	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
 {
 	load_user_apps_table (APPS_AGENT (user_data));
+}
+
+static void
+recent_monitor_changed_cb (MainMenuRecentMonitor *monitor, gpointer user_data)
+{
+	load_rct_apps_table (APPS_AGENT (user_data));
 }
 
 static void

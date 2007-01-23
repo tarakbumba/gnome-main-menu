@@ -20,6 +20,7 @@
 #define DIRS_BOOKMARK_FILENAME   "places.xbel"
 
 static gchar                 *get_data_file_path     (const gchar *, gboolean);
+static gboolean               store_has_uri          (const gchar *, const gchar *);
 static GList                 *get_uri_list           (const gchar *);
 static void                   save_uri_list          (const gchar *, const GList *);
 static GnomeVFSMonitorHandle *add_store_file_monitor (const gchar *,
@@ -600,36 +601,6 @@ get_uri_list (const gchar *path)
 	return uris_list;
 }
 
-/*
-LibSlabBookmarkFile *
-libslab_get_system_item_store ()
-{
-	LibSlabBookmarkFile *bm_file;
-	gchar               *path;
-
-	GError *error = NULL;
-
-
-	path = get_data_file_path (SYSTEM_BOOKMARK_FILENAME);
-
-	if (! path)
-		return NULL;
-
-	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path, & error);
-
-	if (error)
-		libslab_handle_g_error (
-			& error,
-			"%s: couldn't load bookmark file [%s]",
-			__FUNCTION__, path);
-
-	g_free (path);
-
-	return bm_file;
-}
-*/
-
 gchar *
 libslab_get_system_item_store_path (gboolean writeable)
 {
@@ -682,6 +653,64 @@ libslab_remove_system_item (const gchar *uri)
 	libslab_bookmark_file_free (bm_file);
 
 	g_free (path_old);
+}
+
+gboolean
+libslab_system_item_store_has_uri (const gchar *uri)
+{
+	gchar *path;
+	gboolean exists;
+
+
+	path = libslab_get_system_item_store_path (FALSE);
+
+	exists = store_has_uri (path, uri);
+
+	g_free (path);
+
+	return exists;
+}
+
+gboolean
+libslab_user_apps_store_has_uri (const gchar *uri)
+{
+	gchar *path;
+	gboolean exists;
+
+
+	path = libslab_get_user_apps_store_path (FALSE);
+
+	exists = store_has_uri (path, uri);
+
+	g_free (path);
+
+	return exists;
+}
+
+static gboolean
+store_has_uri (const gchar *path, const gchar *uri)
+{
+	LibSlabBookmarkFile *bm_file;
+
+	gboolean exists = FALSE;
+
+	GError *error = NULL;
+
+
+	bm_file = libslab_bookmark_file_new ();
+	libslab_bookmark_file_load_from_file (bm_file, path, & error);
+
+	if (! error)
+		exists = libslab_bookmark_file_has_item (bm_file, uri);
+	else
+		libslab_handle_g_error (
+			& error,
+			"%s: couldn't open bookmark file [%s]",
+			__FUNCTION__, path);
+
+	libslab_bookmark_file_free (bm_file);
+
+	return exists;
 }
 
 static void
