@@ -9,12 +9,6 @@
 #include <gconf/gconf-value.h>
 #include <libgnome/gnome-url.h>
 
-#if GLIB_CHECK_VERSION (2, 12, 0)
-#	define USE_G_BOOKMARK
-#else
-#	include "eggbookmarkfile.h"
-#endif
-
 #define GLOBAL_XDG_PATH_ENV_VAR  "XDG_DATA_DIRS"
 #define DEFAULT_GLOBAL_XDG_PATH  "/usr/local/share:/usr/share"
 #define DEFAULT_USER_XDG_DIR     ".local/share"
@@ -25,13 +19,12 @@
 #define DOCS_BOOKMARK_FILENAME   "documents.xbel"
 #define DIRS_BOOKMARK_FILENAME   "places.xbel"
 
+static gchar                 *get_data_file_path     (const gchar *, gboolean);
 static GList                 *get_uri_list           (const gchar *);
 static void                   save_uri_list          (const gchar *, const GList *);
 static GnomeVFSMonitorHandle *add_store_file_monitor (const gchar *,
                                                       GnomeVFSMonitorCallback,
                                                       gpointer);
-
-static gboolean get_data_file_path (gchar **, const gchar *, gboolean);
 
 #define ALTERNATE_DOCPATH_KEY "DocPath"
 
@@ -285,6 +278,15 @@ libslab_strcmp (const gchar *a, const gchar *b)
 	return strcmp (a, b);
 }
 
+gint
+libslab_strlen (const gchar *a)
+{
+	if (! a)
+		return 0;
+
+	return strlen (a);
+}
+
 gpointer
 libslab_get_gconf_value (const gchar *key)
 {
@@ -469,7 +471,7 @@ libslab_get_system_item_uris ()
 	gchar *path;
 
 
-	get_data_file_path (& path, SYSTEM_BOOKMARK_FILENAME, FALSE);
+	path = get_data_file_path (SYSTEM_BOOKMARK_FILENAME, FALSE);
 	uris = get_uri_list (path);
 
 	g_free (path);
@@ -484,7 +486,7 @@ libslab_get_user_app_uris ()
 	gchar *path;
 
 
-	get_data_file_path (& path, APPS_BOOKMARK_FILENAME, FALSE);
+	path = get_data_file_path (APPS_BOOKMARK_FILENAME, FALSE);
 	uris = get_uri_list (path);
 
 	g_free (path);
@@ -499,7 +501,7 @@ libslab_get_user_doc_uris ()
 	gchar *path;
 
 
-	get_data_file_path (& path, DOCS_BOOKMARK_FILENAME, FALSE);
+	path = get_data_file_path (DOCS_BOOKMARK_FILENAME, FALSE);
 	uris = get_uri_list (path);
 
 	g_free (path);
@@ -598,6 +600,42 @@ get_uri_list (const gchar *path)
 	return uris_list;
 }
 
+/*
+LibSlabBookmarkFile *
+libslab_get_system_item_store ()
+{
+	LibSlabBookmarkFile *bm_file;
+	gchar               *path;
+
+	GError *error = NULL;
+
+
+	path = get_data_file_path (SYSTEM_BOOKMARK_FILENAME);
+
+	if (! path)
+		return NULL;
+
+	bm_file = libslab_bookmark_file_new ();
+	libslab_bookmark_file_load_from_file (bm_file, path, & error);
+
+	if (error)
+		libslab_handle_g_error (
+			& error,
+			"%s: couldn't load bookmark file [%s]",
+			__FUNCTION__, path);
+
+	g_free (path);
+
+	return bm_file;
+}
+*/
+
+gchar *
+libslab_get_system_item_store_path (gboolean writeable)
+{
+	return get_data_file_path (SYSTEM_BOOKMARK_FILENAME, writeable);
+}
+
 static void
 save_uri_list (const gchar *filename, const GList *uris)
 {
@@ -615,7 +653,7 @@ save_uri_list (const gchar *filename, const GList *uris)
 	GError *error = NULL;
 
 
-	get_data_file_path (& path, filename, TRUE);
+	path = get_data_file_path (filename, TRUE);
 
 #ifdef USE_G_BOOKMARK
 	bm_file = g_bookmark_file_new ();
@@ -653,18 +691,14 @@ save_uri_list (const gchar *filename, const GList *uris)
 #endif
 }
 
-static gboolean
-get_data_file_path (gchar **path_out, const gchar *filename, gboolean user_only)
+static gchar *
+get_data_file_path (const gchar *filename, gboolean writeable)
 {
-	GList *user_dirs   = NULL;
-	GList *global_dirs = NULL;
+	GList *dirs = NULL;
 
-	gchar **dirs;
 	gchar  *path;
+	gchar **global_dirs;
 	gchar  *dir;
-
-	gboolean need_mkdir;
-	gboolean user_file_exists = FALSE;
 
 	GList *node;
 	gint   i;
@@ -672,109 +706,61 @@ get_data_file_path (gchar **path_out, const gchar *filename, gboolean user_only)
 
 	path = (gchar *) g_getenv ("XDG_DATA_HOME");
 
-	if (path && g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		dir = g_build_filename (path, TOP_CONFIG_DIR, NULL);
-		user_dirs = g_list_append (user_dirs, dir);
-	}
+	if (path)
+		dirs = g_list_append (dirs, g_build_filename (path, TOP_CONFIG_DIR, NULL));
 
-	path = g_build_filename (g_get_home_dir (), DEFAULT_USER_XDG_DIR, NULL);
+	dirs = g_list_append (dirs, g_build_filename (
+		g_get_home_dir (), DEFAULT_USER_XDG_DIR, TOP_CONFIG_DIR, NULL));
 
-	if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		dir = g_build_filename (path, TOP_CONFIG_DIR, NULL);
-		user_dirs = g_list_append (user_dirs, dir);
+	if (! writeable) {
+		global_dirs = g_strsplit (g_getenv ("XDG_DATA_DIRS"), ":", 0);
 
-		g_free (path);
-	}
-
-	if (! user_only) {
-		dirs = g_strsplit (g_getenv ("XDG_DATA_DIRS"), ":", 0);
-
-		if (! dirs [0]) {
-			g_strfreev (dirs);
-			dirs = g_strsplit (DEFAULT_GLOBAL_XDG_PATH, ":", 0);
+		if (! (global_dirs && global_dirs [0])) {
+			g_strfreev (global_dirs);
+			global_dirs = g_strsplit (DEFAULT_GLOBAL_XDG_PATH, ":", 0);
 		}
 
-		for (i = 0; dirs [i]; ++i) {
-			if (g_file_test (dirs [i], G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-				path = g_build_filename (dirs [i], TOP_CONFIG_DIR, NULL);
-				global_dirs = g_list_append (global_dirs, path);
-			}
+		for (i = 0; global_dirs [i]; ++i) {
+			path = g_build_filename (
+				global_dirs [i], TOP_CONFIG_DIR, NULL);
+			dirs = g_list_append (dirs, path);
 		}
 
-		g_strfreev (dirs);
+		g_strfreev (global_dirs);
 	}
 
-	path = NULL;
-
-	for (node = user_dirs; ! path && node; node = node->next) {
+	for (node = dirs, path = NULL; ! path && node; node = node->next) {
 		dir = (gchar *) node->data;
 
-		if (filename) {
-			path = g_build_filename (dir, filename, NULL);
+		path = g_build_filename (dir, filename, NULL);
 
-			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-				g_free (path);
-				path = NULL;
-			}
-			else
-				user_file_exists = TRUE;
+		if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
+			g_free (path);
+			path = NULL;
 		}
-		else
-			if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-				path = g_strdup (dir);
 	}
 
-	for (node = global_dirs; ! path && node; node = node->next) {
-		dir = (gchar *) node->data;
-
-		if (filename) {
-			path = g_build_filename (dir, filename, NULL);
-
-			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-				g_free (path);
-				path = NULL;
-			}
-		}
-		else
-			if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-				path = g_strdup (dir);
-	}
-
-	if (! path) {
-		dir = NULL;
-
-		need_mkdir = TRUE;
-
-		for (node = user_dirs; need_mkdir && node; node = node->next) {
+	if (! path && writeable) {
+		for (node = dirs, dir = NULL; ! dir && node; node = node->next) {
 			dir = (gchar *) node->data;
 
-			if (g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-				need_mkdir = FALSE;
+			if (! g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+				dir = NULL;
 		}
 
-		if (need_mkdir) {
-			dir = (gchar *) user_dirs->data;
-
+		if (! dir) {
+			dir = (gchar *) dirs->data;
 			g_mkdir_with_parents (dir, 0700);
 		}
 
-		if (filename)
-			path = g_build_filename (dir, filename, NULL);
-		else
-			path = g_strdup (dir);
+		path = g_build_filename (dir, filename, NULL);
 	}
 
-	for (node = user_dirs; node; node = node->next)
+	for (node = dirs; node; node = node->next)
 		g_free (node->data);
-	g_list_free (user_dirs);
+	g_list_free (dirs);
 
-	for (node = global_dirs; node; node = node->next)
-		g_free (node->data);
-	g_list_free (global_dirs);
-
-	*path_out = path;
-
-	return user_file_exists;
+	return path;
 }
 
 static GnomeVFSMonitorHandle *
@@ -785,8 +771,8 @@ add_store_file_monitor (const gchar *filename, GnomeVFSMonitorCallback callback,
 	gchar                 *uri;
 
 
-	get_data_file_path (& path, filename, FALSE);
-	uri = g_filename_to_uri (path, NULL, NULL);
+	path = get_data_file_path (filename, FALSE);
+	uri  = g_filename_to_uri (path, NULL, NULL);
 
 	gnome_vfs_monitor_add (& handle, uri, GNOME_VFS_MONITOR_FILE, callback, user_data);
 

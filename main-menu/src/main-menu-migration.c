@@ -64,11 +64,7 @@ migrate_system_gconf_to_bookmark_file ()
 	GList *gconf_system_list;
 	gint   system_tile_type;
 
-#ifdef USE_G_BOOKMARK
-	GBookmarkFile *bm_file;
-#else
-	EggBookmarkFile *bm_file;
-#endif
+	LibSlabBookmarkFile *bm_file;
 
 	gchar *path;
 
@@ -81,6 +77,8 @@ migrate_system_gconf_to_bookmark_file ()
 	gchar *exec_string;
 	gchar *cmd_string;
 	gchar *arg_string;
+
+	const gchar *name;
 
 	gchar *data_dir;
 
@@ -102,11 +100,7 @@ migrate_system_gconf_to_bookmark_file ()
 	if (! gconf_system_list)
 		goto exit;
 
-#ifdef USE_G_BOOKMARK
-	bm_file = g_bookmark_file_new ();
-#else
-	bm_file = egg_bookmark_file_new ();
-#endif
+	bm_file = libslab_bookmark_file_new ();
 
 	get_main_menu_user_data_file_path (& data_dir, NULL, TRUE);
 
@@ -201,19 +195,22 @@ migrate_system_gconf_to_bookmark_file ()
 			uri = NULL;
 
 		if (uri) {
-#ifdef USE_G_BOOKMARK
-			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
-			g_bookmark_file_add_application (
+			libslab_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			libslab_bookmark_file_add_application (
 				bm_file, uri,
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
 				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
-#else
-			egg_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
-			egg_bookmark_file_add_application (
-				bm_file, uri,
-				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
-				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
-#endif
+
+			name = gnome_desktop_item_get_string (ditem, GNOME_DESKTOP_ITEM_NAME);
+
+			if (! strcmp (name, "Yelp"))
+				libslab_bookmark_file_set_title (bm_file, uri, _("Help"));
+
+			if (! strcmp (name, "Session Logout Dialog"))
+				libslab_bookmark_file_set_title (bm_file, uri, _("Logout"));
+
+			if (! strcmp (name, "System Shutdown Dialog"))
+				libslab_bookmark_file_set_title (bm_file, uri, _("Shutdown"));
 		}
 
 		g_free (uri);
@@ -223,11 +220,7 @@ migrate_system_gconf_to_bookmark_file ()
 			gnome_desktop_item_unref (ditem);
 	}
 
-#ifdef USE_G_BOOKMARK
-	g_bookmark_file_to_file (bm_file, bookmark_path, & error);
-#else
-	egg_bookmark_file_to_file (bm_file, bookmark_path, & error);
-#endif
+	libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
 
 	if (error)
 		libslab_handle_g_error (
@@ -235,11 +228,7 @@ migrate_system_gconf_to_bookmark_file ()
 			"%s: cannot save migrated system item list [%s]",
 			G_GNUC_FUNCTION, bookmark_path);
 
-#ifdef USE_G_BOOKMARK
-	g_bookmark_file_free (bm_file);
-#else
-	egg_bookmark_file_free (bm_file);
-#endif
+	libslab_bookmark_file_free (bm_file);
 
 	g_list_free (gconf_system_list);
 	g_free (data_dir);

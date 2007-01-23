@@ -18,6 +18,288 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "main-menu-ui.h"
+
+#include <glade/glade.h>
+#include <cairo.h>
+
+#include "double-click-detector.h"
+#include "tile-table.h"
+#include "apps-agent.h"
+
+#define GLADE_FILE_PATH "/home/jimmyk/glade/projects/slab-window/slab-window.glade"
+
+G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
+
+typedef struct {
+	GtkWidget *panel_button;
+	GtkWidget *slab_window;
+
+	GtkWidget *top_pane;
+	GtkWidget *left_pane;
+
+	AppsAgent *apps_agent;
+
+	GtkContainer *sys_table_ctnr;
+	TileTable    *sys_table;
+} MainMenuUIPrivate;
+
+#define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
+
+static void main_menu_ui_finalize (GObject *);
+
+static void     panel_button_clicked_cb (GtkButton *, gpointer);
+static gboolean slab_window_expose_cb   (GtkWidget *, GdkEventExpose *, gpointer);
+
+MainMenuUI *
+main_menu_ui_new (PanelApplet *applet)
+{
+	MainMenuUI        *this;
+	MainMenuUIPrivate *priv;
+
+	GladeXML *main_menu_xml;
+	GladeXML *panel_button_xml;
+
+
+	this = g_object_new (MAIN_MENU_UI_TYPE, NULL);
+	priv = PRIVATE (this);
+
+	main_menu_xml    = glade_xml_new (GLADE_FILE_PATH, "slab-main-menu-window", NULL);
+	panel_button_xml = glade_xml_new (GLADE_FILE_PATH, "slab-panel-button-root", NULL);
+
+	priv->panel_button = glade_xml_get_widget (
+		panel_button_xml, "slab-main-menu-panel-button");
+	g_object_set_data (
+		G_OBJECT (priv->panel_button),
+		"double-click-detector",
+		double_click_detector_new ());
+
+	priv->slab_window = glade_xml_get_widget (main_menu_xml, "slab-main-menu-window");
+	gtk_widget_set_app_paintable (priv->slab_window, TRUE);
+	gtk_widget_hide (priv->slab_window);
+
+	priv->top_pane  = glade_xml_get_widget (main_menu_xml, "top-pane");
+	priv->left_pane = glade_xml_get_widget (main_menu_xml, "left-pane");
+
+	priv->sys_table_ctnr = GTK_CONTAINER (
+		glade_xml_get_widget (main_menu_xml, "system-table-container"));
+
+	priv->sys_table = TILE_TABLE (tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL));
+
+	gtk_container_add (priv->sys_table_ctnr, GTK_WIDGET (priv->sys_table));
+
+	priv->apps_agent = apps_agent_new (priv->sys_table, NULL, NULL);
+
+	g_signal_connect (
+		G_OBJECT (priv->panel_button), "clicked",
+		G_CALLBACK (panel_button_clicked_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "expose-event",
+		G_CALLBACK (slab_window_expose_cb), this);
+
+	return this;
+}
+
+GtkWidget *
+main_menu_ui_get_panel_button (MainMenuUI *this)
+{
+	return PRIVATE (this)->panel_button;
+}
+
+static void
+main_menu_ui_class_init (MainMenuUIClass *this_class)
+{
+	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
+
+	g_obj_class->finalize = main_menu_ui_finalize;
+
+	g_type_class_add_private (this_class, sizeof (MainMenuUIPrivate));
+}
+
+static void
+main_menu_ui_init (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->panel_button = NULL;
+	priv->slab_window  = NULL;
+
+	priv->top_pane  = NULL;
+	priv->left_pane = NULL;
+
+	priv->sys_table_ctnr = NULL;
+}
+
+static void
+main_menu_ui_finalize (GObject *g_obj)
+{
+	MainMenuUIPrivate *priv = PRIVATE (g_obj);
+
+	g_object_unref (G_OBJECT (g_object_get_data (
+			G_OBJECT (priv->panel_button), "double-click-detector")));
+
+	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
+}
+
+static void
+panel_button_clicked_cb (GtkButton *button, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
+
+	DoubleClickDetector *detector;
+	GTimeVal current_time;
+	guint32 current_time_millis;
+
+
+	detector = DOUBLE_CLICK_DETECTOR (
+		g_object_get_data (G_OBJECT (toggle), "double-click-detector"));
+
+	g_get_current_time (& current_time);
+
+	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
+
+	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
+		if (GTK_WIDGET_VISIBLE (priv->slab_window))
+			gtk_widget_hide (priv->slab_window);
+		else
+			gtk_window_present_with_time (
+				GTK_WINDOW (priv->slab_window), current_time_millis);
+	}
+
+	gtk_toggle_button_set_active (toggle, GTK_WIDGET_VISIBLE (priv->slab_window));
+}
+
+static gboolean
+slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	cairo_t         *cr;
+	cairo_pattern_t *gradient;
+
+
+	cr = gdk_cairo_create (widget->window);
+
+	cairo_rectangle (
+		cr,
+		event->area.x, event->area.y,
+		event->area.width, event->area.height);
+
+	cairo_clip (cr);
+
+/* draw window background */
+
+	cairo_rectangle (
+		cr, 
+		widget->allocation.x + 0.5, widget->allocation.y + 0.5,
+		widget->allocation.width - 1, widget->allocation.height - 1);
+
+	cairo_set_source_rgb (
+		cr,
+		widget->style->bg [GTK_STATE_ACTIVE].red   / 65535.0,
+		widget->style->bg [GTK_STATE_ACTIVE].green / 65535.0,
+		widget->style->bg [GTK_STATE_ACTIVE].blue  / 65535.0);
+
+	cairo_fill_preserve (cr);
+
+/* draw window outline */
+
+	cairo_set_source_rgb (
+		cr,
+		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
+
+	cairo_set_line_width (cr, 1.0);
+	cairo_stroke (cr);
+
+/* draw left pane background */
+
+	cairo_rectangle (
+		cr,
+		priv->left_pane->allocation.x + 0.5, priv->left_pane->allocation.y + 0.5,
+		priv->left_pane->allocation.width - 1, priv->left_pane->allocation.height - 1);
+
+	cairo_set_source_rgb (
+		cr,
+		widget->style->bg [GTK_STATE_PRELIGHT].red   / 65535.0,
+		widget->style->bg [GTK_STATE_PRELIGHT].green / 65535.0,
+		widget->style->bg [GTK_STATE_PRELIGHT].blue  / 65535.0);
+
+	cairo_fill_preserve (cr);
+
+/* draw left pane outline */
+
+	cairo_set_source_rgb (
+		cr,
+		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
+
+	cairo_stroke (cr);
+
+/* draw top pane separator */
+
+	cairo_move_to (
+		cr,
+		priv->top_pane->allocation.x + 0.5,
+		priv->top_pane->allocation.y + priv->top_pane->allocation.height - 0.5);
+
+	cairo_line_to (
+		cr,
+		priv->top_pane->allocation.x + priv->top_pane->allocation.width - 0.5,
+		priv->top_pane->allocation.y + priv->top_pane->allocation.height - 0.5);
+
+	cairo_set_source_rgb (
+		cr,
+		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
+
+	cairo_stroke (cr);
+
+/* draw top pane gradient */
+
+	cairo_rectangle (
+		cr,
+		priv->top_pane->allocation.x + 0.5, priv->top_pane->allocation.y + 0.5,
+		priv->top_pane->allocation.width - 1, priv->top_pane->allocation.height - 1);
+
+	gradient = cairo_pattern_create_linear (
+		priv->top_pane->allocation.x,
+		priv->top_pane->allocation.y,
+		priv->top_pane->allocation.x,
+		priv->top_pane->allocation.y + priv->top_pane->allocation.height);
+	cairo_pattern_add_color_stop_rgba (
+		gradient, 0,
+		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
+		0.0);
+	cairo_pattern_add_color_stop_rgba (
+		gradient, 1,
+		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
+		0.2);
+
+	cairo_set_source (cr, gradient);
+	cairo_fill_preserve (cr);
+
+	cairo_destroy (cr);
+
+	return FALSE;
+}
+
+
+
+
+#define HIDE 0
+#if HIDE
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -1845,3 +2127,5 @@ bind_search_key (void)
 
 	xmlFreeDoc (doc);
 }
+
+#endif

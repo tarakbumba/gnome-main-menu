@@ -47,7 +47,7 @@ typedef struct {
 
 GType system_tile_get_type (void);
 
-GtkWidget *system_tile_new (const gchar *desktop_item_id);
+GtkWidget *system_tile_new (const gchar *desktop_item_id, const gchar *title);
 
 G_END_DECLS
 #endif

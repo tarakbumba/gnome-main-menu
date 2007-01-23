@@ -6,6 +6,48 @@
 #include <libgnome/gnome-desktop-item.h>
 #include <libgnomevfs/gnome-vfs.h>
 
+#if GLIB_CHECK_VERSION (2, 12, 0)
+#	define USE_G_BOOKMARK
+
+#	define LibSlabBookmarkFile                    GBookmarkFile
+
+#	define libslab_bookmark_file_new              g_bookmark_file_new
+#	define libslab_bookmark_file_free             g_bookmark_file_free
+
+#	define libslab_bookmark_file_load_from_file   g_bookmark_file_load_from_file
+#	define libslab_bookmark_file_to_file          g_bookmark_file_to_file
+
+#	define libslab_bookmark_file_has_item         g_bookmark_file_has_item
+#	define libslab_bookmark_file_get_uris         g_bookmark_file_get_uris
+#	define libslab_bookmark_file_get_title        g_bookmark_file_get_title
+#	define libslab_bookmark_file_set_title        g_bookmark_file_set_title
+#	define libslab_bookmark_file_get_mime_type    g_bookmark_file_get_mime_type
+#	define libslab_bookmark_file_set_mime_type    g_bookmark_file_set_mime_type
+#	define libslab_bookmark_file_get_applications g_bookmark_file_get_applications
+#	define libslab_bookmark_file_add_application  g_bookmark_file_add_application
+#	define libslab_bookmark_file_get_app_info     g_bookmark_file_get_app_info
+#else
+#	include "eggbookmarkfile.h"
+
+#	define LibSlabBookmarkFile                    EggBookmarkFile
+
+#	define libslab_bookmark_file_new              egg_bookmark_file_new
+#	define libslab_bookmark_file_free             egg_bookmark_file_free
+
+#	define libslab_bookmark_file_load_from_file   egg_bookmark_file_load_from_file
+#	define libslab_bookmark_file_to_file          egg_bookmark_file_to_file
+
+#	define libslab_bookmark_file_has_item         egg_bookmark_file_has_item
+#	define libslab_bookmark_file_get_uris         egg_bookmark_file_get_uris
+#	define libslab_bookmark_file_get_title        egg_bookmark_file_get_title
+#	define libslab_bookmark_file_set_title        egg_bookmark_file_set_title
+#	define libslab_bookmark_file_get_mime_type    egg_bookmark_file_get_mime_type
+#	define libslab_bookmark_file_set_mime_type    egg_bookmark_file_set_mime_type
+#	define libslab_bookmark_file_add_application  egg_bookmark_file_add_application
+#	define libslab_bookmark_file_get_applications egg_bookmark_file_get_applications
+#	define libslab_bookmark_file_get_app_info     egg_bookmark_file_get_app_info
+#endif
+
 G_BEGIN_DECLS
 
 gboolean          libslab_gtk_image_set_by_id (GtkImage *image, const gchar *id);
@@ -15,6 +57,7 @@ gchar            *libslab_gnome_desktop_item_get_docpath (GnomeDesktopItem *item
 gboolean          libslab_gnome_desktop_item_open_help (GnomeDesktopItem *item);
 guint32           libslab_get_current_time_millis (void);
 gint              libslab_strcmp (const gchar *a, const gchar *b);
+gint              libslab_strlen (const gchar *a);
 gpointer          libslab_get_gconf_value (const gchar *key);
 void              libslab_set_gconf_value (const gchar *key, gconstpointer data);
 void              libslab_handle_g_error (GError **error, const gchar *msg_format, ...);
@@ -22,6 +65,8 @@ void              libslab_handle_g_error (GError **error, const gchar *msg_forma
 GList *libslab_get_system_item_uris (void);
 GList *libslab_get_user_app_uris    (void);
 GList *libslab_get_user_doc_uris    (void);
+
+gchar *libslab_get_system_item_store_path (gboolean writeable);
 
 void libslab_save_system_item_uris (const GList *);
 void libslab_save_app_uris         (const GList *);

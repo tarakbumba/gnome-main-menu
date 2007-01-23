@@ -57,12 +57,14 @@ static void tile_table_finalize     (GObject *);
 
 static void tile_table_update (TileTable *, TileTableUpdateEvent *);
 
-static void load_tiles      (TileTable *, GList *);
-static void set_limit       (TileTable *, gint);
-static void update_bins     (TileTable *);
-static void insert_into_bin (TileTable *, Tile *, gint);
-static void empty_bin       (TileTable *, gint);
-static void resize_table    (TileTable *, guint, guint); 
+static void load_tiles         (TileTable *, GList *);
+static void set_limit          (TileTable *, gint);
+static void update_bins        (TileTable *);
+static void insert_into_bin    (TileTable *, Tile *, gint);
+static void empty_bin          (TileTable *, gint);
+static void resize_table       (TileTable *, guint, guint); 
+static void emit_update_signal (TileTable *, GList *, GList *, guint32);
+
 static void tile_drag_data_rcv_cb (
 	GtkWidget *, GdkDragContext *, gint, gint, GtkSelectionData *, guint, guint, gpointer);
 
@@ -406,6 +408,45 @@ resize_table (TileTable *this, guint n_rows_new, guint n_cols_new)
 }
 
 static void
+emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint32 time)
+{
+	TileTableUpdateEvent *update_event;
+
+	gboolean equal = FALSE;
+
+	GList *node_u;
+	GList *node_v;
+
+
+	if (g_list_length (tiles_prev) == g_list_length (tiles_curr)) {
+		node_u = tiles_prev;
+		node_v = tiles_curr;
+		equal  = TRUE;
+
+		while (equal && node_u && node_v) {
+			if (tile_compare (node_u->data, node_v->data))
+                		equal = FALSE;
+
+			node_u = node_u->next;
+			node_v = node_v->next;
+		}
+	}
+
+	if (! equal) {
+		update_event = g_new0 (TileTableUpdateEvent, 1);
+		update_event->time       = time;
+		update_event->tiles_prev = tiles_prev;
+		update_event->tiles_curr = tiles_curr;
+
+		g_signal_emit (this, tile_table_signals [UPDATE_SIGNAL], 0, update_event);
+	}
+	else {
+		g_list_free (tiles_prev);
+		g_list_free (tiles_curr);
+	}
+}
+
+static void
 tile_drag_data_rcv_cb (
 	GtkWidget *dst_widget, GdkDragContext *drag_context, gint x, gint y,
 	GtkSelectionData *selection, guint info, guint time, gpointer user_data)
@@ -426,7 +467,6 @@ tile_drag_data_rcv_cb (
 	gint src_index;
 	gint dst_index;
 
-	TileTableUpdateEvent *update_event;
 	TileTableURIAddedEvent *uri_event;
 
 	gboolean new_uri;
@@ -492,12 +532,7 @@ tile_drag_data_rcv_cb (
 		tiles_curr = g_list_insert_before (tiles_curr, dst_node, src_node->data);
 	}
 
-	update_event = g_new0 (TileTableUpdateEvent, 1);
-	update_event->time = (guint32) time;
-	update_event->tiles_prev = tiles_prev;
-	update_event->tiles_curr = tiles_curr;
-
-	g_signal_emit (this, tile_table_signals [UPDATE_SIGNAL], 0, update_event);
+	emit_update_signal (this, tiles_prev, tiles_curr, (guint32) time);
 
 exit:
 

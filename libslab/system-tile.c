@@ -50,7 +50,7 @@ typedef struct {
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), SYSTEM_TILE_TYPE, SystemTilePrivate))
 
 GtkWidget *
-system_tile_new (const gchar *desktop_item_id)
+system_tile_new (const gchar *desktop_item_id, const gchar *title)
 {
 	SystemTile        *this;
 	SystemTilePrivate *priv;
@@ -77,22 +77,18 @@ system_tile_new (const gchar *desktop_item_id)
 	desktop_item = libslab_gnome_desktop_item_new_from_unknown_id (desktop_item_id);
 
 	if (desktop_item) {
-		image_id   = g_strdup (gnome_desktop_item_get_localestring (desktop_item, "Icon"));
-		uri        = g_strdup (gnome_desktop_item_get_location (desktop_item));
-		header_txt = g_strdup (gnome_desktop_item_get_localestring (desktop_item, "Name"));
+		image_id = g_strdup (gnome_desktop_item_get_localestring (desktop_item, "Icon"));
+		uri      = g_strdup (gnome_desktop_item_get_location (desktop_item));
+
+		if (title)
+			header_txt = g_strdup (title);
+		else
+			header_txt = g_strdup (
+				gnome_desktop_item_get_localestring (desktop_item, "Name"));
 	}
 
 	if (! uri)
 		return NULL;
-
-	if (! strcmp (header_txt, "Yelp"))
-		header_txt = g_strdup ("Help");
-
-	if (! strcmp (header_txt, "Session Logout Dialog"))
-		header_txt = g_strdup ("Logout");
-
-	if (! strcmp (header_txt, "System Shutdown Dialog"))
-		header_txt = g_strdup ("Shutdown");
 
 	header = create_header (header_txt);
 

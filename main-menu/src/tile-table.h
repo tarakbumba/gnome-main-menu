@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 #define TILE_TABLE_LIMIT_PROP "item-limit"
 
 typedef struct {
-	GtkTable parent;
+	GtkTable gtk_table;
 } TileTable;
 
 typedef struct {
@@ -56,7 +56,7 @@ typedef struct {
 } TileTableURIAddedEvent;
 
 typedef struct {
-	GtkTableClass parent_class;
+	GtkTableClass gtk_table_class;
 
 	void (* update)    (TileTable *, TileTableUpdateEvent *);
 	void (* uri_added) (TileTable *, TileTableURIAddedEvent *);
