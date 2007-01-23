@@ -69,7 +69,9 @@ GList *libslab_get_user_app_uris    (void);
 GList *libslab_get_user_doc_uris    (void);
 
 gchar *libslab_get_system_item_store_path (gboolean writeable);
-void   libslab_remove_system_item         (const gchar *uri);
+gchar *libslab_get_user_apps_store_path   (gboolean writeable);
+
+void libslab_remove_system_item (const gchar *uri);
 
 void libslab_save_system_item_uris (const GList *);
 void libslab_save_app_uris         (const GList *);

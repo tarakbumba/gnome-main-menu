@@ -636,6 +636,12 @@ libslab_get_system_item_store_path (gboolean writeable)
 	return get_data_file_path (SYSTEM_BOOKMARK_FILENAME, writeable);
 }
 
+gchar *
+libslab_get_user_apps_store_path (gboolean writeable)
+{
+	return get_data_file_path (APPS_BOOKMARK_FILENAME, writeable);
+}
+
 void
 libslab_remove_system_item (const gchar *uri)
 {

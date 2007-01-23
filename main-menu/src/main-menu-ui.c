@@ -36,6 +36,9 @@
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
 typedef struct {
+	GladeXML *main_menu_xml;
+	GladeXML *panel_button_xml;
+
 	GtkWidget *panel_button;
 	GtkWidget *slab_window;
 
@@ -44,13 +47,18 @@ typedef struct {
 
 	AppsAgent *apps_agent;
 
-	GtkContainer *sys_table_ctnr;
-	TileTable    *sys_table;
+	TileTable *sys_table;
+	TileTable *user_apps_table;
 } MainMenuUIPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
 
 static void main_menu_ui_finalize (GObject *);
+
+static void create_panel_button      (MainMenuUI *);
+static void create_slab_window       (MainMenuUI *);
+static void create_system_section    (MainMenuUI *);
+static void create_user_apps_section (MainMenuUI *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
@@ -63,50 +71,19 @@ main_menu_ui_new (PanelApplet *applet)
 	MainMenuUI        *this;
 	MainMenuUIPrivate *priv;
 
-	GladeXML *main_menu_xml;
-	GladeXML *panel_button_xml;
-
 
 	this = g_object_new (MAIN_MENU_UI_TYPE, NULL);
 	priv = PRIVATE (this);
 
-	main_menu_xml    = glade_xml_new (GLADE_FILE_PATH, "slab-main-menu-window", NULL);
-	panel_button_xml = glade_xml_new (GLADE_FILE_PATH, "slab-panel-button-root", NULL);
+	priv->main_menu_xml    = glade_xml_new (GLADE_FILE_PATH, "slab-main-menu-window", NULL);
+	priv->panel_button_xml = glade_xml_new (GLADE_FILE_PATH, "slab-panel-button-root", NULL);
 
-	priv->panel_button = glade_xml_get_widget (
-		panel_button_xml, "slab-main-menu-panel-button");
-	g_object_set_data (
-		G_OBJECT (priv->panel_button),
-		"double-click-detector",
-		double_click_detector_new ());
+	create_panel_button      (this);
+	create_slab_window       (this);
+	create_system_section    (this);
+	create_user_apps_section (this);
 
-	priv->slab_window = glade_xml_get_widget (main_menu_xml, "slab-main-menu-window");
-	gtk_widget_set_app_paintable (priv->slab_window, TRUE);
-	gtk_widget_hide (priv->slab_window);
-
-	priv->top_pane  = glade_xml_get_widget (main_menu_xml, "top-pane");
-	priv->left_pane = glade_xml_get_widget (main_menu_xml, "left-pane");
-
-	priv->sys_table_ctnr = GTK_CONTAINER (
-		glade_xml_get_widget (main_menu_xml, "system-table-container"));
-
-	priv->sys_table = TILE_TABLE (tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL));
-
-	gtk_container_add (priv->sys_table_ctnr, GTK_WIDGET (priv->sys_table));
-
-	g_signal_connect (
-		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this);
-
-	priv->apps_agent = apps_agent_new (priv->sys_table, NULL, NULL);
-
-	g_signal_connect (
-		G_OBJECT (priv->panel_button), "clicked",
-		G_CALLBACK (panel_button_clicked_cb), this);
-
-	g_signal_connect (
-		G_OBJECT (priv->slab_window), "expose-event",
-		G_CALLBACK (slab_window_expose_cb), this);
+	priv->apps_agent = apps_agent_new (priv->sys_table, priv->user_apps_table, NULL);
 
 	return this;
 }
@@ -138,7 +115,10 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->top_pane  = NULL;
 	priv->left_pane = NULL;
 
-	priv->sys_table_ctnr = NULL;
+	priv->apps_agent = NULL;
+
+	priv->sys_table       = NULL;
+	priv->user_apps_table = NULL;
 }
 
 static void
@@ -148,8 +128,84 @@ main_menu_ui_finalize (GObject *g_obj)
 
 	g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->panel_button), "double-click-detector")));
+	g_object_unref (priv->apps_agent);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
+}
+
+static void
+create_panel_button (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->panel_button = glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button");
+	g_object_set_data (
+		G_OBJECT (priv->panel_button),
+		"double-click-detector",
+		double_click_detector_new ());
+
+	g_signal_connect (
+		G_OBJECT (priv->panel_button), "clicked",
+		G_CALLBACK (panel_button_clicked_cb), this);
+}
+
+static void
+create_slab_window (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->slab_window = glade_xml_get_widget (
+		priv->main_menu_xml, "slab-main-menu-window");
+	gtk_widget_set_app_paintable (priv->slab_window, TRUE);
+	gtk_widget_hide (priv->slab_window);
+
+	priv->top_pane  = glade_xml_get_widget (priv->main_menu_xml, "top-pane");
+	priv->left_pane = glade_xml_get_widget (priv->main_menu_xml, "left-pane");
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "expose-event",
+		G_CALLBACK (slab_window_expose_cb), this);
+}
+
+static void
+create_system_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "system-item-table-container"));
+
+	priv->sys_table = TILE_TABLE (tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL));
+
+	gtk_container_add (ctnr, GTK_WIDGET (priv->sys_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this);
+}
+
+static void
+create_user_apps_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "user-apps-table-container"));
+
+	priv->user_apps_table = TILE_TABLE (tile_table_new (2, TILE_TABLE_REORDERING_PUSH_PULL));
+
+	gtk_container_add (ctnr, GTK_WIDGET (priv->user_apps_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->user_apps_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this);
 }
 
 static void
