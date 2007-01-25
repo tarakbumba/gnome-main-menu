@@ -78,8 +78,9 @@ static void create_user_docs_section (MainMenuUI *);
 static void create_rct_docs_section  (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 
-static void select_page   (MainMenuUI *, gint);
-static void update_limits (MainMenuUI *);
+static void select_page              (MainMenuUI *, gint);
+static void update_limits            (MainMenuUI *);
+static void connect_to_tile_triggers (MainMenuUI *, TileTable *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
@@ -238,6 +239,8 @@ create_system_section (MainMenuUI *this)
 
 	priv->sys_table = TILE_TABLE (system_tile_table_new ());
 
+	connect_to_tile_triggers (this, priv->sys_table);
+
 	gtk_container_add (ctnr, GTK_WIDGET (priv->sys_table));
 
 	g_signal_connect (
@@ -257,6 +260,8 @@ create_user_apps_section (MainMenuUI *this)
 		priv->main_menu_xml, "user-apps-table-container"));
 
 	priv->usr_apps_table = TILE_TABLE (user_apps_tile_table_new ());
+
+	connect_to_tile_triggers (this, priv->usr_apps_table);
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_apps_table));
 
@@ -282,6 +287,8 @@ create_rct_apps_section (MainMenuUI *this)
 
 	priv->rct_apps_table = TILE_TABLE (recent_apps_tile_table_new ());
 
+	connect_to_tile_triggers (this, priv->rct_apps_table);
+
 	gtk_container_add (ctnr, GTK_WIDGET (priv->rct_apps_table));
 
 	g_signal_connect (
@@ -301,6 +308,8 @@ create_user_docs_section (MainMenuUI *this)
 		priv->main_menu_xml, "user-docs-table-container"));
 
 	priv->usr_docs_table = TILE_TABLE (user_docs_tile_table_new ());
+
+	connect_to_tile_triggers (this, priv->usr_docs_table);
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_docs_table));
 
@@ -325,6 +334,8 @@ create_rct_docs_section (MainMenuUI *this)
 		priv->main_menu_xml, "recent-docs-table-container"));
 
 	priv->rct_docs_table = TILE_TABLE (recent_docs_tile_table_new ());
+
+	connect_to_tile_triggers (this, priv->rct_docs_table);
 
 	g_object_set (G_OBJECT (priv->rct_docs_table), TILE_TABLE_LIMIT_PROP, 6, NULL);
 
@@ -412,6 +423,29 @@ update_limits (MainMenuUI *this)
 			recent_tables [i],
 			TILE_TABLE_LIMIT_PROP, priv->max_total_items - n_user_bins [i],
 			NULL);
+}
+
+static void
+connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
+{
+	GList *tiles;
+	GList *node;
+
+	gulong handler_id;
+
+
+	g_object_get (G_OBJECT (table), TILE_TABLE_TILES_PROP, & tiles, NULL);
+
+	for (node = tiles; node; node = node->next) {
+		handler_id = g_signal_handler_find (
+			G_OBJECT (node->data), G_SIGNAL_MATCH_FUNC, 0, 0,
+			NULL, tile_action_triggered_cb, NULL);
+
+		if (! handler_id)
+			g_signal_connect (
+				G_OBJECT (node->data), "tile-action-triggered",
+				G_CALLBACK (tile_action_triggered_cb), this);
+	}
 }
 
 static void
@@ -601,26 +635,11 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 static void
 tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
-
-	GList *tiles;
-	GList *node;
-
-	gulong handler_id;
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 
-	g_object_get (g_obj, TILE_TABLE_TILES_PROP, & tiles, NULL);
-
-	for (node = tiles; node; node = node->next) {
-		handler_id = g_signal_handler_find (
-			G_OBJECT (node->data), G_SIGNAL_MATCH_FUNC, 0, 0,
-			NULL, tile_action_triggered_cb, NULL);
-
-		if (! handler_id)
-			g_signal_connect (
-				G_OBJECT (node->data), "tile-action-triggered",
-				G_CALLBACK (tile_action_triggered_cb), user_data);
-	}
+	connect_to_tile_triggers (MAIN_MENU_UI (user_data), TILE_TABLE (g_obj));
 
 	if (TILE_TABLE (g_obj) == priv->usr_apps_table)
 		tile_table_reload (priv->rct_apps_table);
