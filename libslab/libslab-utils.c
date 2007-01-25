@@ -613,6 +613,12 @@ libslab_get_user_apps_store_path (gboolean writeable)
 	return get_data_file_path (APPS_BOOKMARK_FILENAME, writeable);
 }
 
+gchar *
+libslab_get_user_docs_store_path (gboolean writeable)
+{
+	return get_data_file_path (DOCS_BOOKMARK_FILENAME, writeable);
+}
+
 void
 libslab_remove_system_item (const gchar *uri)
 {
@@ -679,6 +685,22 @@ libslab_user_apps_store_has_uri (const gchar *uri)
 
 
 	path = libslab_get_user_apps_store_path (FALSE);
+
+	exists = store_has_uri (path, uri);
+
+	g_free (path);
+
+	return exists;
+}
+
+gboolean
+libslab_user_docs_store_has_uri (const gchar *uri)
+{
+	gchar *path;
+	gboolean exists;
+
+
+	path = libslab_get_user_docs_store_path (FALSE);
 
 	exists = store_has_uri (path, uri);
 

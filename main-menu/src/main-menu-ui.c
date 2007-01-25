@@ -27,6 +27,7 @@
 #include "tile.h"
 #include "user-apps-tile-table.h"
 #include "recent-apps-tile-table.h"
+#include "user-docs-tile-table.h"
 #include "recent-docs-tile-table.h"
 #include "system-tile-table.h"
 #include "libslab-utils.h"
@@ -58,7 +59,10 @@ typedef struct {
 	TileTable *sys_table;
 	TileTable *usr_apps_table;
 	TileTable *rct_apps_table;
+	TileTable *usr_docs_table;
 	TileTable *rct_docs_table;
+
+	gint max_total_items;
 } MainMenuUIPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
@@ -70,18 +74,18 @@ static void create_slab_window       (MainMenuUI *);
 static void create_file_area         (MainMenuUI *);
 static void create_user_apps_section (MainMenuUI *);
 static void create_rct_apps_section  (MainMenuUI *);
+static void create_user_docs_section (MainMenuUI *);
 static void create_rct_docs_section  (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 
 static void select_page   (MainMenuUI *, gint);
-static void update_limits (TileTable *, TileTable *);
+static void update_limits (MainMenuUI *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
 static void     page_button_clicked_cb   (GtkButton *, gpointer);
 static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
-static void     apps_table_notify_cb     (GObject *, GParamSpec *, gpointer);
-static void     table_notify_cb          (GObject *, GParamSpec *, gpointer);
+static void     gtk_table_notify_cb      (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
 MainMenuUI *
@@ -102,12 +106,12 @@ main_menu_ui_new (PanelApplet *applet)
 	create_file_area         (this);
 	create_user_apps_section (this);
 	create_rct_apps_section  (this);
+	create_user_docs_section (this);
 	create_rct_docs_section  (this);
 	create_system_section    (this);
 
-	select_page (this, -1);
-
-	update_limits (priv->usr_apps_table, priv->rct_apps_table);
+	select_page   (this, -1);
+	update_limits (this);
 
 	return this;
 }
@@ -239,10 +243,6 @@ create_system_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
-
-	g_signal_connect (
-		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (apps_table_notify_cb), this);
 }
 
 static void
@@ -265,12 +265,8 @@ create_user_apps_section (MainMenuUI *this)
 		G_CALLBACK (tile_table_notify_cb), this);
 
 	g_signal_connect (
-		G_OBJECT (priv->usr_apps_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (apps_table_notify_cb), this);
-
-	g_signal_connect (
 		G_OBJECT (priv->usr_apps_table), "notify::n-rows",
-		G_CALLBACK (table_notify_cb), this);
+		G_CALLBACK (gtk_table_notify_cb), this);
 }
 
 static void
@@ -291,6 +287,30 @@ create_rct_apps_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->rct_apps_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+}
+
+static void
+create_user_docs_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "user-docs-table-container"));
+
+	priv->usr_docs_table = TILE_TABLE (user_docs_tile_table_new ());
+
+	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_docs_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->usr_docs_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->usr_docs_table), "notify::n-rows",
+		G_CALLBACK (gtk_table_notify_cb), this);
 }
 
 static void
@@ -343,32 +363,55 @@ select_page (MainMenuUI *this, gint page_id)
 }
 
 static void
-update_limits (TileTable *user_table, TileTable *recent_table)
+update_limits (MainMenuUI *this)
 {
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GObject *user_tables   [2];
+	GObject *recent_tables [2];
+	gint     n_user_bins   [2];
+
 	gint n_rows;
 	gint n_cols;
 
-	gint max_total_items;
+	gint max_total_items_default;
+	gint max_total_items_new;
 	gint min_recent_items;
 
-	gint limit_new;
+	gint i;
 
 
-	g_return_if_fail (user_table && recent_table);
+	user_tables [0] = G_OBJECT (priv->usr_apps_table);
+	user_tables [1] = G_OBJECT (priv->usr_docs_table);
 
-	max_total_items = GPOINTER_TO_INT (
+	recent_tables [0] = G_OBJECT (priv->rct_apps_table);
+	recent_tables [1] = G_OBJECT (priv->rct_docs_table);
+
+/* TODO: make this instant apply */
+
+	max_total_items_default = GPOINTER_TO_INT (
 		libslab_get_gconf_value (MAX_TOTAL_ITEMS_GCONF_KEY));
 	min_recent_items = GPOINTER_TO_INT (
 		libslab_get_gconf_value (MIN_RECENT_ITEMS_GCONF_KEY));
 
-	g_object_get (G_OBJECT (user_table), "n-rows", & n_rows, "n-columns", & n_cols, NULL);
+	priv->max_total_items = max_total_items_default;
 
-	limit_new = max_total_items - n_cols * n_rows;
+	for (i = 0; i < 2; ++i) {
+		g_object_get (user_tables [i], "n-rows", & n_rows, "n-columns", & n_cols, NULL);
 
-	if (limit_new < min_recent_items)
-		limit_new = min_recent_items;
+		n_user_bins [i] = n_cols * n_rows;
 
-	g_object_set (G_OBJECT (recent_table), TILE_TABLE_LIMIT_PROP, limit_new, NULL);
+		max_total_items_new = n_user_bins [i] + min_recent_items;
+
+		if (priv->max_total_items < max_total_items_new)
+			priv->max_total_items = max_total_items_new;
+	}
+
+	for (i = 0; i < 2; ++i)
+		g_object_set (
+			recent_tables [i],
+			TILE_TABLE_LIMIT_PROP, priv->max_total_items - n_user_bins [i],
+			NULL);
 }
 
 static void
@@ -558,6 +601,8 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 static void
 tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
 	GList *tiles;
 	GList *node;
 
@@ -576,23 +621,19 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 				G_OBJECT (node->data), "tile-action-triggered",
 				G_CALLBACK (tile_action_triggered_cb), user_data);
 	}
-}
-
-static void
-apps_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
-{
-	tile_table_reload (PRIVATE (user_data)->rct_apps_table);
-}
-
-static void
-table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
-{
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	if (TILE_TABLE (g_obj) == priv->usr_apps_table)
-		update_limits (priv->usr_apps_table, priv->rct_apps_table);
+		tile_table_reload (priv->rct_apps_table);
+	else if (TILE_TABLE (g_obj) == priv->usr_docs_table)
+		tile_table_reload (priv->rct_docs_table);
 	else
 		/* do nothing */ ;
+}
+
+static void
+gtk_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
+{
+	update_limits (MAIN_MENU_UI (user_data));
 }
 
 static void

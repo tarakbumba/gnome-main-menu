@@ -22,6 +22,7 @@
 
 #include "recent-files.h"
 #include "document-tile.h"
+#include "libslab-utils.h"
 
 G_DEFINE_TYPE (RecentDocsTileTable, recent_docs_tile_table, TILE_TABLE_TYPE)
 
@@ -97,6 +98,8 @@ reload_tiles (TileTable *this)
 	const gchar *mime_type;
 	time_t       modified;
 
+	gboolean blacklisted = FALSE;
+
 	GList     *tiles = NULL;
 	GtkWidget *tile;
 
@@ -112,10 +115,14 @@ reload_tiles (TileTable *this)
 		mime_type = main_menu_recent_file_get_mime_type (doc);
 		modified  = main_menu_recent_file_get_modified  (doc);
 
-		tile = document_tile_new (uri, mime_type, modified);
+		blacklisted = libslab_user_docs_store_has_uri (uri);
 
-		if (tile)
-			tiles = g_list_append (tiles, tile);
+		if (! blacklisted) {
+			tile = document_tile_new (uri, mime_type, modified);
+
+			if (tile)
+				tiles = g_list_append (tiles, tile);
+		}
 
 		g_object_unref (doc);
 	}

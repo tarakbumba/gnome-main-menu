@@ -24,6 +24,8 @@
 #	define libslab_bookmark_file_set_title        g_bookmark_file_set_title
 #	define libslab_bookmark_file_get_mime_type    g_bookmark_file_get_mime_type
 #	define libslab_bookmark_file_set_mime_type    g_bookmark_file_set_mime_type
+#	define libslab_bookmark_file_get_modified     g_bookmark_file_get_modified
+#	define libslab_bookmark_file_set_modified     g_bookmark_file_set_modified
 #	define libslab_bookmark_file_get_applications g_bookmark_file_get_applications
 #	define libslab_bookmark_file_add_application  g_bookmark_file_add_application
 #	define libslab_bookmark_file_get_app_info     g_bookmark_file_get_app_info
@@ -45,6 +47,8 @@
 #	define libslab_bookmark_file_set_title        egg_bookmark_file_set_title
 #	define libslab_bookmark_file_get_mime_type    egg_bookmark_file_get_mime_type
 #	define libslab_bookmark_file_set_mime_type    egg_bookmark_file_set_mime_type
+#	define libslab_bookmark_file_get_modified     egg_bookmark_file_get_modified
+#	define libslab_bookmark_file_set_modified     egg_bookmark_file_set_modified
 #	define libslab_bookmark_file_add_application  egg_bookmark_file_add_application
 #	define libslab_bookmark_file_get_applications egg_bookmark_file_get_applications
 #	define libslab_bookmark_file_get_app_info     egg_bookmark_file_get_app_info
@@ -70,9 +74,11 @@ GList *libslab_get_user_doc_uris    (void);
 
 gchar *libslab_get_system_item_store_path (gboolean writeable);
 gchar *libslab_get_user_apps_store_path   (gboolean writeable);
+gchar *libslab_get_user_docs_store_path   (gboolean writeable);
 
 gboolean libslab_system_item_store_has_uri (const gchar *uri);
 gboolean libslab_user_apps_store_has_uri   (const gchar *uri);
+gboolean libslab_user_docs_store_has_uri   (const gchar *uri);
 
 void libslab_remove_system_item (const gchar *uri);
 
