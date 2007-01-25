@@ -33,8 +33,10 @@
 
 #define GLADE_FILE_PATH "/home/jimmyk/glade/projects/slab-window/slab-window.glade"
 
-#define CURRENT_PAGE_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/file_class"
-#define URGENT_CLOSE_GCONF_KEY "/desktop/gnome/applications/main-menu/urgent_close"
+#define CURRENT_PAGE_GCONF_KEY     "/desktop/gnome/applications/main-menu/file-area/file_class"
+#define URGENT_CLOSE_GCONF_KEY     "/desktop/gnome/applications/main-menu/urgent_close"
+#define MAX_TOTAL_ITEMS_GCONF_KEY  "/desktop/gnome/applications/main-menu/file-area/max_total_items"
+#define MIN_RECENT_ITEMS_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/min_recent_items"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -71,13 +73,15 @@ static void create_rct_apps_section  (MainMenuUI *);
 static void create_rct_docs_section  (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 
-static void select_page (MainMenuUI *, gint);
+static void select_page   (MainMenuUI *, gint);
+static void update_limits (TileTable *, TileTable *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
 static void     page_button_clicked_cb   (GtkButton *, gpointer);
 static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
 static void     apps_table_notify_cb     (GObject *, GParamSpec *, gpointer);
+static void     table_notify_cb          (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
 MainMenuUI *
@@ -102,6 +106,8 @@ main_menu_ui_new (PanelApplet *applet)
 	create_system_section    (this);
 
 	select_page (this, -1);
+
+	update_limits (priv->usr_apps_table, priv->rct_apps_table);
 
 	return this;
 }
@@ -261,6 +267,10 @@ create_user_apps_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->usr_apps_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (apps_table_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->usr_apps_table), "notify::n-rows",
+		G_CALLBACK (table_notify_cb), this);
 }
 
 static void
@@ -330,6 +340,35 @@ select_page (MainMenuUI *this, gint page_id)
 
 	for (i = 0; i < 3; ++i)
 		gtk_toggle_button_set_active (selectors [i], (i == page_id));
+}
+
+static void
+update_limits (TileTable *user_table, TileTable *recent_table)
+{
+	gint n_rows;
+	gint n_cols;
+
+	gint max_total_items;
+	gint min_recent_items;
+
+	gint limit_new;
+
+
+	g_return_if_fail (user_table && recent_table);
+
+	max_total_items = GPOINTER_TO_INT (
+		libslab_get_gconf_value (MAX_TOTAL_ITEMS_GCONF_KEY));
+	min_recent_items = GPOINTER_TO_INT (
+		libslab_get_gconf_value (MIN_RECENT_ITEMS_GCONF_KEY));
+
+	g_object_get (G_OBJECT (user_table), "n-rows", & n_rows, "n-columns", & n_cols, NULL);
+
+	limit_new = max_total_items - n_cols * n_rows;
+
+	if (limit_new < min_recent_items)
+		limit_new = min_recent_items;
+
+	g_object_set (G_OBJECT (recent_table), TILE_TABLE_LIMIT_PROP, limit_new, NULL);
 }
 
 static void
@@ -543,6 +582,17 @@ static void
 apps_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
 	tile_table_reload (PRIVATE (user_data)->rct_apps_table);
+}
+
+static void
+table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	if (TILE_TABLE (g_obj) == priv->usr_apps_table)
+		update_limits (priv->usr_apps_table, priv->rct_apps_table);
+	else
+		/* do nothing */ ;
 }
 
 static void
