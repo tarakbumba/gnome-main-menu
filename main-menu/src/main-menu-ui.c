@@ -926,9 +926,6 @@ main_menu_ui_new (PanelApplet * applet, MainMenuConf * conf, MainMenuEngine * en
 	priv->conf = conf;
 	priv->engine = engine;
 
-	migrate_system_gconf_to_bookmark_file    ();
-	migrate_user_apps_gconf_to_bookmark_file ();
-
 	build_main_menu_window (ui);
 	build_panel_button (ui);
 

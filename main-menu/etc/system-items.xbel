@@ -4,6 +4,7 @@
       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
 >
   <bookmark href="file:///opt/gnome/share/applications/yelp.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Help</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -44,6 +45,7 @@
     </info>
   </bookmark>
   <bookmark href="file:///opt/gnome/share/applications/gnome-session-logout.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Logout</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -54,6 +56,7 @@
     </info>
   </bookmark>
   <bookmark href="file:///opt/gnome/share/applications/gnome-session-shutdown.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Shutdown</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>

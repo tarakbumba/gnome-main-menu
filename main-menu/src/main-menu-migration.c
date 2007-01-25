@@ -58,6 +58,9 @@ void
 migrate_system_gconf_to_bookmark_file ()
 {
 	gchar *bookmark_path;
+	gchar *bookmark_path_cp_dest;
+
+	gchar *contents;
 
 	gboolean need_migration = TRUE;
 
@@ -97,8 +100,29 @@ migrate_system_gconf_to_bookmark_file ()
 
 	gconf_system_list = (GList *) libslab_get_gconf_value (SYSTEM_ITEM_GCONF_KEY);
 
-	if (! gconf_system_list)
+	if (! gconf_system_list) {
+		bookmark_path         = libslab_get_system_item_store_path (FALSE);
+		bookmark_path_cp_dest = libslab_get_system_item_store_path (TRUE);
+
+		g_file_get_contents (bookmark_path, & contents, NULL, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't read system item store path [%s]\n",
+				__FUNCTION__, bookmark_path);
+		else
+			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't save system item store path [%s]\n",
+				__FUNCTION__, bookmark_path_cp_dest);
+
+		g_free (contents);
+		g_free (bookmark_path_cp_dest);
+
 		goto exit;
+	}
 
 	bm_file = libslab_bookmark_file_new ();
 
@@ -242,6 +266,9 @@ void
 migrate_user_apps_gconf_to_bookmark_file ()
 {
 	gchar *bookmark_path;
+	gchar *bookmark_path_cp_dest;
+
+	gchar *contents;
 
 	gboolean need_migration;
 
@@ -269,8 +296,29 @@ migrate_user_apps_gconf_to_bookmark_file ()
 
 	user_apps_list = (GList *) libslab_get_gconf_value (USER_APPS_GCONF_KEY);
 
-	if (! user_apps_list)
+	if (! user_apps_list) {
+		bookmark_path         = libslab_get_user_apps_store_path (FALSE);
+		bookmark_path_cp_dest = libslab_get_user_apps_store_path (TRUE);
+
+		g_file_get_contents (bookmark_path, & contents, NULL, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't read user apps store path [%s]\n",
+				__FUNCTION__, bookmark_path);
+		else
+			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't save user apps store path [%s]\n",
+				__FUNCTION__, bookmark_path_cp_dest);
+
+		g_free (contents);
+		g_free (bookmark_path_cp_dest);
+
 		goto exit;
+	}
 
 #ifdef USE_G_BOOKMARK
 	bm_file = g_bookmark_file_new ();
@@ -335,6 +383,44 @@ migrate_user_apps_gconf_to_bookmark_file ()
 	g_list_free (user_apps_list);
 
 exit:
+
+	g_free (bookmark_path);
+}
+
+void
+migrate_user_docs_to_user_bookmark_file ()
+{
+	gchar *bookmark_path;
+	gchar *bookmark_path_cp_dest;
+
+	gchar *contents;
+
+	GError *error = NULL;
+
+
+	if (! get_main_menu_user_data_file_path (& bookmark_path, DOCS_BOOKMARK_FILENAME, TRUE)) {
+		g_free (bookmark_path);
+
+		bookmark_path         = libslab_get_user_docs_store_path (FALSE);
+		bookmark_path_cp_dest = libslab_get_user_docs_store_path (TRUE);
+
+		g_file_get_contents (bookmark_path, & contents, NULL, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't read user docs store path [%s]\n",
+				__FUNCTION__, bookmark_path);
+		else
+			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't save user docs store path [%s]\n",
+				__FUNCTION__, bookmark_path_cp_dest);
+
+		g_free (contents);
+		g_free (bookmark_path_cp_dest);
+	}
 
 	g_free (bookmark_path);
 }

@@ -64,7 +64,9 @@ main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data
 
 	gnome_program_init (PACKAGE, VERSION, LIBGNOMEUI_MODULE, 1, argv, NULL, NULL);
 
-	migrate_system_gconf_to_bookmark_file ();
+	migrate_system_gconf_to_bookmark_file    ();
+	migrate_user_apps_gconf_to_bookmark_file ();
+	migrate_user_docs_to_user_bookmark_file  ();
 
 	ui = main_menu_ui_new (applet);
 
