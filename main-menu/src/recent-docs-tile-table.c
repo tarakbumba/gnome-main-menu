@@ -33,7 +33,7 @@ typedef struct {
 
 static void recent_docs_tile_table_finalize (GObject *);
 
-static void load_tiles (RecentDocsTileTable *);
+static void reload_tiles (TileTable *);
 
 static void recent_monitor_changed_cb (MainMenuRecentMonitor *, gpointer);
 
@@ -53,7 +53,7 @@ recent_docs_tile_table_new ()
 		G_OBJECT (priv->recent_monitor), "changed",
 		G_CALLBACK (recent_monitor_changed_cb), this);
 
-	load_tiles (this);
+	reload_tiles (TILE_TABLE (this));
 
 	return GTK_WIDGET (this);
 }
@@ -61,7 +61,12 @@ recent_docs_tile_table_new ()
 static void
 recent_docs_tile_table_class_init (RecentDocsTileTableClass *this_class)
 {
-	G_OBJECT_CLASS (this_class)->finalize = recent_docs_tile_table_finalize;
+	GObjectClass   *g_obj_class      = G_OBJECT_CLASS   (this_class);
+	TileTableClass *tile_table_class = TILE_TABLE_CLASS (this_class);
+
+	g_obj_class->finalize = recent_docs_tile_table_finalize;
+
+	tile_table_class->reload = reload_tiles;
 
 	g_type_class_add_private (this_class, sizeof (RecentDocsTileTablePrivate));
 }
@@ -81,7 +86,7 @@ recent_docs_tile_table_finalize (GObject *g_obj)
 }
 
 static void
-load_tiles (RecentDocsTileTable *this)
+reload_tiles (TileTable *this)
 {
 	RecentDocsTileTablePrivate *priv = PRIVATE (this);
 
@@ -124,5 +129,5 @@ load_tiles (RecentDocsTileTable *this)
 static void
 recent_monitor_changed_cb (MainMenuRecentMonitor *monitor, gpointer user_data)
 {
-	load_tiles (RECENT_DOCS_TILE_TABLE (user_data));
+	reload_tiles (TILE_TABLE (user_data));
 }

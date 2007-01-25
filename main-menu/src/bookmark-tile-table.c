@@ -37,6 +37,7 @@ static void bookmark_tile_table_finalize (GObject *);
 static void bookmark_tile_table_update    (TileTable *, TileTableUpdateEvent   *);
 static void bookmark_tile_table_uri_added (TileTable *, TileTableURIAddedEvent *);
 
+static void reload_tiles   (TileTable *);
 static void update_monitor (BookmarkTileTable *);
 
 static void store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
@@ -50,6 +51,7 @@ bookmark_tile_table_class_init (BookmarkTileTableClass *this_class)
 
 	g_obj_class->finalize = bookmark_tile_table_finalize;
 
+	tile_table_class->reload    = reload_tiles;
 	tile_table_class->update    = bookmark_tile_table_update;
 	tile_table_class->uri_added = bookmark_tile_table_uri_added;
 
@@ -167,8 +169,8 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 	g_free (path_new);
 }
 
-void
-bookmark_tile_table_load_tiles (BookmarkTileTable *this)
+static void
+reload_tiles (TileTable *this)
 {
 	gchar *path;
 	LibSlabBookmarkFile *bm_file;
@@ -211,7 +213,7 @@ bookmark_tile_table_load_tiles (BookmarkTileTable *this)
 	libslab_bookmark_file_free (bm_file);
 	g_list_free (tiles);
 
-	update_monitor (this);
+	update_monitor (BOOKMARK_TILE_TABLE (this));
 }
 
 static void
@@ -247,5 +249,5 @@ store_monitor_cb (
 	GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
 	const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
 {
-	bookmark_tile_table_load_tiles (BOOKMARK_TILE_TABLE (user_data));
+	reload_tiles (TILE_TABLE (user_data));
 }

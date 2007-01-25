@@ -25,10 +25,10 @@
 
 #include "double-click-detector.h"
 #include "tile.h"
+#include "user-apps-tile-table.h"
+#include "recent-apps-tile-table.h"
 #include "recent-docs-tile-table.h"
 #include "system-tile-table.h"
-#include "user-apps-tile-table.h"
-#include "apps-agent.h"
 #include "libslab-utils.h"
 
 #define GLADE_FILE_PATH "/home/jimmyk/glade/projects/slab-window/slab-window.glade"
@@ -77,6 +77,7 @@ static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
 static void     page_button_clicked_cb   (GtkButton *, gpointer);
 static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
+static void     apps_table_notify_cb     (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 
 MainMenuUI *
@@ -232,6 +233,10 @@ create_system_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (apps_table_notify_cb), this);
 }
 
 static void
@@ -252,12 +257,16 @@ create_user_apps_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->usr_apps_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->usr_apps_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (apps_table_notify_cb), this);
 }
 
 static void
 create_rct_apps_section (MainMenuUI *this)
 {
-/*	MainMenuUIPrivate *priv = PRIVATE (this);
+	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkContainer *ctnr;
 
@@ -265,13 +274,13 @@ create_rct_apps_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-apps-table-container"));
 
-	priv->rct_apps_table = TILE_TABLE (tile_table_new (2, TILE_TABLE_REORDERING_NONE));
+	priv->rct_apps_table = TILE_TABLE (recent_apps_tile_table_new ());
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->rct_apps_table));
 
 	g_signal_connect (
 		G_OBJECT (priv->rct_apps_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this); */
+		G_CALLBACK (tile_table_notify_cb), this);
 }
 
 static void
@@ -528,6 +537,12 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 				G_OBJECT (node->data), "tile-action-triggered",
 				G_CALLBACK (tile_action_triggered_cb), user_data);
 	}
+}
+
+static void
+apps_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
+{
+	tile_table_reload (PRIVATE (user_data)->rct_apps_table);
 }
 
 static void

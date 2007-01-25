@@ -34,7 +34,7 @@ system_tile_table_new ()
 {
 	GObject *this = g_object_new (SYSTEM_TILE_TABLE_TYPE, "n-columns", 1, NULL);
 
-	bookmark_tile_table_load_tiles (BOOKMARK_TILE_TABLE (this));
+	tile_table_reload (TILE_TABLE (this));
 
 	return GTK_WIDGET (this);
 }
@@ -61,7 +61,7 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 {
 	gchar *title = NULL;
 
-	if (libslab_bookmark_file_has_item (bm_file_old, uri))
+	if (bm_file_old && libslab_bookmark_file_has_item (bm_file_old, uri))
 		title = libslab_bookmark_file_get_title (bm_file_old, uri, NULL);
 
 	libslab_bookmark_file_set_mime_type (bm_file_new, uri, "application/x-desktop");

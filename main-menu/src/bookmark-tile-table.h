@@ -49,8 +49,6 @@ typedef struct {
 
 GType bookmark_tile_table_get_type (void);
 
-void bookmark_tile_table_load_tiles (BookmarkTileTable *this);
-
 G_END_DECLS
 
 #endif

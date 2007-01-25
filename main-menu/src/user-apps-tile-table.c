@@ -34,7 +34,7 @@ user_apps_tile_table_new ()
 {
 	GObject *this = g_object_new (USER_APPS_TILE_TABLE_TYPE, "n-columns", 2, NULL);
 
-	bookmark_tile_table_load_tiles (BOOKMARK_TILE_TABLE (this));
+	tile_table_reload (TILE_TABLE (this));
 
 	return GTK_WIDGET (this);
 }

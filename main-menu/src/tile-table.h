@@ -57,6 +57,7 @@ typedef struct {
 typedef struct {
 	GtkTableClass gtk_table_class;
 
+	void (* reload)    (TileTable *);
 	void (* update)    (TileTable *, TileTableUpdateEvent *);
 	void (* uri_added) (TileTable *, TileTableURIAddedEvent *);
 } TileTableClass;
@@ -69,6 +70,8 @@ typedef enum {
 } TileTableReorderingPriority;
 
 GType tile_table_get_type (void);
+
+void tile_table_reload (TileTable *this);
 
 G_END_DECLS
 

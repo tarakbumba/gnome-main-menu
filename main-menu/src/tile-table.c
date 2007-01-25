@@ -55,7 +55,7 @@ static void tile_table_get_property (GObject *, guint, GValue *, GParamSpec *);
 static void tile_table_set_property (GObject *, guint, const GValue *, GParamSpec *);
 static void tile_table_finalize     (GObject *);
 
-static void load_tiles         (TileTable *, GList *);
+static void replace_tiles      (TileTable *, GList *);
 static void set_limit          (TileTable *, gint);
 static void update_bins        (TileTable *);
 static void insert_into_bin    (TileTable *, Tile *, gint);
@@ -66,6 +66,13 @@ static void emit_update_signal (TileTable *, GList *, GList *, guint32);
 static void tile_activated_cb     (Tile *, TileEvent *, gpointer);
 static void tile_drag_data_rcv_cb (GtkWidget *, GdkDragContext *, gint, gint,
                                    GtkSelectionData *, guint, guint, gpointer);
+
+void
+tile_table_reload (TileTable *this)
+{
+	if (TILE_TABLE_GET_CLASS (this)->reload)
+		TILE_TABLE_GET_CLASS (this)->reload (this);
+}
 
 static void
 tile_table_class_init (TileTableClass *this_class)
@@ -80,6 +87,7 @@ tile_table_class_init (TileTableClass *this_class)
 	g_obj_class->set_property = tile_table_set_property;
 	g_obj_class->finalize     = tile_table_finalize;
 
+	this_class->reload    = NULL;
 	this_class->update    = NULL;
 	this_class->uri_added = NULL;
 
@@ -151,7 +159,7 @@ tile_table_set_property (GObject *g_obj, guint prop_id, const GValue *value, GPa
 {
 	switch (prop_id) {
 		case PROP_TILES:
-			load_tiles (TILE_TABLE (g_obj), (GList *) g_value_get_pointer (value));
+			replace_tiles (TILE_TABLE (g_obj), (GList *) g_value_get_pointer (value));
 			break;
 
 		case PROP_LIMIT:
@@ -174,20 +182,15 @@ tile_table_finalize (GObject *g_obj)
 }
 
 static void
-load_tiles (TileTable *this, GList *tiles)
+replace_tiles (TileTable *this, GList *tiles)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 
 	GtkWidget *tile;
 	gulong     handler_id;
 
-	gint n_cols;
-
 	GList *node;
 
-
-	g_object_get (G_OBJECT (this), "n-columns", & n_cols, NULL);
-	g_printf ("n-columns = %d\n", n_cols);
 
 	for (node = priv->tiles; node; node = node->next)
 		gtk_widget_destroy (GTK_WIDGET (node->data));
