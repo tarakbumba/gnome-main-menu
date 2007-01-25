@@ -10,12 +10,15 @@ AM_CPPFLAGS =								\
 	-DDATADIR=\""$(datadir)"\"					\
 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
-main_menu_SOURCES =					\
-	main-menu.c					\
-	main-menu-ui.c		main-menu-ui.h		\
-	main-menu-migration.c	main-menu-migration.h	\
-	tile-table.c		tile-table.h		\
-	apps-agent.c		apps-agent.h
+main_menu_SOURCES =							\
+	main-menu.c							\
+	main-menu-ui.c			main-menu-ui.h			\
+	main-menu-migration.c		main-menu-migration.h		\
+	tile-table.c			tile-table.h			\
+	bookmark-tile-table.c		bookmark-tile-table.h		\
+	recent-docs-tile-table.c	recent-docs-tile-table.h	\
+	system-tile-table.c		system-tile-table.h		\
+	user-apps-tile-table.c		user-apps-tile-table.h
 
 main_menu_LDADD =							\
 	$(MAIN_MENU_LIBS)						\

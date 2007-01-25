@@ -55,8 +55,6 @@ static void tile_table_get_property (GObject *, guint, GValue *, GParamSpec *);
 static void tile_table_set_property (GObject *, guint, const GValue *, GParamSpec *);
 static void tile_table_finalize     (GObject *);
 
-static void tile_table_update (TileTable *, TileTableUpdateEvent *);
-
 static void load_tiles         (TileTable *, GList *);
 static void set_limit          (TileTable *, gint);
 static void update_bins        (TileTable *);
@@ -65,27 +63,9 @@ static void empty_bin          (TileTable *, gint);
 static void resize_table       (TileTable *, guint, guint); 
 static void emit_update_signal (TileTable *, GList *, GList *, guint32);
 
-static void tile_drag_data_rcv_cb (
-	GtkWidget *, GdkDragContext *, gint, gint, GtkSelectionData *, guint, guint, gpointer);
-
-#define TILE_TABLE_ROW_SPACINGS 6
-#define TILE_TABLE_COL_SPACINGS 6
-
-GtkWidget *
-tile_table_new (guint n_cols, TileTableReorderingPriority priority)
-{
-	TileTable *this = g_object_new (
-		TILE_TABLE_TYPE,
-		"n-columns",      n_cols,
-		"homogeneous",    TRUE,
-		"row-spacing",    TILE_TABLE_ROW_SPACINGS,
-		"column-spacing", TILE_TABLE_COL_SPACINGS,
-		NULL);
-
-	PRIVATE (this)->priority = priority;
-
-	return GTK_WIDGET (this);
-}
+static void tile_activated_cb     (Tile *, TileEvent *, gpointer);
+static void tile_drag_data_rcv_cb (GtkWidget *, GdkDragContext *, gint, gint,
+                                   GtkSelectionData *, guint, guint, gpointer);
 
 static void
 tile_table_class_init (TileTableClass *this_class)
@@ -100,7 +80,7 @@ tile_table_class_init (TileTableClass *this_class)
 	g_obj_class->set_property = tile_table_set_property;
 	g_obj_class->finalize     = tile_table_finalize;
 
-	this_class->update    = tile_table_update;
+	this_class->update    = NULL;
 	this_class->uri_added = NULL;
 
 	tiles_pspec = g_param_spec_pointer (
@@ -137,7 +117,7 @@ tile_table_class_init (TileTableClass *this_class)
 }
 
 static void
-tile_table_init (TileTable * this)
+tile_table_init (TileTable *this)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 
@@ -201,8 +181,13 @@ load_tiles (TileTable *this, GList *tiles)
 	GtkWidget *tile;
 	gulong     handler_id;
 
+	gint n_cols;
+
 	GList *node;
 
+
+	g_object_get (G_OBJECT (this), "n-columns", & n_cols, NULL);
+	g_printf ("n-columns = %d\n", n_cols);
 
 	for (node = priv->tiles; node; node = node->next)
 		gtk_widget_destroy (GTK_WIDGET (node->data));
@@ -236,6 +221,15 @@ load_tiles (TileTable *this, GList *tiles)
 		else
 			/* do nothing */ ;
 
+		handler_id = g_signal_handler_find (
+			tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+			tile_activated_cb, NULL);
+
+		if (! handler_id)
+			g_signal_connect (
+				G_OBJECT (tile), "tile-activated",
+				G_CALLBACK (tile_activated_cb), NULL);
+
 		priv->tiles = g_list_append (priv->tiles, tile);
 	}
 
@@ -255,17 +249,6 @@ set_limit (TileTable *this, gint limit)
 
 		update_bins (this);
 	}
-}
-
-static void
-tile_table_update (TileTable *this, TileTableUpdateEvent *event)
-{
-	TileTablePrivate *priv = PRIVATE (this);
-
-	g_list_free (priv->tiles);
-	priv->tiles = event->tiles_curr;
-
-	update_bins (this);
 }
 
 static void
@@ -410,6 +393,8 @@ resize_table (TileTable *this, guint n_rows_new, guint n_cols_new)
 static void
 emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint32 time)
 {
+	TileTablePrivate *priv = PRIVATE (this);
+
 	TileTableUpdateEvent *update_event;
 
 	gboolean equal = FALSE;
@@ -433,10 +418,13 @@ emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint
 	}
 
 	if (! equal) {
+		g_list_free (priv->tiles);
+		priv->tiles = tiles_curr;
+		update_bins (this);
+
 		update_event = g_new0 (TileTableUpdateEvent, 1);
-		update_event->time       = time;
-		update_event->tiles_prev = tiles_prev;
-		update_event->tiles_curr = tiles_curr;
+		update_event->time  = time;
+		update_event->tiles = tiles_curr;
 
 		g_signal_emit (this, tile_table_signals [UPDATE_SIGNAL], 0, update_event);
 	}
@@ -444,6 +432,15 @@ emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint
 		g_list_free (tiles_prev);
 		g_list_free (tiles_curr);
 	}
+}
+
+static void
+tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
+{
+	if (event->type == TILE_EVENT_ACTIVATED_DOUBLE_CLICK)
+		return;
+
+	tile_trigger_action_with_time (tile, tile->default_action, event->time);
 }
 
 static void

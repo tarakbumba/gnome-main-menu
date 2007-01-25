@@ -448,7 +448,7 @@ system_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpointer 
 	path_new = libslab_get_system_item_store_path (TRUE);
 
 	update_bookmark_store (
-		path_old, path_new, event->tiles_curr, create_sys_item_bookmark_entry);
+		path_old, path_new, event->tiles, create_sys_item_bookmark_entry);
 
 	g_free (path_old);
 	g_free (path_new);
@@ -465,7 +465,7 @@ user_apps_table_update_cb (TileTable *table, TileTableUpdateEvent *event, gpoint
 	path_new = libslab_get_user_apps_store_path (TRUE);
 
 	update_bookmark_store (
-		path_old, path_new, event->tiles_curr, create_user_app_bookmark_entry);
+		path_old, path_new, event->tiles, create_user_app_bookmark_entry);
 
 	g_free (path_old);
 	g_free (path_new);

@@ -45,8 +45,7 @@ typedef struct {
 typedef struct {
 	guint32 time;
 
-	GList *tiles_prev;
-	GList *tiles_curr;
+	GList *tiles;
 } TileTableUpdateEvent;
 
 typedef struct {
@@ -70,10 +69,6 @@ typedef enum {
 } TileTableReorderingPriority;
 
 GType tile_table_get_type (void);
-
-GtkWidget *tile_table_new (guint n_cols, TileTableReorderingPriority priority);
-
-void tile_table_set_limit  (TileTable *this, gint limit);
 
 G_END_DECLS
 

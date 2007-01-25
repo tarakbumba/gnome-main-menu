@@ -25,7 +25,9 @@
 
 #include "double-click-detector.h"
 #include "tile.h"
-#include "tile-table.h"
+#include "recent-docs-tile-table.h"
+#include "system-tile-table.h"
+#include "user-apps-tile-table.h"
 #include "apps-agent.h"
 #include "libslab-utils.h"
 
@@ -51,11 +53,10 @@ typedef struct {
 	GtkToggleButton *docs_button;
 	GtkToggleButton *dirs_button;
 
-	AppsAgent *apps_agent;
-
 	TileTable *sys_table;
-	TileTable *user_apps_table;
+	TileTable *usr_apps_table;
 	TileTable *rct_apps_table;
+	TileTable *rct_docs_table;
 } MainMenuUIPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
@@ -67,6 +68,7 @@ static void create_slab_window       (MainMenuUI *);
 static void create_file_area         (MainMenuUI *);
 static void create_user_apps_section (MainMenuUI *);
 static void create_rct_apps_section  (MainMenuUI *);
+static void create_rct_docs_section  (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 
 static void select_page (MainMenuUI *, gint);
@@ -95,10 +97,8 @@ main_menu_ui_new (PanelApplet *applet)
 	create_file_area         (this);
 	create_user_apps_section (this);
 	create_rct_apps_section  (this);
+	create_rct_docs_section  (this);
 	create_system_section    (this);
-
-	priv->apps_agent = apps_agent_new (
-		priv->sys_table, priv->user_apps_table, priv->rct_apps_table);
 
 	select_page (this, -1);
 
@@ -132,11 +132,10 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->top_pane  = NULL;
 	priv->left_pane = NULL;
 
-	priv->apps_agent = NULL;
-
-	priv->sys_table       = NULL;
-	priv->user_apps_table = NULL;
-	priv->rct_apps_table  = NULL;
+	priv->sys_table      = NULL;
+	priv->usr_apps_table = NULL;
+	priv->rct_apps_table = NULL;
+	priv->rct_docs_table = NULL;
 }
 
 static void
@@ -146,7 +145,6 @@ main_menu_ui_finalize (GObject *g_obj)
 
 	g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->panel_button), "double-click-detector")));
-	g_object_unref (priv->apps_agent);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -155,6 +153,9 @@ static void
 create_panel_button (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gtk_widget_hide (glade_xml_get_widget (
+		priv->panel_button_xml, "slab-panel-button-root"));
 
 	priv->panel_button = glade_xml_get_widget (
 		priv->panel_button_xml, "slab-main-menu-panel-button");
@@ -224,7 +225,7 @@ create_system_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "system-item-table-container"));
 
-	priv->sys_table = TILE_TABLE (tile_table_new (1, TILE_TABLE_REORDERING_PUSH_PULL));
+	priv->sys_table = TILE_TABLE (system_tile_table_new ());
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->sys_table));
 
@@ -244,19 +245,19 @@ create_user_apps_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-apps-table-container"));
 
-	priv->user_apps_table = TILE_TABLE (tile_table_new (2, TILE_TABLE_REORDERING_PUSH_PULL));
+	priv->usr_apps_table = TILE_TABLE (user_apps_tile_table_new ());
 
-	gtk_container_add (ctnr, GTK_WIDGET (priv->user_apps_table));
+	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_apps_table));
 
 	g_signal_connect (
-		G_OBJECT (priv->user_apps_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_OBJECT (priv->usr_apps_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
 }
 
 static void
 create_rct_apps_section (MainMenuUI *this)
 {
-	MainMenuUIPrivate *priv = PRIVATE (this);
+/*	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkContainer *ctnr;
 
@@ -270,6 +271,28 @@ create_rct_apps_section (MainMenuUI *this)
 
 	g_signal_connect (
 		G_OBJECT (priv->rct_apps_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this); */
+}
+
+static void
+create_rct_docs_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "recent-docs-table-container"));
+
+	priv->rct_docs_table = TILE_TABLE (recent_docs_tile_table_new ());
+
+	g_object_set (G_OBJECT (priv->rct_docs_table), TILE_TABLE_LIMIT_PROP, 6, NULL);
+
+	gtk_container_add (ctnr, GTK_WIDGET (priv->rct_docs_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->rct_docs_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
 }
 
