@@ -20,6 +20,7 @@ main_menu_SOURCES =							\
 	recent-apps-tile-table.c	recent-apps-tile-table.h	\
 	user-docs-tile-table.c		user-docs-tile-table.h		\
 	recent-docs-tile-table.c	recent-docs-tile-table.h	\
+	user-dirs-tile-table.c		user-dirs-tile-table.h		\
 	system-tile-table.c		system-tile-table.h
 
 main_menu_LDADD =							\

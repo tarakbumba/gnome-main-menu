@@ -60,6 +60,8 @@ typedef struct
 	gchar *basename;
 	
 	GtkBin *header_bin;
+
+	gchar *icon_name;
 	
 	gboolean renaming;
 	gboolean image_is_broken;
@@ -83,7 +85,7 @@ static void directory_tile_class_init (DirectoryTileClass *this_class)
 }
 
 GtkWidget *
-directory_tile_new (const gchar *in_uri)
+directory_tile_new (const gchar *in_uri, const gchar *title, const gchar *icon_name)
 {
 	DirectoryTile *this;
 	DirectoryTilePrivate *priv;
@@ -112,9 +114,13 @@ directory_tile_new (const gchar *in_uri)
 
 	image = gtk_image_new ();
 
-	markup = g_path_get_basename (uri);
-	basename = gnome_vfs_unescape_string (markup, NULL);
-	g_free (markup);
+	if (! title) {
+		markup = g_path_get_basename (uri);
+		basename = gnome_vfs_unescape_string (markup, NULL);
+		g_free (markup);
+	}
+	else
+		basename = g_strdup (title);
 
 	header = create_header (basename);
 
@@ -143,6 +149,7 @@ directory_tile_new (const gchar *in_uri)
 	priv = DIRECTORY_TILE_GET_PRIVATE (this);
 	priv->basename    = g_strdup (basename);
 	priv->header_bin  = GTK_BIN (header);
+	priv->icon_name   = g_strdup (icon_name);
 
 	directory_tile_private_setup (this);
 
@@ -274,6 +281,7 @@ directory_tile_init (DirectoryTile *tile)
 
 	priv->basename = NULL;
 	priv->header_bin = NULL;
+	priv->icon_name = NULL;
 	priv->renaming = FALSE;
 	priv->image_is_broken = TRUE;
 	priv->delete_enabled = FALSE;
@@ -288,6 +296,7 @@ directory_tile_finalize (GObject *g_object)
 	GConfClient *client;
 
 	g_free (priv->basename);
+	g_free (priv->icon_name);
 
 	client = gconf_client_get_default ();
 
@@ -308,8 +317,16 @@ directory_tile_style_set (GtkWidget *widget, GtkStyle *prev_style)
 static void
 load_image (DirectoryTile *tile)
 {
-	DIRECTORY_TILE_GET_PRIVATE (tile)->image_is_broken = slab_load_image (
-		GTK_IMAGE (NAMEPLATE_TILE (tile)->image), GTK_ICON_SIZE_DND, "gnome-fs-directory");
+	DirectoryTilePrivate *priv = DIRECTORY_TILE_GET_PRIVATE (tile);
+	gchar *icon_name;
+
+	if (priv->icon_name)
+		icon_name = priv->icon_name;
+	else
+		icon_name = "gnome-fs-directory";
+
+	priv->image_is_broken = slab_load_image (
+		GTK_IMAGE (NAMEPLATE_TILE (tile)->image), GTK_ICON_SIZE_DND, icon_name);
 }
 
 static GtkWidget *
@@ -447,31 +464,14 @@ gconf_enable_delete_cb (GConfClient *client, guint conn_id, GConfEntry *entry, g
 static void
 open_trigger (Tile *tile, TileEvent *event, TileAction *action)
 {
-	gchar *filename;
-	gchar *dirname;
-	gchar *uri;
-
 	gchar *cmd;
 
-	filename = g_filename_from_uri (TILE (tile)->uri, NULL, NULL);
-	dirname = g_path_get_dirname (filename);
-	uri = g_filename_to_uri (dirname, NULL, NULL);
+	cmd = string_replace_once (
+		get_slab_gconf_string (SLAB_FILE_MANAGER_OPEN_CMD), "FILE_URI", tile->uri);
 
-	if (!uri)
-		g_warning ("error getting dirname for [%s]\n", TILE (tile)->uri);
-	else
-	{
-		cmd = string_replace_once (get_slab_gconf_string (SLAB_FILE_MANAGER_OPEN_CMD),
-			"FILE_URI", uri);
+	spawn_process (cmd);
 
-		spawn_process (cmd);
-
-		g_free (cmd);
-	}
-
-	g_free (filename);
-	g_free (dirname);
-	g_free (uri);
+	g_free (cmd);
 }
 
 static void

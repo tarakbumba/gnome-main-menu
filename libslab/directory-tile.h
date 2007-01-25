@@ -50,7 +50,7 @@ typedef struct {
 
 GType directory_tile_get_type (void);
 
-GtkWidget *directory_tile_new (const gchar *uri);
+GtkWidget *directory_tile_new (const gchar *uri, const gchar *title, const gchar *icon_name);
 
 G_END_DECLS
 

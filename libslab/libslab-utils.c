@@ -620,6 +620,12 @@ libslab_get_user_docs_store_path (gboolean writeable)
 	return get_data_file_path (DOCS_BOOKMARK_FILENAME, writeable);
 }
 
+gchar *
+libslab_get_user_dirs_store_path (gboolean writeable)
+{
+	return get_data_file_path (DIRS_BOOKMARK_FILENAME, writeable);
+}
+
 void
 libslab_remove_system_item (const gchar *uri)
 {

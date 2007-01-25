@@ -61,6 +61,7 @@ typedef struct {
 	TileTable *rct_apps_table;
 	TileTable *usr_docs_table;
 	TileTable *rct_docs_table;
+	TileTable *usr_dirs_table;
 
 	gint max_total_items;
 } MainMenuUIPrivate;
@@ -76,6 +77,7 @@ static void create_user_apps_section (MainMenuUI *);
 static void create_rct_apps_section  (MainMenuUI *);
 static void create_user_docs_section (MainMenuUI *);
 static void create_rct_docs_section  (MainMenuUI *);
+static void create_user_dirs_section (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 
 static void select_page              (MainMenuUI *, gint);
@@ -109,6 +111,7 @@ main_menu_ui_new (PanelApplet *applet)
 	create_rct_apps_section  (this);
 	create_user_docs_section (this);
 	create_rct_docs_section  (this);
+	create_user_dirs_section (this);
 	create_system_section    (this);
 
 	select_page   (this, -1);
@@ -147,7 +150,9 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->sys_table      = NULL;
 	priv->usr_apps_table = NULL;
 	priv->rct_apps_table = NULL;
+	priv->usr_docs_table = NULL;
 	priv->rct_docs_table = NULL;
+	priv->usr_dirs_table = NULL;
 }
 
 static void
@@ -344,6 +349,32 @@ create_rct_docs_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->rct_docs_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+}
+
+static void
+create_user_dirs_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "user-dirs-table-container"));
+
+	priv->usr_dirs_table = TILE_TABLE (user_dirs_tile_table_new ());
+
+	connect_to_tile_triggers (this, priv->usr_dirs_table);
+
+	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_dirs_table));
+
+	g_signal_connect (
+		G_OBJECT (priv->usr_dirs_table), "notify::" TILE_TABLE_TILES_PROP,
+		G_CALLBACK (tile_table_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->usr_dirs_table), "notify::n-rows",
+		G_CALLBACK (gtk_table_notify_cb), this);
 }
 
 static void

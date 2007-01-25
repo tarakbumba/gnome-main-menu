@@ -41,6 +41,7 @@
 #define SYSTEM_BOOKMARK_FILENAME "system-items.xbel"
 #define APPS_BOOKMARK_FILENAME   "applications.xbel"
 #define DOCS_BOOKMARK_FILENAME   "documents.xbel"
+#define DIRS_BOOKMARK_FILENAME   "places.xbel"
 
 #define SYSTEM_ITEM_GCONF_KEY    "/desktop/gnome/applications/main-menu/system-area/system_item_list"
 #define HELP_ITEM_GCONF_KEY      "/desktop/gnome/applications/main-menu/system-area/help_item"
@@ -416,6 +417,44 @@ migrate_user_docs_to_user_bookmark_file ()
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't save user docs store path [%s]\n",
+				__FUNCTION__, bookmark_path_cp_dest);
+
+		g_free (contents);
+		g_free (bookmark_path_cp_dest);
+	}
+
+	g_free (bookmark_path);
+}
+
+void
+migrate_user_dirs_to_user_bookmark_file ()
+{
+	gchar *bookmark_path;
+	gchar *bookmark_path_cp_dest;
+
+	gchar *contents;
+
+	GError *error = NULL;
+
+
+	if (! get_main_menu_user_data_file_path (& bookmark_path, DIRS_BOOKMARK_FILENAME, TRUE)) {
+		g_free (bookmark_path);
+
+		bookmark_path         = libslab_get_user_dirs_store_path (FALSE);
+		bookmark_path_cp_dest = libslab_get_user_dirs_store_path (TRUE);
+
+		g_file_get_contents (bookmark_path, & contents, NULL, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't read user dirs store path [%s]\n",
+				__FUNCTION__, bookmark_path);
+		else
+			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error, "%s: can't save user dirs store path [%s]\n",
 				__FUNCTION__, bookmark_path_cp_dest);
 
 		g_free (contents);
