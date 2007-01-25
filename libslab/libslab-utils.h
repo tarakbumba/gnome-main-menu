@@ -1,5 +1,5 @@
-#ifndef __GNOME_UTILS_H__
-#define __GNOME_UTILS_H__
+#ifndef __LIBSLAB_UTILS_H__
+#define __LIBSLAB_UTILS_H__
 
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -81,6 +81,10 @@ gboolean libslab_user_apps_store_has_uri   (const gchar *uri);
 gboolean libslab_user_docs_store_has_uri   (const gchar *uri);
 
 void libslab_remove_system_item (const gchar *uri);
+void libslab_remove_user_doc    (const gchar *uri);
+
+void libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
+                           const gchar *app_name, const gchar *app_exec);
 
 void libslab_save_system_item_uris (const GList *);
 void libslab_save_app_uris         (const GList *);

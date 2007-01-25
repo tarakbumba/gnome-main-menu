@@ -1,7 +1,7 @@
 /*
  * This file is part of libtile.
  *
- * Copyright (c) 2006 Novell, Inc.
+ * Copyright (c) 2006, 2007 Novell, Inc.
  *
  * Libtile is free software; you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
@@ -68,8 +68,7 @@ static void remove_from_startup_list (ApplicationTile *);
 static gboolean verify_package_management_command (gchar *);
 static void run_package_management_command (ApplicationTile *, gchar *);
 
-static gboolean is_desktop_item_in_user_list (const gchar *);
-static void     update_user_list_menu_item (ApplicationTile *);
+static void update_user_list_menu_item (ApplicationTile *);
 
 static StartupStatus get_desktop_item_startup_status (GnomeDesktopItem *);
 static void          update_startup_menu_item (ApplicationTile *);
@@ -296,7 +295,7 @@ application_tile_setup (ApplicationTile *this)
 		"application-description", desc,
 		NULL);
 
-	priv->is_in_user_list = is_desktop_item_in_user_list (TILE (this)->uri);
+	priv->is_in_user_list = libslab_user_apps_store_has_uri (TILE (this)->uri);
 	priv->startup_status  = get_desktop_item_startup_status (priv->desktop_item);
 
 	actions = g_new0 (TileAction *, 6);
@@ -694,33 +693,6 @@ application_tile_get_desktop_item (ApplicationTile *tile)
 	return APPLICATION_TILE_GET_PRIVATE (tile)->desktop_item;
 }
 
-static gboolean
-is_desktop_item_in_user_list (const gchar *uri)
-{
-	GList *uris;
-
-	GList *node;
-	gint offset;
-
-
-	uris = libslab_get_user_app_uris ();
-
-	if (! uris)
-		return FALSE;
-
-	for (node = uris; node; node = node->next) {
-		offset = strlen (uri) - strlen ((gchar *) node->data);
-
-		if (offset < 0)
-			offset = 0;
-
-		if (! strcmp (& uri [offset], (gchar *) node->data))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
 static void
 update_user_list_menu_item (ApplicationTile *this)
 {
@@ -810,7 +782,7 @@ apps_store_monitor_cb (
 	gboolean is_in_user_list_current;
 
 
-	is_in_user_list_current = is_desktop_item_in_user_list (TILE (this)->uri);
+	is_in_user_list_current = libslab_user_apps_store_has_uri (TILE (this)->uri);
 
 	if (is_in_user_list_current == priv->is_in_user_list)
 		return;

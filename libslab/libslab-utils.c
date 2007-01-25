@@ -23,6 +23,7 @@ static gchar                 *get_data_file_path     (const gchar *, gboolean);
 static gboolean               store_has_uri          (const gchar *, const gchar *);
 static GList                 *get_uri_list           (const gchar *);
 static void                   save_uri_list          (const gchar *, const GList *);
+static void                   remove_bookmark_item   (const gchar *, const gchar *, const gchar *);
 static GnomeVFSMonitorHandle *add_store_file_monitor (const gchar *,
                                                       GnomeVFSMonitorCallback,
                                                       gpointer);
@@ -622,6 +623,70 @@ libslab_get_user_docs_store_path (gboolean writeable)
 void
 libslab_remove_system_item (const gchar *uri)
 {
+	gchar *path_old;
+	gchar *path_new;
+
+
+	path_old = libslab_get_system_item_store_path (FALSE);
+	path_new = libslab_get_system_item_store_path (TRUE);
+
+	remove_bookmark_item (path_old, path_new, uri);
+
+	g_free (path_new);
+	g_free (path_old);
+}
+
+void
+libslab_remove_user_doc (const gchar *uri)
+{
+	gchar *path_old;
+	gchar *path_new;
+
+
+	path_old = libslab_get_user_docs_store_path (FALSE);
+	path_new = libslab_get_user_docs_store_path (TRUE);
+
+	remove_bookmark_item (path_old, path_new, uri);
+
+	g_free (path_new);
+	g_free (path_old);
+}
+
+static void
+remove_bookmark_item (const gchar *path_old, const gchar *path_new, const gchar *uri)
+{
+	LibSlabBookmarkFile *bm_file;
+
+	GError *error = NULL;
+
+
+	bm_file  = libslab_bookmark_file_new ();
+	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
+
+	if (! error) {
+		libslab_bookmark_file_remove_item (bm_file, uri, NULL);
+
+		libslab_bookmark_file_to_file (bm_file, path_new, & error);
+
+		if (error)
+			libslab_handle_g_error (
+				& error,
+				"%s: couldn't save bookmark file [%s]",
+				__FUNCTION__, path_new);
+	}
+	else
+		libslab_handle_g_error (
+			& error,
+			"%s: couldn't open bookmark file [%s]",
+			__FUNCTION__, path_old);
+
+	libslab_bookmark_file_free (bm_file);
+}
+
+void
+libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
+                      const gchar *app_name, const gchar *app_exec)
+{
 	LibSlabBookmarkFile *bm_file;
 
 	gchar *path_old;
@@ -630,14 +695,17 @@ libslab_remove_system_item (const gchar *uri)
 	GError *error = NULL;
 
 
-	path_old = libslab_get_system_item_store_path (FALSE);
-	bm_file  = libslab_bookmark_file_new ();
+	path_old = libslab_get_user_docs_store_path (FALSE);
+	path_new = libslab_get_user_docs_store_path (TRUE);
+
+	bm_file = libslab_bookmark_file_new ();
 	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
 
 	if (! error) {
-		libslab_bookmark_file_remove_item (bm_file, uri, NULL);
+		libslab_bookmark_file_set_mime_type   (bm_file, uri, mime_type);
+		libslab_bookmark_file_set_modified    (bm_file, uri, modified);
+		libslab_bookmark_file_add_application (bm_file, uri, app_name, app_exec);
 
-		path_new = libslab_get_system_item_store_path (TRUE);
 		libslab_bookmark_file_to_file (bm_file, path_new, & error);
 
 		if (error)
@@ -645,20 +713,14 @@ libslab_remove_system_item (const gchar *uri)
 				& error,
 				"%s: couldn't save bookmark file [%s]",
 				__FUNCTION__, path_new);
-
-		g_free (path_new);
 	}
-	else if (error)
+	else
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't open bookmark file [%s]",
 			__FUNCTION__, path_old);
-	else
-		;
 
 	libslab_bookmark_file_free (bm_file);
-
-	g_free (path_old);
 }
 
 gboolean
