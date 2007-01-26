@@ -35,8 +35,9 @@ G_BEGIN_DECLS
 #define TILE_TABLE_UPDATE_SIGNAL    "update"
 #define TILE_TABLE_URI_ADDED_SIGNAL "uri-added"
 
-#define TILE_TABLE_TILES_PROP "tile-list"
-#define TILE_TABLE_LIMIT_PROP "item-limit"
+#define TILE_TABLE_TILES_PROP   "tile-list"
+#define TILE_TABLE_REORDER_PROP "tile-reordering-priority"
+#define TILE_TABLE_LIMIT_PROP   "item-limit"
 
 typedef struct {
 	GtkTable gtk_table;

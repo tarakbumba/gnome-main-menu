@@ -40,6 +40,7 @@ typedef struct {
 enum {
 	PROP_0,
 	PROP_TILES,
+	PROP_REORDER,
 	PROP_LIMIT
 };
 
@@ -80,6 +81,7 @@ tile_table_class_init (TileTableClass *this_class)
 	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
 
 	GParamSpec *tiles_pspec;
+	GParamSpec *reorder_pspec;
 	GParamSpec *limit_pspec;
 
 
@@ -97,6 +99,13 @@ tile_table_class_init (TileTableClass *this_class)
 		G_PARAM_CONSTRUCT | G_PARAM_READWRITE |
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
 
+	reorder_pspec = g_param_spec_int (
+		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDER_PROP,
+		"the type of reordering allowed for this table",
+		TILE_TABLE_REORDERING_SWAP, TILE_TABLE_REORDERING_NONE, TILE_TABLE_REORDERING_PUSH_PULL,
+		G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE |
+		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
+
 	limit_pspec = g_param_spec_int (
 		TILE_TABLE_LIMIT_PROP, TILE_TABLE_LIMIT_PROP,
 		"the maximum number of Tiles this table can hold, -1 if unlimited",
@@ -104,8 +113,9 @@ tile_table_class_init (TileTableClass *this_class)
 		G_PARAM_CONSTRUCT | G_PARAM_READWRITE |
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
 
-	g_object_class_install_property (g_obj_class, PROP_TILES, tiles_pspec);
-	g_object_class_install_property (g_obj_class, PROP_LIMIT, limit_pspec);
+	g_object_class_install_property (g_obj_class, PROP_TILES,   tiles_pspec);
+	g_object_class_install_property (g_obj_class, PROP_REORDER, reorder_pspec);
+	g_object_class_install_property (g_obj_class, PROP_LIMIT,   limit_pspec);
 
 	tile_table_signals [UPDATE_SIGNAL] = g_signal_new (
 		TILE_TABLE_UPDATE_SIGNAL,
@@ -157,13 +167,20 @@ tile_table_get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpe
 static void
 tile_table_set_property (GObject *g_obj, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
+	TileTable *this = TILE_TABLE (g_obj);
+	TileTablePrivate *priv = PRIVATE (g_obj);
+
 	switch (prop_id) {
 		case PROP_TILES:
-			replace_tiles (TILE_TABLE (g_obj), (GList *) g_value_get_pointer (value));
+			replace_tiles (this, (GList *) g_value_get_pointer (value));
+			break;
+
+		case PROP_REORDER:
+			priv->priority = g_value_get_int (value);
 			break;
 
 		case PROP_LIMIT:
-			set_limit (TILE_TABLE (g_obj), g_value_get_int (value));
+			set_limit (this, g_value_get_int (value));
 			break;
 
 		default:

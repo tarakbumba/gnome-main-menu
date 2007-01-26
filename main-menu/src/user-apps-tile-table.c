@@ -32,7 +32,11 @@ static GtkWidget *get_application_tile (LibSlabBookmarkFile *, const gchar *);
 GtkWidget *
 user_apps_tile_table_new ()
 {
-	GObject *this = g_object_new (USER_APPS_TILE_TABLE_TYPE, "n-columns", 2, NULL);
+	GObject *this = g_object_new (
+		USER_APPS_TILE_TABLE_TYPE,
+		"n-columns",             2,
+		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_PUSH_PULL,
+		NULL);
 
 	tile_table_reload (TILE_TABLE (this));
 

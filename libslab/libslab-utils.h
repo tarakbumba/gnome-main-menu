@@ -31,6 +31,8 @@
 #	define libslab_bookmark_file_get_applications g_bookmark_file_get_applications
 #	define libslab_bookmark_file_add_application  g_bookmark_file_add_application
 #	define libslab_bookmark_file_get_app_info     g_bookmark_file_get_app_info
+#	define libslab_bookmark_file_get_groups       g_bookmark_file_get_groups
+#	define libslab_bookmark_file_add_group        g_bookmark_file_add_group
 #else
 #	include "eggbookmarkfile.h"
 
@@ -56,6 +58,8 @@
 #	define libslab_bookmark_file_add_application  egg_bookmark_file_add_application
 #	define libslab_bookmark_file_get_applications egg_bookmark_file_get_applications
 #	define libslab_bookmark_file_get_app_info     egg_bookmark_file_get_app_info
+#	define libslab_bookmark_file_get_groups       egg_bookmark_file_get_groups
+#	define libslab_bookmark_file_add_group        egg_bookmark_file_add_group
 #endif
 
 G_BEGIN_DECLS

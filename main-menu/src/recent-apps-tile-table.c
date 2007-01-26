@@ -51,7 +51,12 @@ recent_apps_tile_table_new ()
 	RecentAppsTileTablePrivate *priv;
 	
 	
-	this = g_object_new (RECENT_APPS_TILE_TABLE_TYPE, "n-columns", 2, NULL);
+	this = g_object_new (
+		RECENT_APPS_TILE_TABLE_TYPE,
+		"n-columns",             2,
+		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_NONE,
+		NULL);
+
 	priv = PRIVATE (this);
 
 	priv->recent_monitor = main_menu_recent_monitor_new ();

@@ -29,6 +29,7 @@
 #include "recent-apps-tile-table.h"
 #include "user-docs-tile-table.h"
 #include "recent-docs-tile-table.h"
+#include "user-dirs-tile-table.h"
 #include "system-tile-table.h"
 #include "libslab-utils.h"
 

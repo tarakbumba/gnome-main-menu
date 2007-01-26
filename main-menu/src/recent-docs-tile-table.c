@@ -45,7 +45,12 @@ recent_docs_tile_table_new ()
 	RecentDocsTileTablePrivate *priv;
 	
 	
-	this = g_object_new (RECENT_DOCS_TILE_TABLE_TYPE, "n-columns", 2, NULL);
+	this = g_object_new (
+		RECENT_DOCS_TILE_TABLE_TYPE,
+		"n-columns",             2,
+		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_NONE,
+		NULL);
+
 	priv = PRIVATE (this);
 
 	priv->recent_monitor = main_menu_recent_monitor_new ();
