@@ -45,8 +45,16 @@
 #define URGENT_CLOSE_GCONF_KEY     "/desktop/gnome/applications/main-menu/urgent_close"
 #define MAX_TOTAL_ITEMS_GCONF_KEY  "/desktop/gnome/applications/main-menu/file-area/max_total_items"
 #define MIN_RECENT_ITEMS_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/min_recent_items"
+#define APP_BROWSER_GCONF_KEY      "/desktop/gnome/applications/main-menu/application_browser"
+#define FILE_BROWSER_GCONF_KEY     "/desktop/gnome/applications/main-menu/file_browser"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
+
+enum {
+	MORE_APPS_BUTTON,
+	MORE_DOCS_BUTTON,
+	MORE_DIRS_BUTTON
+};
 
 typedef struct {
 	GladeXML *main_menu_xml;
@@ -59,9 +67,9 @@ typedef struct {
 	GtkWidget *left_pane;
 
 	GtkNotebook     *file_area;
-	GtkToggleButton *apps_button;
-	GtkToggleButton *docs_button;
-	GtkToggleButton *dirs_button;
+	GtkToggleButton *apps_selector;
+	GtkToggleButton *docs_selector;
+	GtkToggleButton *dirs_selector;
 
 	TileTable *sys_table;
 	TileTable *usr_apps_table;
@@ -69,6 +77,8 @@ typedef struct {
 	TileTable *usr_docs_table;
 	TileTable *rct_docs_table;
 	TileTable *usr_dirs_table;
+
+	GtkWidget *more_button [3];
 
 	gint max_total_items;
 } MainMenuUIPrivate;
@@ -87,10 +97,12 @@ static void create_rct_docs_section  (MainMenuUI *);
 static void create_user_dirs_section (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
+static void create_more_buttons      (MainMenuUI *);
 
 static void select_page              (MainMenuUI *, gint);
 static void update_limits            (MainMenuUI *);
 static void connect_to_tile_triggers (MainMenuUI *, TileTable *);
+static void hide_window_on_launch    (MainMenuUI *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
@@ -98,6 +110,7 @@ static void     page_button_clicked_cb   (GtkButton *, gpointer);
 static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
 static void     gtk_table_notify_cb      (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
+static void     more_button_clicked_cb   (GtkButton *, gpointer);
 
 MainMenuUI *
 main_menu_ui_new (PanelApplet *applet)
@@ -126,6 +139,7 @@ main_menu_ui_new (PanelApplet *applet)
 	create_user_dirs_section (this);
 	create_system_section    (this);
 	create_status_section    (this);
+	create_more_buttons      (this);
 
 	select_page   (this, -1);
 	update_limits (this);
@@ -154,18 +168,32 @@ main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	priv->panel_button = NULL;
-	priv->slab_window  = NULL;
+	priv->main_menu_xml    = NULL;
+	priv->panel_button_xml = NULL;
 
-	priv->top_pane  = NULL;
-	priv->left_pane = NULL;
+	priv->panel_button     = NULL;
+	priv->slab_window      = NULL;
 
-	priv->sys_table      = NULL;
-	priv->usr_apps_table = NULL;
-	priv->rct_apps_table = NULL;
-	priv->usr_docs_table = NULL;
-	priv->rct_docs_table = NULL;
-	priv->usr_dirs_table = NULL;
+	priv->top_pane         = NULL;
+	priv->left_pane        = NULL;
+
+	priv->file_area        = NULL;
+	priv->apps_selector    = NULL;
+	priv->docs_selector    = NULL;
+	priv->dirs_selector    = NULL;
+
+	priv->sys_table        = NULL;
+	priv->usr_apps_table   = NULL;
+	priv->rct_apps_table   = NULL;
+	priv->usr_docs_table   = NULL;
+	priv->rct_docs_table   = NULL;
+	priv->usr_dirs_table   = NULL;
+
+	priv->more_button [0]  = NULL;
+	priv->more_button [1]  = NULL;
+	priv->more_button [2]  = NULL;
+
+	priv->max_total_items  = 10;
 }
 
 static void
@@ -173,8 +201,15 @@ main_menu_ui_finalize (GObject *g_obj)
 {
 	MainMenuUIPrivate *priv = PRIVATE (g_obj);
 
+	gint i;
+
+
 	g_object_unref (G_OBJECT (g_object_get_data (
-			G_OBJECT (priv->panel_button), "double-click-detector")));
+		G_OBJECT (priv->panel_button), "double-click-detector")));
+
+	for (i = 0; i < 3; ++i)
+		g_object_unref (G_OBJECT (g_object_get_data (
+			G_OBJECT (priv->more_button [i]), "double-click-detector")));
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -224,23 +259,23 @@ create_file_area (MainMenuUI *this)
 
 	priv->file_area = GTK_NOTEBOOK (glade_xml_get_widget (
 		priv->main_menu_xml, "file-area-notebook"));
-	priv->apps_button = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+	priv->apps_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
 		priv->main_menu_xml, "slab-page-selector-button-applications"));
-	priv->docs_button = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+	priv->docs_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
 		priv->main_menu_xml, "slab-page-selector-button-documents"));
-	priv->dirs_button = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+	priv->dirs_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
 		priv->main_menu_xml, "slab-page-selector-button-places"));
 
 	g_signal_connect (
-		G_OBJECT (priv->apps_button), "clicked",
+		G_OBJECT (priv->apps_selector), "clicked",
 		G_CALLBACK (page_button_clicked_cb), this);
 
 	g_signal_connect (
-		G_OBJECT (priv->docs_button), "clicked",
+		G_OBJECT (priv->docs_selector), "clicked",
 		G_CALLBACK (page_button_clicked_cb), this);
 
 	g_signal_connect (
-		G_OBJECT (priv->dirs_button), "clicked",
+		G_OBJECT (priv->dirs_selector), "clicked",
 		G_CALLBACK (page_button_clicked_cb), this);
 }
 
@@ -423,6 +458,29 @@ create_user_dirs_section (MainMenuUI *this)
 }
 
 static void
+create_more_buttons (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gint i;
+
+
+	priv->more_button [0] = glade_xml_get_widget (priv->main_menu_xml, "more-applications-button");
+	priv->more_button [1] = glade_xml_get_widget (priv->main_menu_xml, "more-documents-button");
+	priv->more_button [2] = glade_xml_get_widget (priv->main_menu_xml, "more-places-button");
+
+	for (i = 0; i < 3; ++i) {
+		g_object_set_data (
+			G_OBJECT (priv->more_button [i]),
+			"double-click-detector", double_click_detector_new ());
+
+		g_signal_connect (
+			G_OBJECT (priv->more_button [i]), "clicked",
+			G_CALLBACK (more_button_clicked_cb), this);
+	}
+}
+
+static void
 select_page (MainMenuUI *this, gint page_id)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
@@ -441,9 +499,9 @@ select_page (MainMenuUI *this, gint page_id)
 
 	gtk_notebook_set_current_page (priv->file_area, page_id);
 
-	selectors [0] = priv->apps_button;
-	selectors [1] = priv->docs_button;
-	selectors [2] = priv->dirs_button;
+	selectors [0] = priv->apps_selector;
+	selectors [1] = priv->docs_selector;
+	selectors [2] = priv->dirs_selector;
 
 	for (i = 0; i < 3; ++i)
 		gtk_toggle_button_set_active (selectors [i], (i == page_id));
@@ -522,6 +580,17 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 				G_OBJECT (node->data), "tile-action-triggered",
 				G_CALLBACK (tile_action_triggered_cb), this);
 	}
+}
+
+static void
+hide_window_on_launch (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
+		return;
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 }
 
 static void
@@ -734,15 +803,47 @@ gtk_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 static void
 tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
-
 	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
 		return;
 
-	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
-		return;
+	hide_window_on_launch (MAIN_MENU_UI (user_data));
+}
 
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
+static void
+more_button_clicked_cb (GtkButton *button, gpointer user_data)
+{
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
+
+	DoubleClickDetector *detector;
+	GTimeVal current_time;
+	guint32 current_time_millis;
+
+	GnomeDesktopItem *ditem;
+	gchar            *ditem_id;
+
+
+	detector = DOUBLE_CLICK_DETECTOR (
+		g_object_get_data (G_OBJECT (button), "double-click-detector"));
+
+	g_get_current_time (& current_time);
+
+	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
+
+	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
+		if (GTK_WIDGET (button) == priv->more_button [MORE_APPS_BUTTON])
+			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
+		else
+			ditem_id = libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
+
+		ditem = libslab_gnome_desktop_item_new_from_unknown_id (ditem_id);
+
+		if (ditem) {
+			libslab_gnome_desktop_item_launch_default (ditem);
+
+			hide_window_on_launch (this);
+		}
+	}
 }
 
 
