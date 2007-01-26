@@ -3,6 +3,7 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <gconf/gconf-client.h>
 #include <libgnome/gnome-desktop-item.h>
 #include <libgnomevfs/gnome-vfs.h>
 
@@ -74,6 +75,8 @@ gint              libslab_strcmp (const gchar *a, const gchar *b);
 gint              libslab_strlen (const gchar *a);
 gpointer          libslab_get_gconf_value (const gchar *key);
 void              libslab_set_gconf_value (const gchar *key, gconstpointer data);
+guint             libslab_gconf_notify_add (const gchar *key, GConfClientNotifyFunc callback, gpointer user_data);
+void              libslab_gconf_notify_remove (guint conn_id);
 void              libslab_handle_g_error (GError **error, const gchar *msg_format, ...);
 
 GList *libslab_get_system_item_uris (void);

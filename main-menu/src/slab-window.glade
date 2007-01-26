@@ -55,7 +55,7 @@
 		  <property name="spacing">12</property>
 
 		  <child>
-		    <widget class="GtkHBox" id="hbox2">
+		    <widget class="GtkHBox" id="search-section">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">False</property>
 		      <property name="spacing">0</property>
@@ -103,7 +103,7 @@
 		      </child>
 
 		      <child>
-			<widget class="GtkEntry" id="entry1">
+			<widget class="GtkEntry" id="search-entry">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>

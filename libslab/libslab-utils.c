@@ -5,7 +5,6 @@
 #endif
 
 #include <string.h>
-#include <gconf/gconf-client.h>
 #include <gconf/gconf-value.h>
 #include <libgnome/gnome-url.h>
 
@@ -437,6 +436,48 @@ libslab_set_gconf_value (const gchar *key, gconstpointer data)
 exit:
 
 	gconf_value_free (value);
+	g_object_unref (client);
+}
+
+guint
+libslab_gconf_notify_add (const gchar *key, GConfClientNotifyFunc callback, gpointer user_data)
+{
+	GConfClient *client;
+	guint        conn_id;
+
+	GError *error = NULL;
+
+
+	client  = gconf_client_get_default ();
+	conn_id = gconf_client_notify_add (client, key, callback, user_data, NULL, & error);
+
+	if (error)
+		libslab_handle_g_error (
+			& error, "%s: error adding gconf notify for (%s)", __FUNCTION__, key);
+
+	g_object_unref (client);
+
+	return conn_id;
+}
+
+void
+libslab_gconf_notify_remove (guint conn_id)
+{
+	GConfClient *client;
+
+	GError *error = NULL;
+
+
+	if (conn_id == 0)
+		return;
+
+	client = gconf_client_get_default ();
+	gconf_client_notify_remove (client, conn_id);
+
+	if (error)
+		libslab_handle_g_error (
+			& error, "%s: error removing gconf notify", __FUNCTION__);
+
 	g_object_unref (client);
 }
 

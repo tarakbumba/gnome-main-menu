@@ -26,6 +26,7 @@
 
 #include <glade/glade.h>
 #include <cairo.h>
+#include <string.h>
 
 #include "tile.h"
 #include "hard-drive-status-tile.h"
@@ -47,6 +48,7 @@
 #define MIN_RECENT_ITEMS_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/min_recent_items"
 #define APP_BROWSER_GCONF_KEY      "/desktop/gnome/applications/main-menu/application_browser"
 #define FILE_BROWSER_GCONF_KEY     "/desktop/gnome/applications/main-menu/file_browser"
+#define SEARCH_CMD_GCONF_KEY       "/desktop/gnome/applications/main-menu/search_command"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -66,7 +68,10 @@ typedef struct {
 	GtkWidget *top_pane;
 	GtkWidget *left_pane;
 
-	GtkNotebook     *file_area;
+	GtkWidget *search_section;
+	GtkWidget *search_entry;
+
+	GtkNotebook     *file_section;
 	GtkToggleButton *apps_selector;
 	GtkToggleButton *docs_selector;
 	GtkToggleButton *dirs_selector;
@@ -81,6 +86,8 @@ typedef struct {
 	GtkWidget *more_button [3];
 
 	gint max_total_items;
+
+	guint search_cmd_gconf_mntr_id;
 } MainMenuUIPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
@@ -89,7 +96,8 @@ static void main_menu_ui_finalize (GObject *);
 
 static void create_panel_button      (MainMenuUI *);
 static void create_slab_window       (MainMenuUI *);
-static void create_file_area         (MainMenuUI *);
+static void create_search_section    (MainMenuUI *);
+static void create_file_section      (MainMenuUI *);
 static void create_user_apps_section (MainMenuUI *);
 static void create_rct_apps_section  (MainMenuUI *);
 static void create_user_docs_section (MainMenuUI *);
@@ -99,18 +107,23 @@ static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
 static void create_more_buttons      (MainMenuUI *);
 
-static void select_page              (MainMenuUI *, gint);
-static void update_limits            (MainMenuUI *);
-static void connect_to_tile_triggers (MainMenuUI *, TileTable *);
-static void hide_window_on_launch    (MainMenuUI *);
+static void    select_page                (MainMenuUI *, gint);
+static void    update_limits              (MainMenuUI *);
+static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
+static void    hide_window_on_launch      (MainMenuUI *);
+static void    set_slab_window_visible    (MainMenuUI *, gboolean, guint32);
+static void    set_search_section_visible (MainMenuUI *this);
+static gchar **get_search_argv            (const gchar *);
 
 static void     panel_button_clicked_cb  (GtkButton *, gpointer);
 static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
+static void     search_entry_activate_cb (GtkEntry *, gpointer);
 static void     page_button_clicked_cb   (GtkButton *, gpointer);
 static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
 static void     gtk_table_notify_cb      (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
 static void     more_button_clicked_cb   (GtkButton *, gpointer);
+static void     search_cmd_notify_cb     (GConfClient *, guint, GConfEntry *, gpointer);
 
 MainMenuUI *
 main_menu_ui_new (PanelApplet *applet)
@@ -131,7 +144,8 @@ main_menu_ui_new (PanelApplet *applet)
 
 	create_panel_button      (this);
 	create_slab_window       (this);
-	create_file_area         (this);
+	create_search_section    (this);
+	create_file_section      (this);
 	create_user_apps_section (this);
 	create_rct_apps_section  (this);
 	create_user_docs_section (this);
@@ -168,32 +182,37 @@ main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	priv->main_menu_xml    = NULL;
-	priv->panel_button_xml = NULL;
+	priv->main_menu_xml            = NULL;
+	priv->panel_button_xml         = NULL;
 
-	priv->panel_button     = NULL;
-	priv->slab_window      = NULL;
+	priv->panel_button             = NULL;
+	priv->slab_window              = NULL;
 
-	priv->top_pane         = NULL;
-	priv->left_pane        = NULL;
+	priv->top_pane                 = NULL;
+	priv->left_pane                = NULL;
 
-	priv->file_area        = NULL;
-	priv->apps_selector    = NULL;
-	priv->docs_selector    = NULL;
-	priv->dirs_selector    = NULL;
+	priv->search_section           = NULL;
+	priv->search_entry             = NULL;
 
-	priv->sys_table        = NULL;
-	priv->usr_apps_table   = NULL;
-	priv->rct_apps_table   = NULL;
-	priv->usr_docs_table   = NULL;
-	priv->rct_docs_table   = NULL;
-	priv->usr_dirs_table   = NULL;
+	priv->file_section             = NULL;
+	priv->apps_selector            = NULL;
+	priv->docs_selector            = NULL;
+	priv->dirs_selector            = NULL;
 
-	priv->more_button [0]  = NULL;
-	priv->more_button [1]  = NULL;
-	priv->more_button [2]  = NULL;
+	priv->sys_table                = NULL;
+	priv->usr_apps_table           = NULL;
+	priv->rct_apps_table           = NULL;
+	priv->usr_docs_table           = NULL;
+	priv->rct_docs_table           = NULL;
+	priv->usr_dirs_table           = NULL;
 
-	priv->max_total_items  = 10;
+	priv->more_button [0]          = NULL;
+	priv->more_button [1]          = NULL;
+	priv->more_button [2]          = NULL;
+
+	priv->max_total_items          = 10;
+
+	priv->search_cmd_gconf_mntr_id = 0;
 }
 
 static void
@@ -210,6 +229,8 @@ main_menu_ui_finalize (GObject *g_obj)
 	for (i = 0; i < 3; ++i)
 		g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->more_button [i]), "double-click-detector")));
+
+	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -253,11 +274,29 @@ create_slab_window (MainMenuUI *this)
 }
 
 static void
-create_file_area (MainMenuUI *this)
+create_search_section (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	priv->file_area = GTK_NOTEBOOK (glade_xml_get_widget (
+        priv->search_section = glade_xml_get_widget (priv->main_menu_xml, "search-section");
+	priv->search_entry   = glade_xml_get_widget (priv->main_menu_xml, "search-entry");
+
+	g_signal_connect (
+		G_OBJECT (priv->search_entry), "activate",
+		G_CALLBACK (search_entry_activate_cb), this);
+
+	set_search_section_visible (this);
+
+	priv->search_cmd_gconf_mntr_id = libslab_gconf_notify_add (
+		SEARCH_CMD_GCONF_KEY, search_cmd_notify_cb, this);
+}
+
+static void
+create_file_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->file_section = GTK_NOTEBOOK (glade_xml_get_widget (
 		priv->main_menu_xml, "file-area-notebook"));
 	priv->apps_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
 		priv->main_menu_xml, "slab-page-selector-button-applications"));
@@ -497,7 +536,7 @@ select_page (MainMenuUI *this, gint page_id)
 	else
 		libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_id));
 
-	gtk_notebook_set_current_page (priv->file_area, page_id);
+	gtk_notebook_set_current_page (priv->file_section, page_id);
 
 	selectors [0] = priv->apps_selector;
 	selectors [1] = priv->docs_selector;
@@ -594,15 +633,111 @@ hide_window_on_launch (MainMenuUI *this)
 }
 
 static void
+set_slab_window_visible (MainMenuUI *this, gboolean visible, guint32 time_millis)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GTimeVal current_time;
+
+
+	if (visible != GTK_WIDGET_VISIBLE (priv->slab_window)) {
+		if (time_millis == 0) {
+			g_get_current_time (& current_time);
+
+			time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
+		}
+
+		if (GTK_WIDGET_VISIBLE (priv->slab_window))
+			gtk_widget_hide (priv->slab_window);
+		else
+			gtk_window_present_with_time (
+				GTK_WINDOW (priv->slab_window), time_millis);
+	}
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), visible);
+}
+
+static void
+set_search_section_visible (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gchar **argv;
+	gchar  *found_cmd = NULL;
+
+
+	argv = get_search_argv (NULL);
+
+	found_cmd = g_find_program_in_path (argv [0]);
+
+	if (found_cmd) {
+		gtk_widget_set_no_show_all (priv->search_section, FALSE);
+		gtk_widget_show            (priv->search_section);
+	}
+	else {
+		gtk_widget_set_no_show_all (priv->search_section, TRUE);
+		gtk_widget_hide            (priv->search_section);
+	}
+
+	g_strfreev (argv);
+	g_free (found_cmd);
+}
+
+static gchar **
+get_search_argv (const gchar *search_txt)
+{
+	gchar  *cmd;
+	gint    argc;
+	gchar **argv_parsed = NULL;
+
+	gchar **argv = NULL;
+
+	gint i;
+
+
+	cmd = (gchar *) libslab_get_gconf_value (SEARCH_CMD_GCONF_KEY);
+
+	if (! cmd) {
+		g_warning ("could not find search command in gconf [" SEARCH_CMD_GCONF_KEY "]\n");
+
+		return NULL;
+	}
+
+	if (! g_shell_parse_argv (cmd, & argc, & argv_parsed, NULL))
+		goto exit;
+
+	argv = g_new0 (gchar *, argc + 1);
+
+	for (i = 0; i < argc; ++i) {
+		if (search_txt && ! strcmp (argv_parsed [i], "SEARCH_STRING"))
+			argv [i] = g_strdup (search_txt);
+		else
+			argv [i] = g_strdup (argv_parsed [i]);
+	}
+
+	argv [argc] = NULL;
+
+exit:
+
+	g_free (cmd);
+	g_strfreev (argv_parsed);
+
+	return argv;
+}
+
+static void
 panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
 
 	DoubleClickDetector *detector;
 	GTimeVal current_time;
 	guint32 current_time_millis;
+
+	gboolean visible;
 
 
 	detector = DOUBLE_CLICK_DETECTOR (
@@ -612,15 +747,12 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 
 	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
 
-	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
-		if (GTK_WIDGET_VISIBLE (priv->slab_window))
-			gtk_widget_hide (priv->slab_window);
-		else
-			gtk_window_present_with_time (
-				GTK_WINDOW (priv->slab_window), current_time_millis);
-	}
+	visible = GTK_WIDGET_VISIBLE (priv->slab_window);
 
-	gtk_toggle_button_set_active (toggle, GTK_WIDGET_VISIBLE (priv->slab_window));
+	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE))
+		set_slab_window_visible (this, ! visible, current_time_millis);
+	else
+		set_slab_window_visible (this, visible, current_time_millis);
 }
 
 static gboolean
@@ -746,6 +878,40 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 }
 
 static void
+search_entry_activate_cb (GtkEntry *entry, gpointer user_data)
+{
+	const gchar *search_txt;
+
+	gchar **argv;
+	gchar  *cmd;
+
+	GError *error = NULL;
+
+
+	search_txt = gtk_entry_get_text (entry);
+
+	if (! search_txt || strlen (search_txt) < 1)
+		return;
+
+	argv = get_search_argv (search_txt);
+
+	g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, & error);
+
+	if (error) {
+		cmd = g_strjoinv (" ", argv);
+		libslab_handle_g_error (
+			& error, "%s: can't execute search [%s]\n", __FUNCTION__, cmd);
+		g_free (cmd);
+	}
+
+	g_strfreev (argv);
+
+	gtk_entry_set_text (entry, "");
+
+	hide_window_on_launch (MAIN_MENU_UI (user_data));
+}
+
+static void
 page_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
 	const gchar *name;
@@ -844,6 +1010,13 @@ more_button_clicked_cb (GtkButton *button, gpointer user_data)
 			hide_window_on_launch (this);
 		}
 	}
+}
+
+static void
+search_cmd_notify_cb (GConfClient *client, guint conn_id,
+                      GConfEntry *entry, gpointer user_data)
+{
+	set_search_section_visible (MAIN_MENU_UI (user_data));
 }
 
 
