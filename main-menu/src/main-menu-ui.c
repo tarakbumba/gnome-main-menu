@@ -24,6 +24,7 @@
 #	include <config.h>
 #endif
 
+#include <panel-applet.h>
 #include <glade/glade.h>
 #include <cairo.h>
 #include <string.h>
@@ -52,17 +53,16 @@
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
-enum {
-	MORE_APPS_BUTTON,
-	MORE_DOCS_BUTTON,
-	MORE_DIRS_BUTTON
-};
-
 typedef struct {
+	PanelApplet *panel_applet;
+	GtkWidget   *panel_about_dialog;
+
 	GladeXML *main_menu_xml;
 	GladeXML *panel_button_xml;
 
+	GtkWidget *panel_buttons [3];
 	GtkWidget *panel_button;
+
 	GtkWidget *slab_window;
 
 	GtkWidget *top_pane;
@@ -114,16 +114,52 @@ static void    hide_window_on_launch      (MainMenuUI *);
 static void    set_slab_window_visible    (MainMenuUI *, gboolean, guint32);
 static void    set_search_section_visible (MainMenuUI *this);
 static gchar **get_search_argv            (const gchar *);
+static void    reorient_panel_button      (MainMenuUI *);
 
-static void     panel_button_clicked_cb  (GtkButton *, gpointer);
-static gboolean slab_window_expose_cb    (GtkWidget *, GdkEventExpose *, gpointer);
-static void     search_entry_activate_cb (GtkEntry *, gpointer);
-static void     page_button_clicked_cb   (GtkButton *, gpointer);
-static void     tile_table_notify_cb     (GObject *, GParamSpec *, gpointer);
-static void     gtk_table_notify_cb      (GObject *, GParamSpec *, gpointer);
-static void     tile_action_triggered_cb (Tile *, TileEvent *, TileAction *, gpointer);
-static void     more_button_clicked_cb   (GtkButton *, gpointer);
-static void     search_cmd_notify_cb     (GConfClient *, guint, GConfEntry *, gpointer);
+static void     panel_button_clicked_cb       (GtkButton *, gpointer);
+static gboolean panel_button_button_press_cb  (GtkWidget *, GdkEventButton *, gpointer);
+static gboolean slab_window_expose_cb         (GtkWidget *, GdkEventExpose *, gpointer);
+static void     search_entry_activate_cb      (GtkEntry *, gpointer);
+static void     page_button_clicked_cb        (GtkButton *, gpointer);
+static void     tile_table_notify_cb          (GObject *, GParamSpec *, gpointer);
+static void     gtk_table_notify_cb           (GObject *, GParamSpec *, gpointer);
+static void     tile_action_triggered_cb      (Tile *, TileEvent *, TileAction *, gpointer);
+static void     more_button_clicked_cb        (GtkButton *, gpointer);
+static void     search_cmd_notify_cb          (GConfClient *, guint, GConfEntry *, gpointer);
+static void     panel_menu_open_cb            (BonoboUIComponent *, gpointer, const gchar *);
+static void     panel_menu_about_cb           (BonoboUIComponent *, gpointer, const gchar *);
+static void     panel_applet_change_orient_cb (PanelApplet *, PanelAppletOrient, gpointer);
+
+static const BonoboUIVerb applet_bonobo_verbs [] = {
+	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen",  panel_menu_open_cb),
+	BONOBO_UI_UNSAFE_VERB ("MainMenuAbout", panel_menu_about_cb),
+	BONOBO_UI_VERB_END
+};
+
+static const gchar *main_menu_authors [] = {
+	"Jim Krehl <jimmyk@novell.com>",
+	"Scott Reeves <sreeves@novell.com>",
+	"Dan Winship <danw@novell.com>",
+	NULL
+};
+
+static const gchar *main_menu_artists [] = {
+	"Garrett LeSage <garrett@novell.com>",
+	"Jakub Steiner <jimmac@novell.com>",
+	NULL
+};
+
+enum {
+	MORE_APPS_BUTTON,
+	MORE_DOCS_BUTTON,
+	MORE_DIRS_BUTTON
+};
+
+enum {
+	PANEL_BUTTON_ORIENT_TOP,
+	PANEL_BUTTON_ORIENT_LEFT,
+	PANEL_BUTTON_ORIENT_RIGHT
+};
 
 MainMenuUI *
 main_menu_ui_new (PanelApplet *applet)
@@ -136,6 +172,8 @@ main_menu_ui_new (PanelApplet *applet)
 
 	this = g_object_new (MAIN_MENU_UI_TYPE, NULL);
 	priv = PRIVATE (this);
+
+	priv->panel_applet = applet;
 
 	glade_xml_path = g_build_filename (DATADIR, PACKAGE, "slab-window.glade", NULL);
 
@@ -161,12 +199,6 @@ main_menu_ui_new (PanelApplet *applet)
 	return this;
 }
 
-GtkWidget *
-main_menu_ui_get_panel_button (MainMenuUI *this)
-{
-	return PRIVATE (this)->panel_button;
-}
-
 static void
 main_menu_ui_class_init (MainMenuUIClass *this_class)
 {
@@ -182,37 +214,41 @@ main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	priv->main_menu_xml            = NULL;
-	priv->panel_button_xml         = NULL;
+	priv->main_menu_xml                             = NULL;
+	priv->panel_button_xml                          = NULL;
 
-	priv->panel_button             = NULL;
-	priv->slab_window              = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP]   = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT]  = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = NULL;
+	priv->panel_button                              = NULL;
 
-	priv->top_pane                 = NULL;
-	priv->left_pane                = NULL;
+	priv->slab_window                               = NULL;
 
-	priv->search_section           = NULL;
-	priv->search_entry             = NULL;
+	priv->top_pane                                  = NULL;
+	priv->left_pane                                 = NULL;
 
-	priv->file_section             = NULL;
-	priv->apps_selector            = NULL;
-	priv->docs_selector            = NULL;
-	priv->dirs_selector            = NULL;
+	priv->search_section                            = NULL;
+	priv->search_entry                              = NULL;
 
-	priv->sys_table                = NULL;
-	priv->usr_apps_table           = NULL;
-	priv->rct_apps_table           = NULL;
-	priv->usr_docs_table           = NULL;
-	priv->rct_docs_table           = NULL;
-	priv->usr_dirs_table           = NULL;
+	priv->file_section                              = NULL;
+	priv->apps_selector                             = NULL;
+	priv->docs_selector                             = NULL;
+	priv->dirs_selector                             = NULL;
 
-	priv->more_button [0]          = NULL;
-	priv->more_button [1]          = NULL;
-	priv->more_button [2]          = NULL;
+	priv->sys_table                                 = NULL;
+	priv->usr_apps_table                            = NULL;
+	priv->rct_apps_table                            = NULL;
+	priv->usr_docs_table                            = NULL;
+	priv->rct_docs_table                            = NULL;
+	priv->usr_dirs_table                            = NULL;
 
-	priv->max_total_items          = 10;
+	priv->more_button [0]                           = NULL;
+	priv->more_button [1]                           = NULL;
+	priv->more_button [2]                           = NULL;
 
-	priv->search_cmd_gconf_mntr_id = 0;
+	priv->max_total_items                           = 10;
+
+	priv->search_cmd_gconf_mntr_id                  = 0;
 }
 
 static void
@@ -223,12 +259,15 @@ main_menu_ui_finalize (GObject *g_obj)
 	gint i;
 
 
-	g_object_unref (G_OBJECT (g_object_get_data (
-		G_OBJECT (priv->panel_button), "double-click-detector")));
-
-	for (i = 0; i < 3; ++i)
+	for (i = 0; i < 3; ++i) {
 		g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->more_button [i]), "double-click-detector")));
+
+		g_object_unref (G_OBJECT (g_object_get_data (
+			G_OBJECT (priv->panel_buttons [i]), "double-click-detector")));
+
+		gtk_widget_unref (priv->panel_buttons [i]);
+	}
 
 	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
 
@@ -240,19 +279,55 @@ create_panel_button (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	gtk_widget_hide (glade_xml_get_widget (
-		priv->panel_button_xml, "slab-panel-button-root"));
+	GtkWidget *button_root;
+	GtkWidget *button_parent;
 
-	priv->panel_button = glade_xml_get_widget (
-		priv->panel_button_xml, "slab-main-menu-panel-button");
-	g_object_set_data (
-		G_OBJECT (priv->panel_button),
-		"double-click-detector",
-		double_click_detector_new ());
+	gint i;
+
+
+	button_root = glade_xml_get_widget (
+		priv->panel_button_xml, "slab-panel-button-root");
+
+	gtk_widget_hide (button_root);
+
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP] = glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-top");
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT] = glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-left");
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-right");
+
+	for (i = 0; i < 3; ++i) {
+		g_object_set_data (
+			G_OBJECT (priv->panel_buttons [i]), "double-click-detector",
+			double_click_detector_new ());
+
+		button_parent = gtk_widget_get_parent (priv->panel_buttons [i]);
+
+		gtk_widget_ref (priv->panel_buttons [i]);
+		gtk_container_remove (
+			GTK_CONTAINER (button_parent), priv->panel_buttons [i]);
+
+		g_signal_connect (
+			G_OBJECT (priv->panel_buttons [i]), "clicked",
+			G_CALLBACK (panel_button_clicked_cb), this);
+
+		g_signal_connect (
+			G_OBJECT (priv->panel_buttons [i]), "button_press_event",
+			G_CALLBACK (panel_button_button_press_cb), this);
+	}
+
+	gtk_widget_destroy (button_root);
+
+	reorient_panel_button (this);
+
+	panel_applet_setup_menu_from_file (
+		priv->panel_applet, NULL, "GNOME_MainMenu_ContextMenu.xml",
+		NULL, applet_bonobo_verbs, this);
 
 	g_signal_connect (
-		G_OBJECT (priv->panel_button), "clicked",
-		G_CALLBACK (panel_button_clicked_cb), this);
+		G_OBJECT (priv->panel_applet), "change_orient",
+		G_CALLBACK (panel_applet_change_orient_cb), this);
 }
 
 static void
@@ -641,17 +716,17 @@ set_slab_window_visible (MainMenuUI *this, gboolean visible, guint32 time_millis
 
 
 	if (visible != GTK_WIDGET_VISIBLE (priv->slab_window)) {
-		if (time_millis == 0) {
-			g_get_current_time (& current_time);
-
-			time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
-		}
-
-		if (GTK_WIDGET_VISIBLE (priv->slab_window))
+		if (! visible)
 			gtk_widget_hide (priv->slab_window);
-		else
-			gtk_window_present_with_time (
-				GTK_WINDOW (priv->slab_window), time_millis);
+		else {
+			if (time_millis == 0) {
+				g_get_current_time (& current_time);
+
+				time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
+			}
+
+			gtk_widget_show_all (priv->slab_window);
+		}
 	}
 
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), visible);
@@ -726,6 +801,40 @@ exit:
 }
 
 static void
+reorient_panel_button (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	PanelAppletOrient orientation;
+
+	GtkWidget *child;
+
+
+	orientation = panel_applet_get_orient (priv->panel_applet);
+
+	child = gtk_bin_get_child (GTK_BIN (priv->panel_applet));
+
+	if (GTK_IS_WIDGET (child))
+		gtk_container_remove (GTK_CONTAINER (priv->panel_applet), child);
+
+	switch (orientation) {
+		case PANEL_APPLET_ORIENT_LEFT:
+			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT];
+			break;
+
+		case PANEL_APPLET_ORIENT_RIGHT:
+			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT];
+			break;
+
+		default:
+			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP];
+			break;
+	}
+
+	gtk_container_add (GTK_CONTAINER (priv->panel_applet), priv->panel_button);
+}
+
+static void
 panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);
@@ -753,6 +862,15 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 		set_slab_window_visible (this, ! visible, current_time_millis);
 	else
 		set_slab_window_visible (this, visible, current_time_millis);
+}
+
+static gboolean
+panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	if (event->button != 1)
+		g_signal_stop_emission_by_name (widget, "button_press_event");
+
+	return FALSE;
 }
 
 static gboolean
@@ -1017,6 +1135,48 @@ search_cmd_notify_cb (GConfClient *client, guint conn_id,
                       GConfEntry *entry, gpointer user_data)
 {
 	set_search_section_visible (MAIN_MENU_UI (user_data));
+}
+
+static void
+panel_menu_open_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
+{
+	gtk_toggle_button_set_active (
+		GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
+}
+
+static void
+panel_menu_about_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
+{
+	MainMenuUI *this        = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
+
+
+	if (! priv->panel_about_dialog) {
+		priv->panel_about_dialog = gtk_about_dialog_new ();
+
+		g_object_set (priv->panel_about_dialog,
+			"name", _("GNOME Main Menu"),
+			"comments", _("The GNOME Main Menu"),
+			"version", VERSION,
+			"authors", main_menu_authors,
+			"artists", main_menu_artists,
+			"logo-icon-name", "gnome-fs-client",
+			"copyright", "Copyright \xc2\xa9 2005-2007 Novell, Inc.",
+			NULL);
+
+		gtk_widget_show (priv->panel_about_dialog);
+
+		g_signal_connect (G_OBJECT (priv->panel_about_dialog), "response",
+			G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	}
+
+	gtk_window_present (GTK_WINDOW (priv->panel_about_dialog));
+}
+
+static void
+panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gpointer user_data)
+{
+	reorient_panel_button (MAIN_MENU_UI (user_data));
 }
 
 

@@ -45,8 +45,7 @@ typedef struct {
 
 GType main_menu_ui_get_type (void);
 
-MainMenuUI *main_menu_ui_new              (PanelApplet *applet);
-GtkWidget  *main_menu_ui_get_panel_button (MainMenuUI  *this);
+MainMenuUI *main_menu_ui_new (PanelApplet *applet);
 
 G_END_DECLS
 

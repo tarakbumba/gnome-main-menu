@@ -38,13 +38,7 @@ PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_MainMenu_Factory", PANEL_TYPE_APPLET,
 static gboolean
 main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data)
 {
-	MainMenuUI *ui;
-
-	gchar *argv[1] = { "slab" };
-
-	GtkWidget *panel_button;
-	GtkWidget *panel_button_parent = NULL;
-
+	gchar *argv [1] = { "slab" };
 
 	if (strcmp (iid, "OAFIID:GNOME_MainMenu") != 0)
 		return FALSE;
@@ -69,22 +63,7 @@ main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data
 	migrate_user_docs_to_user_bookmark_file  ();
 	migrate_user_dirs_to_user_bookmark_file  ();
 
-	ui = main_menu_ui_new (applet);
-
-	panel_button = main_menu_ui_get_panel_button (ui);
-	panel_button_parent = gtk_widget_get_parent (panel_button);
-
-	if (panel_button_parent) {
-		gtk_widget_ref (panel_button);
-		gtk_container_remove (GTK_CONTAINER (panel_button_parent), panel_button);
-	}
-
-	gtk_container_add (GTK_CONTAINER (applet), panel_button);
-
-	if (panel_button_parent) {
-		gtk_widget_unref (panel_button);
-		gtk_widget_destroy (panel_button_parent);
-	}
+	main_menu_ui_new (applet);
 
 	gtk_widget_show_all (GTK_WIDGET (applet));
 
