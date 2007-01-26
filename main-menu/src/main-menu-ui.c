@@ -28,6 +28,8 @@
 #include <glade/glade.h>
 #include <cairo.h>
 #include <string.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 #include "tile.h"
 #include "hard-drive-status-tile.h"
@@ -40,6 +42,7 @@
 #include "user-dirs-tile-table.h"
 #include "system-tile-table.h"
 
+#include "tomboykeybinder.h"
 #include "libslab-utils.h"
 #include "double-click-detector.h"
 
@@ -115,6 +118,8 @@ static void    set_slab_window_visible    (MainMenuUI *, gboolean, guint32);
 static void    set_search_section_visible (MainMenuUI *this);
 static gchar **get_search_argv            (const gchar *);
 static void    reorient_panel_button      (MainMenuUI *);
+static void    bind_search_key            (MainMenuUI *);
+static void    launch_search              (MainMenuUI *);
 
 static void     panel_button_clicked_cb       (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb  (GtkWidget *, GdkEventButton *, gpointer);
@@ -129,6 +134,8 @@ static void     search_cmd_notify_cb          (GConfClient *, guint, GConfEntry 
 static void     panel_menu_open_cb            (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_menu_about_cb           (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_applet_change_orient_cb (PanelApplet *, PanelAppletOrient, gpointer);
+static void     slab_window_tomboy_bindkey_cb (gchar *, gpointer);
+static void     search_tomboy_bindkey_cb      (gchar *, gpointer);
 
 static const BonoboUIVerb applet_bonobo_verbs [] = {
 	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen",  panel_menu_open_cb),
@@ -342,6 +349,10 @@ create_slab_window (MainMenuUI *this)
 
 	priv->top_pane  = glade_xml_get_widget (priv->main_menu_xml, "top-pane");
 	priv->left_pane = glade_xml_get_widget (priv->main_menu_xml, "left-pane");
+
+	tomboy_keybinder_init ();
+	tomboy_keybinder_bind ("<Ctrl>Escape", slab_window_tomboy_bindkey_cb, this);
+	bind_search_key (this);
 
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "expose-event",
@@ -784,8 +795,8 @@ get_search_argv (const gchar *search_txt)
 	argv = g_new0 (gchar *, argc + 1);
 
 	for (i = 0; i < argc; ++i) {
-		if (search_txt && ! strcmp (argv_parsed [i], "SEARCH_STRING"))
-			argv [i] = g_strdup (search_txt);
+		if (! strcmp (argv_parsed [i], "SEARCH_STRING"))
+			argv [i] = g_strdup ((search_txt == NULL) ? "" : search_txt);
 		else
 			argv [i] = g_strdup (argv_parsed [i]);
 	}
@@ -832,6 +843,115 @@ reorient_panel_button (MainMenuUI *this)
 	}
 
 	gtk_container_add (GTK_CONTAINER (priv->panel_applet), priv->panel_button);
+}
+
+static void
+launch_search (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	const gchar *search_txt;
+
+	gchar **argv;
+	gchar  *cmd;
+
+	GError *error = NULL;
+
+
+	search_txt = gtk_entry_get_text (GTK_ENTRY (priv->search_entry));
+
+	argv = get_search_argv (search_txt);
+
+	g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, & error);
+
+	if (error) {
+		cmd = g_strjoinv (" ", argv);
+		libslab_handle_g_error (
+			& error, "%s: can't execute search [%s]\n", __FUNCTION__, cmd);
+		g_free (cmd);
+	}
+
+	g_strfreev (argv);
+
+	hide_window_on_launch (this);
+
+	gtk_entry_set_text (GTK_ENTRY (priv->search_entry), "");
+}
+
+static void
+bind_search_key (MainMenuUI *this)
+{
+	xmlDocPtr  doc;
+	xmlNodePtr node;
+
+	gchar    *path;
+	gchar    *contents;
+	gsize     length;
+	gboolean  success;
+
+	gchar *key;
+
+	gboolean ctrl;
+	gboolean alt;
+
+	xmlChar *val;
+
+
+	path = g_build_filename (
+		g_get_home_dir (), ".beagle/config/searching.xml", NULL);
+	success = g_file_get_contents (path, & contents, & length, NULL);
+	g_free (path);
+
+	if (! success)
+		return;
+
+	doc = xmlParseMemory (contents, length);
+	g_free (contents);
+
+	if (! doc)
+		return;
+
+	if (! doc->children || ! doc->children->children)
+		goto exit;
+
+	for (node = doc->children->children; node; node = node->next) {
+		if (! node->name || strcmp ((gchar *) node->name, "ShowSearchWindowBinding"))
+			continue;
+
+		if (! node->children)
+			break;
+
+		val  = xmlGetProp (node, (xmlChar *) "Ctrl");
+		ctrl = val && ! strcmp ((gchar *) val, "true");
+		xmlFree (val);
+
+		val = xmlGetProp (node, (xmlChar *) "Alt");
+		alt = val && ! strcmp ((gchar *) val, "true");
+		xmlFree (val);
+
+		for (node = node->children; node; node = node->next) {
+			if (! node->name || strcmp ((gchar *) node->name, "Key"))
+				continue;
+
+			val = xmlNodeGetContent (node);
+
+			key = g_strdup_printf (
+				"%s%s%s", ctrl ? "<Ctrl>" : "", alt ? "<Alt>" : "", val);
+			xmlFree (val);
+
+			tomboy_keybinder_bind (key, search_tomboy_bindkey_cb, this);
+
+			g_free (key);
+
+			break;
+		}
+
+		break;
+	}
+
+exit:
+
+	xmlFreeDoc (doc);
 }
 
 static void
@@ -998,35 +1118,7 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 static void
 search_entry_activate_cb (GtkEntry *entry, gpointer user_data)
 {
-	const gchar *search_txt;
-
-	gchar **argv;
-	gchar  *cmd;
-
-	GError *error = NULL;
-
-
-	search_txt = gtk_entry_get_text (entry);
-
-	if (! search_txt || strlen (search_txt) < 1)
-		return;
-
-	argv = get_search_argv (search_txt);
-
-	g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, & error);
-
-	if (error) {
-		cmd = g_strjoinv (" ", argv);
-		libslab_handle_g_error (
-			& error, "%s: can't execute search [%s]\n", __FUNCTION__, cmd);
-		g_free (cmd);
-	}
-
-	g_strfreev (argv);
-
-	gtk_entry_set_text (entry, "");
-
-	hide_window_on_launch (MAIN_MENU_UI (user_data));
+	launch_search (MAIN_MENU_UI (user_data));
 }
 
 static void
@@ -1177,6 +1269,19 @@ static void
 panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gpointer user_data)
 {
 	reorient_panel_button (MAIN_MENU_UI (user_data));
+}
+
+static void
+slab_window_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
+{
+	gtk_toggle_button_set_active (
+		GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
+}
+
+static void
+search_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
+{
+	launch_search (MAIN_MENU_UI (user_data));
 }
 
 

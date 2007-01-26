@@ -28,7 +28,9 @@ main_menu_SOURCES =							\
 	hard-drive-status-tile.c	hard-drive-status-tile.h	\
 	network-status-tile.c		network-status-tile.h		\
 	network-status-agent.c		network-status-agent.h		\
-	network-status-info.c		network-status-info.h
+	network-status-info.c		network-status-info.h		\
+	tomboykeybinder.c		tomboykeybinder.h		\
+	eggaccelerators.c		eggaccelerators.h
 
 main_menu_LDADD =							\
 	$(MAIN_MENU_LIBS)						\
