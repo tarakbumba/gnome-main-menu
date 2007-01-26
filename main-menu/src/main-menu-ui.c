@@ -20,20 +20,26 @@
 
 #include "main-menu-ui.h"
 
+#ifdef HAVE_CONFIG_H
+#	include <config.h>
+#endif
+
 #include <glade/glade.h>
 #include <cairo.h>
 
-#include "double-click-detector.h"
 #include "tile.h"
+#include "hard-drive-status-tile.h"
+#include "network-status-tile.h"
+
 #include "user-apps-tile-table.h"
 #include "recent-apps-tile-table.h"
 #include "user-docs-tile-table.h"
 #include "recent-docs-tile-table.h"
 #include "user-dirs-tile-table.h"
 #include "system-tile-table.h"
-#include "libslab-utils.h"
 
-#define GLADE_FILE_PATH "/home/jimmyk/glade/projects/slab-window/slab-window.glade"
+#include "libslab-utils.h"
+#include "double-click-detector.h"
 
 #define CURRENT_PAGE_GCONF_KEY     "/desktop/gnome/applications/main-menu/file-area/file_class"
 #define URGENT_CLOSE_GCONF_KEY     "/desktop/gnome/applications/main-menu/urgent_close"
@@ -80,6 +86,7 @@ static void create_user_docs_section (MainMenuUI *);
 static void create_rct_docs_section  (MainMenuUI *);
 static void create_user_dirs_section (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
+static void create_status_section    (MainMenuUI *);
 
 static void select_page              (MainMenuUI *, gint);
 static void update_limits            (MainMenuUI *);
@@ -98,12 +105,16 @@ main_menu_ui_new (PanelApplet *applet)
 	MainMenuUI        *this;
 	MainMenuUIPrivate *priv;
 
+	gchar *glade_xml_path;
+
 
 	this = g_object_new (MAIN_MENU_UI_TYPE, NULL);
 	priv = PRIVATE (this);
 
-	priv->main_menu_xml    = glade_xml_new (GLADE_FILE_PATH, "slab-main-menu-window", NULL);
-	priv->panel_button_xml = glade_xml_new (GLADE_FILE_PATH, "slab-panel-button-root", NULL);
+	glade_xml_path = g_build_filename (DATADIR, PACKAGE, "slab-window.glade", NULL);
+
+	priv->main_menu_xml    = glade_xml_new (glade_xml_path, "slab-main-menu-window", NULL);
+	priv->panel_button_xml = glade_xml_new (glade_xml_path, "slab-panel-button-root", NULL);
 
 	create_panel_button      (this);
 	create_slab_window       (this);
@@ -114,6 +125,7 @@ main_menu_ui_new (PanelApplet *applet)
 	create_rct_docs_section  (this);
 	create_user_dirs_section (this);
 	create_system_section    (this);
+	create_status_section    (this);
 
 	select_page   (this, -1);
 	update_limits (this);
@@ -252,6 +264,38 @@ create_system_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+}
+
+static void
+create_status_section (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkContainer *ctnr;
+	GtkWidget    *tile;
+
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "hard-drive-status-container"));
+	tile = hard_drive_status_tile_new ();
+
+	g_signal_connect (
+		G_OBJECT (tile), "tile-action-triggered",
+		G_CALLBACK (tile_action_triggered_cb), this);
+
+	gtk_container_add   (ctnr, tile);
+	gtk_widget_show_all (GTK_WIDGET (ctnr));
+
+	ctnr = GTK_CONTAINER (glade_xml_get_widget (
+		priv->main_menu_xml, "network-status-container"));
+	tile = network_status_tile_new ();
+
+	g_signal_connect (
+		G_OBJECT (tile), "tile-action-triggered",
+		G_CALLBACK (tile_action_triggered_cb), this);
+
+	gtk_container_add   (ctnr, tile);
+	gtk_widget_show_all (GTK_WIDGET (ctnr));
 }
 
 static void
@@ -692,10 +736,10 @@ tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpoi
 {
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
-	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
+	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
 		return;
 
-	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
+	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
 		return;
 
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);

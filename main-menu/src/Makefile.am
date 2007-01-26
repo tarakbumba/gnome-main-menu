@@ -3,6 +3,9 @@ INCLUDES =								\
 	-I$(top_srcdir)/libslab						\
 	$(WARN_CFLAGS)
 
+gladedir = $(datadir)/$(PACKAGE)
+glade_DATA = slab-window.glade
+
 libexec_PROGRAMS = main-menu
 
 AM_CPPFLAGS =								\
@@ -21,9 +24,15 @@ main_menu_SOURCES =							\
 	user-docs-tile-table.c		user-docs-tile-table.h		\
 	recent-docs-tile-table.c	recent-docs-tile-table.h	\
 	user-dirs-tile-table.c		user-dirs-tile-table.h		\
-	system-tile-table.c		system-tile-table.h
+	system-tile-table.c		system-tile-table.h		\
+	hard-drive-status-tile.c	hard-drive-status-tile.h	\
+	network-status-tile.c		network-status-tile.h		\
+	network-status-agent.c		network-status-agent.h		\
+	network-status-info.c		network-status-info.h
 
 main_menu_LDADD =							\
 	$(MAIN_MENU_LIBS)						\
 	$(GLADE_LIBS)							\
 	$(top_builddir)/libslab/libslab.la
+
+EXTRA_DIST = $(glade_DATA)
