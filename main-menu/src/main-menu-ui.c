@@ -30,6 +30,7 @@
 #include <string.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "tile.h"
 #include "hard-drive-status-tile.h"
@@ -90,7 +91,9 @@ typedef struct {
 
 	gint max_total_items;
 
-	guint search_cmd_gconf_mntr_id;
+	guint    search_cmd_gconf_mntr_id;
+	gboolean ptr_is_grabbed;
+	gboolean kbd_is_grabbed;
 } MainMenuUIPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MAIN_MENU_UI_TYPE, MainMenuUIPrivate))
@@ -113,29 +116,38 @@ static void create_more_buttons      (MainMenuUI *);
 static void    select_page                (MainMenuUI *, gint);
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
-static void    hide_window_on_launch      (MainMenuUI *);
+static void    hide_slab_if_urgent_close  (MainMenuUI *);
 static void    set_slab_window_visible    (MainMenuUI *, gboolean, guint32);
 static void    set_search_section_visible (MainMenuUI *this);
 static gchar **get_search_argv            (const gchar *);
 static void    reorient_panel_button      (MainMenuUI *);
 static void    bind_search_key            (MainMenuUI *);
 static void    launch_search              (MainMenuUI *);
+static void    grab_focus                 (MainMenuUI *, guint32);
 
-static void     panel_button_clicked_cb       (GtkButton *, gpointer);
-static gboolean panel_button_button_press_cb  (GtkWidget *, GdkEventButton *, gpointer);
-static gboolean slab_window_expose_cb         (GtkWidget *, GdkEventExpose *, gpointer);
-static void     search_entry_activate_cb      (GtkEntry *, gpointer);
-static void     page_button_clicked_cb        (GtkButton *, gpointer);
-static void     tile_table_notify_cb          (GObject *, GParamSpec *, gpointer);
-static void     gtk_table_notify_cb           (GObject *, GParamSpec *, gpointer);
-static void     tile_action_triggered_cb      (Tile *, TileEvent *, TileAction *, gpointer);
-static void     more_button_clicked_cb        (GtkButton *, gpointer);
-static void     search_cmd_notify_cb          (GConfClient *, guint, GConfEntry *, gpointer);
-static void     panel_menu_open_cb            (BonoboUIComponent *, gpointer, const gchar *);
-static void     panel_menu_about_cb           (BonoboUIComponent *, gpointer, const gchar *);
-static void     panel_applet_change_orient_cb (PanelApplet *, PanelAppletOrient, gpointer);
-static void     slab_window_tomboy_bindkey_cb (gchar *, gpointer);
-static void     search_tomboy_bindkey_cb      (gchar *, gpointer);
+static void     panel_button_clicked_cb           (GtkButton *, gpointer);
+static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
+static gboolean slab_window_expose_cb             (GtkWidget *, GdkEventExpose *, gpointer);
+static gboolean slab_window_key_press_cb          (GtkWidget *, GdkEventKey *, gpointer);
+static gboolean slab_window_button_press_cb       (GtkWidget *, GdkEventButton *, gpointer);
+static void     slab_window_map_cb                (GtkWidget *, GdkEvent *, gpointer);
+static void     slab_window_unmap_cb              (GtkWidget *, GdkEvent *, gpointer);
+static gboolean slab_window_grab_broken_cb        (GtkWidget *, GdkEvent *, gpointer);
+static void     search_entry_activate_cb          (GtkEntry *, gpointer);
+static void     page_button_clicked_cb            (GtkButton *, gpointer);
+static void     tile_table_notify_cb              (GObject *, GParamSpec *, gpointer);
+static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpointer);
+static void     tile_action_triggered_cb          (Tile *, TileEvent *, TileAction *, gpointer);
+static void     more_button_clicked_cb            (GtkButton *, gpointer);
+static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
+static void     panel_menu_open_cb                (BonoboUIComponent *, gpointer, const gchar *);
+static void     panel_menu_about_cb               (BonoboUIComponent *, gpointer, const gchar *);
+static void     panel_applet_change_orient_cb     (PanelApplet *, PanelAppletOrient, gpointer);
+static void     panel_applet_change_background_cb (PanelApplet *, PanelAppletBackgroundType, GdkColor *,
+                                                   GdkPixmap * pixmap, gpointer);
+static void     slab_window_tomboy_bindkey_cb     (gchar *, gpointer);
+static void     search_tomboy_bindkey_cb          (gchar *, gpointer);
+static gboolean grabbing_window_event_cb          (GtkWidget *, GdkEvent *, gpointer);
 
 static const BonoboUIVerb applet_bonobo_verbs [] = {
 	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen",  panel_menu_open_cb),
@@ -253,9 +265,11 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->more_button [1]                           = NULL;
 	priv->more_button [2]                           = NULL;
 
-	priv->max_total_items                           = 10;
+	priv->max_total_items                           = 8;
 
 	priv->search_cmd_gconf_mntr_id                  = 0;
+	priv->ptr_is_grabbed                            = FALSE;
+	priv->kbd_is_grabbed                            = FALSE;
 }
 
 static void
@@ -335,6 +349,10 @@ create_panel_button (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->panel_applet), "change_orient",
 		G_CALLBACK (panel_applet_change_orient_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->panel_applet), "change_background",
+		G_CALLBACK (panel_applet_change_background_cb), this);
 }
 
 static void
@@ -346,6 +364,7 @@ create_slab_window (MainMenuUI *this)
 		priv->main_menu_xml, "slab-main-menu-window");
 	gtk_widget_set_app_paintable (priv->slab_window, TRUE);
 	gtk_widget_hide (priv->slab_window);
+	gtk_window_stick (GTK_WINDOW (priv->slab_window));
 
 	priv->top_pane  = glade_xml_get_widget (priv->main_menu_xml, "top-pane");
 	priv->left_pane = glade_xml_get_widget (priv->main_menu_xml, "left-pane");
@@ -357,6 +376,26 @@ create_slab_window (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "expose-event",
 		G_CALLBACK (slab_window_expose_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "key-press-event",
+		G_CALLBACK (slab_window_key_press_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "button_press_event",
+		G_CALLBACK (slab_window_button_press_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "grab-broken-event",
+		G_CALLBACK (slab_window_grab_broken_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "map_event",
+		G_CALLBACK (slab_window_map_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "unmap_event",
+		G_CALLBACK (slab_window_unmap_cb), this);
 }
 
 static void
@@ -708,7 +747,7 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 }
 
 static void
-hide_window_on_launch (MainMenuUI *this)
+hide_slab_if_urgent_close (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
@@ -736,7 +775,7 @@ set_slab_window_visible (MainMenuUI *this, gboolean visible, guint32 time_millis
 				time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
 			}
 
-			gtk_widget_show_all (priv->slab_window);
+			gtk_window_present_with_time (GTK_WINDOW (priv->slab_window), time_millis);
 		}
 	}
 
@@ -873,9 +912,49 @@ launch_search (MainMenuUI *this)
 
 	g_strfreev (argv);
 
-	hide_window_on_launch (this);
+	hide_slab_if_urgent_close (this);
 
 	gtk_entry_set_text (GTK_ENTRY (priv->search_entry), "");
+}
+
+static void
+grab_focus (MainMenuUI *this, guint32 time)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GdkGrabStatus status;
+
+
+	if (time == 0)
+		time = GDK_CURRENT_TIME;
+
+	if (GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY))) {
+		gtk_widget_grab_focus (priv->slab_window);
+		gtk_grab_add          (priv->slab_window);
+
+		status = gdk_pointer_grab (
+			priv->slab_window->window, TRUE, GDK_BUTTON_PRESS_MASK,
+			NULL, NULL, time);
+
+		priv->ptr_is_grabbed = (status == GDK_GRAB_SUCCESS);
+
+		status = gdk_keyboard_grab (priv->slab_window->window, TRUE, time);
+
+		priv->kbd_is_grabbed = (status == GDK_GRAB_SUCCESS);
+	}
+	else {
+		if (priv->ptr_is_grabbed) {
+			gdk_pointer_ungrab (time);
+			priv->ptr_is_grabbed = FALSE;
+		}
+
+		if (priv->kbd_is_grabbed) {
+			gdk_keyboard_ungrab (time);
+			priv->kbd_is_grabbed = FALSE;
+		}
+
+		gtk_grab_remove (priv->slab_window);
+	}
 }
 
 static void
@@ -1115,6 +1194,93 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 	return FALSE;
 }
 
+static gboolean
+slab_window_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	switch (event->keyval) {
+		case GDK_Escape:
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
+
+			return TRUE;
+
+		case GDK_W:
+		case GDK_w:
+			if (event->state & GDK_CONTROL_MASK) {
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
+
+				return TRUE;
+			}
+
+		default:
+			return FALSE;
+	}
+}
+
+static gboolean
+slab_window_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
+
+	GdkWindow *ptr_window;
+	
+	
+	ptr_window = gdk_window_at_pointer (NULL, NULL);
+
+	if (priv->slab_window->window != ptr_window) {
+		hide_slab_if_urgent_close (this);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+slab_window_map_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	grab_focus (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
+}
+
+static void
+slab_window_unmap_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	if (priv->ptr_is_grabbed) {
+		gdk_pointer_ungrab (gdk_event_get_time (event));
+		priv->ptr_is_grabbed = FALSE;
+	}
+
+	if (priv->kbd_is_grabbed) {
+		gdk_keyboard_ungrab (gdk_event_get_time (event));
+		priv->kbd_is_grabbed = FALSE;
+	}
+
+	gtk_grab_remove (widget);
+}
+
+static gboolean
+slab_window_grab_broken_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	GdkEventGrabBroken *grab_event = (GdkEventGrabBroken *) event;
+	gpointer window_data;
+
+
+	if (grab_event->grab_window) {
+		gdk_window_get_user_data (grab_event->grab_window, & window_data);
+
+		if (GTK_IS_WIDGET (window_data))
+			g_signal_connect (
+				G_OBJECT (window_data), "event",
+				G_CALLBACK (grabbing_window_event_cb), user_data);
+	}
+
+	return FALSE;
+}
+
 static void
 search_entry_activate_cb (GtkEntry *entry, gpointer user_data)
 {
@@ -1182,7 +1348,7 @@ tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpoi
 	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
 		return;
 
-	hide_window_on_launch (MAIN_MENU_UI (user_data));
+	hide_slab_if_urgent_close (MAIN_MENU_UI (user_data));
 }
 
 static void
@@ -1217,7 +1383,7 @@ more_button_clicked_cb (GtkButton *button, gpointer user_data)
 		if (ditem) {
 			libslab_gnome_desktop_item_launch_default (ditem);
 
-			hide_window_on_launch (this);
+			hide_slab_if_urgent_close (this);
 		}
 	}
 }
@@ -1272,6 +1438,50 @@ panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gp
 }
 
 static void
+panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundType type, GdkColor *color,
+                                   GdkPixmap *pixmap, gpointer user_data)
+{
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
+
+	GtkRcStyle *rc_style;
+	GtkStyle   *style;
+
+
+/* reset style */
+
+	gtk_widget_set_style (GTK_WIDGET (priv->panel_applet), NULL);
+	rc_style = gtk_rc_style_new ();
+	gtk_widget_modify_style (GTK_WIDGET (priv->panel_applet), rc_style);
+	gtk_rc_style_unref (rc_style);
+
+	switch (type) {
+		case PANEL_NO_BACKGROUND:
+			break;
+
+		case PANEL_COLOR_BACKGROUND:
+			gtk_widget_modify_bg (
+				GTK_WIDGET (priv->panel_applet), GTK_STATE_NORMAL, color);
+
+			break;
+
+		case PANEL_PIXMAP_BACKGROUND:
+			style = gtk_style_copy (GTK_WIDGET (priv->panel_applet)->style);
+
+			if (style->bg_pixmap [GTK_STATE_NORMAL])
+				g_object_unref (style->bg_pixmap [GTK_STATE_NORMAL]);
+
+			style->bg_pixmap [GTK_STATE_NORMAL] = g_object_ref (pixmap);
+
+			gtk_widget_set_style (GTK_WIDGET (priv->panel_applet), style);
+
+			g_object_unref (style);
+
+			break;
+	}
+}
+
+static void
 slab_window_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
 {
 	gtk_toggle_button_set_active (
@@ -1282,6 +1492,15 @@ static void
 search_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
 {
 	launch_search (MAIN_MENU_UI (user_data));
+}
+
+static gboolean
+grabbing_window_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	if (event->type == GDK_UNMAP || event->type == GDK_SELECTION_CLEAR)
+		grab_focus (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
+
+	return FALSE;
 }
 
 
