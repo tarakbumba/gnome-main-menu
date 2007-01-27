@@ -121,7 +121,7 @@ static void    set_slab_window_visible    (MainMenuUI *, gboolean, guint32);
 static void    set_search_section_visible (MainMenuUI *this);
 static gchar **get_search_argv            (const gchar *);
 static void    reorient_panel_button      (MainMenuUI *);
-static void    bind_search_key            (MainMenuUI *);
+static void    bind_beagle_search_key     (MainMenuUI *);
 static void    launch_search              (MainMenuUI *);
 static void    grab_focus                 (MainMenuUI *, guint32);
 
@@ -371,7 +371,7 @@ create_slab_window (MainMenuUI *this)
 
 	tomboy_keybinder_init ();
 	tomboy_keybinder_bind ("<Ctrl>Escape", slab_window_tomboy_bindkey_cb, this);
-	bind_search_key (this);
+	bind_beagle_search_key (this);
 
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "expose-event",
@@ -958,7 +958,7 @@ grab_focus (MainMenuUI *this, guint32 time)
 }
 
 static void
-bind_search_key (MainMenuUI *this)
+bind_beagle_search_key (MainMenuUI *this)
 {
 	xmlDocPtr  doc;
 	xmlNodePtr node;
@@ -1651,7 +1651,7 @@ static void system_item_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *
 
 static void tile_activated_cb (Tile *, TileEvent *, gpointer);
 
-static void bind_search_key (void);
+static void bind_beagle_search_key (void);
 
 static void grab_focus (MainMenuUI *, GdkEvent *);
 
@@ -1790,7 +1790,7 @@ main_menu_ui_new (PanelApplet * applet, MainMenuConf * conf, MainMenuEngine * en
 
 	tomboy_keybinder_init ();
 	tomboy_keybinder_bind ("<Ctrl>Escape", tomboy_bindkey_cb, ui);
-	bind_search_key ();
+	bind_beagle_search_key ();
 
 	/* install message client handler to get messages through the X root window */
 	gdk_atom_slab_action = gdk_atom_intern ("_SLAB_ACTION", FALSE);
@@ -3273,7 +3273,7 @@ launch_search_cb (char *key, gpointer user_data)
 }
 
 static void
-bind_search_key (void)
+bind_beagle_search_key (void)
 {
 	xmlDocPtr doc;
 	xmlNodePtr node;
