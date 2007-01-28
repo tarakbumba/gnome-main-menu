@@ -924,7 +924,7 @@ launch_search (MainMenuUI *this)
 	if (error) {
 		cmd = g_strjoinv (" ", argv);
 		libslab_handle_g_error (
-			& error, "%s: can't execute search [%s]\n", __FUNCTION__, cmd);
+			& error, "%s: can't execute search [%s]\n", G_STRFUNC, cmd);
 		g_free (cmd);
 	}
 

@@ -234,7 +234,7 @@ sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't save bookmark file [%s]",
-			__FUNCTION__, path);
+			G_STRFUNC, path);
 
 	g_strfreev (folders);
 	g_free (buf);

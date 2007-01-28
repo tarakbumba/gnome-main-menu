@@ -85,7 +85,6 @@ static void handle_launcher_single_clicked (Tile * launcher, gpointer data);
 static void handle_menu_action_performed (Tile * launcher, TileEvent * event, TileAction * action,
 	gpointer data);
 static gint category_name_compare (gconstpointer a, gconstpointer b);
-static gint category_data_compare (gconstpointer a, gconstpointer b);
 static gint application_launcher_compare (gconstpointer a, gconstpointer b);
 static void gmenu_tree_changed_callback (GMenuTree * tree, gpointer user_data);
 gboolean regenerate_categories (AppShellData * app_data);
@@ -1272,19 +1271,6 @@ category_name_compare (gconstpointer a, gconstpointer b)
 		g_assert_not_reached ();
 	}
 	return g_ascii_strcasecmp (category, data->category);
-}
-
-static gint
-category_data_compare (gconstpointer a, gconstpointer b)
-{
-	CategoryData *data1 = (CategoryData *) a;
-	CategoryData *data2 = (CategoryData *) b;
-
-	if (data1->category == NULL || data2->category == NULL)
-	{
-		g_assert_not_reached ();
-	}
-	return g_ascii_strcasecmp (data1->category, data2->category);
 }
 
 static void

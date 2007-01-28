@@ -110,14 +110,14 @@ migrate_system_gconf_to_bookmark_file ()
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't read system item store path [%s]\n",
-				__FUNCTION__, bookmark_path);
+				G_STRFUNC, bookmark_path);
 		else
 			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
 
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't save system item store path [%s]\n",
-				__FUNCTION__, bookmark_path_cp_dest);
+				G_STRFUNC, bookmark_path_cp_dest);
 
 		g_free (contents);
 		g_free (bookmark_path_cp_dest);
@@ -251,7 +251,7 @@ migrate_system_gconf_to_bookmark_file ()
 		libslab_handle_g_error (
 			& error,
 			"%s: cannot save migrated system item list [%s]",
-			G_GNUC_FUNCTION, bookmark_path);
+			G_STRFUNC, bookmark_path);
 
 	libslab_bookmark_file_free (bm_file);
 
@@ -306,14 +306,14 @@ migrate_user_apps_gconf_to_bookmark_file ()
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't read user apps store path [%s]\n",
-				__FUNCTION__, bookmark_path);
+				G_STRFUNC, bookmark_path);
 		else
 			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
 
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't save user apps store path [%s]\n",
-				__FUNCTION__, bookmark_path_cp_dest);
+				G_STRFUNC, bookmark_path_cp_dest);
 
 		g_free (contents);
 		g_free (bookmark_path_cp_dest);
@@ -373,7 +373,7 @@ migrate_user_apps_gconf_to_bookmark_file ()
 		libslab_handle_g_error (
 			& error,
 			"%s: cannot save migrated user apps list [%s]",
-			G_GNUC_FUNCTION, bookmark_path);
+			G_STRFUNC, bookmark_path);
 
 #ifdef USE_G_BOOKMARK
 	g_bookmark_file_free (bm_file);
@@ -410,14 +410,14 @@ migrate_user_docs_to_user_bookmark_file ()
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't read user docs store path [%s]\n",
-				__FUNCTION__, bookmark_path);
+				G_STRFUNC, bookmark_path);
 		else
 			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
 
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't save user docs store path [%s]\n",
-				__FUNCTION__, bookmark_path_cp_dest);
+				G_STRFUNC, bookmark_path_cp_dest);
 
 		g_free (contents);
 		g_free (bookmark_path_cp_dest);
@@ -448,14 +448,14 @@ migrate_user_dirs_to_user_bookmark_file ()
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't read user dirs store path [%s]\n",
-				__FUNCTION__, bookmark_path);
+				G_STRFUNC, bookmark_path);
 		else
 			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
 
 		if (error)
 			libslab_handle_g_error (
 				& error, "%s: can't save user dirs store path [%s]\n",
-				__FUNCTION__, bookmark_path_cp_dest);
+				G_STRFUNC, bookmark_path_cp_dest);
 
 		g_free (contents);
 		g_free (bookmark_path_cp_dest);

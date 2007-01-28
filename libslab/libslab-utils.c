@@ -308,7 +308,7 @@ libslab_get_gconf_value (const gchar *key)
 	value  = gconf_client_get (client, key, & error);
 
 	if (error || ! value)
-		libslab_handle_g_error (& error, "%s: error getting %s", G_GNUC_FUNCTION, key);
+		libslab_handle_g_error (& error, "%s: error getting %s", G_STRFUNC, key);
 	else {
 		switch (value->type) {
 			case GCONF_VALUE_STRING:
@@ -378,7 +378,7 @@ libslab_set_gconf_value (const gchar *key, gconstpointer data)
 	value  = gconf_client_get (client, key, & error);
 
 	if (error) {
-		libslab_handle_g_error (&error, "%s: error getting %s", G_GNUC_FUNCTION, key);
+		libslab_handle_g_error (&error, "%s: error getting %s", G_STRFUNC, key);
 
 		goto exit;
 	}
@@ -431,7 +431,7 @@ libslab_set_gconf_value (const gchar *key, gconstpointer data)
 	gconf_client_set (client, key, value, & error);
 
 	if (error)
-		libslab_handle_g_error (&error, "%s: error setting %s", G_GNUC_FUNCTION, key);
+		libslab_handle_g_error (&error, "%s: error setting %s", G_STRFUNC, key);
 
 exit:
 
@@ -453,7 +453,7 @@ libslab_gconf_notify_add (const gchar *key, GConfClientNotifyFunc callback, gpoi
 
 	if (error)
 		libslab_handle_g_error (
-			& error, "%s: error adding gconf notify for (%s)", __FUNCTION__, key);
+			& error, "%s: error adding gconf notify for (%s)", G_STRFUNC, key);
 
 	g_object_unref (client);
 
@@ -476,7 +476,7 @@ libslab_gconf_notify_remove (guint conn_id)
 
 	if (error)
 		libslab_handle_g_error (
-			& error, "%s: error removing gconf notify", __FUNCTION__);
+			& error, "%s: error removing gconf notify", G_STRFUNC);
 
 	g_object_unref (client);
 }
@@ -628,9 +628,7 @@ get_uri_list (const gchar *path)
 	}
 	else
 		libslab_handle_g_error (
-			& error,
-			"%s: couldn't load bookmark file [%s]",
-			G_GNUC_FUNCTION, path);
+			& error, "%s: couldn't load bookmark file [%s]", G_STRFUNC, path);
 
 	g_strfreev (uris_array);
 
@@ -719,13 +717,13 @@ remove_bookmark_item (const gchar *path_old, const gchar *path_new, const gchar 
 			libslab_handle_g_error (
 				& error,
 				"%s: couldn't save bookmark file [%s]",
-				__FUNCTION__, path_new);
+				G_STRFUNC, path_new);
 	}
 	else
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't open bookmark file [%s]",
-			__FUNCTION__, path_old);
+			G_STRFUNC, path_old);
 
 	libslab_bookmark_file_free (bm_file);
 }
@@ -759,13 +757,13 @@ libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
 			libslab_handle_g_error (
 				& error,
 				"%s: couldn't save bookmark file [%s]",
-				__FUNCTION__, path_new);
+				G_STRFUNC, path_new);
 	}
 	else
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't open bookmark file [%s]",
-			__FUNCTION__, path_old);
+			G_STRFUNC, path_old);
 
 	libslab_bookmark_file_free (bm_file);
 }
@@ -837,7 +835,7 @@ store_has_uri (const gchar *path, const gchar *uri)
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't open bookmark file [%s]",
-			__FUNCTION__, path);
+			G_STRFUNC, path);
 
 	libslab_bookmark_file_free (bm_file);
 
@@ -890,7 +888,7 @@ save_uri_list (const gchar *filename, const GList *uris)
 	if (error)
 		libslab_handle_g_error (
 			& error, "%s: cannot save uri list [%s]",
-			G_GNUC_FUNCTION, path);
+			G_STRFUNC, path);
 
 #ifdef USE_G_BOOKMARK
 	g_bookmark_file_free (bm_file);

@@ -117,7 +117,7 @@ bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't save bookmark file [%s]",
-			__FUNCTION__, path_new);
+			G_STRFUNC, path_new);
 
 	libslab_bookmark_file_free (bm_file_old);
 	libslab_bookmark_file_free (bm_file_new);
@@ -153,13 +153,13 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 			libslab_handle_g_error (
 				& error,
 				"%s: couldn't save bookmark file [%s]",
-				__FUNCTION__, path_new);
+				G_STRFUNC, path_new);
 	}
 	else if (error)
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't open bookmark file [%s]",
-			__FUNCTION__, path_old);
+			G_STRFUNC, path_old);
 	else
 		/* do nothing */ ;
 
@@ -208,7 +208,7 @@ reload_tiles (TileTable *this)
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't load bookmark file [%s]",
-			__FUNCTION__, path);
+			G_STRFUNC, path);
 
 	libslab_bookmark_file_free (bm_file);
 	g_list_free (tiles);
