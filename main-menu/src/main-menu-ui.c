@@ -536,6 +536,8 @@ create_user_apps_section (MainMenuUI *this)
 		priv->main_menu_xml, "user-apps-table-container"));
 
 	priv->usr_apps_table = TILE_TABLE (user_apps_tile_table_new ());
+	gtk_table_set_row_spacings (GTK_TABLE (priv->usr_apps_table), 6);
+	gtk_table_set_col_spacings (GTK_TABLE (priv->usr_apps_table), 6);
 
 	connect_to_tile_triggers (this, priv->usr_apps_table);
 
@@ -562,6 +564,8 @@ create_rct_apps_section (MainMenuUI *this)
 		priv->main_menu_xml, "recent-apps-table-container"));
 
 	priv->rct_apps_table = TILE_TABLE (recent_apps_tile_table_new ());
+	gtk_table_set_row_spacings (GTK_TABLE (priv->rct_apps_table), 6);
+	gtk_table_set_col_spacings (GTK_TABLE (priv->rct_apps_table), 6);
 
 	connect_to_tile_triggers (this, priv->rct_apps_table);
 
@@ -584,6 +588,8 @@ create_user_docs_section (MainMenuUI *this)
 		priv->main_menu_xml, "user-docs-table-container"));
 
 	priv->usr_docs_table = TILE_TABLE (user_docs_tile_table_new ());
+	gtk_table_set_row_spacings (GTK_TABLE (priv->usr_docs_table), 6);
+	gtk_table_set_col_spacings (GTK_TABLE (priv->usr_docs_table), 6);
 
 	connect_to_tile_triggers (this, priv->usr_docs_table);
 
@@ -610,6 +616,8 @@ create_rct_docs_section (MainMenuUI *this)
 		priv->main_menu_xml, "recent-docs-table-container"));
 
 	priv->rct_docs_table = TILE_TABLE (recent_docs_tile_table_new ());
+	gtk_table_set_row_spacings (GTK_TABLE (priv->rct_docs_table), 6);
+	gtk_table_set_col_spacings (GTK_TABLE (priv->rct_docs_table), 6);
 
 	connect_to_tile_triggers (this, priv->rct_docs_table);
 
@@ -634,6 +642,8 @@ create_user_dirs_section (MainMenuUI *this)
 		priv->main_menu_xml, "user-dirs-table-container"));
 
 	priv->usr_dirs_table = TILE_TABLE (user_dirs_tile_table_new ());
+	gtk_table_set_row_spacings (GTK_TABLE (priv->usr_dirs_table), 6);
+	gtk_table_set_col_spacings (GTK_TABLE (priv->usr_dirs_table), 6);
 
 	connect_to_tile_triggers (this, priv->usr_dirs_table);
 
