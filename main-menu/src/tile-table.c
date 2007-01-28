@@ -75,6 +75,18 @@ tile_table_reload (TileTable *this)
 		TILE_TABLE_GET_CLASS (this)->reload (this);
 }
 
+void
+tile_table_uri_added (TileTable *this, const gchar *uri)
+{
+	TileTableURIAddedEvent *uri_event;
+
+	uri_event = g_new0 (TileTableURIAddedEvent, 1);
+	uri_event->time = (guint32) time;
+	uri_event->uri = g_strdup (uri);
+
+	g_signal_emit (this, tile_table_signals [URI_ADDED_SIGNAL], 0, uri_event);
+}
+
 static void
 tile_table_class_init (TileTableClass *this_class)
 {
@@ -484,8 +496,6 @@ tile_drag_data_rcv_cb (
 	gint src_index;
 	gint dst_index;
 
-	TileTableURIAddedEvent *uri_event;
-
 	gboolean new_uri;
 
 	gpointer tmp;
@@ -504,14 +514,8 @@ tile_drag_data_rcv_cb (
 	if (new_uri || ! src_node) {
 		uris = gtk_selection_data_get_uris (selection);
 
-		for (i = 0; uris && uris [i]; ++i) {
-			uri_event = g_new0 (TileTableURIAddedEvent, 1);
-			uri_event->time = (guint32) time;
-			uri_event->uri = g_strdup (uris [i]);
-
-			g_signal_emit (
-				this, tile_table_signals [URI_ADDED_SIGNAL], 0, uri_event);
-		}
+		for (i = 0; uris && uris [i]; ++i)
+			tile_table_uri_added (this, uris [i]);
 
 		goto exit;
 	}

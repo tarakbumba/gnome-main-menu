@@ -36,8 +36,11 @@
 #define GIGA (1024 * 1024 * 1024)
 #define MEGA (1024 * 1024)
 #define KILO (1024)
+
 #define TIMEOUT_KEY_DIR "/apps/procman"
-#define TIMEOUT_KEY "/apps/procman/disks_interval"
+#define TIMEOUT_KEY     "/apps/procman/disks_interval"
+
+#define FILE_BROWSER_GCONF_KEY "/desktop/gnome/applications/main-menu/file_browser"
 
 G_DEFINE_TYPE (HardDriveStatusTile, hard_drive_status_tile, NAMEPLATE_TILE_TYPE)
 
@@ -452,9 +455,20 @@ tile_show_event_cb (GtkWidget * widget, gpointer user_data)
 static void
 open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 {
-	GnomeDesktopItem *desktop_item = libslab_gnome_desktop_item_new_from_unknown_id ("nautilus.desktop");
+	GnomeDesktopItem *ditem;
+	gchar *fb_ditem_id;
+	
 
-	if (!open_desktop_item_exec (desktop_item))
+	fb_ditem_id = (gchar *) libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
+
+	if (! fb_ditem_id)
+		fb_ditem_id = g_strdup ("nautilus.desktop");
+
+	ditem = libslab_gnome_desktop_item_new_from_unknown_id (fb_ditem_id);
+
+	if (! open_desktop_item_exec (ditem))
 		g_warning ("open_hard_drive_tile: couldn't exec item\n");
-	gnome_desktop_item_unref (desktop_item);
+
+	gnome_desktop_item_unref (ditem);
+	g_free (fb_ditem_id);
 }

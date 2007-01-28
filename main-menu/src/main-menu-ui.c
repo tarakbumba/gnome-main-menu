@@ -126,6 +126,8 @@ static void    grab_pointer_and_keyboard  (MainMenuUI *, guint32);
 
 static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
+static void     panel_button_drag_data_rcv_cb     (GtkWidget *, GdkDragContext *, gint, gint,
+                                                   GtkSelectionData *, guint, guint, gpointer);
 static gboolean slab_window_expose_cb             (GtkWidget *, GdkEventExpose *, gpointer);
 static gboolean slab_window_key_press_cb          (GtkWidget *, GdkEventKey *, gpointer);
 static gboolean slab_window_button_press_cb       (GtkWidget *, GdkEventButton *, gpointer);
@@ -339,6 +341,15 @@ create_panel_button (MainMenuUI *this)
 		g_signal_connect (
 			G_OBJECT (priv->panel_buttons [i]), "button_press_event",
 			G_CALLBACK (panel_button_button_press_cb), this);
+
+		gtk_drag_dest_set (
+			priv->panel_buttons [i],
+			GTK_DEST_DEFAULT_ALL, NULL, 0, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+		gtk_drag_dest_add_uri_targets (priv->panel_buttons [i]);
+
+		g_signal_connect (
+			G_OBJECT (priv->panel_buttons [i]), "drag-data-received",
+			G_CALLBACK (panel_button_drag_data_rcv_cb), this);
 	}
 
 	gtk_widget_destroy (button_root);
@@ -1059,6 +1070,45 @@ panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer
 		g_signal_stop_emission_by_name (widget, "button_press_event");
 
 	return FALSE;
+}
+
+static void
+panel_button_drag_data_rcv_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
+                               GtkSelectionData *selection, guint info, guint time,
+                               gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	gchar **uris;
+	gint    uri_len;
+
+	gint i;
+
+
+	if (gtk_drag_get_source_widget (context))
+		return;
+
+	if (! selection)
+		return;
+
+	uris = gtk_selection_data_get_uris (selection);
+
+	if (! uris)
+		return;
+
+	for (i = 0; uris [i]; ++i) {
+		if (strncmp (uris [i], "file://", 7))
+			continue;
+
+		uri_len = strlen (uris [i]);
+
+		if (! strcmp (& uris [i] [uri_len - 8], ".desktop"))
+			tile_table_uri_added (priv->usr_apps_table, uris [i]);
+		else
+			tile_table_uri_added (priv->usr_docs_table, uris [i]);
+	}
+
+	g_strfreev (uris);
 }
 
 static gboolean

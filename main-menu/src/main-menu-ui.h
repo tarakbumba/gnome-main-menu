@@ -24,8 +24,6 @@
 #include <gtk/gtk.h>
 #include <panel-applet.h>
 
-#include "main-menu-conf.h"
-
 G_BEGIN_DECLS
 
 #define MAIN_MENU_UI_TYPE         (main_menu_ui_get_type ())
