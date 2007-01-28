@@ -207,7 +207,10 @@ main_keypress_callback (GtkWidget * widget, GdkEventKey * event, AppShellData * 
 		((event->keyval == GDK_w || event->keyval == GDK_W)	&& (event->state & GDK_CONTROL_MASK)) ||
 		((event->keyval == GDK_q || event->keyval == GDK_Q) && (event->state & GDK_CONTROL_MASK)))
 	{
-		hide_shell (app_data);
+		if (app_data->exit_on_close)
+			gtk_main_quit ();
+		else
+			hide_shell (app_data);
 		return TRUE;
 	}
 	return FALSE;
@@ -216,6 +219,12 @@ main_keypress_callback (GtkWidget * widget, GdkEventKey * event, AppShellData * 
 static gboolean
 main_delete_callback (GtkWidget * widget, GdkEvent * event, AppShellData * app_data)
 {
+	if (app_data->exit_on_close)
+	{
+		gtk_main_quit ();
+		return FALSE;
+	}
+
 	hide_shell (app_data);
 	return TRUE;		/* stop the processing of this event */
 }
@@ -812,7 +821,7 @@ gmenu_tree_changed_callback (GMenuTree * old_tree, gpointer user_data)
 
 AppShellData *
 appshelldata_new (const gchar * menu_name, NewAppConfig * new_apps, const gchar * gconf_keys_prefix,
-	GtkIconSize icon_size)
+	GtkIconSize icon_size, gboolean exit_on_close)
 {
 	AppShellData *app_data = g_new0 (AppShellData, 1);
 	app_data->gconf_prefix = gconf_keys_prefix;
@@ -820,6 +829,7 @@ appshelldata_new (const gchar * menu_name, NewAppConfig * new_apps, const gchar 
 	app_data->menu_name = menu_name;
 	app_data->icon_size = icon_size;
 	app_data->stop_incremental_relayout = TRUE;
+	app_data->exit_on_close = exit_on_close;
 	return app_data;
 }
 
@@ -1298,7 +1308,12 @@ handle_launcher_single_clicked (Tile * launcher, gpointer data)
 
 	gconf_key = g_strdup_printf ("%s%s", app_data->gconf_prefix, EXIT_SHELL_ON_ACTION_START);
 	if (get_slab_gconf_bool (gconf_key))
-		hide_shell (app_data);
+	{
+		if (app_data->exit_on_close)
+			gtk_main_quit ();
+		else
+			hide_shell (app_data);
+	}
 	g_free (gconf_key);
 }
 
@@ -1337,7 +1352,12 @@ handle_menu_action_performed (Tile * launcher, TileEvent * event, TileAction * a
 	if (temp)
 	{
 		if (get_slab_gconf_bool (temp))
-			hide_shell (app_data);
+		{
+			if (app_data->exit_on_close)
+				gtk_main_quit ();
+			else
+				hide_shell (app_data);
+		}
 		g_free (temp);
 	}
 	else

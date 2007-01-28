@@ -1,3 +1,35 @@
+2007-01-25  Scott Reeves  <sreeves@novell.com>
+	* control-center/src/control-center.c: - stop CC common tasks from
+	launching twic
+	* main-menu/src/system-tile.c: - patch from Otavio Salvador for
+	system-tile's launched twice.
+	* libslab/application-tile.c: - When no GenericName is present then
+	just show and center the Name
+		
+
+2007-01-19  Scott Reeves  <sreeves@novell.com>
+	* control-center/src/control-center.c
+	* libslab/app-shell.c:
+	Check the exit arg when exiting via keyboard and context menu	
+
+2007-01-18  Rodrigo Moya <rodrigo@gnome-db.org>
+
+	* libslab/app-shell.c (main_delete_callback): return FALSE if we
+	want the window destroyed.
+
+2007-01-17  Rodrigo Moya <rodrigo@gnome-db.org>
+
+	* libslab/app-shell.[ch] (appshelldata_new): added an argument to
+	specify whether to exit the program when the shell window is closed.
+
+	* application-browser/src/application-browser.c (main): pass FALSE,
+	don't quit.
+
+	* control-center/src/control-center.c (main): pass TRUE, quit when
+	closed.
+	(handle_static_action_clicked): check for the exit_on_close flag if
+	the GConf key is set.
+
 2007-01-12  Scott Reeves  <sreeves@novell.com>
 	* libslab/libslab.pc.in:
 	Clean up the .pc file
