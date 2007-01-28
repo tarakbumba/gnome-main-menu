@@ -493,10 +493,15 @@ create_status_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 	GtkWidget    *tile;
 
+	gint icon_width;
+
 
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "hard-drive-status-container"));
 	tile = hard_drive_status_tile_new ();
+
+	gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
+	gtk_widget_set_size_request (tile, 6 * icon_width, -1);
 
 	g_signal_connect (
 		G_OBJECT (tile), "tile-action-triggered",
@@ -508,6 +513,8 @@ create_status_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "network-status-container"));
 	tile = network_status_tile_new ();
+
+	gtk_widget_set_size_request (tile, 6 * icon_width, -1);
 
 	g_signal_connect (
 		G_OBJECT (tile), "tile-action-triggered",
@@ -751,6 +758,8 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 
 	gulong handler_id;
 
+	gint icon_width;
+
 
 	g_object_get (G_OBJECT (table), TILE_TABLE_TILES_PROP, & tiles, NULL);
 
@@ -763,6 +772,10 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 			g_signal_connect (
 				G_OBJECT (node->data), "tile-action-triggered",
 				G_CALLBACK (tile_action_triggered_cb), this);
+
+
+		gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
+		gtk_widget_set_size_request (GTK_WIDGET (node->data), 6 * icon_width, -1);
 	}
 }
 

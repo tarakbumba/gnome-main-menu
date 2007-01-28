@@ -21,6 +21,7 @@
 #include "tile-table.h"
 
 #include "tile.h"
+#include "nameplate-tile.h"
 
 G_DEFINE_TYPE (TileTable, tile_table, GTK_TYPE_TABLE)
 
@@ -218,6 +219,8 @@ replace_tiles (TileTable *this, GList *tiles)
 	GtkWidget *tile;
 	gulong     handler_id;
 
+	GtkSizeGroup *icon_size_group;
+
 	GList *node;
 
 
@@ -227,6 +230,8 @@ replace_tiles (TileTable *this, GList *tiles)
 	g_list_free (priv->tiles);
 
 	priv->tiles = NULL;
+
+	icon_size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (node = tiles; node; node = node->next) {
 		g_assert (IS_TILE (node->data));
@@ -263,6 +268,9 @@ replace_tiles (TileTable *this, GList *tiles)
 				G_CALLBACK (tile_activated_cb), NULL);
 
 		priv->tiles = g_list_append (priv->tiles, tile);
+
+		if (IS_NAMEPLATE_TILE (node->data))
+			gtk_size_group_add_widget (icon_size_group, NAMEPLATE_TILE (node->data)->image);
 	}
 
 	update_bins (this);
