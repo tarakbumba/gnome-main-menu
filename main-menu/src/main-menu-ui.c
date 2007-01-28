@@ -117,21 +117,21 @@ static void    select_page                (MainMenuUI *, gint);
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
 static void    hide_slab_if_urgent_close  (MainMenuUI *);
-static void    set_slab_window_visible    (MainMenuUI *, gboolean, guint32);
 static void    set_search_section_visible (MainMenuUI *this);
 static gchar **get_search_argv            (const gchar *);
 static void    reorient_panel_button      (MainMenuUI *);
 static void    bind_beagle_search_key     (MainMenuUI *);
 static void    launch_search              (MainMenuUI *);
-static void    grab_focus                 (MainMenuUI *, guint32);
+static void    grab_pointer_and_keyboard  (MainMenuUI *, guint32);
 
 static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
 static gboolean slab_window_expose_cb             (GtkWidget *, GdkEventExpose *, gpointer);
 static gboolean slab_window_key_press_cb          (GtkWidget *, GdkEventKey *, gpointer);
 static gboolean slab_window_button_press_cb       (GtkWidget *, GdkEventButton *, gpointer);
-static void     slab_window_map_cb                (GtkWidget *, GdkEvent *, gpointer);
-static void     slab_window_unmap_cb              (GtkWidget *, GdkEvent *, gpointer);
+static void     slab_window_allocate_cb           (GtkWidget *, GtkAllocation *, gpointer);
+static void     slab_window_map_event_cb          (GtkWidget *, GdkEvent *, gpointer);
+static void     slab_window_unmap_event_cb        (GtkWidget *, GdkEvent *, gpointer);
 static gboolean slab_window_grab_broken_cb        (GtkWidget *, GdkEvent *, gpointer);
 static void     search_entry_activate_cb          (GtkEntry *, gpointer);
 static void     page_button_clicked_cb            (GtkButton *, gpointer);
@@ -233,6 +233,9 @@ main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	priv->panel_applet                              = NULL;
+	priv->panel_about_dialog                        = NULL;
+
 	priv->main_menu_xml                             = NULL;
 	priv->panel_button_xml                          = NULL;
 
@@ -261,9 +264,9 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->rct_docs_table                            = NULL;
 	priv->usr_dirs_table                            = NULL;
 
-	priv->more_button [0]                           = NULL;
-	priv->more_button [1]                           = NULL;
-	priv->more_button [2]                           = NULL;
+	priv->more_button [MORE_APPS_BUTTON]            = NULL;
+	priv->more_button [MORE_DOCS_BUTTON]            = NULL;
+	priv->more_button [MORE_DIRS_BUTTON]            = NULL;
 
 	priv->max_total_items                           = 8;
 
@@ -340,6 +343,8 @@ create_panel_button (MainMenuUI *this)
 
 	gtk_widget_destroy (button_root);
 
+	panel_applet_set_flags (priv->panel_applet, PANEL_APPLET_EXPAND_MINOR);
+
 	reorient_panel_button (this);
 
 	panel_applet_setup_menu_from_file (
@@ -363,8 +368,8 @@ create_slab_window (MainMenuUI *this)
 	priv->slab_window = glade_xml_get_widget (
 		priv->main_menu_xml, "slab-main-menu-window");
 	gtk_widget_set_app_paintable (priv->slab_window, TRUE);
-	gtk_widget_hide (priv->slab_window);
-	gtk_window_stick (GTK_WINDOW (priv->slab_window));
+	gtk_widget_hide              (priv->slab_window);
+	gtk_window_stick             (GTK_WINDOW (priv->slab_window));
 
 	priv->top_pane  = glade_xml_get_widget (priv->main_menu_xml, "top-pane");
 	priv->left_pane = glade_xml_get_widget (priv->main_menu_xml, "left-pane");
@@ -382,7 +387,7 @@ create_slab_window (MainMenuUI *this)
 		G_CALLBACK (slab_window_key_press_cb), this);
 
 	g_signal_connect (
-		G_OBJECT (priv->slab_window), "button_press_event",
+		G_OBJECT (priv->slab_window), "button-press-event",
 		G_CALLBACK (slab_window_button_press_cb), this);
 
 	g_signal_connect (
@@ -390,12 +395,16 @@ create_slab_window (MainMenuUI *this)
 		G_CALLBACK (slab_window_grab_broken_cb), this);
 
 	g_signal_connect (
-		G_OBJECT (priv->slab_window), "map_event",
-		G_CALLBACK (slab_window_map_cb), this);
+		G_OBJECT (priv->slab_window), "size-allocate",
+		G_CALLBACK (slab_window_allocate_cb), this);
 
 	g_signal_connect (
-		G_OBJECT (priv->slab_window), "unmap_event",
-		G_CALLBACK (slab_window_unmap_cb), this);
+		G_OBJECT (priv->slab_window), "map-event",
+		G_CALLBACK (slab_window_map_event_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "unmap-event",
+		G_CALLBACK (slab_window_unmap_event_cb), this);
 }
 
 static void
@@ -758,31 +767,6 @@ hide_slab_if_urgent_close (MainMenuUI *this)
 }
 
 static void
-set_slab_window_visible (MainMenuUI *this, gboolean visible, guint32 time_millis)
-{
-	MainMenuUIPrivate *priv = PRIVATE (this);
-
-	GTimeVal current_time;
-
-
-	if (visible != GTK_WIDGET_VISIBLE (priv->slab_window)) {
-		if (! visible)
-			gtk_widget_hide (priv->slab_window);
-		else {
-			if (time_millis == 0) {
-				g_get_current_time (& current_time);
-
-				time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
-			}
-
-			gtk_window_present_with_time (GTK_WINDOW (priv->slab_window), time_millis);
-		}
-	}
-
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), visible);
-}
-
-static void
 set_search_section_visible (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
@@ -918,7 +902,7 @@ launch_search (MainMenuUI *this)
 }
 
 static void
-grab_focus (MainMenuUI *this, guint32 time)
+grab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
@@ -1042,8 +1026,8 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
 
 	DoubleClickDetector *detector;
-	GTimeVal current_time;
-	guint32 current_time_millis;
+	GTimeVal t_curr;
+	guint32  t_curr_ms;
 
 	gboolean visible;
 
@@ -1051,16 +1035,21 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (toggle), "double-click-detector"));
 
-	g_get_current_time (& current_time);
-
-	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
+	g_get_current_time (& t_curr);
+	t_curr_ms = 1000 * t_curr.tv_sec + t_curr.tv_usec / 1000;
 
 	visible = GTK_WIDGET_VISIBLE (priv->slab_window);
 
-	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE))
-		set_slab_window_visible (this, ! visible, current_time_millis);
-	else
-		set_slab_window_visible (this, visible, current_time_millis);
+	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
+		if (! visible)
+			gtk_window_present_with_time (GTK_WINDOW (priv->slab_window), t_curr_ms);
+		else
+			gtk_widget_hide (priv->slab_window);
+
+		visible = GTK_WIDGET_VISIBLE (priv->slab_window);
+	}
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), visible);
 }
 
 static gboolean
@@ -1239,13 +1228,84 @@ slab_window_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer 
 }
 
 static void
-slab_window_map_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_data)
 {
-	grab_focus (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
+	MainMenuUI        *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE      (this);
+
+	GdkScreen *panel_button_screen;
+
+	GdkRectangle button_geom;
+	GdkRectangle slab_geom;
+	GdkRectangle monitor_geom;
+
+	PanelAppletOrient orient;
+
+
+	gdk_window_get_origin (priv->panel_button->window, & button_geom.x, & button_geom.y);
+	button_geom.width  = priv->panel_button->allocation.width;
+	button_geom.height = priv->panel_button->allocation.height;
+
+	slab_geom.width  = priv->slab_window->allocation.width;
+	slab_geom.height = priv->slab_window->allocation.height;
+
+	panel_button_screen = gtk_widget_get_screen (priv->panel_button);
+
+	gdk_screen_get_monitor_geometry (
+		panel_button_screen,
+		gdk_screen_get_monitor_at_window (
+			panel_button_screen, priv->panel_button->window),
+		& monitor_geom);
+
+	orient = panel_applet_get_orient (priv->panel_applet);
+
+	switch (orient) {
+		case PANEL_APPLET_ORIENT_UP:
+			slab_geom.x = button_geom.x;
+			slab_geom.y = button_geom.y - slab_geom.height;
+			break;
+
+		case PANEL_APPLET_ORIENT_DOWN:
+			slab_geom.x = button_geom.x;
+			slab_geom.y = button_geom.y + button_geom.height;
+			break;
+
+		case PANEL_APPLET_ORIENT_RIGHT:
+			slab_geom.x = button_geom.x + button_geom.width;
+			slab_geom.y = button_geom.y;
+			break;
+
+		case PANEL_APPLET_ORIENT_LEFT:
+			slab_geom.x = button_geom.x - slab_geom.width;
+			slab_geom.y = button_geom.y;
+			break;
+
+		default:
+			slab_geom.x = 0;
+			slab_geom.y = 0;
+			break;
+	}
+
+	if (orient == PANEL_APPLET_ORIENT_UP || orient == PANEL_APPLET_ORIENT_DOWN) {
+		if ((slab_geom.x + slab_geom.width) > (monitor_geom.x + monitor_geom.width))
+			slab_geom.x = button_geom.x + button_geom.width - slab_geom.width;
+	}
+	else {
+		if ((slab_geom.y + slab_geom.height) > (monitor_geom.y + monitor_geom.height))
+			slab_geom.y = button_geom.y + button_geom.height - slab_geom.height;
+	}
+
+	gtk_window_move (GTK_WINDOW (priv->slab_window), slab_geom.x, slab_geom.y);
 }
 
 static void
-slab_window_unmap_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+slab_window_map_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
+}
+
+static void
+slab_window_unmap_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
@@ -1284,7 +1344,10 @@ slab_window_grab_broken_cb (GtkWidget *widget, GdkEvent *event, gpointer user_da
 static void
 search_entry_activate_cb (GtkEntry *entry, gpointer user_data)
 {
-	launch_search (MAIN_MENU_UI (user_data));
+	const gchar *entry_text = gtk_entry_get_text (entry);
+
+	if (entry_text && strlen (entry_text) >= 1)
+		launch_search (MAIN_MENU_UI (user_data));
 }
 
 static void
@@ -1498,7 +1561,7 @@ static gboolean
 grabbing_window_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
 	if (event->type == GDK_UNMAP || event->type == GDK_SELECTION_CLEAR)
-		grab_focus (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
+		grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
 
 	return FALSE;
 }
@@ -1608,8 +1671,8 @@ static void position_main_window (MainMenuUI *);
 
 static gboolean main_window_key_press_cb (GtkWidget *, GdkEventKey *, gpointer);
 static gboolean main_window_button_press_cb (GtkWidget *, GdkEventButton *, gpointer);
-static void main_window_map_cb (GtkWidget *, GdkEvent *, gpointer);
-static void main_window_unmap_cb (GtkWidget *, GdkEvent *, gpointer);
+static void main_window_map_event_cb (GtkWidget *, GdkEvent *, gpointer);
+static void main_window_unmap_event_cb (GtkWidget *, GdkEvent *, gpointer);
 static void main_window_resize_cb (GtkWidget *, GtkAllocation *, gpointer);
 static gboolean main_window_grab_broken_cb (GtkWidget *, GdkEvent *, gpointer);
 static gboolean grabbing_window_event_cb (GtkWidget *, GdkEvent *, gpointer);
@@ -1689,6 +1752,7 @@ typedef struct {
 	TileTable *recent_apps_table;
 	TileTable *recent_docs_table;
 	TileTable *recent_dirs_table;
+
 	MainMenuRecentMonitor *recent_monitor;
 
 	gboolean ptr_is_grabbed;
@@ -2044,9 +2108,9 @@ build_main_menu_window (MainMenuUI *this)
 	g_signal_connect (G_OBJECT (window), "grab-broken-event",
 		G_CALLBACK (main_window_grab_broken_cb), this);
 
-	g_signal_connect (G_OBJECT (window), "map_event", G_CALLBACK (main_window_map_cb), this);
+	g_signal_connect (G_OBJECT (window), "map_event", G_CALLBACK (main_window_map_event_cb), this);
 
-	g_signal_connect (G_OBJECT (window), "unmap_event", G_CALLBACK (main_window_unmap_cb), this);
+	g_signal_connect (G_OBJECT (window), "unmap_event", G_CALLBACK (main_window_unmap_event_cb), this);
 
 	gtk_drag_dest_set (GTK_WIDGET (window), GTK_DEST_DEFAULT_ALL, NULL, 0,
 		GDK_ACTION_COPY | GDK_ACTION_MOVE);
@@ -2185,7 +2249,7 @@ main_window_key_press_cb (GtkWidget * widget, GdkEventKey * event, gpointer user
 }
 
 static void
-main_window_map_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
+main_window_map_event_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
 {
 	MainMenuUI *ui = MAIN_MENU_UI (user_data);
 
@@ -2193,7 +2257,7 @@ main_window_map_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
 }
 
 static void
-main_window_unmap_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
+main_window_unmap_event_cb (GtkWidget * widget, GdkEvent * event, gpointer user_data)
 {
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
