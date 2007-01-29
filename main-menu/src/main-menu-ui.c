@@ -1126,9 +1126,9 @@ panel_button_drag_data_rcv_cb (GtkWidget *widget, GdkDragContext *context, gint 
 		uri_len = strlen (uris [i]);
 
 		if (! strcmp (& uris [i] [uri_len - 8], ".desktop"))
-			tile_table_uri_added (priv->usr_apps_table, uris [i]);
+			tile_table_uri_added (priv->usr_apps_table, uris [i], (guint32) time);
 		else
-			tile_table_uri_added (priv->usr_docs_table, uris [i]);
+			tile_table_uri_added (priv->usr_docs_table, uris [i], (guint32) time);
 	}
 
 	g_strfreev (uris);

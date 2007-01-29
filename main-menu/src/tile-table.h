@@ -73,7 +73,7 @@ typedef enum {
 GType tile_table_get_type (void);
 
 void tile_table_reload    (TileTable *this);
-void tile_table_uri_added (TileTable *this, const gchar *uri);
+void tile_table_uri_added (TileTable *this, const gchar *uri, guint32 time);
 
 G_END_DECLS
 

@@ -86,12 +86,19 @@ tile_table_reload (TileTable *this)
 }
 
 void
-tile_table_uri_added (TileTable *this, const gchar *uri)
+tile_table_uri_added (TileTable *this, const gchar *uri, guint32 time_ms)
 {
 	TileTableURIAddedEvent *uri_event;
+	GTimeVal t_curr;
+
+
+	if (! time_ms) {
+		g_get_current_time (& t_curr);
+		time_ms = 1000 * t_curr.tv_sec + t_curr.tv_usec / 1000;
+	}
 
 	uri_event = g_new0 (TileTableURIAddedEvent, 1);
-	uri_event->time = (guint32) time;
+	uri_event->time = time_ms;
 	uri_event->uri = g_strdup (uri);
 
 	g_signal_emit (this, tile_table_signals [URI_ADDED_SIGNAL], 0, uri_event);
@@ -342,7 +349,7 @@ tile_table_drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gi
 		uris = gtk_selection_data_get_uris (selection);
 
 		for (i = 0; uris && uris [i]; ++i)
-			tile_table_uri_added (this, uris [i]);
+			tile_table_uri_added (this, uris [i], (guint32) time);
 
 		g_strfreev (uris);
 	}
@@ -704,89 +711,4 @@ tile_drag_end_cb (GtkWidget *widget, GdkDragContext *context, gpointer user_data
 
 	priv->reord_bin_orig = -1;
 	priv->reord_bin_curr = -1;
-}
-
-static void
-tile_drag_data_rcv_cb (
-	GtkWidget *dst_widget, GdkDragContext *drag_context, gint x, gint y,
-	GtkSelectionData *selection, guint info, guint time, gpointer user_data)
-{
-	TileTable *this = TILE_TABLE (user_data);
-	TileTablePrivate *priv = PRIVATE (this);
-
-	GList *tiles_prev;
-	GList *tiles_curr;
-
-	GtkWidget *src_widget;
-	gchar **uris;
-
-	GList *src_node;
-	GList *dst_node;
-	GList *last_node;
-
-	gint src_index;
-	gint dst_index;
-
-	gboolean new_uri;
-
-	gpointer tmp;
-	gint i;
-
-
-	src_widget = gtk_drag_get_source_widget (drag_context);
-
-	new_uri = (! src_widget || ! IS_TILE (src_widget) || ! tile_compare (src_widget, dst_widget));
-
-	if (! new_uri)
-		src_node = g_list_find_custom (priv->tiles, src_widget, tile_compare);
-	else
-		src_node = NULL;
-
-	if (new_uri || ! src_node) {
-		uris = gtk_selection_data_get_uris (selection);
-
-		for (i = 0; uris && uris [i]; ++i)
-			tile_table_uri_added (this, uris [i]);
-
-		goto exit;
-	}
-
-	tiles_prev = g_list_copy (priv->tiles);
-	tiles_curr = g_list_copy (priv->tiles);
-
-	src_node = g_list_find_custom (tiles_curr, src_widget, tile_compare);
-	dst_node = g_list_find_custom (tiles_curr, dst_widget, tile_compare);
-
-	if (priv->priority == TILE_TABLE_REORDERING_SWAP) {
-		tmp            = src_node->data;
-		src_node->data = dst_node->data;
-		dst_node->data = tmp;
-	}
-	else {
-		src_index = g_list_position (tiles_curr, src_node);
-		dst_index = g_list_position (tiles_curr, dst_node);
-
-		tiles_curr = g_list_remove_link (tiles_curr, src_node);
-
-		if (priv->priority == TILE_TABLE_REORDERING_PUSH) {
-			if (src_index < dst_index) {
-				last_node = g_list_last (tiles_curr);
-
-				tiles_curr = g_list_remove_link (tiles_curr, last_node);
-				tiles_curr = g_list_prepend (tiles_curr, last_node->data);
-			}
-		}
-		else if (src_index < dst_index)
-			dst_node = dst_node->next;
-		else
-			/* do nothing */ ;
-
-		tiles_curr = g_list_insert_before (tiles_curr, dst_node, src_node->data);
-	}
-
-	emit_update_signal (this, tiles_prev, tiles_curr, (guint32) time);
-
-exit:
-
-	gtk_drag_finish (drag_context, TRUE, FALSE, (guint32) time);
 }
