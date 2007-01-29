@@ -70,7 +70,7 @@ static void   update_bins                  (TileTable *, GList *);
 static void   insert_into_bin              (TileTable *, Tile *, gint);
 static void   empty_bin                    (TileTable *, gint);
 static void   resize_table                 (TileTable *, guint, guint); 
-static void   emit_update_signal           (TileTable *, GList *, GList *, guint32);
+static void   emit_update_signal           (TileTable *, GList *, guint32);
 static GList *reorder_tiles                (TileTable *, gint, gint);
 static void   connect_signal_if_not_exists (Tile *, const gchar *, GCallback, gpointer);
 
@@ -294,7 +294,12 @@ tile_table_drag_motion (GtkWidget *widget, GdkDragContext *context, gint x, gint
 
 		tiles_reord = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
 
-		update_bins (this, tiles_reord);
+		if (tiles_reord)
+			update_bins (this, tiles_reord);
+		else
+			update_bins (this, priv->tiles);
+
+		g_list_free (tiles_reord);
 	}
 
 	return FALSE;
@@ -343,7 +348,9 @@ tile_table_drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gi
 	if (reordering) {
 		tiles_new = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
 
-		emit_update_signal (this, priv->tiles, tiles_new, (guint32) time);
+		emit_update_signal (this, tiles_new, (guint32) time);
+
+		g_list_free (tiles_new);
 	}
 	else {
 		uris = gtk_selection_data_get_uris (selection);
@@ -452,7 +459,7 @@ reorder_tiles (TileTable *this, gint src_index, gint dst_index)
 		dst_index = n_tiles - 1;
 
 	if (src_index == dst_index)
-		return priv->tiles;
+		return NULL;
 
 	tiles_reord = g_list_copy (priv->tiles);
 
@@ -513,6 +520,9 @@ update_bins (TileTable *this, GList *tiles)
 	GList *node;
 	gint index;
 
+
+	if (! tiles)
+		return;
 
 	g_object_get (G_OBJECT (this), "n-columns", & n_cols, NULL);
 
@@ -643,7 +653,7 @@ resize_table (TileTable *this, guint n_rows_new, guint n_cols_new)
 }
 
 static void
-emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint32 time)
+emit_update_signal (TileTable *this, GList *tiles_new, guint32 time)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 
@@ -655,9 +665,12 @@ emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint
 	GList *node_v;
 
 
-	if (g_list_length (tiles_prev) == g_list_length (tiles_curr)) {
-		node_u = tiles_prev;
-		node_v = tiles_curr;
+	if (! tiles_new || priv->tiles == tiles_new)
+		return;
+
+	if (g_list_length (priv->tiles) == g_list_length (tiles_new)) {
+		node_u = priv->tiles;
+		node_v = tiles_new;
 		equal  = TRUE;
 
 		while (equal && node_u && node_v) {
@@ -671,18 +684,14 @@ emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint
 
 	if (! equal) {
 		g_list_free (priv->tiles);
-		priv->tiles = tiles_curr;
+		priv->tiles = g_list_copy (tiles_new);
 		update_bins (this, priv->tiles);
 
 		update_event = g_new0 (TileTableUpdateEvent, 1);
 		update_event->time  = time;
-		update_event->tiles = tiles_curr;
+		update_event->tiles = priv->tiles;
 
 		g_signal_emit (this, tile_table_signals [UPDATE_SIGNAL], 0, update_event);
-	}
-	else {
-		g_list_free (tiles_prev);
-		g_list_free (tiles_curr);
 	}
 }
 
