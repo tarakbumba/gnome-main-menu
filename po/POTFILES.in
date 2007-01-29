@@ -19,4 +19,3 @@ main-menu/etc/slab.schemas.in.in
 main-menu/src/hard-drive-status-tile.c
 main-menu/src/main-menu-ui.c
 main-menu/src/network-status-tile.c
-main-menu/src/slab-window.c
