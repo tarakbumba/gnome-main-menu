@@ -11,7 +11,6 @@
         <bookmark:applications>
           <bookmark:application name="nautilus" exec="nautilus --browser %u" timestamp="1169767039" count="1"/>
         </bookmark:applications>
-       <bookmark:icon href="gnome-fs-home" type="application/octet-stream"/>
       </metadata>
     </info>
   </bookmark>
@@ -22,7 +21,6 @@
         <bookmark:applications>
           <bookmark:application name="nautilus" exec="nautilus --browser %u" timestamp="1169767039" count="1"/>
         </bookmark:applications>
-       <bookmark:icon href="gnome-fs-desktop" type="application/octet-stream"/>
       </metadata>
     </info>
   </bookmark>
@@ -34,7 +32,6 @@
         <bookmark:applications>
           <bookmark:application name="nautilus" exec="nautilus --browser %u" timestamp="1169767039" count="1"/>
         </bookmark:applications>
-       <bookmark:icon href="gnome-dev-harddisk" type="application/octet-stream"/>
       </metadata>
     </info>
   </bookmark>

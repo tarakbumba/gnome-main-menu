@@ -14,7 +14,7 @@ desktop_DATA = main-menu-rug.desktop
 @INTLTOOL_DESKTOP_RULE@
 
 bookmarkdir = $(datadir)/gnome-main-menu
-bookmark_DATA = applications.xbel documents.xbel system-items.xbel
+bookmark_DATA = applications.xbel documents.xbel system-items.xbel places.xbel
 
 $(server_DATA).in: $(server_DATA).in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
