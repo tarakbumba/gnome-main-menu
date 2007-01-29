@@ -3432,12 +3432,12 @@ egg_bookmark_file_add_application (EggBookmarkFile *bookmark,
       egg_bookmark_file_add_item (bookmark, item, NULL);
     }
   
-  if (name || name[0] != '\0')
+  if (name && name[0] != '\0')
     app_name = g_strdup (name);
   else
     app_name = g_strdup (g_get_application_name ());
   
-  if (exec || exec[0] != '\0')
+  if (exec && exec[0] != '\0')
     app_exec = g_strdup (exec);
   else
     app_exec = g_strjoin (" ", g_get_prgname(), "%u", NULL);
