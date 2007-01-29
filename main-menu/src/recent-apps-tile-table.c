@@ -54,6 +54,7 @@ recent_apps_tile_table_new ()
 	this = g_object_new (
 		RECENT_APPS_TILE_TABLE_TYPE,
 		"n-columns",             2,
+		"homogeneous",           TRUE,
 		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_NONE,
 		NULL);
 

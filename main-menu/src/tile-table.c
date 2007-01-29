@@ -34,6 +34,9 @@ typedef struct {
 	gint limit;
 
 	TileTableReorderingPriority priority;
+
+	gint reord_bin_orig;
+	gint reord_bin_curr;
 } TileTablePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_TABLE_TYPE, TileTablePrivate))
@@ -53,21 +56,27 @@ enum {
 
 static guint tile_table_signals [LAST_SIGNAL] = { 0 };
 
-static void tile_table_get_property (GObject *, guint, GValue *, GParamSpec *);
-static void tile_table_set_property (GObject *, guint, const GValue *, GParamSpec *);
-static void tile_table_finalize     (GObject *);
+static void     tile_table_get_property  (GObject *, guint, GValue *, GParamSpec *);
+static void     tile_table_set_property  (GObject *, guint, const GValue *, GParamSpec *);
+static void     tile_table_finalize      (GObject *);
+static gboolean tile_table_drag_motion   (GtkWidget *, GdkDragContext *, gint, gint, guint);
+static void     tile_table_drag_leave    (GtkWidget *, GdkDragContext *, guint);
+static void     tile_table_drag_data_rcv (GtkWidget *, GdkDragContext *, gint, gint,
+                                          GtkSelectionData *, guint, guint);
 
-static void replace_tiles      (TileTable *, GList *);
-static void set_limit          (TileTable *, gint);
-static void update_bins        (TileTable *);
-static void insert_into_bin    (TileTable *, Tile *, gint);
-static void empty_bin          (TileTable *, gint);
-static void resize_table       (TileTable *, guint, guint); 
-static void emit_update_signal (TileTable *, GList *, GList *, guint32);
+static void   replace_tiles                (TileTable *, GList *);
+static void   set_limit                    (TileTable *, gint);
+static void   update_bins                  (TileTable *, GList *);
+static void   insert_into_bin              (TileTable *, Tile *, gint);
+static void   empty_bin                    (TileTable *, gint);
+static void   resize_table                 (TileTable *, guint, guint); 
+static void   emit_update_signal           (TileTable *, GList *, GList *, guint32);
+static GList *reorder_tiles                (TileTable *, gint, gint);
+static void   connect_signal_if_not_exists (Tile *, const gchar *, GCallback, gpointer);
 
 static void tile_activated_cb     (Tile *, TileEvent *, gpointer);
-static void tile_drag_data_rcv_cb (GtkWidget *, GdkDragContext *, gint, gint,
-                                   GtkSelectionData *, guint, guint, gpointer);
+static void tile_drag_begin_cb    (GtkWidget *, GdkDragContext *, gpointer);
+static void tile_drag_end_cb      (GtkWidget *, GdkDragContext *, gpointer);
 
 void
 tile_table_reload (TileTable *this)
@@ -91,7 +100,8 @@ tile_table_uri_added (TileTable *this, const gchar *uri)
 static void
 tile_table_class_init (TileTableClass *this_class)
 {
-	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
+	GObjectClass   *g_obj_class  = G_OBJECT_CLASS   (this_class);
+	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (this_class);
 
 	GParamSpec *tiles_pspec;
 	GParamSpec *reorder_pspec;
@@ -101,6 +111,10 @@ tile_table_class_init (TileTableClass *this_class)
 	g_obj_class->get_property = tile_table_get_property;
 	g_obj_class->set_property = tile_table_set_property;
 	g_obj_class->finalize     = tile_table_finalize;
+
+	widget_class->drag_motion        = tile_table_drag_motion;
+	widget_class->drag_leave         = tile_table_drag_leave;
+	widget_class->drag_data_received = tile_table_drag_data_rcv;
 
 	this_class->reload    = NULL;
 	this_class->update    = NULL;
@@ -154,8 +168,14 @@ tile_table_init (TileTable *this)
 
 	priv->tiles = NULL;
 
+	priv->bins   = NULL;
+	priv->n_bins = 0;
+
 	priv->limit = G_MAXINT;
 	priv->priority = TILE_TABLE_REORDERING_PUSH_PULL;
+
+	priv->reord_bin_orig = -1;
+	priv->reord_bin_curr = -1;
 }
 
 static void
@@ -190,6 +210,17 @@ tile_table_set_property (GObject *g_obj, guint prop_id, const GValue *value, GPa
 
 		case PROP_REORDER:
 			priv->priority = g_value_get_int (value);
+
+			if (priv->priority != TILE_TABLE_REORDERING_NONE) {
+				gtk_drag_dest_set (
+					GTK_WIDGET (this),
+					GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
+					NULL, 0, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+				gtk_drag_dest_add_uri_targets (GTK_WIDGET (this));
+			}
+			else
+				gtk_drag_dest_unset (GTK_WIDGET (this));
+
 			break;
 
 		case PROP_LIMIT:
@@ -211,14 +242,120 @@ tile_table_finalize (GObject *g_obj)
 	G_OBJECT_CLASS (tile_table_parent_class)->finalize (g_obj);
 }
 
+static gboolean
+tile_table_drag_motion (GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time)
+{
+	TileTable        *this = TILE_TABLE (widget);
+	TileTablePrivate *priv = PRIVATE    (this);
+
+	GtkWidget *src_tile;
+	TileTable *src_table;
+
+	GList *tiles_reord;
+
+	gint n_rows, n_cols;
+	gint bin_row, bin_col;
+
+	gint bin_index;
+
+
+	src_tile = gtk_drag_get_source_widget (context);
+
+	if (! (src_tile && IS_TILE (src_tile))) {
+		gtk_drag_highlight (widget);
+
+		return FALSE;
+	}
+
+	src_table = TILE_TABLE (g_object_get_data (G_OBJECT (src_tile), "tile-table"));
+
+	if (src_table != TILE_TABLE (widget)) {
+		gtk_drag_highlight (widget);
+
+		return FALSE;
+	}
+
+	g_object_get (G_OBJECT (widget), "n-rows", & n_rows, "n-columns", & n_cols, NULL);
+
+	bin_row = y * n_rows / widget->allocation.height;
+	bin_col = x * n_cols / widget->allocation.width;
+
+	bin_index = bin_row * n_cols + bin_col;
+
+	if (priv->reord_bin_curr != bin_index) {
+		priv->reord_bin_curr = bin_index;
+
+		tiles_reord = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
+
+		update_bins (this, tiles_reord);
+	}
+
+	return FALSE;
+}
+
+static void
+tile_table_drag_leave (GtkWidget *widget, GdkDragContext *context, guint time)
+{
+	TileTable        *this = TILE_TABLE (widget);
+	TileTablePrivate *priv = PRIVATE    (this);
+
+
+	gtk_drag_unhighlight (widget);
+
+	update_bins (TILE_TABLE (widget), priv->tiles);
+}
+
+static void
+tile_table_drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
+                          GtkSelectionData *selection, guint info, guint time)
+{
+	TileTable        *this = TILE_TABLE (widget);
+	TileTablePrivate *priv = PRIVATE    (this);
+
+	GtkWidget *src_tile;
+	TileTable *src_table;
+
+	gboolean reordering;
+
+	GList *tiles_new;
+
+	gchar **uris;
+	gint    i;
+
+
+	src_tile = gtk_drag_get_source_widget (context);
+
+	if (src_tile && IS_TILE (src_tile)) {
+		src_table = TILE_TABLE (g_object_get_data (G_OBJECT (src_tile), "tile-table"));
+
+		reordering = (src_table == TILE_TABLE (widget));
+	}
+	else
+		reordering = FALSE;
+
+	if (reordering) {
+		tiles_new = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
+
+		emit_update_signal (this, priv->tiles, tiles_new, (guint32) time);
+	}
+	else {
+		uris = gtk_selection_data_get_uris (selection);
+
+		for (i = 0; uris && uris [i]; ++i)
+			tile_table_uri_added (this, uris [i]);
+
+		g_strfreev (uris);
+	}
+
+	gtk_drag_finish (context, TRUE, FALSE, (guint32) time);
+}
+
 static void
 replace_tiles (TileTable *this, GList *tiles)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 
-	GtkWidget *tile;
-	gulong     handler_id;
-
+	GtkWidget    *tile;
 	GtkSizeGroup *icon_size_group;
 
 	GList *node;
@@ -238,6 +375,9 @@ replace_tiles (TileTable *this, GList *tiles)
 
 		tile = GTK_WIDGET (node->data);
 
+		g_object_set_data (G_OBJECT (node->data), "tile-table", this);
+
+#if 0
 		handler_id = g_signal_handler_find (
 			tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
 			tile_drag_data_rcv_cb, NULL);
@@ -257,23 +397,86 @@ replace_tiles (TileTable *this, GList *tiles)
 			g_signal_handler_disconnect (tile, handler_id);
 		else
 			/* do nothing */ ;
+#endif
 
-		handler_id = g_signal_handler_find (
-			tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			tile_activated_cb, NULL);
-
-		if (! handler_id)
-			g_signal_connect (
-				G_OBJECT (tile), "tile-activated",
-				G_CALLBACK (tile_activated_cb), NULL);
+		connect_signal_if_not_exists (
+			TILE (tile), "tile-activated", G_CALLBACK (tile_activated_cb), NULL);
+		connect_signal_if_not_exists (
+			TILE (tile), "drag-begin", G_CALLBACK (tile_drag_begin_cb), this);
+		connect_signal_if_not_exists (
+			TILE (tile), "drag-end", G_CALLBACK (tile_drag_end_cb), this);
 
 		priv->tiles = g_list_append (priv->tiles, tile);
 
-		if (IS_NAMEPLATE_TILE (node->data))
-			gtk_size_group_add_widget (icon_size_group, NAMEPLATE_TILE (node->data)->image);
+		if (IS_NAMEPLATE_TILE (tile))
+			gtk_size_group_add_widget (icon_size_group, NAMEPLATE_TILE (tile)->image);
 	}
 
-	update_bins (this);
+	update_bins (this, priv->tiles);
+}
+
+static void
+connect_signal_if_not_exists (Tile *tile, const gchar *signal, GCallback cb, gpointer user_data)
+{
+	gulong handler_id = g_signal_handler_find (tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, cb, NULL);
+
+	if (! handler_id)
+		g_signal_connect (G_OBJECT (tile), signal, cb, user_data);
+}
+
+static GList *
+reorder_tiles (TileTable *this, gint src_index, gint dst_index)
+{
+	TileTablePrivate *priv = PRIVATE (this);
+
+	GList *tiles_reord;
+	gint   n_tiles;
+
+	GList *src_node;
+	GList *dst_node;
+	GList *last_node;
+
+	gpointer tmp;
+
+
+	n_tiles = g_list_length (priv->tiles);
+
+	if (dst_index >= n_tiles)
+		dst_index = n_tiles - 1;
+
+	if (src_index == dst_index)
+		return priv->tiles;
+
+	tiles_reord = g_list_copy (priv->tiles);
+
+	src_node = g_list_nth (tiles_reord, src_index);
+	dst_node = g_list_nth (tiles_reord, dst_index);
+
+	if (priv->priority == TILE_TABLE_REORDERING_SWAP) {
+		tmp            = src_node->data;
+		src_node->data = dst_node->data;
+		dst_node->data = tmp;
+	}
+	else {
+		tiles_reord = g_list_remove_link (tiles_reord, src_node);
+
+		if (priv->priority == TILE_TABLE_REORDERING_PUSH) {
+			if (src_index < dst_index) {
+				last_node = g_list_last (tiles_reord);
+
+				tiles_reord = g_list_remove_link (tiles_reord, last_node);
+				tiles_reord = g_list_prepend (tiles_reord, last_node->data);
+			}
+		}
+		else if (src_index < dst_index)
+			dst_node = dst_node->next;
+		else
+			/* do nothing */ ;
+
+		tiles_reord = g_list_insert_before (tiles_reord, dst_node, src_node->data);
+	}
+
+	return tiles_reord;
 }
 
 static void
@@ -287,12 +490,12 @@ set_limit (TileTable *this, gint limit)
 	if (limit != priv->limit) {
 		priv->limit = limit;
 
-		update_bins (this);
+		update_bins (this, priv->tiles);
 	}
 }
 
 static void
-update_bins (TileTable *this)
+update_bins (TileTable *this, GList *tiles)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 
@@ -306,7 +509,7 @@ update_bins (TileTable *this)
 
 	g_object_get (G_OBJECT (this), "n-columns", & n_cols, NULL);
 
-	n_tiles = g_list_length (priv->tiles);
+	n_tiles = g_list_length (tiles);
 
 	if (n_tiles > priv->limit)
 		n_tiles = priv->limit;
@@ -315,7 +518,7 @@ update_bins (TileTable *this)
 
 	resize_table (this, n_rows, n_cols);
 
-	for (node = priv->tiles, index = 0; node && index < priv->n_bins; node = node->next)
+	for (node = tiles, index = 0; node && index < priv->n_bins; node = node->next)
 		insert_into_bin (this, TILE (node->data), index++);
 
 	for (; index < priv->n_bins; ++index)
@@ -366,6 +569,8 @@ insert_into_bin (TileTable *this, Tile *tile, gint index)
 	}
 	else
 		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile));
+
+	g_object_set_data (G_OBJECT (tile), "tile-table-bin", GINT_TO_POINTER (index));
 }
 
 static void
@@ -460,7 +665,7 @@ emit_update_signal (TileTable *this, GList *tiles_prev, GList *tiles_curr, guint
 	if (! equal) {
 		g_list_free (priv->tiles);
 		priv->tiles = tiles_curr;
-		update_bins (this);
+		update_bins (this, priv->tiles);
 
 		update_event = g_new0 (TileTableUpdateEvent, 1);
 		update_event->time  = time;
@@ -481,6 +686,24 @@ tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
 		return;
 
 	tile_trigger_action_with_time (tile, tile->default_action, event->time);
+}
+
+static void
+tile_drag_begin_cb (GtkWidget *widget, GdkDragContext *context, gpointer user_data)
+{
+	TileTablePrivate *priv = PRIVATE (user_data);
+
+	priv->reord_bin_orig = GPOINTER_TO_INT (
+		g_object_get_data (G_OBJECT (widget), "tile-table-bin"));
+}
+
+static void
+tile_drag_end_cb (GtkWidget *widget, GdkDragContext *context, gpointer user_data)
+{
+	TileTablePrivate *priv = PRIVATE (user_data);
+
+	priv->reord_bin_orig = -1;
+	priv->reord_bin_curr = -1;
 }
 
 static void

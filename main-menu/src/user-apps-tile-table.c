@@ -20,6 +20,8 @@
 
 #include "user-apps-tile-table.h"
 
+#include <string.h>
+
 #include "application-tile.h"
 #include "libslab-utils.h"
 
@@ -35,6 +37,7 @@ user_apps_tile_table_new ()
 	GObject *this = g_object_new (
 		USER_APPS_TILE_TABLE_TYPE,
 		"n-columns",             2,
+		"homogeneous",           TRUE,
 		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_PUSH_PULL,
 		NULL);
 
@@ -63,12 +66,26 @@ static void
 update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new,
               const gchar *uri)
 {
-	libslab_bookmark_file_set_mime_type   (bm_file_new, uri, "application/x-desktop");
-	libslab_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
+	gint uri_len;
+	
+	if (! uri)
+		return;
+
+	uri_len = strlen (uri);
+
+	if (! strcmp (& uri [uri_len - 8], ".desktop")) {
+		libslab_bookmark_file_set_mime_type   (bm_file_new, uri, "application/x-desktop");
+		libslab_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
+	}
 }
 
 static GtkWidget *
 get_application_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 {
-	return application_tile_new (uri);
+	gint uri_len = strlen (uri);
+
+	if (! strcmp (& uri [uri_len - 8], ".desktop"))
+		return application_tile_new (uri);
+
+	return NULL;
 }

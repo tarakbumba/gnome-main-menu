@@ -20,6 +20,8 @@
 
 #include "system-tile-table.h"
 
+#include <string.h>
+
 #include "system-tile.h"
 #include "libslab-utils.h"
 
@@ -35,6 +37,7 @@ system_tile_table_new ()
 	GObject *this = g_object_new (
 		SYSTEM_TILE_TABLE_TYPE,
 		"n-columns",             1,
+		"homogeneous",           TRUE,
 		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_PUSH_PULL,
 		NULL);
 
@@ -64,6 +67,16 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
               const gchar *uri)
 {
 	gchar *title = NULL;
+	gint uri_len;
+
+
+	if (! uri)
+		return;
+
+	uri_len = strlen (uri);
+
+	if (strcmp (& uri [uri_len - 8], ".desktop"))
+		return;
 
 	if (bm_file_old && libslab_bookmark_file_has_item (bm_file_old, uri))
 		title = libslab_bookmark_file_get_title (bm_file_old, uri, NULL);
@@ -81,9 +94,25 @@ static GtkWidget *
 get_system_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 {
 	gchar *title = NULL;
+	gint uri_len;
+
+	GtkWidget *tile;
+
+
+	if (! uri)
+		return NULL;
+
+	uri_len = strlen (uri);
+
+	if (strcmp (& uri [uri_len - 8], ".desktop"))
+		return NULL;
 
 	if (libslab_bookmark_file_has_item (bm_file, uri))
 		title = libslab_bookmark_file_get_title (bm_file, uri, NULL);
 
-	return system_tile_new (uri, title);
+	tile = system_tile_new (uri, title);
+
+	g_free (title);
+
+	return tile;
 }
