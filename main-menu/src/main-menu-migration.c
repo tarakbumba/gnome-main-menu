@@ -70,6 +70,8 @@ migrate_system_gconf_to_bookmark_file ()
 
 	LibSlabBookmarkFile *bm_file;
 
+	gchar **uris;
+
 	gchar *path;
 
 	GnomeDesktopItem *ditem;
@@ -96,8 +98,44 @@ migrate_system_gconf_to_bookmark_file ()
 
 	need_migration = ! get_main_menu_user_data_file_path (& bookmark_path, SYSTEM_BOOKMARK_FILENAME, TRUE);
 
-	if (! need_migration)
+	if (! need_migration) {
+		bm_file = libslab_bookmark_file_new ();
+
+		libslab_bookmark_file_load_from_file (bm_file, bookmark_path, & error);
+
+		if (error) {
+			libslab_handle_g_error (
+				& error, "%s: can't read system item store path [%s]\n",
+				G_STRFUNC, bookmark_path);
+		}
+		else {
+			uris = libslab_bookmark_file_get_uris (bm_file, NULL);
+
+			for (i = 0; uris && uris [i]; ++i) {
+				if (g_str_has_suffix (uris [i], "yelp.desktop"))
+					libslab_bookmark_file_set_title (bm_file, uris [i], _("Help"));
+				else if (g_str_has_suffix (uris [i], "gnome-session-logout.desktop"))
+					libslab_bookmark_file_set_title (bm_file, uris [i], _("Logout"));
+				else if (g_str_has_suffix (uris [i], "gnome-session-shutdown.desktop"))
+					libslab_bookmark_file_set_title (bm_file, uris [i], _("Shutdown"));
+				else
+					/* do nothing */ ;
+			}
+
+			libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
+
+			if (error)
+				libslab_handle_g_error (
+					& error, "%s: can't write system item store [%s]\n",
+					G_STRFUNC, bookmark_path);
+
+			g_strfreev (uris);
+		}
+
+		libslab_bookmark_file_free (bm_file);
+
 		goto exit;
+	}
 
 	gconf_system_list = (GList *) libslab_get_gconf_value (SYSTEM_ITEM_GCONF_KEY);
 
@@ -429,12 +467,20 @@ migrate_user_docs_to_user_bookmark_file ()
 void
 migrate_user_dirs_to_user_bookmark_file ()
 {
+	LibSlabBookmarkFile *bm_file;
+
 	gchar *bookmark_path;
 	gchar *bookmark_path_cp_dest;
 
 	gchar *contents;
 
+	gchar **uris;
+	gchar  *uri_new;
+	gchar  *path;
+
 	GError *error = NULL;
+
+	gint i;
 
 
 	if (! get_main_menu_user_data_file_path (& bookmark_path, DIRS_BOOKMARK_FILENAME, TRUE)) {
@@ -458,7 +504,49 @@ migrate_user_dirs_to_user_bookmark_file ()
 				G_STRFUNC, bookmark_path_cp_dest);
 
 		g_free (contents);
-		g_free (bookmark_path_cp_dest);
+
+		g_free (bookmark_path);
+		bookmark_path = bookmark_path_cp_dest;
+
+		bm_file = libslab_bookmark_file_new ();
+		libslab_bookmark_file_load_from_file (bm_file, bookmark_path, & error);
+
+		if (error) {
+			libslab_handle_g_error (
+				& error, "%s: can't read user dirs store path [%s]\n",
+				G_STRFUNC, bookmark_path);
+		}
+		else {
+			uris = libslab_bookmark_file_get_uris (bm_file, NULL);
+
+			for (i = 0; uris && uris [i]; ++i) {
+				if (! strcmp (uris [i], "HOME"))
+					uri_new = g_filename_to_uri (g_get_home_dir (), NULL, NULL);
+				else if (! strcmp (uris [i], "DESKTOP")) {
+					path = g_build_filename (g_get_home_dir (), "Desktop", NULL);
+					uri_new = g_filename_to_uri (path, NULL, NULL);
+					g_free (path);
+				}
+				else
+					uri_new = NULL;
+
+				if (uri_new)
+					libslab_bookmark_file_move_item (bm_file, uris [i], uri_new, NULL);
+
+				g_free (uri_new);
+			}
+
+			libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
+
+			if (error)
+				libslab_handle_g_error (
+					& error, "%s: can't write user dirs store [%s]\n",
+					G_STRFUNC, bookmark_path);
+
+			g_strfreev (uris);
+		}
+
+		libslab_bookmark_file_free (bm_file);
 	}
 
 	g_free (bookmark_path);

@@ -3,7 +3,7 @@
       xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
 >
-  <bookmark href="file:///home/jimmyk" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
+  <bookmark href="HOME" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
     <title>Home Dir</title>
     <info>
       <metadata owner="http://freedesktop.org">
@@ -14,7 +14,8 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///home/jimmyk/Desktop" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
+  <bookmark href="DESKTOP" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
+    <title>Desktop</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="inode/directory"/>
