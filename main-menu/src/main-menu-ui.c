@@ -64,7 +64,7 @@ typedef struct {
 	GladeXML *main_menu_xml;
 	GladeXML *panel_button_xml;
 
-	GtkWidget *panel_buttons [3];
+	GtkWidget *panel_buttons [4];
 	GtkWidget *panel_button;
 
 	GtkWidget *slab_window;
@@ -178,6 +178,7 @@ enum {
 
 enum {
 	PANEL_BUTTON_ORIENT_TOP,
+	PANEL_BUTTON_ORIENT_BOTTOM,
 	PANEL_BUTTON_ORIENT_LEFT,
 	PANEL_BUTTON_ORIENT_RIGHT
 };
@@ -235,46 +236,47 @@ main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	priv->panel_applet                              = NULL;
-	priv->panel_about_dialog                        = NULL;
+	priv->panel_applet                               = NULL;
+	priv->panel_about_dialog                         = NULL;
 
-	priv->main_menu_xml                             = NULL;
-	priv->panel_button_xml                          = NULL;
+	priv->main_menu_xml                              = NULL;
+	priv->panel_button_xml                           = NULL;
 
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP]   = NULL;
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT]  = NULL;
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = NULL;
-	priv->panel_button                              = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP]    = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_BOTTOM] = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT]   = NULL;
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT]  = NULL;
+	priv->panel_button                               = NULL;
 
-	priv->slab_window                               = NULL;
+	priv->slab_window                                = NULL;
 
-	priv->top_pane                                  = NULL;
-	priv->left_pane                                 = NULL;
+	priv->top_pane                                   = NULL;
+	priv->left_pane                                  = NULL;
 
-	priv->search_section                            = NULL;
-	priv->search_entry                              = NULL;
+	priv->search_section                             = NULL;
+	priv->search_entry                               = NULL;
 
-	priv->file_section                              = NULL;
-	priv->apps_selector                             = NULL;
-	priv->docs_selector                             = NULL;
-	priv->dirs_selector                             = NULL;
+	priv->file_section                               = NULL;
+	priv->apps_selector                              = NULL;
+	priv->docs_selector                              = NULL;
+	priv->dirs_selector                              = NULL;
 
-	priv->sys_table                                 = NULL;
-	priv->usr_apps_table                            = NULL;
-	priv->rct_apps_table                            = NULL;
-	priv->usr_docs_table                            = NULL;
-	priv->rct_docs_table                            = NULL;
-	priv->usr_dirs_table                            = NULL;
+	priv->sys_table                                  = NULL;
+	priv->usr_apps_table                             = NULL;
+	priv->rct_apps_table                             = NULL;
+	priv->usr_docs_table                             = NULL;
+	priv->rct_docs_table                             = NULL;
+	priv->usr_dirs_table                             = NULL;
 
-	priv->more_button [MORE_APPS_BUTTON]            = NULL;
-	priv->more_button [MORE_DOCS_BUTTON]            = NULL;
-	priv->more_button [MORE_DIRS_BUTTON]            = NULL;
+	priv->more_button [MORE_APPS_BUTTON]             = NULL;
+	priv->more_button [MORE_DOCS_BUTTON]             = NULL;
+	priv->more_button [MORE_DIRS_BUTTON]             = NULL;
 
-	priv->max_total_items                           = 8;
+	priv->max_total_items                            = 8;
 
-	priv->search_cmd_gconf_mntr_id                  = 0;
-	priv->ptr_is_grabbed                            = FALSE;
-	priv->kbd_is_grabbed                            = FALSE;
+	priv->search_cmd_gconf_mntr_id                   = 0;
+	priv->ptr_is_grabbed                             = FALSE;
+	priv->kbd_is_grabbed                             = FALSE;
 }
 
 static void
@@ -285,7 +287,7 @@ main_menu_ui_finalize (GObject *g_obj)
 	gint i;
 
 
-	for (i = 0; i < 3; ++i) {
+	for (i = 0; i < 4; ++i) {
 		g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->more_button [i]), "double-click-detector")));
 
@@ -318,12 +320,14 @@ create_panel_button (MainMenuUI *this)
 
 	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP] = glade_xml_get_widget (
 		priv->panel_button_xml, "slab-main-menu-panel-button-top");
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_BOTTOM] = glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-bottom");
 	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT] = glade_xml_get_widget (
 		priv->panel_button_xml, "slab-main-menu-panel-button-left");
 	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = glade_xml_get_widget (
 		priv->panel_button_xml, "slab-main-menu-panel-button-right");
 
-	for (i = 0; i < 3; ++i) {
+	for (i = 0; i < 4; ++i) {
 		g_object_set_data (
 			G_OBJECT (priv->panel_buttons [i]), "double-click-detector",
 			double_click_detector_new ());
@@ -892,6 +896,10 @@ reorient_panel_button (MainMenuUI *this)
 
 		case PANEL_APPLET_ORIENT_RIGHT:
 			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT];
+			break;
+
+		case PANEL_APPLET_ORIENT_UP:
+			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_BOTTOM];
 			break;
 
 		default:
