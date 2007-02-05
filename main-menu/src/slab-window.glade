@@ -7,7 +7,7 @@
 <widget class="GtkWindow" id="slab-main-menu-window">
   <property name="border_width">3</property>
   <property name="title" translatable="yes">GNOME Main Menu</property>
-  <property name="type">GTK_WINDOW_TOPLEVEL</property>
+  <property name="type">GTK_WINDOW_POPUP</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
@@ -16,7 +16,7 @@
   <property name="decorated">False</property>
   <property name="skip_taskbar_hint">True</property>
   <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_MENU</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
@@ -69,7 +69,7 @@
 			<widget class="GtkHBox" id="search-section">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">0</property>
+			  <property name="spacing">6</property>
 
 			  <child>
 			    <widget class="GtkImage" id="image1">
@@ -155,7 +155,7 @@
 			    <widget class="GtkHBox" id="hbox3">
 			      <property name="visible">True</property>
 			      <property name="homogeneous">False</property>
-			      <property name="spacing">3</property>
+			      <property name="spacing">6</property>
 
 			      <child>
 				<widget class="GtkToggleButton" id="slab-page-selector-button-applications">
@@ -300,7 +300,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">12</property>
+		      <property name="top_padding">6</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">12</property>
 		      <property name="right_padding">12</property>
@@ -309,10 +309,10 @@
 			<widget class="GtkVBox" id="vbox3">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">18</property>
+			  <property name="spacing">12</property>
 
 			  <child>
-			    <widget class="GtkLabel" id="label5">
+			    <widget class="GtkLabel" id="slab-favorite-applications">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Favorite Applications</property>
 			      <property name="use_underline">False</property>
@@ -360,7 +360,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkLabel" id="label6">
+			    <widget class="GtkLabel" id="slab-recent-applications">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Recent Applications</property>
 			      <property name="use_underline">False</property>
@@ -476,7 +476,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">12</property>
+		      <property name="top_padding">6</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">12</property>
 		      <property name="right_padding">12</property>
@@ -485,10 +485,10 @@
 			<widget class="GtkVBox" id="vbox44">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">18</property>
+			  <property name="spacing">12</property>
 
 			  <child>
-			    <widget class="GtkLabel" id="label93">
+			    <widget class="GtkLabel" id="slab-favorite-documents">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Favorite Documents</property>
 			      <property name="use_underline">False</property>
@@ -536,7 +536,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkLabel" id="label94">
+			    <widget class="GtkLabel" id="slab-recent-documents">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Recent Documents</property>
 			      <property name="use_underline">False</property>
@@ -652,7 +652,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">12</property>
+		      <property name="top_padding">6</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">12</property>
 		      <property name="right_padding">12</property>
@@ -661,10 +661,10 @@
 			<widget class="GtkVBox" id="vbox45">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">18</property>
+			  <property name="spacing">12</property>
 
 			  <child>
-			    <widget class="GtkLabel" id="label95">
+			    <widget class="GtkLabel" id="slab-favorite-places">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Favorite Places</property>
 			      <property name="use_underline">False</property>
@@ -808,7 +808,7 @@
 	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkLabel" id="label59">
+		<widget class="GtkLabel" id="slab-side-system-label">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">System</property>
 		  <property name="use_underline">False</property>
@@ -923,7 +923,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkLabel" id="label63">
+		<widget class="GtkLabel" id="slab-side-status-label">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">Status</property>
 		  <property name="use_underline">False</property>
@@ -1146,8 +1146,8 @@
 	  <property name="visible">True</property>
 	  <property name="xalign">0.5</property>
 	  <property name="yalign">0.5</property>
-	  <property name="xscale">1</property>
-	  <property name="yscale">1</property>
+	  <property name="xscale">0</property>
+	  <property name="yscale">0</property>
 	  <property name="top_padding">0</property>
 	  <property name="bottom_padding">0</property>
 	  <property name="left_padding">0</property>
@@ -1266,7 +1266,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label96">
+		    <widget class="GtkLabel" id="label93">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Computer</property>
 		      <property name="use_underline">False</property>

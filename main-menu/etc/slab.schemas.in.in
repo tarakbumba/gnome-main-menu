@@ -242,15 +242,51 @@
 		</schema>
 
 		<schema>
+			<key>/schemas/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps</key>
+			<applyto>/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps</applyto>
+			<owner>gnome-main-menu</owner>
+			<type>bool</type>
+			<default>true</default>
+			<locale name="C">
+				<short>lock-down status for the user-specified apps section</short>
+				<long>set to true if the user is allowed to modify the list of user-specified or "Favorite" applications.</long>
+			</locale>
+		</schema>
+
+		<schema>
+			<key>/schemas/desktop/gnome/applications/main-menu/lock-down/user_modifiable_docs</key>
+			<applyto>/desktop/gnome/applications/main-menu/lock-down/user_modifiable_docs</applyto>
+			<owner>gnome-main-menu</owner>
+			<type>bool</type>
+			<default>true</default>
+			<locale name="C">
+				<short>lock-down status for the user-specified docs section</short>
+				<long>set to true if the user is allowed to modify the list of user-specified or "Favorite" documents.</long>
+			</locale>
+		</schema>
+
+		<schema>
+			<key>/schemas/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs</key>
+			<applyto>/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs</applyto>
+			<owner>gnome-main-menu</owner>
+			<type>bool</type>
+			<default>true</default>
+			<locale name="C">
+				<short>lock-down status for the user-specified dirs section</short>
+				<long>set to true if the user is allowed to modify the list of user-specified or "Favorite" directories or "Places".</long>
+			</locale>
+		</schema>
+
+		<schema>
 			<key>/schemas/desktop/gnome/applications/main-menu/lock-down/showable_file_types</key>
 			<applyto>/desktop/gnome/applications/main-menu/lock-down/showable_file_types</applyto>
 			<owner>gnome-main-menu</owner>
 			<type>list</type>
 			<list_type>int</list_type>
-			<default>[0,1,2]</default>
+			<default>[0,1,2,3,4,5]</default>
 			<locale name="C">
 				<short>lock-down configuration of the file area</short>
-				<long>contains the list (in no particular order) of allowable file types to show in the file area.  possible values (see also the note for /desktop/gnome/applications/main-menu/file-area/file_class): 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 [RECENT_FILES].  RECENTLY_USED_APPS is the list of recently used (instantiated with the main-menu or the application-browser).  USER_SPECIFIED_APPS is equivalent to "Favorite Applications".  RECENT_FILES is the list of files from ~/.recently-used.</long>
+				<long>contains the list (in no particular order) of allowable file tables to show in the file area.  possible values: 0 - show the user-specified or "Favorite" applications table, 1 - show the recently used applications table, 2 - show the user-specified or "Favorite" documents table, 3 - show the recently used documents table, 4 - show the user-specified of "Favorite" directories or "Places" table, and 5 - show the recently used directories or "Places" table.</long>
 			</locale>
 		</schema>
 	</schemalist>

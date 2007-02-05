@@ -527,6 +527,16 @@ migrate_user_dirs_to_user_bookmark_file ()
 					uri_new = g_filename_to_uri (path, NULL, NULL);
 					g_free (path);
 				}
+				else if (! strcmp (uris [i], "SPREADSHEET")) {
+					path = g_build_filename (g_get_home_dir (), "Documents", g_strconcat (_("New Spreadsheet"), ".ods", NULL), NULL);
+					uri_new = g_filename_to_uri (path, NULL, NULL);
+					g_free (path);
+				}
+				else if (! strcmp (uris [i], "DOCUMENT")) {
+					path = g_build_filename (g_get_home_dir (), "Documents", g_strconcat (_("New Document"), ".odt", NULL), NULL);
+					uri_new = g_filename_to_uri (path, NULL, NULL);
+					g_free (path);
+				}
 				else
 					uri_new = NULL;
 
