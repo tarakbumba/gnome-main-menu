@@ -34,7 +34,7 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///home/jimmyk/.local/share/gnome-main-menu/lockscreen.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+  <bookmark href="file:///opt/gnome/share/applications/gnome-screensaver-lock.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>

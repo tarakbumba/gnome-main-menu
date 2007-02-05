@@ -14,7 +14,7 @@ libslab/document-tile.c
 libslab/system-tile.c
 main-menu/etc/GNOME_MainMenu_ContextMenu.xml
 main-menu/etc/GNOME_MainMenu.server.in.in
-main-menu/etc/main-menu-rug.desktop.in
+main-menu/etc/gnome-screensaver-lock.desktop
 main-menu/etc/slab.schemas.in.in
 main-menu/src/hard-drive-status-tile.c
 main-menu/src/main-menu-ui.c

@@ -10,7 +10,7 @@ uidir   = $(datadir)/gnome-2.0/ui
 ui_DATA = GNOME_MainMenu_ContextMenu.xml
 
 desktopdir   = $(datadir)/applications
-desktop_DATA = main-menu-rug.desktop
+desktop_DATA = gnome-screensaver-lock.desktop
 @INTLTOOL_DESKTOP_RULE@
 
 bookmarkdir = $(datadir)/gnome-main-menu
@@ -29,6 +29,6 @@ install-data-local:
 		done \
 	fi
 
-EXTRA_DIST = $(server_DATA).in.in $(schemas_DATA).in.in $(ui_DATA) $(desktop_DATA).in $(bookmark_DATA)
+EXTRA_DIST = $(server_DATA).in.in $(schemas_DATA).in.in $(ui_DATA) $(desktop_DATA) $(bookmark_DATA)
 
-CLEANFILES = $(server_DATA) $(desktop_DATA) $(schemas_DATA) $(server_DATA).in $(schemas_DATA).in
+CLEANFILES = $(server_DATA) $(schemas_DATA) $(server_DATA).in $(schemas_DATA).in
