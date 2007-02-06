@@ -215,19 +215,11 @@ libslab_gnome_desktop_item_open_help (GnomeDesktopItem *item)
 guint32
 libslab_get_current_time_millis ()
 {
-	GTimeVal time_val;
-	guint32  time;
+	GTimeVal t_curr;
 
+	g_get_current_time (& t_curr);
 
-	time = gtk_get_current_event_time ();
-
-	if (! time) {
-		g_get_current_time (& time_val);
-
-		time = (guint32) (1000L * time_val.tv_sec + time_val.tv_usec / 1000L);
-	}
-
-	return time;
+	return 1000L * t_curr.tv_sec + t_curr.tv_usec / 1000L;
 }
 
 void

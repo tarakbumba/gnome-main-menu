@@ -994,16 +994,14 @@
 	  <property name="right_padding">0</property>
 
 	  <child>
-	    <widget class="GtkToggleButton" id="slab-main-menu-panel-button-top">
+	    <widget class="GtkEventBox" id="slab-main-menu-panel-button-top">
 	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="relief">GTK_RELIEF_NONE</property>
-	      <property name="focus_on_click">False</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
+	      <property name="visible_window">True</property>
+	      <property name="above_child">False</property>
 
 	      <child>
 		<widget class="GtkHBox" id="panel-button-inner-container">
+		  <property name="border_width">2</property>
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
 		  <property name="spacing">6</property>
@@ -1011,7 +1009,7 @@
 		  <child>
 		    <widget class="GtkImage" id="panel-button-icon">
 		      <property name="visible">True</property>
-		      <property name="icon_size">1</property>
+		      <property name="icon_size">2</property>
 		      <property name="icon_name">gnome-fs-client</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
@@ -1074,13 +1072,10 @@
 	  <property name="right_padding">0</property>
 
 	  <child>
-	    <widget class="GtkToggleButton" id="slab-main-menu-panel-button-left">
+	    <widget class="GtkEventBox" id="slab-main-menu-panel-button-left">
 	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="relief">GTK_RELIEF_NONE</property>
-	      <property name="focus_on_click">False</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
+	      <property name="visible_window">True</property>
+	      <property name="above_child">False</property>
 
 	      <child>
 		<widget class="GtkVBox" id="vbox42">
@@ -1116,7 +1111,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image42">
 		      <property name="visible">True</property>
-		      <property name="icon_size">1</property>
+		      <property name="icon_size">2</property>
 		      <property name="icon_name">gnome-fs-client</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
@@ -1154,13 +1149,10 @@
 	  <property name="right_padding">0</property>
 
 	  <child>
-	    <widget class="GtkToggleButton" id="slab-main-menu-panel-button-right">
+	    <widget class="GtkEventBox" id="slab-main-menu-panel-button-right">
 	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="relief">GTK_RELIEF_NONE</property>
-	      <property name="focus_on_click">False</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
+	      <property name="visible_window">True</property>
+	      <property name="above_child">False</property>
 
 	      <child>
 		<widget class="GtkVBox" id="vbox43">
@@ -1171,7 +1163,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image43">
 		      <property name="visible">True</property>
-		      <property name="icon_size">1</property>
+		      <property name="icon_size">2</property>
 		      <property name="icon_name">gnome-fs-client</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
@@ -1234,13 +1226,10 @@
 	  <property name="right_padding">0</property>
 
 	  <child>
-	    <widget class="GtkToggleButton" id="slab-main-menu-panel-button-bottom">
+	    <widget class="GtkEventBox" id="slab-main-menu-panel-button-bottom">
 	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="relief">GTK_RELIEF_NONE</property>
-	      <property name="focus_on_click">False</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
+	      <property name="visible_window">True</property>
+	      <property name="above_child">False</property>
 
 	      <child>
 		<widget class="GtkHBox" id="hbox43">
@@ -1251,7 +1240,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image44">
 		      <property name="visible">True</property>
-		      <property name="icon_size">1</property>
+		      <property name="icon_size">2</property>
 		      <property name="icon_name">gnome-fs-client</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
