@@ -310,8 +310,6 @@ create_panel_button (MainMenuUI *this)
 	GtkWidget *button_root;
 	GtkWidget *button_parent;
 
-	GtkImage *image;
-
 	gint i;
 
 
@@ -328,8 +326,6 @@ create_panel_button (MainMenuUI *this)
 		priv->panel_button_xml, "slab-main-menu-panel-button-left");
 	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = glade_xml_get_widget (
 		priv->panel_button_xml, "slab-main-menu-panel-button-right");
-
-	image = GTK_IMAGE (glade_xml_get_widget (priv->panel_button_xml, "image44"));
 
 	for (i = 0; i < 4; ++i) {
 		g_object_set_data (
@@ -694,10 +690,12 @@ set_panel_button_active (MainMenuUI *this, gboolean active)
 		gtk_window_present_with_time (
 			GTK_WINDOW (priv->slab_window), gtk_get_current_event_time ());
 		gtk_widget_set_state (priv->panel_button, GTK_STATE_ACTIVE);
+		gtk_event_box_set_visible_window (GTK_EVENT_BOX (priv->panel_button), TRUE);
 	}
 	else {
 		gtk_widget_hide (priv->slab_window);
 		gtk_widget_set_state (priv->panel_button, GTK_STATE_NORMAL);
+		gtk_event_box_set_visible_window (GTK_EVENT_BOX (priv->panel_button), FALSE);
 	}
 }
 
