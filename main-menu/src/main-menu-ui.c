@@ -329,7 +329,7 @@ create_panel_button (MainMenuUI *this)
 	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = glade_xml_get_widget (
 		priv->panel_button_xml, "slab-main-menu-panel-button-right");
 
-	image = GTK_IMAGE (glade_xml_get_widget (panel_button_xml, "image44"));
+	image = GTK_IMAGE (glade_xml_get_widget (priv->panel_button_xml, "image44"));
 
 	for (i = 0; i < 4; ++i) {
 		g_object_set_data (
