@@ -158,16 +158,17 @@
 			      <property name="spacing">6</property>
 
 			      <child>
-				<widget class="GtkToggleButton" id="slab-page-selector-button-applications">
+				<widget class="GtkRadioButton" id="slab-page-selector-button-applications">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">False</property>
 				  <property name="active">False</property>
 				  <property name="inconsistent">False</property>
+				  <property name="draw_indicator">False</property>
 
 				  <child>
-				    <widget class="GtkLabel" id="label86">
+				    <widget class="GtkLabel" id="label94">
 				      <property name="visible">True</property>
 				      <property name="label" translatable="yes">Applications</property>
 				      <property name="use_underline">False</property>
@@ -194,16 +195,18 @@
 			      </child>
 
 			      <child>
-				<widget class="GtkToggleButton" id="slab-page-selector-button-documents">
+				<widget class="GtkRadioButton" id="slab-page-selector-button-documents">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">False</property>
 				  <property name="active">False</property>
 				  <property name="inconsistent">False</property>
+				  <property name="draw_indicator">False</property>
+				  <property name="group">slab-page-selector-button-applications</property>
 
 				  <child>
-				    <widget class="GtkLabel" id="label88">
+				    <widget class="GtkLabel" id="label95">
 				      <property name="visible">True</property>
 				      <property name="label" translatable="yes">Documents</property>
 				      <property name="use_underline">False</property>
@@ -230,16 +233,18 @@
 			      </child>
 
 			      <child>
-				<widget class="GtkToggleButton" id="slab-page-selector-button-places">
+				<widget class="GtkRadioButton" id="slab-page-selector-button-places">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">False</property>
 				  <property name="active">False</property>
 				  <property name="inconsistent">False</property>
+				  <property name="draw_indicator">False</property>
+				  <property name="group">slab-page-selector-button-applications</property>
 
 				  <child>
-				    <widget class="GtkLabel" id="label87">
+				    <widget class="GtkLabel" id="label96">
 				      <property name="visible">True</property>
 				      <property name="label" translatable="yes">Places</property>
 				      <property name="use_underline">False</property>
@@ -294,7 +299,7 @@
 		  <property name="enable_popup">False</property>
 
 		  <child>
-		    <widget class="GtkAlignment" id="alignment16">
+		    <widget class="GtkAlignment" id="applications-page">
 		      <property name="visible">True</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
@@ -470,7 +475,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkAlignment" id="alignment17">
+		    <widget class="GtkAlignment" id="documents-page">
 		      <property name="visible">True</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
@@ -646,7 +651,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkAlignment" id="alignment21">
+		    <widget class="GtkAlignment" id="places-page">
 		      <property name="visible">True</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>

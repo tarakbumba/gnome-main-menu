@@ -75,10 +75,9 @@ typedef struct {
 	GtkWidget *search_section;
 	GtkWidget *search_entry;
 
-	GtkNotebook     *file_section;
-	GtkToggleButton *apps_selector;
-	GtkToggleButton *docs_selector;
-	GtkToggleButton *dirs_selector;
+	GtkNotebook *file_section;
+	GtkWidget   *page_selectors [3];
+	gint         notebook_page_ids [3];
 
 	TileTable *sys_table;
 	TileTable *usr_apps_table;
@@ -113,7 +112,6 @@ static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
 static void create_more_buttons      (MainMenuUI *);
 
-static void    select_page                (MainMenuUI *, gint);
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
 static void    hide_slab_if_urgent_close  (MainMenuUI *);
@@ -171,9 +169,9 @@ static const gchar *main_menu_artists [] = {
 };
 
 enum {
-	MORE_APPS_BUTTON,
-	MORE_DOCS_BUTTON,
-	MORE_DIRS_BUTTON
+	APPS_PAGE,
+	DOCS_PAGE,
+	DIRS_PAGE
 };
 
 enum {
@@ -215,7 +213,6 @@ main_menu_ui_new (PanelApplet *applet)
 	create_status_section    (this);
 	create_more_buttons      (this);
 
-	select_page   (this, -1);
 	update_limits (this);
 
 	return this;
@@ -257,9 +254,12 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->search_entry                               = NULL;
 
 	priv->file_section                               = NULL;
-	priv->apps_selector                              = NULL;
-	priv->docs_selector                              = NULL;
-	priv->dirs_selector                              = NULL;
+	priv->page_selectors [APPS_PAGE]                 = NULL;
+	priv->page_selectors [DOCS_PAGE]                 = NULL;
+	priv->page_selectors [DIRS_PAGE]                 = NULL;
+	priv->notebook_page_ids [APPS_PAGE]              = 0;
+	priv->notebook_page_ids [DOCS_PAGE]              = 0;
+	priv->notebook_page_ids [DIRS_PAGE]              = 0;
 
 	priv->sys_table                                  = NULL;
 	priv->usr_apps_table                             = NULL;
@@ -268,9 +268,9 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->rct_docs_table                             = NULL;
 	priv->usr_dirs_table                             = NULL;
 
-	priv->more_button [MORE_APPS_BUTTON]             = NULL;
-	priv->more_button [MORE_DOCS_BUTTON]             = NULL;
-	priv->more_button [MORE_DIRS_BUTTON]             = NULL;
+	priv->more_button [APPS_PAGE]                    = NULL;
+	priv->more_button [DOCS_PAGE]                    = NULL;
+	priv->more_button [DIRS_PAGE]                    = NULL;
 
 	priv->max_total_items                            = 8;
 
@@ -445,26 +445,38 @@ create_file_section (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	GtkWidget *pages [3];
+
+	gint i;
+
+
 	priv->file_section = GTK_NOTEBOOK (glade_xml_get_widget (
 		priv->main_menu_xml, "file-area-notebook"));
-	priv->apps_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
-		priv->main_menu_xml, "slab-page-selector-button-applications"));
-	priv->docs_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
-		priv->main_menu_xml, "slab-page-selector-button-documents"));
-	priv->dirs_selector = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
-		priv->main_menu_xml, "slab-page-selector-button-places"));
 
-	g_signal_connect (
-		G_OBJECT (priv->apps_selector), "clicked",
-		G_CALLBACK (page_button_clicked_cb), this);
+	priv->page_selectors [APPS_PAGE] = glade_xml_get_widget (
+		priv->main_menu_xml, "slab-page-selector-button-applications");
+	priv->page_selectors [DOCS_PAGE] = glade_xml_get_widget (
+		priv->main_menu_xml, "slab-page-selector-button-documents");
+	priv->page_selectors [DIRS_PAGE] = glade_xml_get_widget (
+		priv->main_menu_xml, "slab-page-selector-button-places");
 
-	g_signal_connect (
-		G_OBJECT (priv->docs_selector), "clicked",
-		G_CALLBACK (page_button_clicked_cb), this);
+	pages [APPS_PAGE] = glade_xml_get_widget (priv->main_menu_xml, "applications-page");
+	pages [DOCS_PAGE] = glade_xml_get_widget (priv->main_menu_xml, "documents-page");
+	pages [DIRS_PAGE] = glade_xml_get_widget (priv->main_menu_xml, "places-page");
 
-	g_signal_connect (
-		G_OBJECT (priv->dirs_selector), "clicked",
-		G_CALLBACK (page_button_clicked_cb), this);
+	for (i = 0; i < 3; ++i) {
+		gtk_container_child_get (
+			GTK_CONTAINER (priv->file_section), pages [i],
+			"position", & priv->notebook_page_ids [i], NULL);
+
+		g_object_set_data (
+			G_OBJECT (priv->page_selectors [i]), "notebook-page-id",
+			GINT_TO_POINTER (priv->notebook_page_ids [i]));
+
+		g_signal_connect (
+			G_OBJECT (priv->page_selectors [i]), "clicked",
+			G_CALLBACK (page_button_clicked_cb), this);
+	}
 }
 
 static void
@@ -685,15 +697,11 @@ create_more_buttons (MainMenuUI *this)
 	}
 }
 
+#if 0
 static void
 select_page (MainMenuUI *this, gint page_id)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
-
-	GtkToggleButton *selectors [3];
-
-	gint i;
-
 
 /* TODO: make this instant apply */
 
@@ -703,14 +711,8 @@ select_page (MainMenuUI *this, gint page_id)
 		libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_id));
 
 	gtk_notebook_set_current_page (priv->file_section, page_id);
-
-	selectors [0] = priv->apps_selector;
-	selectors [1] = priv->docs_selector;
-	selectors [2] = priv->dirs_selector;
-
-	for (i = 0; i < 3; ++i)
-		gtk_toggle_button_set_active (selectors [i], (i == page_id));
 }
+#endif
 
 static void
 update_limits (MainMenuUI *this)
@@ -1440,33 +1442,11 @@ search_entry_activate_cb (GtkEntry *entry, gpointer user_data)
 static void
 page_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
-	const gchar *name;
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
-	gint page_id_new = 0;
-	gint page_id_curr;
-
-
-	name = gtk_widget_get_name (GTK_WIDGET (button));
-
-	if (! libslab_strcmp (name, "slab-page-selector-button-applications"))
-		page_id_new = 0;
-	else if (! libslab_strcmp (name, "slab-page-selector-button-documents"))
-		page_id_new = 1;
-	else if (! libslab_strcmp (name, "slab-page-selector-button-places"))
-		page_id_new = 2;
-	else
-		g_warning ("Unknown page selector [%s]\n", name);
-
-	page_id_curr = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
-
-	if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
-		if (page_id_new == page_id_curr)
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
-		else
-			return;
-	}
-	else
-		select_page (MAIN_MENU_UI (user_data), page_id_new);
+	gtk_notebook_set_current_page (
+		priv->file_section, GPOINTER_TO_INT (
+			g_object_get_data (G_OBJECT (button), "notebook-page-id")));
 }
 
 static void
@@ -1523,7 +1503,7 @@ more_button_clicked_cb (GtkButton *button, gpointer user_data)
 	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
 
 	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
-		if (GTK_WIDGET (button) == priv->more_button [MORE_APPS_BUTTON])
+		if (GTK_WIDGET (button) == priv->more_button [APPS_PAGE])
 			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
 		else
 			ditem_id = libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
