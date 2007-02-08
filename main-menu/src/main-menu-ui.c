@@ -113,7 +113,6 @@ static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
 static void create_more_buttons      (MainMenuUI *);
 
-static void    set_panel_button_active    (MainMenuUI *, gboolean);
 static void    select_page                (MainMenuUI *, gint);
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
@@ -125,6 +124,7 @@ static void    bind_beagle_search_key     (MainMenuUI *);
 static void    launch_search              (MainMenuUI *);
 static void    grab_pointer_and_keyboard  (MainMenuUI *, guint32);
 
+static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
 static void     panel_button_drag_data_rcv_cb     (GtkWidget *, GdkDragContext *, gint, gint,
                                                    GtkSelectionData *, guint, guint, gpointer);
@@ -337,6 +337,10 @@ create_panel_button (MainMenuUI *this)
 		gtk_widget_ref (priv->panel_buttons [i]);
 		gtk_container_remove (
 			GTK_CONTAINER (button_parent), priv->panel_buttons [i]);
+
+		g_signal_connect (
+			G_OBJECT (priv->panel_buttons [i]), "clicked",
+			G_CALLBACK (panel_button_clicked_cb), this);
 
 		g_signal_connect (
 			G_OBJECT (priv->panel_buttons [i]), "button_press_event",
@@ -682,24 +686,6 @@ create_more_buttons (MainMenuUI *this)
 }
 
 static void
-set_panel_button_active (MainMenuUI *this, gboolean active)
-{
-	MainMenuUIPrivate *priv = PRIVATE (this);
-
-	if (active) {
-		gtk_window_present_with_time (
-			GTK_WINDOW (priv->slab_window), gtk_get_current_event_time ());
-		gtk_widget_set_state (priv->panel_button, GTK_STATE_ACTIVE);
-		gtk_event_box_set_visible_window (GTK_EVENT_BOX (priv->panel_button), TRUE);
-	}
-	else {
-		gtk_widget_hide (priv->slab_window);
-		gtk_widget_set_state (priv->panel_button, GTK_STATE_NORMAL);
-		gtk_event_box_set_visible_window (GTK_EVENT_BOX (priv->panel_button), FALSE);
-	}
-}
-
-static void
 select_page (MainMenuUI *this, gint page_id)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
@@ -810,10 +796,12 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 static void
 hide_slab_if_urgent_close (MainMenuUI *this)
 {
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
 	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
 		return;
 
-	set_panel_button_active (this, FALSE);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 }
 
 static void
@@ -1071,26 +1059,52 @@ exit:
 	xmlFreeDoc (doc);
 }
 
-static gboolean
-panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+static void
+panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
-	DoubleClickDetector *dcd;
+	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
+
+	DoubleClickDetector *detector;
+	GTimeVal t_curr;
+	guint32  t_curr_ms;
+
+	gboolean visible;
 
 
-	if (event->button == 1) {
-		dcd = DOUBLE_CLICK_DETECTOR (
-			g_object_get_data (G_OBJECT (widget), "double-click-detector"));
+	detector = DOUBLE_CLICK_DETECTOR (
+		g_object_get_data (G_OBJECT (toggle), "double-click-detector"));
 
-		if (! double_click_detector_is_double_click (dcd, event->time, TRUE))
-			set_panel_button_active (this, ! GTK_WIDGET_VISIBLE (priv->slab_window));
+	g_get_current_time (& t_curr);
+	t_curr_ms = 1000 * t_curr.tv_sec + t_curr.tv_usec / 1000;
 
-		return TRUE;
+	visible = GTK_WIDGET_VISIBLE (priv->slab_window);
+
+	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
+		if (! visible)
+			gtk_window_present_with_time (GTK_WINDOW (priv->slab_window), t_curr_ms);
+		else
+			gtk_widget_hide (priv->slab_window);
+
+		visible = GTK_WIDGET_VISIBLE (priv->slab_window);
 	}
-	else
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), visible);
+}
+
+static gboolean
+panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
+	if (event->button != 1)
 		g_signal_stop_emission_by_name (widget, "button_press_event");
+	else if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->panel_button)))
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), TRUE);
+	else
+		/* do nothing */ ;
 
 	return FALSE;
 }
@@ -1187,9 +1201,9 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
 	cairo_set_source_rgb (
 		cr,
-		widget->style->bg [GTK_STATE_PRELIGHT].red   / 65535.0,
-		widget->style->bg [GTK_STATE_PRELIGHT].green / 65535.0,
-		widget->style->bg [GTK_STATE_PRELIGHT].blue  / 65535.0);
+		widget->style->bg [GTK_STATE_NORMAL].red   / 65535.0,
+		widget->style->bg [GTK_STATE_NORMAL].green / 65535.0,
+		widget->style->bg [GTK_STATE_NORMAL].blue  / 65535.0);
 
 	cairo_fill_preserve (cr);
 
@@ -1259,18 +1273,18 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 static gboolean
 slab_window_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
-	MainMenuUI *this = MAIN_MENU_UI (user_data);
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	switch (event->keyval) {
 		case GDK_Escape:
-			set_panel_button_active (this, FALSE);
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 
 			return TRUE;
 
 		case GDK_W:
 		case GDK_w:
 			if (event->state & GDK_CONTROL_MASK) {
-				set_panel_button_active (this, FALSE);
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
 
 				return TRUE;
 			}
@@ -1287,31 +1301,17 @@ slab_window_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer 
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 	GdkWindow *ptr_window;
-
-	DoubleClickDetector *dcd;
 	
 	
 	ptr_window = gdk_window_at_pointer (NULL, NULL);
 
-	if (ptr_window == priv->slab_window->window)
-		return FALSE;
+	if (priv->slab_window->window != ptr_window) {
+		hide_slab_if_urgent_close (this);
 
-/* If the external click happens in the panel button then it's the user turning
- * off the menu (or double-clicking. */
-
-	if (ptr_window == priv->panel_button->window) {
-		dcd = DOUBLE_CLICK_DETECTOR (
-			g_object_get_data (G_OBJECT (priv->panel_button), "double-click-detector"));
-
-		if (! double_click_detector_is_double_click (dcd, event->time, TRUE))
-			set_panel_button_active (this, FALSE);
-
-		return FALSE;
+		return TRUE;
 	}
 
-	hide_slab_if_urgent_close (this);
-
-	return TRUE;
+	return FALSE;
 }
 
 static void
@@ -1507,15 +1507,22 @@ more_button_clicked_cb (GtkButton *button, gpointer user_data)
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
-	DoubleClickDetector *dcd;
+	DoubleClickDetector *detector;
+	GTimeVal current_time;
+	guint32 current_time_millis;
 
 	GnomeDesktopItem *ditem;
 	gchar            *ditem_id;
 
 
-	dcd = DOUBLE_CLICK_DETECTOR (g_object_get_data (G_OBJECT (button), "double-click-detector"));
+	detector = DOUBLE_CLICK_DETECTOR (
+		g_object_get_data (G_OBJECT (button), "double-click-detector"));
 
-	if (! double_click_detector_is_double_click (dcd, gtk_get_current_event_time (), TRUE)) {
+	g_get_current_time (& current_time);
+
+	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
+
+	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
 		if (GTK_WIDGET (button) == priv->more_button [MORE_APPS_BUTTON])
 			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
 		else
@@ -1541,7 +1548,8 @@ search_cmd_notify_cb (GConfClient *client, guint conn_id,
 static void
 panel_menu_open_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
 {
-	set_panel_button_active (MAIN_MENU_UI (user_data), TRUE);
+	gtk_toggle_button_set_active (
+		GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
 }
 
 static void
@@ -1626,7 +1634,8 @@ panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundTyp
 static void
 slab_window_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
 {
-	set_panel_button_active (MAIN_MENU_UI (user_data), TRUE);
+	gtk_toggle_button_set_active (
+		GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
 }
 
 static void
