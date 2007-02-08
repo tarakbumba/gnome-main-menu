@@ -66,8 +66,8 @@ typedef struct {
 	GladeXML *main_menu_xml;
 	GladeXML *panel_button_xml;
 
-	GtkWidget *panel_buttons [4];
-	GtkWidget *panel_button;
+	GtkToggleButton *panel_buttons [4];
+	GtkToggleButton *panel_button;
 
 	GtkWidget *slab_window;
 
@@ -301,7 +301,7 @@ main_menu_ui_finalize (GObject *g_obj)
 		g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->panel_buttons [i]), "double-click-detector")));
 
-		gtk_widget_unref (priv->panel_buttons [i]);
+		gtk_widget_unref (GTK_WIDGET (priv->panel_buttons [i]));
 	}
 
 	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
@@ -325,25 +325,25 @@ create_panel_button (MainMenuUI *this)
 
 	gtk_widget_hide (button_root);
 
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP] = glade_xml_get_widget (
-		priv->panel_button_xml, "slab-main-menu-panel-button-top");
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_BOTTOM] = glade_xml_get_widget (
-		priv->panel_button_xml, "slab-main-menu-panel-button-bottom");
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT] = glade_xml_get_widget (
-		priv->panel_button_xml, "slab-main-menu-panel-button-left");
-	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = glade_xml_get_widget (
-		priv->panel_button_xml, "slab-main-menu-panel-button-right");
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_TOP] = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-top"));
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_BOTTOM] = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-bottom"));
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT] = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-left"));
+	priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT] = GTK_TOGGLE_BUTTON (glade_xml_get_widget (
+		priv->panel_button_xml, "slab-main-menu-panel-button-right"));
 
 	for (i = 0; i < 4; ++i) {
 		g_object_set_data (
 			G_OBJECT (priv->panel_buttons [i]), "double-click-detector",
 			double_click_detector_new ());
 
-		button_parent = gtk_widget_get_parent (priv->panel_buttons [i]);
+		button_parent = gtk_widget_get_parent (GTK_WIDGET (priv->panel_buttons [i]));
 
-		gtk_widget_ref (priv->panel_buttons [i]);
+		gtk_widget_ref (GTK_WIDGET (priv->panel_buttons [i]));
 		gtk_container_remove (
-			GTK_CONTAINER (button_parent), priv->panel_buttons [i]);
+			GTK_CONTAINER (button_parent), GTK_WIDGET (priv->panel_buttons [i]));
 
 		g_signal_connect (
 			G_OBJECT (priv->panel_buttons [i]), "clicked",
@@ -354,9 +354,9 @@ create_panel_button (MainMenuUI *this)
 			G_CALLBACK (panel_button_button_press_cb), this);
 
 		gtk_drag_dest_set (
-			priv->panel_buttons [i],
+			GTK_WIDGET (priv->panel_buttons [i]),
 			GTK_DEST_DEFAULT_ALL, NULL, 0, GDK_ACTION_COPY | GDK_ACTION_MOVE);
-		gtk_drag_dest_add_uri_targets (priv->panel_buttons [i]);
+		gtk_drag_dest_add_uri_targets (GTK_WIDGET (priv->panel_buttons [i]));
 
 		g_signal_connect (
 			G_OBJECT (priv->panel_buttons [i]), "drag-data-received",
@@ -818,7 +818,7 @@ hide_slab_if_urgent_close (MainMenuUI *this)
 	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
 		return;
 
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
+	gtk_toggle_button_set_active (priv->panel_button, FALSE);
 }
 
 static void
@@ -924,7 +924,7 @@ reorient_panel_button (MainMenuUI *this)
 			break;
 	}
 
-	gtk_container_add (GTK_CONTAINER (priv->panel_applet), priv->panel_button);
+	gtk_container_add (GTK_CONTAINER (priv->panel_applet), GTK_WIDGET (priv->panel_button));
 }
 
 static void
@@ -1108,7 +1108,7 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 		visible = GTK_WIDGET_VISIBLE (priv->slab_window);
 	}
 
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), visible);
+	gtk_toggle_button_set_active (priv->panel_button, visible);
 }
 
 static gboolean
@@ -1118,8 +1118,8 @@ panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer
 
 	if (event->button != 1)
 		g_signal_stop_emission_by_name (widget, "button_press_event");
-	else if (! gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->panel_button)))
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), TRUE);
+	else if (! gtk_toggle_button_get_active (priv->panel_button))
+		gtk_toggle_button_set_active (priv->panel_button, TRUE);
 	else
 		/* do nothing */ ;
 
@@ -1293,15 +1293,16 @@ slab_window_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer user_d
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	switch (event->keyval) {
+		case GDK_Super_L:
 		case GDK_Escape:
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
+			gtk_toggle_button_set_active (priv->panel_button, FALSE);
 
 			return TRUE;
 
 		case GDK_W:
 		case GDK_w:
 			if (event->state & GDK_CONTROL_MASK) {
-				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->panel_button), FALSE);
+				gtk_toggle_button_set_active (priv->panel_button, FALSE);
 
 				return TRUE;
 			}
@@ -1346,19 +1347,19 @@ slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 	PanelAppletOrient orient;
 
 
-	gdk_window_get_origin (priv->panel_button->window, & button_geom.x, & button_geom.y);
-	button_geom.width  = priv->panel_button->allocation.width;
-	button_geom.height = priv->panel_button->allocation.height;
+	gdk_window_get_origin (GTK_WIDGET (priv->panel_button)->window, & button_geom.x, & button_geom.y);
+	button_geom.width  = GTK_WIDGET (priv->panel_button)->allocation.width;
+	button_geom.height = GTK_WIDGET (priv->panel_button)->allocation.height;
 
 	slab_geom.width  = priv->slab_window->allocation.width;
 	slab_geom.height = priv->slab_window->allocation.height;
 
-	panel_button_screen = gtk_widget_get_screen (priv->panel_button);
+	panel_button_screen = gtk_widget_get_screen (GTK_WIDGET (priv->panel_button));
 
 	gdk_screen_get_monitor_geometry (
 		panel_button_screen,
 		gdk_screen_get_monitor_at_window (
-			panel_button_screen, priv->panel_button->window),
+			panel_button_screen, GTK_WIDGET (priv->panel_button)->window),
 		& monitor_geom);
 
 	orient = panel_applet_get_orient (priv->panel_applet);
@@ -1543,8 +1544,7 @@ search_cmd_notify_cb (GConfClient *client, guint conn_id,
 static void
 panel_menu_open_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
 {
-	gtk_toggle_button_set_active (
-		GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
+	gtk_toggle_button_set_active (PRIVATE (user_data)->panel_button, TRUE);
 }
 
 static void
@@ -1629,8 +1629,7 @@ panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundTyp
 static void
 slab_window_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
 {
-	gtk_toggle_button_set_active (
-		GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
+	gtk_toggle_button_set_active (PRIVATE (user_data)->panel_button, TRUE);
 }
 
 static void
@@ -1651,14 +1650,20 @@ grabbing_window_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data
 static GdkFilterReturn
 slab_gdk_message_filter (GdkXEvent *gdk_xevent, GdkEvent *event, gpointer user_data)
 {
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
+
 	XEvent *xevent = (XEvent *) gdk_xevent;
+	gboolean active;
+
 
 	if (xevent->type != ClientMessage)
 		return GDK_FILTER_CONTINUE;
 
-	if (xevent->xclient.data.l [0] == slab_action_main_menu_atom)
-		gtk_toggle_button_set_active (
-			GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
+	if (xevent->xclient.data.l [0] == slab_action_main_menu_atom) {
+		active = gtk_toggle_button_get_active (priv->panel_button);
+
+		gtk_toggle_button_set_active (priv->panel_button, ! active);
+	}
 	else
 		return GDK_FILTER_CONTINUE;
 
