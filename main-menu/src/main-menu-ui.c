@@ -31,6 +31,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <gdk/gdkkeysyms.h>
+#include <X11/Xlib.h>
+#include <gdk/gdkx.h>
 
 #include "tile.h"
 #include "hard-drive-status-tile.h"
@@ -149,6 +151,8 @@ static void     slab_window_tomboy_bindkey_cb     (gchar *, gpointer);
 static void     search_tomboy_bindkey_cb          (gchar *, gpointer);
 static gboolean grabbing_window_event_cb          (GtkWidget *, GdkEvent *, gpointer);
 
+static GdkFilterReturn slab_gdk_message_filter (GdkXEvent *, GdkEvent *, gpointer);
+
 static const BonoboUIVerb applet_bonobo_verbs [] = {
 	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen",  panel_menu_open_cb),
 	BONOBO_UI_UNSAFE_VERB ("MainMenuAbout", panel_menu_about_cb),
@@ -180,6 +184,8 @@ enum {
 	PANEL_BUTTON_ORIENT_LEFT,
 	PANEL_BUTTON_ORIENT_RIGHT
 };
+
+static Atom slab_action_main_menu_atom = None;
 
 MainMenuUI *
 main_menu_ui_new (PanelApplet *applet)
@@ -213,7 +219,8 @@ main_menu_ui_new (PanelApplet *applet)
 	create_status_section    (this);
 	create_more_buttons      (this);
 
-	update_limits (this);
+	bind_beagle_search_key (this);
+	update_limits          (this);
 
 	return this;
 }
@@ -380,6 +387,9 @@ create_slab_window (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	GdkAtom slab_action_atom;
+
+
 	priv->slab_window = glade_xml_get_widget (
 		priv->main_menu_xml, "slab-main-menu-window");
 	gtk_widget_set_app_paintable (priv->slab_window, TRUE);
@@ -391,7 +401,12 @@ create_slab_window (MainMenuUI *this)
 
 	tomboy_keybinder_init ();
 	tomboy_keybinder_bind ("<Ctrl>Escape", slab_window_tomboy_bindkey_cb, this);
-	bind_beagle_search_key (this);
+
+	slab_action_atom = gdk_atom_intern ("_SLAB_ACTION", FALSE);
+	slab_action_main_menu_atom = XInternAtom (
+		GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), "_SLAB_ACTION_MAIN_MENU", FALSE);
+	gdk_display_add_client_message_filter (
+		gdk_display_get_default (), slab_action_atom, slab_gdk_message_filter, this);
 
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "expose-event",
@@ -1631,4 +1646,21 @@ grabbing_window_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data
 		grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
 
 	return FALSE;
+}
+
+static GdkFilterReturn
+slab_gdk_message_filter (GdkXEvent *gdk_xevent, GdkEvent *event, gpointer user_data)
+{
+	XEvent *xevent = (XEvent *) gdk_xevent;
+
+	if (xevent->type != ClientMessage)
+		return GDK_FILTER_CONTINUE;
+
+	if (xevent->xclient.data.l [0] == slab_action_main_menu_atom)
+		gtk_toggle_button_set_active (
+			GTK_TOGGLE_BUTTON (PRIVATE (user_data)->panel_button), TRUE);
+	else
+		return GDK_FILTER_CONTINUE;
+
+	return GDK_FILTER_REMOVE;
 }
