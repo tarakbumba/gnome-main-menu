@@ -57,11 +57,12 @@
 #define FILE_BROWSER_GCONF_KEY     "/desktop/gnome/applications/main-menu/file_browser"
 #define SEARCH_CMD_GCONF_KEY       "/desktop/gnome/applications/main-menu/search_command"
 
-#define LOCKDOWN_GCONF_DIR      "/desktop/gnome/applications/main-menu/lock-down"
-#define MORE_LINK_VIS_GCONF_KEY LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
-#define SEARCH_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/search_area_visible"
-#define STATUS_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/status_area_visible"
-#define SYSTEM_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/system_area_visible"
+#define LOCKDOWN_GCONF_DIR       "/desktop/gnome/applications/main-menu/lock-down"
+#define MORE_LINK_VIS_GCONF_KEY  LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
+#define SEARCH_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/search_area_visible"
+#define STATUS_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/status_area_visible"
+#define SYSTEM_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/system_area_visible"
+#define SHOWABLE_TYPES_GCONF_KEY LOCKDOWN_GCONF_DIR "/showable_file_types"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -87,8 +88,9 @@ typedef struct {
 	GtkWidget   *page_selectors [3];
 	gint         notebook_page_ids [3];
 
-	TileTable *file_tables    [5];
-	GtkWidget *table_sections [5];
+	TileTable *file_tables     [5];
+	GtkWidget *table_sections  [5];
+	gboolean   allowable_types [5];
 
 	TileTable *sys_table;
 
@@ -106,6 +108,7 @@ typedef struct {
 	guint search_vis_gconf_mntr_id;
 	guint status_vis_gconf_mntr_id;
 	guint system_vis_gconf_mntr_id;
+	guint showable_types_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -134,7 +137,8 @@ static void    select_page                (MainMenuUI *);
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
 static void    hide_slab_if_urgent_close  (MainMenuUI *);
-static void    set_search_section_visible (MainMenuUI *this);
+static void    set_search_section_visible (MainMenuUI *);
+static void    set_table_section_visible  (MainMenuUI *, TileTable *);
 static gchar **get_search_argv            (const gchar *);
 static void    reorient_panel_button      (MainMenuUI *);
 static void    bind_beagle_search_key     (MainMenuUI *);
@@ -310,6 +314,11 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->table_sections [USER_DOCS_TABLE]           = NULL;
 	priv->table_sections [RCNT_DOCS_TABLE]           = NULL;
 	priv->table_sections [USER_DIRS_TABLE]           = NULL;
+	priv->allowable_types [USER_APPS_TABLE]          = TRUE;
+	priv->allowable_types [RCNT_APPS_TABLE]          = TRUE;
+	priv->allowable_types [USER_DOCS_TABLE]          = TRUE;
+	priv->allowable_types [RCNT_DOCS_TABLE]          = TRUE;
+	priv->allowable_types [USER_DIRS_TABLE]          = TRUE;
 
 	priv->sys_table                                  = NULL;
 
@@ -331,6 +340,7 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->search_vis_gconf_mntr_id                   = 0;
 	priv->status_vis_gconf_mntr_id                   = 0;
 	priv->system_vis_gconf_mntr_id                   = 0;
+	priv->showable_types_gconf_mntr_id               = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -360,6 +370,7 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->search_vis_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->status_vis_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->system_vis_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->showable_types_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -781,6 +792,8 @@ setup_lock_down (MainMenuUI *this)
 		STATUS_VIS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->system_vis_gconf_mntr_id = libslab_gconf_notify_add (
 		SYSTEM_VIS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->showable_types_gconf_mntr_id = libslab_gconf_notify_add (
+		SHOWABLE_TYPES_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static void
@@ -851,6 +864,13 @@ update_limits (MainMenuUI *this)
 		if (priv->max_total_items < max_total_items_new)
 			priv->max_total_items = max_total_items_new;
 	}
+
+	g_object_get (
+		priv->file_tables [USER_DIRS_TABLE],
+		"n-rows", & n_rows, "n-columns", & n_cols, NULL);
+
+	if (priv->max_total_items < (n_rows * n_cols))
+		priv->max_total_items = n_rows * n_cols;
 
 	for (i = 0; i < 2; ++i)
 		g_object_set (
@@ -929,6 +949,45 @@ set_search_section_visible (MainMenuUI *this)
 		gtk_widget_show (priv->search_section);
 	else
 		gtk_widget_hide (priv->search_section);
+}
+
+static void
+set_table_section_visible (MainMenuUI *this, TileTable *table)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gint   table_id;
+	GList *tiles;
+
+
+	table_id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (table), "table-id"));
+	g_object_get (G_OBJECT (table), TILE_TABLE_TILES_PROP, & tiles, NULL);
+
+	if (priv->allowable_types [table_id] && g_list_length (tiles) > 0)
+		gtk_widget_show (priv->table_sections [table_id]);
+	else
+		gtk_widget_hide (priv->table_sections [table_id]);
+
+	if (
+		GTK_WIDGET_VISIBLE (priv->table_sections [USER_APPS_TABLE]) ||
+		GTK_WIDGET_VISIBLE (priv->table_sections [RCNT_APPS_TABLE])
+	)
+		gtk_widget_show (priv->page_selectors [APPS_PAGE]);
+	else
+		gtk_widget_hide (priv->page_selectors [APPS_PAGE]);
+
+	if (
+		GTK_WIDGET_VISIBLE (priv->table_sections [USER_DOCS_TABLE]) ||
+		GTK_WIDGET_VISIBLE (priv->table_sections [RCNT_DOCS_TABLE])
+	)
+		gtk_widget_show (priv->page_selectors [DOCS_PAGE]);
+	else
+		gtk_widget_hide (priv->page_selectors [DOCS_PAGE]);
+
+	if (GTK_WIDGET_VISIBLE (priv->table_sections [USER_DIRS_TABLE]))
+		gtk_widget_show (priv->page_selectors [DIRS_PAGE]);
+	else
+		gtk_widget_hide (priv->page_selectors [DIRS_PAGE]);
 }
 
 static gchar **
@@ -1089,16 +1148,19 @@ apply_lockdown_settings (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	gboolean more_link_visible;
-	gboolean status_area_visible;
-	gboolean system_area_visible;
+	gboolean  more_link_visible;
+	gboolean  status_area_visible;
+	gboolean  system_area_visible;
+	GList    *showable_types;
 
-	gint i;
+	GList *node;
+	gint   i;
 
 
 	more_link_visible   = GPOINTER_TO_INT (libslab_get_gconf_value (MORE_LINK_VIS_GCONF_KEY));
 	status_area_visible = GPOINTER_TO_INT (libslab_get_gconf_value (STATUS_VIS_GCONF_KEY));
 	system_area_visible = GPOINTER_TO_INT (libslab_get_gconf_value (SYSTEM_VIS_GCONF_KEY));
+	showable_types      = (GList *) libslab_get_gconf_value (SHOWABLE_TYPES_GCONF_KEY);
 
 	for (i = 0; i < 3; ++i)
 		if (more_link_visible)
@@ -1117,6 +1179,23 @@ apply_lockdown_settings (MainMenuUI *this)
 		gtk_widget_show (priv->system_section);
 	else
 		gtk_widget_hide (priv->system_section);
+
+	for (i = 0; i < 5; ++i)
+		priv->allowable_types [i] = FALSE;
+
+	for (node = showable_types; node; node = node->next) {
+		i = GPOINTER_TO_INT (node->data);
+
+		if (0 <= i && i < 5)
+			priv->allowable_types [i] = TRUE;
+	}
+
+	g_list_free (showable_types);
+
+	for (i = 0; i < 5; ++i)
+		set_table_section_visible (this, priv->file_tables [i]);
+
+	update_limits (this);
 }
 
 static void
@@ -1600,7 +1679,6 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 	gint table_id;
-	GList *tiles;
 
 
 	connect_to_tile_triggers (this, TILE_TABLE (g_obj));
@@ -1620,14 +1698,7 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 			break;
 	}
 
-	g_object_get (g_obj, TILE_TABLE_TILES_PROP, & tiles, NULL);
-
-	if (g_list_length (tiles) <= 0)
-		gtk_widget_hide (priv->table_sections [table_id]);
-	else if (! GTK_WIDGET_VISIBLE (priv->table_sections [table_id]))
-		gtk_widget_show (priv->table_sections [table_id]);
-	else
-		/* do nothing */ ;
+	set_table_section_visible (this, TILE_TABLE (g_obj));
 
 	update_limits (this);
 }
