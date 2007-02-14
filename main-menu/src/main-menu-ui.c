@@ -57,6 +57,9 @@
 #define FILE_BROWSER_GCONF_KEY     "/desktop/gnome/applications/main-menu/file_browser"
 #define SEARCH_CMD_GCONF_KEY       "/desktop/gnome/applications/main-menu/search_command"
 
+#define LOCKDOWN_GCONF_DIR      "/desktop/gnome/applications/main-menu/lock-down"
+#define MORE_LINK_VIS_GCONF_KEY LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
+
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
 typedef struct {
@@ -86,12 +89,14 @@ typedef struct {
 
 	TileTable *sys_table;
 
-	GtkWidget *more_button [3];
+	GtkWidget *more_buttons  [3];
+	GtkWidget *more_sections [3];
 
 	gint max_total_items;
 
 	guint search_cmd_gconf_mntr_id;
 	guint current_page_gconf_mntr_id;
+	guint more_link_vis_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -112,8 +117,9 @@ static void create_rct_docs_section  (MainMenuUI *);
 static void create_user_dirs_section (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
-static void create_more_buttons      (MainMenuUI *);
+static void create_more_buttonss      (MainMenuUI *);
 static void setup_file_tables        (MainMenuUI *);
+static void setup_lock_down          (MainMenuUI *);
 
 static void    select_page                (MainMenuUI *);
 static void    update_limits              (MainMenuUI *);
@@ -125,6 +131,7 @@ static void    reorient_panel_button      (MainMenuUI *);
 static void    bind_beagle_search_key     (MainMenuUI *);
 static void    launch_search              (MainMenuUI *);
 static void    grab_pointer_and_keyboard  (MainMenuUI *, guint32);
+static void    apply_lockdown_settings    (MainMenuUI *);
 
 static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
@@ -142,9 +149,10 @@ static void     page_button_clicked_cb            (GtkButton *, gpointer);
 static void     tile_table_notify_cb              (GObject *, GParamSpec *, gpointer);
 static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb          (Tile *, TileEvent *, TileAction *, gpointer);
-static void     more_button_clicked_cb            (GtkButton *, gpointer);
+static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
 static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
+static void     lockdown_notify_cb                (GConfClient *, guint, GConfEntry *, gpointer);
 static void     panel_menu_open_cb                (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_menu_about_cb               (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_applet_change_orient_cb     (PanelApplet *, PanelAppletOrient, gpointer);
@@ -228,12 +236,14 @@ main_menu_ui_new (PanelApplet *applet)
 	create_user_dirs_section (this);
 	create_system_section    (this);
 	create_status_section    (this);
-	create_more_buttons      (this);
+	create_more_buttonss      (this);
 	setup_file_tables        (this);
+	setup_lock_down          (this);
 
-	bind_beagle_search_key (this);
-	update_limits          (this);
-	select_page            (this);
+	bind_beagle_search_key  (this);
+	update_limits           (this);
+	select_page             (this);
+	apply_lockdown_settings (this);
 
 	return this;
 }
@@ -294,14 +304,18 @@ main_menu_ui_init (MainMenuUI *this)
 
 	priv->sys_table                                  = NULL;
 
-	priv->more_button [APPS_PAGE]                    = NULL;
-	priv->more_button [DOCS_PAGE]                    = NULL;
-	priv->more_button [DIRS_PAGE]                    = NULL;
+	priv->more_buttons [APPS_PAGE]                   = NULL;
+	priv->more_buttons [DOCS_PAGE]                   = NULL;
+	priv->more_buttons [DIRS_PAGE]                   = NULL;
+	priv->more_sections [APPS_PAGE]                  = NULL;
+	priv->more_sections [DOCS_PAGE]                  = NULL;
+	priv->more_sections [DIRS_PAGE]                  = NULL;
 
 	priv->max_total_items                            = 8;
 
 	priv->search_cmd_gconf_mntr_id                   = 0;
 	priv->current_page_gconf_mntr_id                 = 0;
+	priv->more_link_vis_gconf_mntr_id                = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -317,7 +331,7 @@ main_menu_ui_finalize (GObject *g_obj)
 
 	for (i = 0; i < 4; ++i) {
 		g_object_unref (G_OBJECT (g_object_get_data (
-			G_OBJECT (priv->more_button [i]), "double-click-detector")));
+			G_OBJECT (priv->more_buttons [i]), "double-click-detector")));
 
 		g_object_unref (G_OBJECT (g_object_get_data (
 			G_OBJECT (priv->panel_buttons [i]), "double-click-detector")));
@@ -327,6 +341,7 @@ main_menu_ui_finalize (GObject *g_obj)
 
 	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->current_page_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->more_link_vis_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -671,26 +686,30 @@ create_user_dirs_section (MainMenuUI *this)
 }
 
 static void
-create_more_buttons (MainMenuUI *this)
+create_more_buttonss (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	gint i;
 
 
-	priv->more_button [0] = glade_xml_get_widget (priv->main_menu_xml, "more-applications-button");
-	priv->more_button [1] = glade_xml_get_widget (priv->main_menu_xml, "more-documents-button");
-	priv->more_button [2] = glade_xml_get_widget (priv->main_menu_xml, "more-places-button");
+	priv->more_buttons [0] = glade_xml_get_widget (priv->main_menu_xml, "more-applications-button");
+	priv->more_buttons [1] = glade_xml_get_widget (priv->main_menu_xml, "more-documents-button");
+	priv->more_buttons [2] = glade_xml_get_widget (priv->main_menu_xml, "more-places-button");
 
 	for (i = 0; i < 3; ++i) {
 		g_object_set_data (
-			G_OBJECT (priv->more_button [i]),
+			G_OBJECT (priv->more_buttons [i]),
 			"double-click-detector", double_click_detector_new ());
 
 		g_signal_connect (
-			G_OBJECT (priv->more_button [i]), "clicked",
-			G_CALLBACK (more_button_clicked_cb), this);
+			G_OBJECT (priv->more_buttons [i]), "clicked",
+			G_CALLBACK (more_buttons_clicked_cb), this);
 	}
+
+	priv->more_sections [0] = glade_xml_get_widget (priv->main_menu_xml, "more-apps-section");
+	priv->more_sections [1] = glade_xml_get_widget (priv->main_menu_xml, "more-docs-section");
+	priv->more_sections [2] = glade_xml_get_widget (priv->main_menu_xml, "more-dirs-section");
 }
 
 static void
@@ -723,6 +742,15 @@ setup_file_tables (MainMenuUI *this)
 			G_OBJECT (priv->file_tables [i]), "notify::n-rows",
 			G_CALLBACK (gtk_table_notify_cb), this);
 	}
+}
+
+static void
+setup_lock_down (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	priv->more_link_vis_gconf_mntr_id = libslab_gconf_notify_add (
+		MORE_LINK_VIS_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static void
@@ -1018,6 +1046,25 @@ grab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
 
 		gtk_grab_remove (priv->slab_window);
 	}
+}
+
+static void
+apply_lockdown_settings (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gboolean more_link_visible;
+
+	gint i;
+
+
+	more_link_visible = GPOINTER_TO_INT (libslab_get_gconf_value (MORE_LINK_VIS_GCONF_KEY));
+
+	for (i = 0; i < 3; ++i)
+		if (more_link_visible)
+			gtk_widget_show (priv->more_sections [i]);
+		else
+			gtk_widget_hide (priv->more_sections [i]);
 }
 
 static void
@@ -1552,7 +1599,7 @@ tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpoi
 }
 
 static void
-more_button_clicked_cb (GtkButton *button, gpointer user_data)
+more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 {
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);
 	MainMenuUIPrivate *priv = PRIVATE      (this);
@@ -1573,7 +1620,7 @@ more_button_clicked_cb (GtkButton *button, gpointer user_data)
 	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
 
 	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
-		if (GTK_WIDGET (button) == priv->more_button [APPS_PAGE])
+		if (GTK_WIDGET (button) == priv->more_buttons [APPS_PAGE])
 			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
 		else
 			ditem_id = libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
@@ -1600,6 +1647,13 @@ current_page_notify_cb (GConfClient *client, guint conn_id,
                         GConfEntry *entry, gpointer user_data)
 {
 	select_page (MAIN_MENU_UI (user_data));
+}
+
+static void
+lockdown_notify_cb (GConfClient *client, guint conn_id,
+                    GConfEntry *entry, gpointer user_data)
+{
+	apply_lockdown_settings (MAIN_MENU_UI (user_data));
 }
 
 static void

@@ -439,7 +439,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkAlignment" id="alignment2">
+			    <widget class="GtkAlignment" id="more-apps-section">
 			      <property name="visible">True</property>
 			      <property name="xalign">1</property>
 			      <property name="yalign">0.5</property>
@@ -641,7 +641,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkAlignment" id="alignment20">
+			    <widget class="GtkAlignment" id="more-docs-section">
 			      <property name="visible">True</property>
 			      <property name="xalign">1</property>
 			      <property name="yalign">0.5</property>
@@ -782,7 +782,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkAlignment" id="alignment24">
+			    <widget class="GtkAlignment" id="more-dirs-section">
 			      <property name="visible">True</property>
 			      <property name="xalign">1</property>
 			      <property name="yalign">0.5</property>
