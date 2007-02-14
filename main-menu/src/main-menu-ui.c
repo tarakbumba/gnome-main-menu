@@ -90,7 +90,9 @@ typedef struct {
 
 	gint max_total_items;
 
-	guint    search_cmd_gconf_mntr_id;
+	guint search_cmd_gconf_mntr_id;
+	guint current_page_gconf_mntr_id;
+
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
 } MainMenuUIPrivate;
@@ -113,6 +115,7 @@ static void create_status_section    (MainMenuUI *);
 static void create_more_buttons      (MainMenuUI *);
 static void setup_file_tables        (MainMenuUI *);
 
+static void    select_page                (MainMenuUI *);
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
 static void    hide_slab_if_urgent_close  (MainMenuUI *);
@@ -141,6 +144,7 @@ static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpoi
 static void     tile_action_triggered_cb          (Tile *, TileEvent *, TileAction *, gpointer);
 static void     more_button_clicked_cb            (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
+static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
 static void     panel_menu_open_cb                (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_menu_about_cb               (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_applet_change_orient_cb     (PanelApplet *, PanelAppletOrient, gpointer);
@@ -229,6 +233,7 @@ main_menu_ui_new (PanelApplet *applet)
 
 	bind_beagle_search_key (this);
 	update_limits          (this);
+	select_page            (this);
 
 	return this;
 }
@@ -296,6 +301,8 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->max_total_items                            = 8;
 
 	priv->search_cmd_gconf_mntr_id                   = 0;
+	priv->current_page_gconf_mntr_id                 = 0;
+
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
 }
@@ -319,6 +326,7 @@ main_menu_ui_finalize (GObject *g_obj)
 	}
 
 	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->current_page_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -499,13 +507,15 @@ create_file_section (MainMenuUI *this)
 			"position", & priv->notebook_page_ids [i], NULL);
 
 		g_object_set_data (
-			G_OBJECT (priv->page_selectors [i]), "notebook-page-id",
-			GINT_TO_POINTER (priv->notebook_page_ids [i]));
+			G_OBJECT (priv->page_selectors [i]), "page-type", GINT_TO_POINTER (i));
 
 		g_signal_connect (
 			G_OBJECT (priv->page_selectors [i]), "clicked",
 			G_CALLBACK (page_button_clicked_cb), this);
 	}
+
+	priv->current_page_gconf_mntr_id = libslab_gconf_notify_add (
+		CURRENT_PAGE_GCONF_KEY, current_page_notify_cb, this);
 
 	priv->table_sections [USER_APPS_TABLE] = glade_xml_get_widget (
 		priv->main_menu_xml, "user-apps-section");
@@ -713,6 +723,21 @@ setup_file_tables (MainMenuUI *this)
 			G_OBJECT (priv->file_tables [i]), "notify::n-rows",
 			G_CALLBACK (gtk_table_notify_cb), this);
 	}
+}
+
+static void
+select_page (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	GtkToggleButton *button;
+	gint curr_page;
+
+
+	curr_page = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
+	button    = GTK_TOGGLE_BUTTON (priv->page_selectors [curr_page]);
+
+	gtk_toggle_button_set_active (button, TRUE);
 }
 
 static void
@@ -1459,9 +1484,14 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
-	gtk_notebook_set_current_page (
-		priv->file_section, GPOINTER_TO_INT (
-			g_object_get_data (G_OBJECT (button), "notebook-page-id")));
+	gint page_type;
+
+
+	page_type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button), "page-type"));
+
+	gtk_notebook_set_current_page (priv->file_section, priv->notebook_page_ids [page_type]);
+
+	libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_type));
 }
 
 static void
@@ -1563,6 +1593,13 @@ search_cmd_notify_cb (GConfClient *client, guint conn_id,
                       GConfEntry *entry, gpointer user_data)
 {
 	set_search_section_visible (MAIN_MENU_UI (user_data));
+}
+
+static void
+current_page_notify_cb (GConfClient *client, guint conn_id,
+                        GConfEntry *entry, gpointer user_data)
+{
+	select_page (MAIN_MENU_UI (user_data));
 }
 
 static void
