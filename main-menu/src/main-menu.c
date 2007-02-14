@@ -62,6 +62,7 @@ main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data
 	migrate_user_apps_gconf_to_bookmark_file ();
 	migrate_user_docs_to_user_bookmark_file  ();
 	migrate_user_dirs_to_user_bookmark_file  ();
+	migrate_showable_file_types              ();
 
 	main_menu_ui_new (applet);
 

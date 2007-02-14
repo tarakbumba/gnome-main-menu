@@ -26,6 +26,8 @@
 
 #include <string.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
+#include <unistd.h>
 
 #include "libslab-utils.h"
 
@@ -49,6 +51,7 @@
 #define PM_ITEM_GCONF_KEY        "/desktop/gnome/applications/main-menu/system-area/package_manager_item"
 #define LOCKSCREEN_GCONF_KEY     "/desktop/gnome/applications/main-menu/lock_screen_priority"
 #define USER_APPS_GCONF_KEY      "/desktop/gnome/applications/main-menu/file-area/user_specified_apps"
+#define SHOWABLE_TYPES_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/showable_file_types"
 
 #define LOGOUT_DESKTOP_ITEM      "gnome-session-logout.desktop"
 #define SHUTDOWN_DESKTOP_ITEM    "gnome-session-shutdown.desktop"
@@ -560,6 +563,68 @@ migrate_user_dirs_to_user_bookmark_file ()
 	}
 
 	g_free (bookmark_path);
+}
+
+void
+migrate_showable_file_types ()
+{
+	GList *showable_files;
+	GList *node;
+
+	gchar *mig_lock_path;
+	gchar *config_dir;
+
+	gboolean allowed_types [3];
+	gboolean need_migration = TRUE;
+
+	gint i;
+
+
+	mig_lock_path = g_build_filename (
+		g_get_user_config_dir (), PACKAGE, "showable_files_migrated", NULL);
+
+	if (g_file_test (mig_lock_path, G_FILE_TEST_EXISTS))
+		goto exit;
+
+	showable_files = (GList *) libslab_get_gconf_value (SHOWABLE_TYPES_GCONF_KEY);
+
+	for (i = 0; i < 3; ++i)
+		allowed_types [i] = FALSE;
+
+	if (g_list_length (showable_files) == 3) {
+		for (node = showable_files; node; node = node->next) {
+			i = GPOINTER_TO_INT (node->data);
+
+			if (0 <= i && i < 3)
+				allowed_types [i] = TRUE;
+		}
+	}
+
+	g_list_free (showable_files);
+
+	for (i = 0; i < 3; ++i)
+		need_migration &= allowed_types [i];
+
+	if (need_migration) {
+		showable_files = NULL;
+
+		for (i = 0; i < 6; ++i)
+			showable_files = g_list_append (showable_files, GINT_TO_POINTER (i));
+
+		libslab_set_gconf_value (SHOWABLE_TYPES_GCONF_KEY, showable_files);
+
+		g_list_free (showable_files);
+	}
+
+	config_dir = g_path_get_dirname (mig_lock_path);
+	g_mkdir_with_parents (config_dir, 0755);
+	g_free (config_dir);
+
+	fclose (g_fopen (mig_lock_path, "w"));
+
+exit:
+
+	g_free (mig_lock_path);
 }
 
 static gboolean

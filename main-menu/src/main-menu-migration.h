@@ -29,6 +29,7 @@ void migrate_system_gconf_to_bookmark_file    (void);
 void migrate_user_apps_gconf_to_bookmark_file (void);
 void migrate_user_docs_to_user_bookmark_file  (void);
 void migrate_user_dirs_to_user_bookmark_file  (void);
+void migrate_showable_file_types              (void);
 
 G_END_DECLS
 
