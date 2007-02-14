@@ -57,12 +57,16 @@
 #define FILE_BROWSER_GCONF_KEY     "/desktop/gnome/applications/main-menu/file_browser"
 #define SEARCH_CMD_GCONF_KEY       "/desktop/gnome/applications/main-menu/search_command"
 
-#define LOCKDOWN_GCONF_DIR       "/desktop/gnome/applications/main-menu/lock-down"
-#define MORE_LINK_VIS_GCONF_KEY  LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
-#define SEARCH_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/search_area_visible"
-#define STATUS_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/status_area_visible"
-#define SYSTEM_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/system_area_visible"
-#define SHOWABLE_TYPES_GCONF_KEY LOCKDOWN_GCONF_DIR "/showable_file_types"
+#define LOCKDOWN_GCONF_DIR          "/desktop/gnome/applications/main-menu/lock-down"
+#define MORE_LINK_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
+#define SEARCH_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/search_area_visible"
+#define STATUS_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/status_area_visible"
+#define SYSTEM_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/system_area_visible"
+#define SHOWABLE_TYPES_GCONF_KEY    LOCKDOWN_GCONF_DIR "/showable_file_types"
+#define MODIFIABLE_SYSTEM_GCONF_KEY LOCKDOWN_GCONF_DIR "/user_modifiable_system_area"
+#define MODIFIABLE_APPS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_apps"
+#define MODIFIABLE_DOCS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_docs"
+#define MODIFIABLE_DIRS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_dirs"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -109,6 +113,10 @@ typedef struct {
 	guint status_vis_gconf_mntr_id;
 	guint system_vis_gconf_mntr_id;
 	guint showable_types_gconf_mntr_id;
+	guint modifiable_system_gconf_mntr_id;
+	guint modifiable_apps_gconf_mntr_id;
+	guint modifiable_docs_gconf_mntr_id;
+	guint modifiable_dirs_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -341,6 +349,10 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->status_vis_gconf_mntr_id                   = 0;
 	priv->system_vis_gconf_mntr_id                   = 0;
 	priv->showable_types_gconf_mntr_id               = 0;
+	priv->modifiable_system_gconf_mntr_id            = 0;
+	priv->modifiable_apps_gconf_mntr_id              = 0;
+	priv->modifiable_docs_gconf_mntr_id              = 0;
+	priv->modifiable_dirs_gconf_mntr_id              = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -371,6 +383,10 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->status_vis_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->system_vis_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->showable_types_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->modifiable_system_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->modifiable_apps_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->modifiable_docs_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->modifiable_dirs_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -794,6 +810,15 @@ setup_lock_down (MainMenuUI *this)
 		SYSTEM_VIS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->showable_types_gconf_mntr_id = libslab_gconf_notify_add (
 		SHOWABLE_TYPES_GCONF_KEY, lockdown_notify_cb, this);
+
+	priv->modifiable_system_gconf_mntr_id = libslab_gconf_notify_add (
+		MODIFIABLE_SYSTEM_GCONF_KEY, lockdown_notify_cb, this);
+	priv->modifiable_apps_gconf_mntr_id = libslab_gconf_notify_add (
+		MODIFIABLE_APPS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->modifiable_docs_gconf_mntr_id = libslab_gconf_notify_add (
+		MODIFIABLE_DOCS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->modifiable_dirs_gconf_mntr_id = libslab_gconf_notify_add (
+		MODIFIABLE_DIRS_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static void
@@ -1194,6 +1219,11 @@ apply_lockdown_settings (MainMenuUI *this)
 
 	for (i = 0; i < 5; ++i)
 		set_table_section_visible (this, priv->file_tables [i]);
+
+	tile_table_reload (priv->sys_table);
+	tile_table_reload (priv->file_tables [USER_APPS_TABLE]);
+	tile_table_reload (priv->file_tables [USER_DOCS_TABLE]);
+	tile_table_reload (priv->file_tables [USER_DIRS_TABLE]);
 
 	update_limits (this);
 }

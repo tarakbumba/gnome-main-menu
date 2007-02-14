@@ -18,6 +18,11 @@
 #define DOCS_BOOKMARK_FILENAME   "documents.xbel"
 #define DIRS_BOOKMARK_FILENAME   "places.xbel"
 
+#define MODIFIABLE_SYSTEM_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_system_area"
+#define MODIFIABLE_APPS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps"
+#define MODIFIABLE_DOCS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_docs"
+#define MODIFIABLE_DIRS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs"
+
 static gchar                 *get_data_file_path     (const gchar *, gboolean);
 static gboolean               store_has_uri          (const gchar *, const gchar *);
 static GList                 *get_uri_list           (const gchar *);
@@ -892,73 +897,61 @@ save_uri_list (const gchar *filename, const GList *uris)
 static gchar *
 get_data_file_path (const gchar *filename, gboolean writeable)
 {
-	GList *dirs = NULL;
+	gboolean user_modifiable;
 
-	gchar  *path;
-	gchar **global_dirs;
-	gchar  *dir;
+	gchar *path;
+	gchar *dir;
 
-	GList *node;
-	gint   i;
+	const gchar * const *sys_dirs;
+
+	gint i;
 
 
-	path = (gchar *) g_getenv ("XDG_DATA_HOME");
+	if (! strcmp (filename, SYSTEM_BOOKMARK_FILENAME))
+		user_modifiable = GPOINTER_TO_INT (
+			libslab_get_gconf_value (MODIFIABLE_SYSTEM_GCONF_KEY));
+	else if (! strcmp (filename, APPS_BOOKMARK_FILENAME))
+		user_modifiable = GPOINTER_TO_INT (
+			libslab_get_gconf_value (MODIFIABLE_APPS_GCONF_KEY));
+	else if (! strcmp (filename, DOCS_BOOKMARK_FILENAME))
+		user_modifiable = GPOINTER_TO_INT (
+			libslab_get_gconf_value (MODIFIABLE_DOCS_GCONF_KEY));
+	else if (! strcmp (filename, DIRS_BOOKMARK_FILENAME))
+		user_modifiable = GPOINTER_TO_INT (
+			libslab_get_gconf_value (MODIFIABLE_DIRS_GCONF_KEY));
+	else
+		user_modifiable = TRUE;
 
-	if (path)
-		dirs = g_list_append (dirs, g_build_filename (path, TOP_CONFIG_DIR, NULL));
+	if (! user_modifiable && writeable)
+		return NULL;
 
-	dirs = g_list_append (dirs, g_build_filename (
-		g_get_home_dir (), DEFAULT_USER_XDG_DIR, TOP_CONFIG_DIR, NULL));
+	if (user_modifiable) {
+		path = g_build_filename (g_get_user_data_dir (), PACKAGE, filename, NULL);
 
-	if (! writeable) {
-		global_dirs = g_strsplit (g_getenv ("XDG_DATA_DIRS"), ":", 0);
-
-		if (! (global_dirs && global_dirs [0])) {
-			g_strfreev (global_dirs);
-			global_dirs = g_strsplit (DEFAULT_GLOBAL_XDG_PATH, ":", 0);
-		}
-
-		for (i = 0; global_dirs [i]; ++i) {
-			path = g_build_filename (
-				global_dirs [i], TOP_CONFIG_DIR, NULL);
-			dirs = g_list_append (dirs, path);
-		}
-
-		g_strfreev (global_dirs);
-	}
-
-	for (node = dirs, path = NULL; ! path && node; node = node->next) {
-		dir = (gchar *) node->data;
-
-		path = g_build_filename (dir, filename, NULL);
-
-		if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-			g_free (path);
-			path = NULL;
-		}
-	}
-
-	if (! path && writeable) {
-		for (node = dirs, dir = NULL; ! dir && node; node = node->next) {
-			dir = (gchar *) node->data;
-
-			if (! g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-				dir = NULL;
-		}
-
-		if (! dir) {
-			dir = (gchar *) dirs->data;
+		if (writeable) {
+			dir = g_path_get_dirname (path);
 			g_mkdir_with_parents (dir, 0700);
+			g_free (dir);
+
+			return path;
 		}
 
-		path = g_build_filename (dir, filename, NULL);
+		if (g_file_test (path, G_FILE_TEST_EXISTS))
+			return path;
 	}
 
-	for (node = dirs; node; node = node->next)
-		g_free (node->data);
-	g_list_free (dirs);
+	sys_dirs = g_get_system_data_dirs ();
 
-	return path;
+	for (i = 0; sys_dirs [i]; ++i) {
+		path = g_build_filename (sys_dirs [i], PACKAGE, filename, NULL);
+
+		if (g_file_test (path, G_FILE_TEST_EXISTS))
+			return path;
+
+		g_free (path);
+	}
+
+	return NULL;
 }
 
 static GnomeVFSMonitorHandle *

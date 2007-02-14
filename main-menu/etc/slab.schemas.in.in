@@ -242,6 +242,18 @@
 		</schema>
 
 		<schema>
+			<key>/schemas/desktop/gnome/applications/main-menu/lock-down/user_modifiable_system_area</key>
+			<applyto>/desktop/gnome/applications/main-menu/lock-down/user_modifiable_system_area</applyto>
+			<owner>gnome-main-menu</owner>
+			<type>bool</type>
+			<default>true</default>
+			<locale name="C">
+				<short>lock-down status for the system area</short>
+				<long>set to true if the user is allowed to modify the list of system items.</long>
+			</locale>
+		</schema>
+
+		<schema>
 			<key>/schemas/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps</key>
 			<applyto>/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps</applyto>
 			<owner>gnome-main-menu</owner>

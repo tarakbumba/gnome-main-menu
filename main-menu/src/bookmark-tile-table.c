@@ -97,6 +97,9 @@ bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 	path_old = BOOKMARK_TILE_TABLE_GET_CLASS (this)->get_store_path (FALSE);
 	path_new = BOOKMARK_TILE_TABLE_GET_CLASS (this)->get_store_path (TRUE);
 
+	if (! path_new)
+		goto exit;
+
 	bm_file_old = libslab_bookmark_file_new ();
 	libslab_bookmark_file_load_from_file (bm_file_old, path_old, & error);
 
@@ -122,8 +125,11 @@ bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 	libslab_bookmark_file_free (bm_file_old);
 	libslab_bookmark_file_free (bm_file_new);
 
-	g_free (path_old);
 	g_free (path_new);
+
+exit:
+
+	g_free (path_old);
 }
 
 static void
@@ -139,6 +145,9 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 
 	path_old = BOOKMARK_TILE_TABLE_GET_CLASS (this)->get_store_path (FALSE);
 	path_new = BOOKMARK_TILE_TABLE_GET_CLASS (this)->get_store_path (TRUE);
+
+	if (! path_new)
+		goto exit;
 
 	bm_file = libslab_bookmark_file_new ();
 	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
@@ -165,8 +174,11 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 
 	libslab_bookmark_file_free (bm_file);
 
-	g_free (path_old);
 	g_free (path_new);
+
+exit:
+
+	g_free (path_old);
 }
 
 static void
