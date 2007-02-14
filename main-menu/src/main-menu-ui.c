@@ -60,6 +60,8 @@
 #define LOCKDOWN_GCONF_DIR      "/desktop/gnome/applications/main-menu/lock-down"
 #define MORE_LINK_VIS_GCONF_KEY LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
 #define SEARCH_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/search_area_visible"
+#define STATUS_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/status_area_visible"
+#define SYSTEM_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/system_area_visible"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -95,10 +97,15 @@ typedef struct {
 
 	gint max_total_items;
 
+	GtkWidget *status_section;
+	GtkWidget *system_section;
+
 	guint search_cmd_gconf_mntr_id;
 	guint current_page_gconf_mntr_id;
 	guint more_link_vis_gconf_mntr_id;
 	guint search_vis_gconf_mntr_id;
+	guint status_vis_gconf_mntr_id;
+	guint system_vis_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -315,10 +322,15 @@ main_menu_ui_init (MainMenuUI *this)
 
 	priv->max_total_items                            = 8;
 
+	priv->status_section                             = NULL;
+	priv->system_section                             = NULL;
+
 	priv->search_cmd_gconf_mntr_id                   = 0;
 	priv->current_page_gconf_mntr_id                 = 0;
 	priv->more_link_vis_gconf_mntr_id                = 0;
 	priv->search_vis_gconf_mntr_id                   = 0;
+	priv->status_vis_gconf_mntr_id                   = 0;
+	priv->system_vis_gconf_mntr_id                   = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -346,6 +358,8 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->current_page_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->more_link_vis_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->search_vis_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->status_vis_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->system_vis_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -568,6 +582,9 @@ create_system_section (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->sys_table), "notify::" TILE_TABLE_TILES_PROP,
 		G_CALLBACK (tile_table_notify_cb), this);
+
+	priv->system_section = glade_xml_get_widget (
+		priv->main_menu_xml, "slab-system-section");
 }
 
 static void
@@ -607,6 +624,9 @@ create_status_section (MainMenuUI *this)
 
 	gtk_container_add   (ctnr, tile);
 	gtk_widget_show_all (GTK_WIDGET (ctnr));
+
+	priv->status_section = glade_xml_get_widget (
+		priv->main_menu_xml, "slab-status-section");
 }
 
 static void
@@ -757,6 +777,10 @@ setup_lock_down (MainMenuUI *this)
 		MORE_LINK_VIS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->search_vis_gconf_mntr_id = libslab_gconf_notify_add (
 		SEARCH_VIS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->status_vis_gconf_mntr_id = libslab_gconf_notify_add (
+		STATUS_VIS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->system_vis_gconf_mntr_id = libslab_gconf_notify_add (
+		SYSTEM_VIS_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static void
@@ -1066,11 +1090,15 @@ apply_lockdown_settings (MainMenuUI *this)
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	gboolean more_link_visible;
+	gboolean status_area_visible;
+	gboolean system_area_visible;
 
 	gint i;
 
 
-	more_link_visible = GPOINTER_TO_INT (libslab_get_gconf_value (MORE_LINK_VIS_GCONF_KEY));
+	more_link_visible   = GPOINTER_TO_INT (libslab_get_gconf_value (MORE_LINK_VIS_GCONF_KEY));
+	status_area_visible = GPOINTER_TO_INT (libslab_get_gconf_value (STATUS_VIS_GCONF_KEY));
+	system_area_visible = GPOINTER_TO_INT (libslab_get_gconf_value (SYSTEM_VIS_GCONF_KEY));
 
 	for (i = 0; i < 3; ++i)
 		if (more_link_visible)
@@ -1079,6 +1107,16 @@ apply_lockdown_settings (MainMenuUI *this)
 			gtk_widget_hide (priv->more_sections [i]);
 
 	set_search_section_visible (this);
+
+	if (status_area_visible)
+		gtk_widget_show (priv->status_section);
+	else
+		gtk_widget_hide (priv->status_section);
+
+	if (system_area_visible)
+		gtk_widget_show (priv->system_section);
+	else
+		gtk_widget_hide (priv->system_section);
 }
 
 static void
