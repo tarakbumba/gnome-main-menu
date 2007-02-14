@@ -59,6 +59,7 @@
 
 #define LOCKDOWN_GCONF_DIR      "/desktop/gnome/applications/main-menu/lock-down"
 #define MORE_LINK_VIS_GCONF_KEY LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
+#define SEARCH_VIS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/search_area_visible"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -97,6 +98,7 @@ typedef struct {
 	guint search_cmd_gconf_mntr_id;
 	guint current_page_gconf_mntr_id;
 	guint more_link_vis_gconf_mntr_id;
+	guint search_vis_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -316,6 +318,7 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->search_cmd_gconf_mntr_id                   = 0;
 	priv->current_page_gconf_mntr_id                 = 0;
 	priv->more_link_vis_gconf_mntr_id                = 0;
+	priv->search_vis_gconf_mntr_id                   = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -342,6 +345,7 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->current_page_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->more_link_vis_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->search_vis_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -751,6 +755,8 @@ setup_lock_down (MainMenuUI *this)
 
 	priv->more_link_vis_gconf_mntr_id = libslab_gconf_notify_add (
 		MORE_LINK_VIS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->search_vis_gconf_mntr_id = libslab_gconf_notify_add (
+		SEARCH_VIS_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static void
@@ -874,25 +880,31 @@ set_search_section_visible (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	gboolean allowable;
+	gboolean visible;
+
 	gchar **argv;
 	gchar  *found_cmd = NULL;
 
 
-	argv = get_search_argv (NULL);
+	allowable = GPOINTER_TO_INT (libslab_get_gconf_value (SEARCH_VIS_GCONF_KEY));
 
-	found_cmd = g_find_program_in_path (argv [0]);
+	if (allowable) {
+		argv = get_search_argv (NULL);
+		found_cmd = g_find_program_in_path (argv [0]);
 
-	if (found_cmd) {
-		gtk_widget_set_no_show_all (priv->search_section, FALSE);
-		gtk_widget_show            (priv->search_section);
+		visible = (found_cmd != NULL);
+
+		g_strfreev (argv);
+		g_free (found_cmd);
 	}
-	else {
-		gtk_widget_set_no_show_all (priv->search_section, TRUE);
-		gtk_widget_hide            (priv->search_section);
-	}
+	else
+		visible = FALSE;
 
-	g_strfreev (argv);
-	g_free (found_cmd);
+	if (visible)
+		gtk_widget_show (priv->search_section);
+	else
+		gtk_widget_hide (priv->search_section);
 }
 
 static gchar **
@@ -1065,6 +1077,8 @@ apply_lockdown_settings (MainMenuUI *this)
 			gtk_widget_show (priv->more_sections [i]);
 		else
 			gtk_widget_hide (priv->more_sections [i]);
+
+	set_search_section_visible (this);
 }
 
 static void
