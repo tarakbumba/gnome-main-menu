@@ -81,12 +81,10 @@ typedef struct {
 	GtkWidget   *page_selectors [3];
 	gint         notebook_page_ids [3];
 
+	TileTable *file_tables    [5];
+	GtkWidget *table_sections [5];
+
 	TileTable *sys_table;
-	TileTable *usr_apps_table;
-	TileTable *rct_apps_table;
-	TileTable *usr_docs_table;
-	TileTable *rct_docs_table;
-	TileTable *usr_dirs_table;
 
 	GtkWidget *more_button [3];
 
@@ -113,6 +111,7 @@ static void create_user_dirs_section (MainMenuUI *);
 static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
 static void create_more_buttons      (MainMenuUI *);
+static void setup_file_tables        (MainMenuUI *);
 
 static void    update_limits              (MainMenuUI *);
 static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
@@ -179,6 +178,14 @@ enum {
 };
 
 enum {
+	USER_APPS_TABLE,
+	RCNT_APPS_TABLE,
+	USER_DOCS_TABLE,
+	RCNT_DOCS_TABLE,
+	USER_DIRS_TABLE
+};
+
+enum {
 	PANEL_BUTTON_ORIENT_TOP,
 	PANEL_BUTTON_ORIENT_BOTTOM,
 	PANEL_BUTTON_ORIENT_LEFT,
@@ -218,6 +225,7 @@ main_menu_ui_new (PanelApplet *applet)
 	create_system_section    (this);
 	create_status_section    (this);
 	create_more_buttons      (this);
+	setup_file_tables        (this);
 
 	bind_beagle_search_key (this);
 	update_limits          (this);
@@ -268,12 +276,18 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->notebook_page_ids [DOCS_PAGE]              = 0;
 	priv->notebook_page_ids [DIRS_PAGE]              = 0;
 
+	priv->file_tables [USER_APPS_TABLE]              = NULL;
+	priv->file_tables [RCNT_APPS_TABLE]              = NULL;
+	priv->file_tables [USER_DOCS_TABLE]              = NULL;
+	priv->file_tables [RCNT_DOCS_TABLE]              = NULL;
+	priv->file_tables [USER_DIRS_TABLE]              = NULL;
+	priv->table_sections [USER_APPS_TABLE]           = NULL;
+	priv->table_sections [RCNT_APPS_TABLE]           = NULL;
+	priv->table_sections [USER_DOCS_TABLE]           = NULL;
+	priv->table_sections [RCNT_DOCS_TABLE]           = NULL;
+	priv->table_sections [USER_DIRS_TABLE]           = NULL;
+
 	priv->sys_table                                  = NULL;
-	priv->usr_apps_table                             = NULL;
-	priv->rct_apps_table                             = NULL;
-	priv->usr_docs_table                             = NULL;
-	priv->rct_docs_table                             = NULL;
-	priv->usr_dirs_table                             = NULL;
 
 	priv->more_button [APPS_PAGE]                    = NULL;
 	priv->more_button [DOCS_PAGE]                    = NULL;
@@ -492,6 +506,17 @@ create_file_section (MainMenuUI *this)
 			G_OBJECT (priv->page_selectors [i]), "clicked",
 			G_CALLBACK (page_button_clicked_cb), this);
 	}
+
+	priv->table_sections [USER_APPS_TABLE] = glade_xml_get_widget (
+		priv->main_menu_xml, "user-apps-section");
+	priv->table_sections [RCNT_APPS_TABLE] = glade_xml_get_widget (
+		priv->main_menu_xml, "recent-apps-section");
+	priv->table_sections [USER_DOCS_TABLE] = glade_xml_get_widget (
+		priv->main_menu_xml, "user-docs-section");
+	priv->table_sections [RCNT_DOCS_TABLE] = glade_xml_get_widget (
+		priv->main_menu_xml, "recent-docs-section");
+	priv->table_sections [USER_DIRS_TABLE] = glade_xml_get_widget (
+		priv->main_menu_xml, "user-dirs-section");
 }
 
 static void
@@ -566,21 +591,9 @@ create_user_apps_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-apps-table-container"));
 
-	priv->usr_apps_table = TILE_TABLE (user_apps_tile_table_new ());
-	gtk_table_set_row_spacings (GTK_TABLE (priv->usr_apps_table), 6);
-	gtk_table_set_col_spacings (GTK_TABLE (priv->usr_apps_table), 6);
+	priv->file_tables [USER_APPS_TABLE] = TILE_TABLE (user_apps_tile_table_new ());
 
-	connect_to_tile_triggers (this, priv->usr_apps_table);
-
-	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_apps_table));
-
-	g_signal_connect (
-		G_OBJECT (priv->usr_apps_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this);
-
-	g_signal_connect (
-		G_OBJECT (priv->usr_apps_table), "notify::n-rows",
-		G_CALLBACK (gtk_table_notify_cb), this);
+	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_APPS_TABLE]));
 }
 
 static void
@@ -594,17 +607,9 @@ create_rct_apps_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-apps-table-container"));
 
-	priv->rct_apps_table = TILE_TABLE (recent_apps_tile_table_new ());
-	gtk_table_set_row_spacings (GTK_TABLE (priv->rct_apps_table), 6);
-	gtk_table_set_col_spacings (GTK_TABLE (priv->rct_apps_table), 6);
+	priv->file_tables [RCNT_APPS_TABLE] = TILE_TABLE (recent_apps_tile_table_new ());
 
-	connect_to_tile_triggers (this, priv->rct_apps_table);
-
-	gtk_container_add (ctnr, GTK_WIDGET (priv->rct_apps_table));
-
-	g_signal_connect (
-		G_OBJECT (priv->rct_apps_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this);
+	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [RCNT_APPS_TABLE]));
 }
 
 static void
@@ -618,21 +623,9 @@ create_user_docs_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-docs-table-container"));
 
-	priv->usr_docs_table = TILE_TABLE (user_docs_tile_table_new ());
-	gtk_table_set_row_spacings (GTK_TABLE (priv->usr_docs_table), 6);
-	gtk_table_set_col_spacings (GTK_TABLE (priv->usr_docs_table), 6);
+	priv->file_tables [USER_DOCS_TABLE] = TILE_TABLE (user_docs_tile_table_new ());
 
-	connect_to_tile_triggers (this, priv->usr_docs_table);
-
-	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_docs_table));
-
-	g_signal_connect (
-		G_OBJECT (priv->usr_docs_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this);
-
-	g_signal_connect (
-		G_OBJECT (priv->usr_docs_table), "notify::n-rows",
-		G_CALLBACK (gtk_table_notify_cb), this);
+	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_DOCS_TABLE]));
 }
 
 static void
@@ -646,19 +639,9 @@ create_rct_docs_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-docs-table-container"));
 
-	priv->rct_docs_table = TILE_TABLE (recent_docs_tile_table_new ());
-	gtk_table_set_row_spacings (GTK_TABLE (priv->rct_docs_table), 6);
-	gtk_table_set_col_spacings (GTK_TABLE (priv->rct_docs_table), 6);
+	priv->file_tables [RCNT_DOCS_TABLE] = TILE_TABLE (recent_docs_tile_table_new ());
 
-	connect_to_tile_triggers (this, priv->rct_docs_table);
-
-	g_object_set (G_OBJECT (priv->rct_docs_table), TILE_TABLE_LIMIT_PROP, 6, NULL);
-
-	gtk_container_add (ctnr, GTK_WIDGET (priv->rct_docs_table));
-
-	g_signal_connect (
-		G_OBJECT (priv->rct_docs_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this);
+	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [RCNT_DOCS_TABLE]));
 }
 
 static void
@@ -672,21 +655,9 @@ create_user_dirs_section (MainMenuUI *this)
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-dirs-table-container"));
 
-	priv->usr_dirs_table = TILE_TABLE (user_dirs_tile_table_new ());
-	gtk_table_set_row_spacings (GTK_TABLE (priv->usr_dirs_table), 6);
-	gtk_table_set_col_spacings (GTK_TABLE (priv->usr_dirs_table), 6);
+	priv->file_tables [USER_DIRS_TABLE] = TILE_TABLE (user_dirs_tile_table_new ());
 
-	connect_to_tile_triggers (this, priv->usr_dirs_table);
-
-	gtk_container_add (ctnr, GTK_WIDGET (priv->usr_dirs_table));
-
-	g_signal_connect (
-		G_OBJECT (priv->usr_dirs_table), "notify::" TILE_TABLE_TILES_PROP,
-		G_CALLBACK (tile_table_notify_cb), this);
-
-	g_signal_connect (
-		G_OBJECT (priv->usr_dirs_table), "notify::n-rows",
-		G_CALLBACK (gtk_table_notify_cb), this);
+	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_DIRS_TABLE]));
 }
 
 static void
@@ -712,31 +683,47 @@ create_more_buttons (MainMenuUI *this)
 	}
 }
 
-#if 0
 static void
-select_page (MainMenuUI *this, gint page_id)
+setup_file_tables (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-/* TODO: make this instant apply */
+	GList *tiles;
 
-	if (page_id < 0)
-		page_id = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
-	else
-		libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_id));
+	gint i;
 
-	gtk_notebook_set_current_page (priv->file_section, page_id);
+
+	for (i = 0; i < 5; ++i) {
+		g_object_set_data (G_OBJECT (priv->file_tables [i]), "table-id", GINT_TO_POINTER (i));
+		gtk_table_set_row_spacings (GTK_TABLE (priv->file_tables [i]), 6);
+		gtk_table_set_col_spacings (GTK_TABLE (priv->file_tables [i]), 6);
+
+		connect_to_tile_triggers (this, priv->file_tables [i]);
+
+		g_object_get (G_OBJECT (priv->file_tables [i]), TILE_TABLE_TILES_PROP, & tiles, NULL);
+
+		if (g_list_length (tiles) <= 0)
+			gtk_widget_hide (priv->table_sections [i]);
+
+		g_signal_connect (
+			G_OBJECT (priv->file_tables [i]), "notify::" TILE_TABLE_TILES_PROP,
+			G_CALLBACK (tile_table_notify_cb), this);
+
+		g_signal_connect (
+			G_OBJECT (priv->file_tables [i]), "notify::n-rows",
+			G_CALLBACK (gtk_table_notify_cb), this);
+	}
 }
-#endif
 
 static void
 update_limits (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	GObject *user_tables   [2];
-	GObject *recent_tables [2];
-	gint     n_user_bins   [2];
+	GObject   *user_tables   [2];
+	GObject   *recent_tables [2];
+	gint       n_user_bins   [2];
+	GtkWidget *sections      [2];
 
 	gint n_rows;
 	gint n_cols;
@@ -748,11 +735,14 @@ update_limits (MainMenuUI *this)
 	gint i;
 
 
-	user_tables [0] = G_OBJECT (priv->usr_apps_table);
-	user_tables [1] = G_OBJECT (priv->usr_docs_table);
+	user_tables [0] = G_OBJECT (priv->file_tables [USER_APPS_TABLE]);
+	user_tables [1] = G_OBJECT (priv->file_tables [USER_DOCS_TABLE]);
 
-	recent_tables [0] = G_OBJECT (priv->rct_apps_table);
-	recent_tables [1] = G_OBJECT (priv->rct_docs_table);
+	recent_tables [0] = G_OBJECT (priv->file_tables [RCNT_APPS_TABLE]);
+	recent_tables [1] = G_OBJECT (priv->file_tables [RCNT_DOCS_TABLE]);
+
+	sections [0] = priv->table_sections [USER_APPS_TABLE];
+	sections [1] = priv->table_sections [USER_DOCS_TABLE];
 
 /* TODO: make this instant apply */
 
@@ -764,7 +754,12 @@ update_limits (MainMenuUI *this)
 	priv->max_total_items = max_total_items_default;
 
 	for (i = 0; i < 2; ++i) {
-		g_object_get (user_tables [i], "n-rows", & n_rows, "n-columns", & n_cols, NULL);
+		if (GTK_WIDGET_VISIBLE (sections [i]))
+			g_object_get (
+				user_tables [i],
+				"n-rows", & n_rows, "n-columns", & n_cols, NULL);
+		else
+			n_rows = n_cols = 0;
 
 		n_user_bins [i] = n_cols * n_rows;
 
@@ -1157,9 +1152,13 @@ panel_button_drag_data_rcv_cb (GtkWidget *widget, GdkDragContext *context, gint 
 		uri_len = strlen (uris [i]);
 
 		if (! strcmp (& uris [i] [uri_len - 8], ".desktop"))
-			tile_table_uri_added (priv->usr_apps_table, uris [i], (guint32) time);
+			tile_table_uri_added (
+				priv->file_tables [USER_APPS_TABLE],
+				uris [i], (guint32) time);
 		else
-			tile_table_uri_added (priv->usr_docs_table, uris [i], (guint32) time);
+			tile_table_uri_added (
+				priv->file_tables [USER_DOCS_TABLE],
+				uris [i], (guint32) time);
 	}
 
 	g_strfreev (uris);
@@ -1471,21 +1470,46 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
+	gint table_id;
+	GList *tiles;
 
-	connect_to_tile_triggers (MAIN_MENU_UI (user_data), TILE_TABLE (g_obj));
 
-	if (TILE_TABLE (g_obj) == priv->usr_apps_table)
-		tile_table_reload (priv->rct_apps_table);
-	else if (TILE_TABLE (g_obj) == priv->usr_docs_table)
-		tile_table_reload (priv->rct_docs_table);
+	connect_to_tile_triggers (this, TILE_TABLE (g_obj));
+
+	table_id = GPOINTER_TO_INT (g_object_get_data (g_obj, "table-id"));
+
+	switch (table_id) {
+		case USER_APPS_TABLE:
+			tile_table_reload (priv->file_tables [RCNT_APPS_TABLE]);
+			break;
+
+		case USER_DOCS_TABLE:
+			tile_table_reload (priv->file_tables [RCNT_DOCS_TABLE]);
+			break;
+
+		default:
+			break;
+	}
+
+	g_object_get (g_obj, TILE_TABLE_TILES_PROP, & tiles, NULL);
+
+	if (g_list_length (tiles) <= 0)
+		gtk_widget_hide (priv->table_sections [table_id]);
+	else if (! GTK_WIDGET_VISIBLE (priv->table_sections [table_id]))
+		gtk_widget_show (priv->table_sections [table_id]);
 	else
 		/* do nothing */ ;
+
+	update_limits (this);
 }
 
 static void
 gtk_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
-	update_limits (MAIN_MENU_UI (user_data));
+	gint table_id = GPOINTER_TO_INT (g_object_get_data (g_obj, "table-id"));
+
+	if (table_id == USER_APPS_TABLE || table_id == USER_DOCS_TABLE)
+		update_limits (MAIN_MENU_UI (user_data));
 }
 
 static void

@@ -391,28 +391,6 @@ replace_tiles (TileTable *this, GList *tiles)
 
 		g_object_set_data (G_OBJECT (node->data), "tile-table", this);
 
-#if 0
-		handler_id = g_signal_handler_find (
-			tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			tile_drag_data_rcv_cb, NULL);
-
-		if (! handler_id && priv->priority != TILE_TABLE_REORDERING_NONE) {
-			gtk_drag_dest_set (
-				tile, GTK_DEST_DEFAULT_ALL,
-				NULL, 0, GDK_ACTION_COPY | GDK_ACTION_MOVE);
-
-			gtk_drag_dest_add_uri_targets (tile);
-
-			g_signal_connect (
-				G_OBJECT (tile), "drag-data-received",
-				G_CALLBACK (tile_drag_data_rcv_cb), this);
-		}
-		else if (handler_id && priv->priority == TILE_TABLE_REORDERING_NONE)
-			g_signal_handler_disconnect (tile, handler_id);
-		else
-			/* do nothing */ ;
-#endif
-
 		connect_signal_if_not_exists (
 			TILE (tile), "tile-activated", G_CALLBACK (tile_activated_cb), NULL);
 		connect_signal_if_not_exists (
