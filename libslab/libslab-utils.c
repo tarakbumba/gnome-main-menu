@@ -18,10 +18,13 @@
 #define DOCS_BOOKMARK_FILENAME   "documents.xbel"
 #define DIRS_BOOKMARK_FILENAME   "places.xbel"
 
+#define DISABLE_TERMINAL_GCONF_KEY  "/desktop/gnome/lockdown/disable_command_line"
 #define MODIFIABLE_SYSTEM_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_system_area"
 #define MODIFIABLE_APPS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps"
 #define MODIFIABLE_DOCS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_docs"
 #define MODIFIABLE_DIRS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs"
+
+#define DESKTOP_ITEM_TERMINAL_EMULATOR_FLAG "TerminalEmulator"
 
 static gchar                 *get_data_file_path     (const gchar *, gboolean);
 static gboolean               store_has_uri          (const gchar *, const gchar *);
@@ -811,6 +814,29 @@ libslab_user_docs_store_has_uri (const gchar *uri)
 	g_free (path);
 
 	return exists;
+}
+
+gboolean
+libslab_desktop_item_is_a_terminal (const gchar *uri)
+{
+	GnomeDesktopItem *d_item;
+	const gchar      *categories;
+
+	gboolean is_terminal = FALSE;
+
+
+	d_item = libslab_gnome_desktop_item_new_from_unknown_id (uri);
+
+	if (! d_item)
+		return FALSE;
+
+	categories = gnome_desktop_item_get_string (d_item, GNOME_DESKTOP_ITEM_CATEGORIES);
+
+	is_terminal = (categories && strstr (categories, DESKTOP_ITEM_TERMINAL_EMULATOR_FLAG));
+
+	gnome_desktop_item_unref (d_item);
+
+	return is_terminal;
 }
 
 static gboolean

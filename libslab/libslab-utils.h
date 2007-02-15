@@ -80,6 +80,7 @@ void              libslab_set_gconf_value (const gchar *key, gconstpointer data)
 guint             libslab_gconf_notify_add (const gchar *key, GConfClientNotifyFunc callback, gpointer user_data);
 void              libslab_gconf_notify_remove (guint conn_id);
 void              libslab_handle_g_error (GError **error, const gchar *msg_format, ...);
+gboolean          libslab_desktop_item_is_a_terminal (const gchar *uri);
 
 GList *libslab_get_system_item_uris (void);
 GList *libslab_get_user_app_uris    (void);

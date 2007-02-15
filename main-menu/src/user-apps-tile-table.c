@@ -25,6 +25,8 @@
 #include "application-tile.h"
 #include "libslab-utils.h"
 
+#define DISABLE_TERMINAL_GCONF_KEY "/desktop/gnome/lockdown/disable_command_line"
+
 G_DEFINE_TYPE (UserAppsTileTable, user_apps_tile_table, BOOKMARK_TILE_TABLE_TYPE)
 
 static void update_store (LibSlabBookmarkFile *, LibSlabBookmarkFile *, const gchar *);
@@ -84,7 +86,14 @@ get_application_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 {
 	gint uri_len = strlen (uri);
 
-	if (! strcmp (& uri [uri_len - 8], ".desktop"))
+	gboolean disable_term;
+	gboolean blacklisted;
+
+
+	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
+
+	if (! blacklisted && ! strcmp (& uri [uri_len - 8], ".desktop"))
 		return application_tile_new (uri);
 
 	return NULL;

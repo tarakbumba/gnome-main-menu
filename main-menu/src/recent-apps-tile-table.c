@@ -26,7 +26,8 @@
 #include "application-tile.h"
 #include "libslab-utils.h"
 
-#define APP_BLACKLIST_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/file_blacklist"
+#define APP_BLACKLIST_GCONF_KEY    "/desktop/gnome/applications/main-menu/file-area/file_blacklist"
+#define DISABLE_TERMINAL_GCONF_KEY "/desktop/gnome/lockdown/disable_command_line"
 
 G_DEFINE_TYPE (RecentAppsTileTable, recent_apps_tile_table, TILE_TABLE_TYPE)
 
@@ -150,10 +151,17 @@ uri_is_in_blacklist (const gchar *uri)
 {
 	GList *blacklist;
 
-	gboolean blacklisted = FALSE;
+	gboolean disable_term;
+	gboolean blacklisted;
 
 	GList *node;
 
+
+	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
+
+	if (blacklisted)
+		return TRUE;
 
 	blacklist = libslab_get_gconf_value (APP_BLACKLIST_GCONF_KEY);
 

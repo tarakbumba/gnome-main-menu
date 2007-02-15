@@ -67,6 +67,7 @@
 #define MODIFIABLE_APPS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_apps"
 #define MODIFIABLE_DOCS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_docs"
 #define MODIFIABLE_DIRS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_dirs"
+#define DISABLE_TERMINAL_GCONF_KEY  "/desktop/gnome/lockdown/disable_command_line"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -117,6 +118,7 @@ typedef struct {
 	guint modifiable_apps_gconf_mntr_id;
 	guint modifiable_docs_gconf_mntr_id;
 	guint modifiable_dirs_gconf_mntr_id;
+	guint disable_term_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -353,6 +355,7 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->modifiable_apps_gconf_mntr_id              = 0;
 	priv->modifiable_docs_gconf_mntr_id              = 0;
 	priv->modifiable_dirs_gconf_mntr_id              = 0;
+	priv->disable_term_gconf_mntr_id                 = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -387,6 +390,7 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->modifiable_apps_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->modifiable_docs_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->modifiable_dirs_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->disable_term_gconf_mntr_id);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -810,7 +814,6 @@ setup_lock_down (MainMenuUI *this)
 		SYSTEM_VIS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->showable_types_gconf_mntr_id = libslab_gconf_notify_add (
 		SHOWABLE_TYPES_GCONF_KEY, lockdown_notify_cb, this);
-
 	priv->modifiable_system_gconf_mntr_id = libslab_gconf_notify_add (
 		MODIFIABLE_SYSTEM_GCONF_KEY, lockdown_notify_cb, this);
 	priv->modifiable_apps_gconf_mntr_id = libslab_gconf_notify_add (
@@ -819,6 +822,8 @@ setup_lock_down (MainMenuUI *this)
 		MODIFIABLE_DOCS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->modifiable_dirs_gconf_mntr_id = libslab_gconf_notify_add (
 		MODIFIABLE_DIRS_GCONF_KEY, lockdown_notify_cb, this);
+	priv->disable_term_gconf_mntr_id = libslab_gconf_notify_add (
+		DISABLE_TERMINAL_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static void
@@ -1222,6 +1227,7 @@ apply_lockdown_settings (MainMenuUI *this)
 
 	tile_table_reload (priv->sys_table);
 	tile_table_reload (priv->file_tables [USER_APPS_TABLE]);
+	tile_table_reload (priv->file_tables [RCNT_APPS_TABLE]);
 	tile_table_reload (priv->file_tables [USER_DOCS_TABLE]);
 	tile_table_reload (priv->file_tables [USER_DIRS_TABLE]);
 
