@@ -24,9 +24,11 @@
 #include <string.h>
 #include <libgnomeui/gnome-icon-lookup.h>
 #include <libgnomevfs/gnome-vfs.h>
+#include <unistd.h>
 
 #include "slab-gnome-util.h"
 #include "gnome-utils.h"
+#include "libslab-utils.h"
 
 #define GCONF_SEND_TO_CMD_KEY       "/desktop/gnome/applications/main-menu/file-area/file_send_to_cmd"
 #define GCONF_ENABLE_DELETE_KEY_DIR "/apps/nautilus/preferences"
@@ -52,8 +54,9 @@ static void send_to_trigger (Tile *, TileEvent *, TileAction *);
 
 static void rename_entry_activate_cb (GtkEntry *, gpointer);
 static gboolean rename_entry_key_release_cb (GtkWidget *, GdkEventKey *, gpointer);
-
 static void gconf_enable_delete_cb (GConfClient *, guint, GConfEntry *, gpointer);
+
+static void disown_spawned_child (gpointer);
 
 typedef struct
 {
@@ -581,51 +584,68 @@ delete_trigger (Tile *tile, TileEvent *event, TileAction *action)
 static void
 send_to_trigger (Tile *tile, TileEvent *event, TileAction *action)
 {
-	gchar *cmd;
-	gchar **argv;
+	gchar  *cmd;
+	gint    argc;
+	gchar **argv_parsed = NULL;
+	gchar **argv        = NULL;
 
-	gchar *filename;
+	gchar *path;
 	gchar *dirname;
 	gchar *basename;
 
 	GError *error = NULL;
 
-	gchar *tmp;
 	gint i;
 
+
 	cmd = (gchar *) get_gconf_value (GCONF_SEND_TO_CMD_KEY);
-	argv = g_strsplit (cmd, " ", 0);
 
-	filename = g_filename_from_uri (TILE (tile)->uri, NULL, NULL);
-	dirname = g_path_get_dirname (filename);
-	basename = g_path_get_basename (filename);
+	if (! g_shell_parse_argv (cmd, & argc, & argv_parsed, NULL))
+		goto exit;
 
-	for (i = 0; argv[i]; ++i)
-	{
-		if (strstr (argv[i], "DIRNAME"))
-		{
-			tmp = string_replace_once (argv[i], "DIRNAME", dirname);
-			g_free (argv[i]);
-			argv[i] = tmp;
-		}
+	argv = g_new0 (gchar *, argc + 1);
 
-		if (strstr (argv[i], "BASENAME"))
-		{
-			tmp = string_replace_once (argv[i], "BASENAME", basename);
-			g_free (argv[i]);
-			argv[i] = tmp;
-		}
+	path     = g_filename_from_uri (tile->uri, NULL, NULL);
+	dirname  = g_path_get_dirname  (path);
+	basename = g_path_get_basename (path);
+
+	for (i = 0; i < argc; ++i) {
+		if (strstr (argv_parsed [i], "DIRNAME"))
+			argv [i] = string_replace_once (argv_parsed [i], "DIRNAME", dirname);
+		else if (strstr (argv_parsed [i], "BASENAME"))
+			argv [i] = string_replace_once (argv_parsed [i], "BASENAME", basename);
+		else
+			argv [i] = g_strdup (argv_parsed [i]);
 	}
 
-	gdk_spawn_on_screen (gtk_widget_get_screen (GTK_WIDGET (tile)), NULL, argv, NULL,
-		G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &error);
+	argv [argc] = NULL;
 
-	if (error)
-		handle_g_error (&error, "error in %s", G_STRFUNC);
-
-	g_free (cmd);
-	g_free (filename);
+	g_free (path);
 	g_free (dirname);
 	g_free (basename);
+
+	g_spawn_async (
+		NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
+		disown_spawned_child, NULL, NULL, & error);
+
+	if (error) {
+		cmd = g_strjoinv (" ", argv);
+		libslab_handle_g_error (
+			& error, "%s: can't execute search [%s]\n", G_STRFUNC, cmd);
+		g_free (cmd);
+	}
+
 	g_strfreev (argv);
+
+exit:
+
+	g_free (cmd);
+	g_strfreev (argv_parsed);
+}
+
+static void
+disown_spawned_child (gpointer user_data)
+{
+	setsid  ();
+	setpgrp ();
 }

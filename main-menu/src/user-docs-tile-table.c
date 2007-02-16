@@ -20,6 +20,9 @@
 
 #include "user-docs-tile-table.h"
 
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
+#include <string.h>
 #include <libgnomevfs/gnome-vfs.h>
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
@@ -119,7 +122,7 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 			gnome_vfs_mime_application_free (default_app);
 		}
 
-		gnome_vfs_file_info_unref       (info);
+		gnome_vfs_file_info_unref (info);
 	}
 
 	if (! (mime_type && apps && apps [0]))
@@ -143,36 +146,66 @@ get_document_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 	gchar  *mime_type = NULL;
 	time_t  modified  = 0;
 
-	GnomeVFSFileInfo info;
+	gchar *dir;
+	gchar *file;
+	gchar *path;
+	gchar *uri_new;
+
+	GnomeVFSFileInfo *info;
 
 	GtkWidget *tile;
 
 
+	if (! strcmp (uri, "BLANK_SPREADSHEET") || ! strcmp (uri, "BLANK_DOCUMENT")) {
+		dir = g_build_filename (g_get_home_dir (), "Documents", NULL);
+		g_mkdir_with_parents (dir, 0700);
+
+		if (! strcmp (uri, "BLANK_SPREADSHEET"))
+			file = g_strconcat (_("New Spreadsheet"), ".ods", NULL);
+		else
+			file = g_strconcat (_("New Document"), ".odt", NULL);
+
+		path = g_build_filename (dir, file, NULL);
+
+		if (! g_file_test (path, G_FILE_TEST_EXISTS))
+			fclose (g_fopen (path, "w"));
+
+		uri_new = g_filename_to_uri (path, NULL, NULL);
+
+		g_free (dir);
+		g_free (file);
+		g_free (path);
+	}
+	else
+		uri_new = g_strdup (uri);
+
 	if (bm_file) {
-		mime_type = libslab_bookmark_file_get_mime_type (bm_file, uri, NULL);
-		modified  = libslab_bookmark_file_get_modified  (bm_file, uri, NULL);
+		mime_type = libslab_bookmark_file_get_mime_type (bm_file, uri_new, NULL);
+		modified  = libslab_bookmark_file_get_modified  (bm_file, uri_new, NULL);
 	}
 
 	if (! mime_type) {
+		info = gnome_vfs_file_info_new ();
 		gnome_vfs_get_file_info (
-			uri, & info, 
+			uri_new, info, 
 			GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FORCE_FAST_MIME_TYPE);
 
-		mime_type = g_strdup (info.mime_type);
-		modified  = info.mtime;
+		mime_type = g_strdup (info->mime_type);
+		modified  = info->mtime;
 
-		gnome_vfs_file_info_clear (& info);
+		gnome_vfs_file_info_clear (info);
 	}
 
 	if (! mime_type) {
-		g_warning ("Cannot make document tile [%s]\n", uri);
+		g_warning ("Cannot make document tile [%s]\n", uri_new);
 
 		tile = NULL;
 	}
 	else
-		tile = document_tile_new (uri, mime_type, modified);
+		tile = document_tile_new (uri_new, mime_type, modified);
 
 	g_free (mime_type);
+	g_free (uri_new);
 
 	return tile;
 }

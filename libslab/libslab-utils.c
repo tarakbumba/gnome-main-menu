@@ -839,6 +839,43 @@ libslab_desktop_item_is_a_terminal (const gchar *uri)
 	return is_terminal;
 }
 
+gchar *
+libslab_string_replace_once (const gchar *string, const gchar *key, const gchar *value)
+{
+	GString *str_built;
+	gint pivot;
+
+
+	pivot = strstr (string, key) - string;
+
+	str_built = g_string_new_len (string, pivot);
+	g_string_append (str_built, value);
+	g_string_append (str_built, & string [pivot + strlen (key)]);
+
+	return g_string_free (str_built, FALSE);
+}
+
+void
+libslab_spawn_command (const gchar *cmd)
+{
+	gchar **argv;
+
+	GError *error = NULL;
+
+
+	if (! cmd || strlen (cmd) < 1)
+		return;
+
+	argv = g_strsplit (cmd, " ", -1);
+
+	g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, & error);
+
+	if (error)
+		libslab_handle_g_error (& error, "%s: error spawning [%s]", G_STRFUNC, cmd);
+
+	g_strfreev (argv);
+}
+
 static gboolean
 store_has_uri (const gchar *path, const gchar *uri)
 {

@@ -49,15 +49,17 @@
 #include "libslab-utils.h"
 #include "double-click-detector.h"
 
-#define CURRENT_PAGE_GCONF_KEY     "/desktop/gnome/applications/main-menu/file-area/file_class"
-#define URGENT_CLOSE_GCONF_KEY     "/desktop/gnome/applications/main-menu/urgent_close"
-#define MAX_TOTAL_ITEMS_GCONF_KEY  "/desktop/gnome/applications/main-menu/file-area/max_total_items"
-#define MIN_RECENT_ITEMS_GCONF_KEY "/desktop/gnome/applications/main-menu/file-area/min_recent_items"
-#define APP_BROWSER_GCONF_KEY      "/desktop/gnome/applications/main-menu/application_browser"
-#define FILE_BROWSER_GCONF_KEY     "/desktop/gnome/applications/main-menu/file_browser"
-#define SEARCH_CMD_GCONF_KEY       "/desktop/gnome/applications/main-menu/search_command"
+#define ROOT_GCONF_DIR             "/desktop/gnome/applications/main-menu"
+#define CURRENT_PAGE_GCONF_KEY     ROOT_GCONF_DIR "/file-area/file_class"
+#define URGENT_CLOSE_GCONF_KEY     ROOT_GCONF_DIR "/urgent_close"
+#define MAX_TOTAL_ITEMS_GCONF_KEY  ROOT_GCONF_DIR "/file-area/max_total_items"
+#define MIN_RECENT_ITEMS_GCONF_KEY ROOT_GCONF_DIR "/file-area/min_recent_items"
+#define APP_BROWSER_GCONF_KEY      ROOT_GCONF_DIR "/application_browser"
+#define FILE_BROWSER_GCONF_KEY     ROOT_GCONF_DIR "/file_browser"
+#define SEARCH_CMD_GCONF_KEY       ROOT_GCONF_DIR "/search_command"
+#define FILE_MGR_OPEN_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_mgr_open_cmd"
 
-#define LOCKDOWN_GCONF_DIR          "/desktop/gnome/applications/main-menu/lock-down"
+#define LOCKDOWN_GCONF_DIR          ROOT_GCONF_DIR "/lock-down"
 #define MORE_LINK_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
 #define SEARCH_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/search_area_visible"
 #define STATUS_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/status_area_visible"
@@ -1770,6 +1772,11 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	GnomeDesktopItem *ditem;
 	gchar            *ditem_id;
 
+	gchar *cmd_template;
+	gchar *cmd;
+	gchar *dir;
+	gchar *uri;
+
 
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (button), "double-click-detector"));
@@ -1781,6 +1788,28 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
 		if (GTK_WIDGET (button) == priv->more_buttons [APPS_PAGE])
 			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
+		else if (GTK_WIDGET (button) == priv->more_buttons [DOCS_PAGE]) {
+			dir = g_build_filename (g_get_home_dir (), "Documents", NULL);
+
+			if (! g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+				dir = g_strdup (g_get_home_dir ());
+
+			uri = g_filename_to_uri (dir, NULL, NULL);
+
+			cmd_template = (gchar *) libslab_get_gconf_value (FILE_MGR_OPEN_GCONF_KEY);
+			cmd = libslab_string_replace_once (cmd_template, "FILE_URI", uri);
+
+			libslab_spawn_command (cmd);
+
+			g_free (cmd);
+			g_free (cmd_template);
+			g_free (uri);
+			g_free (dir);
+
+			ditem_id = NULL;
+
+			hide_slab_if_urgent_close (this);
+		}
 		else
 			ditem_id = libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
 

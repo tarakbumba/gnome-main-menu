@@ -3,7 +3,7 @@
       xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
 >
-  <bookmark href="file:///usr/share/applications/MozillaFirefox.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+  <bookmark href="MozillaFirefox.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -13,7 +13,7 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///opt/gnome/share/applications/evolution.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+  <bookmark href="evolution.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -23,7 +23,7 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///usr/share/applications/banshee.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+  <bookmark href="banshee.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -33,7 +33,7 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///usr/share/applications/writer.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+  <bookmark href="writer.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -43,7 +43,7 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///usr/share/applications/f-spot.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+  <bookmark href="f-spot.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
@@ -53,7 +53,7 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///opt/gnome/share/applications/nautilus.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
+  <bookmark href="nautilus.desktop" added="2007-01-16T05:51:22Z" modified="2007-01-16T05:51:22Z" visited="2007-01-16T05:51:22Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
