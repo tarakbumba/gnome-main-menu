@@ -145,25 +145,53 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 static GtkWidget *
 get_directory_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 {
-	gchar    *title;
-	gchar    *icon;
-	gboolean  found;
+	gchar *title;
+	gchar *path;
+	gchar *icon = NULL;
+	gchar *uri_new = NULL;
 
 	GtkWidget *tile;
 
 
-	if (bm_file) {
-		title = libslab_bookmark_file_get_title (bm_file, uri, NULL);
-		found = libslab_bookmark_file_get_icon (bm_file, uri, & icon, NULL, NULL);
-
-		if (! found)
-			icon = NULL;
+	if (! strcmp (uri, "HOME")) {
+		uri_new = g_filename_to_uri (g_get_home_dir (), NULL, NULL);
+		icon = "gnome-fs-home";
 	}
+	else if (! strcmp (uri, "DOCUMENTS")) {
+		path = g_build_filename (g_get_home_dir (), "Documents", NULL);
 
-	tile = directory_tile_new (uri, title, icon);
+		if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
+			uri_new = g_filename_to_uri (path, NULL, NULL);
+
+		g_free (path);
+	}
+	else if (! strcmp (uri, "DESKTOP")) {
+		path = g_build_filename (g_get_home_dir (), "Desktop", NULL);
+
+		if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+			uri_new = g_filename_to_uri (path, NULL, NULL);
+			icon = "gnome-fs-desktop";
+		}
+
+		g_free (path);
+	}
+	else
+		uri_new = g_strdup (uri);
+
+	if (! strcmp (uri_new, "file:///"))
+		icon = "drive-harddisk";
+	else if (! strcmp (uri_new, "network:"))
+		icon = "network-workgroup";
+	else
+		/* do nothing */ ;
+
+	if (bm_file)
+		title = libslab_bookmark_file_get_title (bm_file, uri, NULL);
+
+	tile = directory_tile_new (uri_new, title, icon);
 
 	g_free (title);
-	g_free (icon);
+	g_free (uri_new);
 
 	return tile;
 }

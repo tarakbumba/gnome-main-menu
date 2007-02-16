@@ -4,7 +4,28 @@
       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
 >
   <bookmark href="HOME" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
-    <title>Home Dir</title>
+    <title>Home</title>
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="inode/directory"/>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="nautilus --browser %u" timestamp="1169767039" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="DOCUMENTS" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="inode/directory"/>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="nautilus --browser %u" timestamp="1169767039" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="network:" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
+    <title>Network Servers</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="inode/directory"/>
@@ -15,7 +36,6 @@
     </info>
   </bookmark>
   <bookmark href="DESKTOP" added="2007-01-25T23:17:19Z" modified="2007-01-25T23:17:19Z" visited="2007-01-25T23:17:19Z">
-    <title>Desktop</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="inode/directory"/>
