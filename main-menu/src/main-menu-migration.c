@@ -53,8 +53,7 @@
 #define USER_APPS_GCONF_KEY      "/desktop/gnome/applications/main-menu/file-area/user_specified_apps"
 #define SHOWABLE_TYPES_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/showable_file_types"
 
-#define LOGOUT_DESKTOP_ITEM      "gnome-session-logout.desktop"
-#define SHUTDOWN_DESKTOP_ITEM    "gnome-session-shutdown.desktop"
+#define LOGOUT_DESKTOP_ITEM      "gnome-session-kill.desktop"
 
 static gboolean get_main_menu_user_data_file_path (gchar **, const gchar *, gboolean);
 
@@ -62,46 +61,35 @@ void
 migrate_system_gconf_to_bookmark_file ()
 {
 	gchar *bookmark_path;
-	gchar *bookmark_path_cp_dest;
 
-	gchar *contents;
+	LibSlabBookmarkFile  *bm_file;
+	gchar               **uris;
 
-	gboolean need_migration = TRUE;
+	gboolean need_migration;
 
-	GList *gconf_system_list;
-	gint   system_tile_type;
-
-	LibSlabBookmarkFile *bm_file;
-
-	gchar **uris;
-
-	gchar *path;
-
+	GList            *gconf_system_list;
+	gint              system_tile_type;
 	GnomeDesktopItem *ditem;
-	gchar            *ditem_id;
+	gchar            *path;
 	const gchar      *loc;
 	gchar            *uri;
+	const gchar      *name;
 
-	GList *screensavers;
-	gchar *exec_string;
-	gchar *cmd_string;
-	gchar *arg_string;
-
-	const gchar *name;
-
-	gchar *data_dir;
+	GList  *screensavers;
+	gchar  *exec_string;
+	gchar **argv;
+	gchar  *cmd_path;
 
 	GError *error = NULL;
 
 	GList *node_i;
 	GList *node_j;
+	gint   i;
 
-	gint i;
 
+	bookmark_path = libslab_get_system_item_store_path (TRUE);
 
-	need_migration = ! get_main_menu_user_data_file_path (& bookmark_path, SYSTEM_BOOKMARK_FILENAME, TRUE);
-
-	if (! need_migration) {
+	if (g_file_test (bookmark_path, G_FILE_TEST_EXISTS)) {
 		bm_file = libslab_bookmark_file_new ();
 
 		libslab_bookmark_file_load_from_file (bm_file, bookmark_path, & error);
@@ -142,162 +130,133 @@ migrate_system_gconf_to_bookmark_file ()
 
 	gconf_system_list = (GList *) libslab_get_gconf_value (SYSTEM_ITEM_GCONF_KEY);
 
-	if (! gconf_system_list) {
-		bookmark_path         = libslab_get_system_item_store_path (FALSE);
-		bookmark_path_cp_dest = libslab_get_system_item_store_path (TRUE);
+	if (gconf_system_list) {
+		need_migration = FALSE;
 
-		g_file_get_contents (bookmark_path, & contents, NULL, & error);
+		for (node_i = gconf_system_list, i = 0; ! need_migration && node_i; node_i = node_i->next, ++i)
+			need_migration |= ! (GPOINTER_TO_INT (node_i->data) == i);
 
-		if (error)
-			libslab_handle_g_error (
-				& error, "%s: can't read system item store path [%s]\n",
-				G_STRFUNC, bookmark_path);
-		else
-			g_file_set_contents (bookmark_path_cp_dest, contents, -1, & error);
+		if (need_migration) {
+			bm_file = libslab_bookmark_file_new ();
 
-		if (error)
-			libslab_handle_g_error (
-				& error, "%s: can't save system item store path [%s]\n",
-				G_STRFUNC, bookmark_path_cp_dest);
+			for (node_i = gconf_system_list; node_i; node_i = node_i->next) {
+				system_tile_type = GPOINTER_TO_INT (node_i->data);
 
-		g_free (contents);
-		g_free (bookmark_path_cp_dest);
+				ditem = NULL;
 
-		goto exit;
-	}
+				if (system_tile_type == 0)
+					ditem = libslab_gnome_desktop_item_new_from_unknown_id (
+						(gchar *) libslab_get_gconf_value (HELP_ITEM_GCONF_KEY));
+				else if (system_tile_type == 1)
+					ditem = libslab_gnome_desktop_item_new_from_unknown_id (
+						(gchar *) libslab_get_gconf_value (CC_ITEM_GCONF_KEY));
+				else if (system_tile_type == 2)
+					ditem = libslab_gnome_desktop_item_new_from_unknown_id (
+						(gchar *) libslab_get_gconf_value (PM_ITEM_GCONF_KEY));
+				else if (system_tile_type == 3) {
+					screensavers = libslab_get_gconf_value (LOCKSCREEN_GCONF_KEY);
 
-	bm_file = libslab_bookmark_file_new ();
+					for (node_j = screensavers; node_j; node_j = node_j->next) {
+						exec_string = (gchar *) node_j->data;
 
-	get_main_menu_user_data_file_path (& data_dir, NULL, TRUE);
+						g_shell_parse_argv (exec_string, NULL, & argv, NULL);
+			
+						cmd_path = g_find_program_in_path (argv [0]);
 
-	for (node_i = gconf_system_list; node_i; node_i = node_i->next) {
-		system_tile_type = GPOINTER_TO_INT (node_i->data);
+						if (cmd_path) {
+							ditem = gnome_desktop_item_new ();
 
-		if (system_tile_type == 0)
-			ditem_id = (gchar *) libslab_get_gconf_value (HELP_ITEM_GCONF_KEY);
-		else if (system_tile_type == 1)
-			ditem_id = (gchar *) libslab_get_gconf_value (CC_ITEM_GCONF_KEY);
-		else if (system_tile_type == 2)
-			ditem_id = (gchar *) libslab_get_gconf_value (PM_ITEM_GCONF_KEY);
-		else if (system_tile_type == 3) {
-			screensavers = libslab_get_gconf_value (LOCKSCREEN_GCONF_KEY);
+							path = g_build_filename (
+								g_get_user_data_dir (), PACKAGE, "lockscreen.desktop", NULL);
 
-			for (node_j = screensavers; node_j; node_j = node_j->next) {
-				exec_string = (gchar *) node_j->data;
-	
-				cmd_string = g_strdup (exec_string);
-				arg_string = NULL;
+							gnome_desktop_item_set_location_file (ditem, path);
+							gnome_desktop_item_set_string (
+								ditem, GNOME_DESKTOP_ITEM_NAME, _("Lock Screen"));
+							gnome_desktop_item_set_string (
+								ditem, GNOME_DESKTOP_ITEM_ICON, _("gnome-lockscreen"));
+							gnome_desktop_item_set_string (
+								ditem, GNOME_DESKTOP_ITEM_EXEC, exec_string);
+							gnome_desktop_item_set_boolean (
+								ditem, GNOME_DESKTOP_ITEM_TERMINAL, FALSE);
+							gnome_desktop_item_set_entry_type (
+								ditem, GNOME_DESKTOP_ITEM_TYPE_APPLICATION);
+							gnome_desktop_item_set_string (
+								ditem, GNOME_DESKTOP_ITEM_ENCODING, "UTF-8");
+							gnome_desktop_item_set_string (
+								ditem, GNOME_DESKTOP_ITEM_CATEGORIES, "GNOME;Application;");
+							gnome_desktop_item_set_string (
+								ditem, GNOME_DESKTOP_ITEM_ONLY_SHOW_IN, "GNOME;");
 
-				for (i = 0; i < strlen (exec_string); ++i) {
-					if (g_ascii_isspace (exec_string [i])) {
-						cmd_string = g_strndup (exec_string, i);
-						arg_string = g_strdup (& exec_string [i + 1]);
+							gnome_desktop_item_save (ditem, NULL, TRUE, NULL);
+
+							g_free (path);
+
+							break;
+						}
+
+						g_strfreev (argv);
+						g_free (cmd_path);
 					}
+
+					for (node_j = screensavers; node_j; node_j = node_j->next)
+						g_free (node_j->data);
+
+					g_list_free (screensavers);
+				}
+				else if (system_tile_type == 4)
+					ditem = libslab_gnome_desktop_item_new_from_unknown_id (LOGOUT_DESKTOP_ITEM);
+				else
+					ditem = NULL;
+
+				if (ditem) {
+					loc = gnome_desktop_item_get_location (ditem);
+
+					if (g_path_is_absolute (loc))
+						uri = g_filename_to_uri (loc, NULL, NULL);
+					else
+						uri = g_strdup (loc);
+				}
+				else
+					uri = NULL;
+
+				if (uri) {
+					libslab_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+					libslab_bookmark_file_add_application (
+						bm_file, uri,
+						gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+						gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+
+					name = gnome_desktop_item_get_string (ditem, GNOME_DESKTOP_ITEM_NAME);
+
+					if (! strcmp (name, "Yelp"))
+						libslab_bookmark_file_set_title (bm_file, uri, _("Help"));
+
+					if (! strcmp (name, "Session Logout Dialog"))
+						libslab_bookmark_file_set_title (bm_file, uri, _("Logout"));
+
+					if (! strcmp (name, "System Shutdown Dialog"))
+						libslab_bookmark_file_set_title (bm_file, uri, _("Shutdown"));
 				}
 
-				cmd_string = g_find_program_in_path (cmd_string);
+				g_free (uri);
 
-				if (cmd_string) {
-					ditem = gnome_desktop_item_new ();
-
-					path = g_build_filename (
-						data_dir, "lockscreen.desktop", NULL);
-
-					gnome_desktop_item_set_location_file (ditem, path);
-					gnome_desktop_item_set_string (
-						ditem, GNOME_DESKTOP_ITEM_NAME, _("Lock Screen"));
-					gnome_desktop_item_set_string (
-						ditem, GNOME_DESKTOP_ITEM_ICON, _("gnome-lockscreen"));
-					gnome_desktop_item_set_string (
-						ditem, GNOME_DESKTOP_ITEM_EXEC, exec_string);
-					gnome_desktop_item_set_boolean (
-						ditem, GNOME_DESKTOP_ITEM_TERMINAL, FALSE);
-					gnome_desktop_item_set_entry_type (
-						ditem, GNOME_DESKTOP_ITEM_TYPE_APPLICATION);
-					gnome_desktop_item_set_string (
-						ditem, GNOME_DESKTOP_ITEM_ENCODING, "UTF-8");
-					gnome_desktop_item_set_string (
-						ditem, GNOME_DESKTOP_ITEM_CATEGORIES, "GNOME;Application;");
-					gnome_desktop_item_set_string (
-						ditem, GNOME_DESKTOP_ITEM_ONLY_SHOW_IN, "GNOME;");
-
-					gnome_desktop_item_save (ditem, NULL, TRUE, NULL);
-
-					break;
-				}
-
-				g_free (cmd_string);
-				g_free (arg_string);
-				g_free (exec_string);
+				if (ditem)
+					gnome_desktop_item_unref (ditem);
 			}
 
-			g_list_free (screensavers);
+			libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
 
-			ditem_id = path;
+			if (error)
+				libslab_handle_g_error (
+					& error,
+					"%s: cannot save migrated system item list [%s]",
+					G_STRFUNC, bookmark_path);
+
+			libslab_bookmark_file_free (bm_file);
 		}
-		else if (system_tile_type == 4) {
-			ditem_id = g_strdup (LOGOUT_DESKTOP_ITEM);
-
-			node_i->data = GINT_TO_POINTER (5);
-
-			node_i = node_i->prev;
-		}
-		else if (system_tile_type == 5)
-			ditem_id = g_strdup (SHUTDOWN_DESKTOP_ITEM);
-		else
-			ditem_id = NULL;
-
-		ditem = libslab_gnome_desktop_item_new_from_unknown_id (ditem_id);
-
-		if (ditem) {
-			loc = gnome_desktop_item_get_location (ditem);
-
-			if (g_path_is_absolute (loc))
-				uri = g_filename_to_uri (loc, NULL, NULL);
-			else
-				uri = g_strdup (loc);
-		}
-		else
-			uri = NULL;
-
-		if (uri) {
-			libslab_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
-			libslab_bookmark_file_add_application (
-				bm_file, uri,
-				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
-				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
-
-			name = gnome_desktop_item_get_string (ditem, GNOME_DESKTOP_ITEM_NAME);
-
-			if (! strcmp (name, "Yelp"))
-				libslab_bookmark_file_set_title (bm_file, uri, _("Help"));
-
-			if (! strcmp (name, "Session Logout Dialog"))
-				libslab_bookmark_file_set_title (bm_file, uri, _("Logout"));
-
-			if (! strcmp (name, "System Shutdown Dialog"))
-				libslab_bookmark_file_set_title (bm_file, uri, _("Shutdown"));
-		}
-
-		g_free (uri);
-		g_free (ditem_id);
-
-		if (ditem)
-			gnome_desktop_item_unref (ditem);
 	}
 
-	libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
-
-	if (error)
-		libslab_handle_g_error (
-			& error,
-			"%s: cannot save migrated system item list [%s]",
-			G_STRFUNC, bookmark_path);
-
-	libslab_bookmark_file_free (bm_file);
-
 	g_list_free (gconf_system_list);
-	g_free (data_dir);
 
 exit:
 

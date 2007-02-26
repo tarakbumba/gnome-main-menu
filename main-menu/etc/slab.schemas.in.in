@@ -5,7 +5,7 @@
 			<applyto>/desktop/gnome/applications/main-menu/uninstall_package_command</applyto>
 			<owner>gnome-main-menu</owner>
 			<type>string</type>
-			<default>zen-remover PACKAGE_NAME</default>
+			<default>package-manager --remove PACKAGE_NAME</default>
 			<locale name="C">
 				<short>command to uninstall packages</short>
 				<long>command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command</long>
@@ -17,7 +17,7 @@
 			<applyto>/desktop/gnome/applications/main-menu/upgrade_package_command</applyto>
 			<owner>gnome-main-menu</owner>
 			<type>string</type>
-			<default>zen-updater --no-tray PACKAGE_NAME</default>
+			<default>package-manager --update PACKAGE_NAME</default>
 			<locale name="C">
 				<short>command to upgrade packages</short>
 				<long>command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command</long>
