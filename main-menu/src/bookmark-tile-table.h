@@ -43,8 +43,8 @@ typedef struct {
 	TileTableClass tile_table_class;
 
 	gchar *     (* get_store_path)        (gboolean);
-	void        (* update_bookmark_store) (LibSlabBookmarkFile *, LibSlabBookmarkFile *, const gchar *);
-	GtkWidget * (* get_tile)              (LibSlabBookmarkFile *, const gchar *);
+	void        (* update_bookmark_store) (GBookmarkFile *, GBookmarkFile *, const gchar *);
+	GtkWidget * (* get_tile)              (GBookmarkFile *, const gchar *);
 } BookmarkTileTableClass;
 
 GType bookmark_tile_table_get_type (void);

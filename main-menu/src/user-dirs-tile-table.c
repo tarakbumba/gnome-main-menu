@@ -39,9 +39,9 @@ typedef struct {
 
 static void user_dirs_tile_table_finalize (GObject *);
 
-static void update_store (LibSlabBookmarkFile *, LibSlabBookmarkFile *, const gchar *);
+static void update_store (GBookmarkFile *, GBookmarkFile *, const gchar *);
 
-static GtkWidget *get_directory_tile (LibSlabBookmarkFile *, const gchar *);
+static GtkWidget *get_directory_tile (GBookmarkFile *, const gchar *);
 
 static void sync_gtk_bookmarks_to_store (UserDirsTileTable *);
 
@@ -120,7 +120,7 @@ user_dirs_tile_table_finalize (GObject *g_obj)
 }
 
 static void
-update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new,
+update_store (GBookmarkFile *bm_file_old, GBookmarkFile *bm_file_new,
               const gchar *uri)
 {
 	gchar    *title;
@@ -128,15 +128,15 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 	gboolean  found;
 
 
-	libslab_bookmark_file_set_mime_type   (bm_file_new, uri, "inode/directory");
-	libslab_bookmark_file_add_application (bm_file_new, uri, "nautilus", "nautilus --browser %u");
+	g_bookmark_file_set_mime_type   (bm_file_new, uri, "inode/directory");
+	g_bookmark_file_add_application (bm_file_new, uri, "nautilus", "nautilus --browser %u");
 
 	if (bm_file_old) {
-		title = libslab_bookmark_file_get_title (bm_file_old, uri, NULL);
-		libslab_bookmark_file_set_title (bm_file_new, uri, title);
+		title = g_bookmark_file_get_title (bm_file_old, uri, NULL);
+		g_bookmark_file_set_title (bm_file_new, uri, title);
 
-		found = libslab_bookmark_file_get_icon (bm_file_old, uri, & icon, NULL, NULL);
-		libslab_bookmark_file_set_icon (bm_file_new, uri, icon, NULL);
+		found = g_bookmark_file_get_icon (bm_file_old, uri, & icon, NULL, NULL);
+		g_bookmark_file_set_icon (bm_file_new, uri, icon, NULL);
 
 		g_free (title);
 		g_free (icon);
@@ -144,7 +144,7 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 }
 
 static GtkWidget *
-get_directory_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
+get_directory_tile (GBookmarkFile *bm_file, const gchar *uri)
 {
 	gchar *title   = NULL;
 	gchar *path;
@@ -224,7 +224,7 @@ get_directory_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 
 	if (uri_new) {
 		if (! title && bm_file)
-			title = libslab_bookmark_file_get_title (bm_file, uri, NULL);
+			title = g_bookmark_file_get_title (bm_file, uri, NULL);
 
 		tile = directory_tile_new (uri_new, title, icon);
 	}
@@ -244,7 +244,7 @@ sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
 
 	gchar *path;
 
-	LibSlabBookmarkFile *bm_file;
+	GBookmarkFile *bm_file;
 
 	gchar **uris;
 	gchar **groups;
@@ -259,17 +259,17 @@ sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
 
 	path = libslab_get_user_dirs_store_path (FALSE);
 
-	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path, NULL);
+	bm_file = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file, path, NULL);
 
-	uris = libslab_bookmark_file_get_uris (bm_file, NULL);
+	uris = g_bookmark_file_get_uris (bm_file, NULL);
 
 	for (i = 0; uris && uris [i]; ++i) {
-		groups = libslab_bookmark_file_get_groups (bm_file, uris [i], NULL, NULL);
+		groups = g_bookmark_file_get_groups (bm_file, uris [i], NULL, NULL);
 
 		for (j = 0; groups && groups [j]; ++j) {
 			if (! strcmp (groups [j], "gtk-bookmarks")) {
-				libslab_bookmark_file_remove_item (bm_file, uris [i], NULL);
+				g_bookmark_file_remove_item (bm_file, uris [i], NULL);
 
 				break;
 			}
@@ -286,11 +286,11 @@ sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
 
 	for (i = 0; folders && folders [i]; ++i) {
 		if (strlen (folders [i]) > 0) {
-			libslab_bookmark_file_set_mime_type (
+			g_bookmark_file_set_mime_type (
 				bm_file, folders [i], "inode/directory");
-			libslab_bookmark_file_add_application (
+			g_bookmark_file_add_application (
 				bm_file, folders [i], "nautilus", "nautilus --browser %u");
-			libslab_bookmark_file_add_group (
+			g_bookmark_file_add_group (
 				bm_file, folders [i], "gtk-bookmarks");
 		}
 	}
@@ -298,7 +298,7 @@ sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
 	g_free (path);
 
 	path = libslab_get_user_dirs_store_path (TRUE);
-	libslab_bookmark_file_to_file (bm_file, path, & error);
+	g_bookmark_file_to_file (bm_file, path, & error);
 
 	if (error)
 		libslab_handle_g_error (
@@ -309,7 +309,7 @@ sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
 	g_strfreev (folders);
 	g_free (buf);
 
-	libslab_bookmark_file_free (bm_file);
+	g_bookmark_file_free (bm_file);
 }
 
 static void

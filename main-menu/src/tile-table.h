@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 #define IS_TILE_TABLE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), TILE_TABLE_TYPE))
 #define TILE_TABLE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TILE_TABLE_TYPE, TileTableClass))
 
-#define TILE_TABLE_UPDATE_SIGNAL    "update"
+#define TILE_TABLE_REORDER_SIGNAL   "reordered"
 #define TILE_TABLE_URI_ADDED_SIGNAL "uri-added"
 
 #define TILE_TABLE_TILES_PROP   "tile-list"
@@ -47,7 +47,7 @@ typedef struct {
 	guint32 time;
 
 	GList *tiles;
-} TileTableUpdateEvent;
+} TileTableReorderEvent;
 
 typedef struct {
 	guint32 time;
@@ -59,7 +59,7 @@ typedef struct {
 	GtkTableClass gtk_table_class;
 
 	void (* reload)    (TileTable *);
-	void (* update)    (TileTable *, TileTableUpdateEvent *);
+	void (* reorder)   (TileTable *, TileTableReorderEvent *);
 	void (* uri_added) (TileTable *, TileTableURIAddedEvent *);
 } TileTableClass;
 

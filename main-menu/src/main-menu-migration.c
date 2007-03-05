@@ -62,8 +62,8 @@ migrate_system_gconf_to_bookmark_file ()
 {
 	gchar *bookmark_path;
 
-	LibSlabBookmarkFile  *bm_file;
-	gchar               **uris;
+	GBookmarkFile  *bm_file;
+	gchar         **uris;
 
 	gboolean need_migration;
 
@@ -90,9 +90,9 @@ migrate_system_gconf_to_bookmark_file ()
 	bookmark_path = libslab_get_system_item_store_path (TRUE);
 
 	if (g_file_test (bookmark_path, G_FILE_TEST_EXISTS)) {
-		bm_file = libslab_bookmark_file_new ();
+		bm_file = g_bookmark_file_new ();
 
-		libslab_bookmark_file_load_from_file (bm_file, bookmark_path, & error);
+		g_bookmark_file_load_from_file (bm_file, bookmark_path, & error);
 
 		if (error) {
 			libslab_handle_g_error (
@@ -100,20 +100,20 @@ migrate_system_gconf_to_bookmark_file ()
 				G_STRFUNC, bookmark_path);
 		}
 		else {
-			uris = libslab_bookmark_file_get_uris (bm_file, NULL);
+			uris = g_bookmark_file_get_uris (bm_file, NULL);
 
 			for (i = 0; uris && uris [i]; ++i) {
 				if (g_str_has_suffix (uris [i], "yelp.desktop"))
-					libslab_bookmark_file_set_title (bm_file, uris [i], _("Help"));
+					g_bookmark_file_set_title (bm_file, uris [i], _("Help"));
 				else if (g_str_has_suffix (uris [i], "gnome-session-logout.desktop"))
-					libslab_bookmark_file_set_title (bm_file, uris [i], _("Logout"));
+					g_bookmark_file_set_title (bm_file, uris [i], _("Logout"));
 				else if (g_str_has_suffix (uris [i], "gnome-session-shutdown.desktop"))
-					libslab_bookmark_file_set_title (bm_file, uris [i], _("Shutdown"));
+					g_bookmark_file_set_title (bm_file, uris [i], _("Shutdown"));
 				else
 					/* do nothing */ ;
 			}
 
-			libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
+			g_bookmark_file_to_file (bm_file, bookmark_path, & error);
 
 			if (error)
 				libslab_handle_g_error (
@@ -123,7 +123,7 @@ migrate_system_gconf_to_bookmark_file ()
 			g_strfreev (uris);
 		}
 
-		libslab_bookmark_file_free (bm_file);
+		g_bookmark_file_free (bm_file);
 
 		goto exit;
 	}
@@ -137,7 +137,7 @@ migrate_system_gconf_to_bookmark_file ()
 			need_migration |= ! (GPOINTER_TO_INT (node_i->data) == i);
 
 		if (need_migration) {
-			bm_file = libslab_bookmark_file_new ();
+			bm_file = g_bookmark_file_new ();
 
 			for (node_i = gconf_system_list; node_i; node_i = node_i->next) {
 				system_tile_type = GPOINTER_TO_INT (node_i->data);
@@ -220,8 +220,8 @@ migrate_system_gconf_to_bookmark_file ()
 					uri = NULL;
 
 				if (uri) {
-					libslab_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
-					libslab_bookmark_file_add_application (
+					g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+					g_bookmark_file_add_application (
 						bm_file, uri,
 						gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
 						gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
@@ -229,13 +229,13 @@ migrate_system_gconf_to_bookmark_file ()
 					name = gnome_desktop_item_get_string (ditem, GNOME_DESKTOP_ITEM_NAME);
 
 					if (! strcmp (name, "Yelp"))
-						libslab_bookmark_file_set_title (bm_file, uri, _("Help"));
+						g_bookmark_file_set_title (bm_file, uri, _("Help"));
 
 					if (! strcmp (name, "Session Logout Dialog"))
-						libslab_bookmark_file_set_title (bm_file, uri, _("Logout"));
+						g_bookmark_file_set_title (bm_file, uri, _("Logout"));
 
 					if (! strcmp (name, "System Shutdown Dialog"))
-						libslab_bookmark_file_set_title (bm_file, uri, _("Shutdown"));
+						g_bookmark_file_set_title (bm_file, uri, _("Shutdown"));
 				}
 
 				g_free (uri);
@@ -244,7 +244,7 @@ migrate_system_gconf_to_bookmark_file ()
 					gnome_desktop_item_unref (ditem);
 			}
 
-			libslab_bookmark_file_to_file (bm_file, bookmark_path, & error);
+			g_bookmark_file_to_file (bm_file, bookmark_path, & error);
 
 			if (error)
 				libslab_handle_g_error (
@@ -252,7 +252,7 @@ migrate_system_gconf_to_bookmark_file ()
 					"%s: cannot save migrated system item list [%s]",
 					G_STRFUNC, bookmark_path);
 
-			libslab_bookmark_file_free (bm_file);
+			g_bookmark_file_free (bm_file);
 		}
 	}
 

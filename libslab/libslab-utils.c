@@ -591,7 +591,7 @@ libslab_add_docs_monitor (GnomeVFSMonitorCallback callback, gpointer user_data)
 static GList *
 get_uri_list (const gchar *path)
 {
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	GBookmarkFile   *bm_file;
 #else
 	EggBookmarkFile *bm_file;
@@ -608,7 +608,7 @@ get_uri_list (const gchar *path)
 	if (! path)
 		return NULL;
 
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	bm_file = g_bookmark_file_new ();
 	g_bookmark_file_load_from_file (bm_file, path, & error);
 #else
@@ -617,7 +617,7 @@ get_uri_list (const gchar *path)
 #endif
 
 	if (! error) {
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 		uris_array = g_bookmark_file_get_uris (bm_file, NULL);
 #else
 		uris_array = egg_bookmark_file_get_uris (bm_file, NULL);
@@ -632,7 +632,7 @@ get_uri_list (const gchar *path)
 
 	g_strfreev (uris_array);
 
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	g_bookmark_file_free (bm_file);
 #else
 	egg_bookmark_file_free (bm_file);
@@ -700,18 +700,18 @@ libslab_remove_user_doc (const gchar *uri)
 static void
 remove_bookmark_item (const gchar *path_old, const gchar *path_new, const gchar *uri)
 {
-	LibSlabBookmarkFile *bm_file;
+	GBookmarkFile *bm_file;
 
 	GError *error = NULL;
 
 
-	bm_file  = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
+	bm_file  = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file, path_old, & error);
 
 	if (! error) {
-		libslab_bookmark_file_remove_item (bm_file, uri, NULL);
+		g_bookmark_file_remove_item (bm_file, uri, NULL);
 
-		libslab_bookmark_file_to_file (bm_file, path_new, & error);
+		g_bookmark_file_to_file (bm_file, path_new, & error);
 
 		if (error)
 			libslab_handle_g_error (
@@ -725,14 +725,14 @@ remove_bookmark_item (const gchar *path_old, const gchar *path_new, const gchar 
 			"%s: couldn't open bookmark file [%s]",
 			G_STRFUNC, path_old);
 
-	libslab_bookmark_file_free (bm_file);
+	g_bookmark_file_free (bm_file);
 }
 
 void
 libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
                       const gchar *app_name, const gchar *app_exec)
 {
-	LibSlabBookmarkFile *bm_file;
+	GBookmarkFile *bm_file;
 
 	gchar *path_old;
 	gchar *path_new;
@@ -743,15 +743,15 @@ libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
 	path_old = libslab_get_user_docs_store_path (FALSE);
 	path_new = libslab_get_user_docs_store_path (TRUE);
 
-	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
+	bm_file = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file, path_old, & error);
 
 	if (! error) {
-		libslab_bookmark_file_set_mime_type   (bm_file, uri, mime_type);
-		libslab_bookmark_file_set_modified    (bm_file, uri, modified);
-		libslab_bookmark_file_add_application (bm_file, uri, app_name, app_exec);
+		g_bookmark_file_set_mime_type   (bm_file, uri, mime_type);
+		g_bookmark_file_set_modified    (bm_file, uri, modified);
+		g_bookmark_file_add_application (bm_file, uri, app_name, app_exec);
 
-		libslab_bookmark_file_to_file (bm_file, path_new, & error);
+		g_bookmark_file_to_file (bm_file, path_new, & error);
 
 		if (error)
 			libslab_handle_g_error (
@@ -765,7 +765,7 @@ libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
 			"%s: couldn't open bookmark file [%s]",
 			G_STRFUNC, path_old);
 
-	libslab_bookmark_file_free (bm_file);
+	g_bookmark_file_free (bm_file);
 }
 
 gboolean
@@ -879,25 +879,25 @@ libslab_spawn_command (const gchar *cmd)
 static gboolean
 store_has_uri (const gchar *path, const gchar *uri)
 {
-	LibSlabBookmarkFile *bm_file;
+	GBookmarkFile *bm_file;
 
 	gboolean exists = FALSE;
 
 	GError *error = NULL;
 
 
-	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path, & error);
+	bm_file = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file, path, & error);
 
 	if (! error)
-		exists = libslab_bookmark_file_has_item (bm_file, uri);
+		exists = g_bookmark_file_has_item (bm_file, uri);
 	else
 		libslab_handle_g_error (
 			& error,
 			"%s: couldn't open bookmark file [%s]",
 			G_STRFUNC, path);
 
-	libslab_bookmark_file_free (bm_file);
+	g_bookmark_file_free (bm_file);
 
 	return exists;
 }
@@ -905,7 +905,7 @@ store_has_uri (const gchar *path, const gchar *uri)
 static void
 save_uri_list (const gchar *filename, const GList *uris)
 {
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	GBookmarkFile *bm_file;
 #else
 	EggBookmarkFile *bm_file;
@@ -921,7 +921,7 @@ save_uri_list (const gchar *filename, const GList *uris)
 
 	path = get_data_file_path (filename, TRUE);
 
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	bm_file = g_bookmark_file_new ();
 #else
 	bm_file = egg_bookmark_file_new ();
@@ -930,7 +930,7 @@ save_uri_list (const gchar *filename, const GList *uris)
 	for (node = uris; node; node = node->next) {
 		uri = (gchar *) node->data;
 
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 		g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
 		g_bookmark_file_add_application (bm_file, uri, NULL, NULL);
 #else
@@ -939,7 +939,7 @@ save_uri_list (const gchar *filename, const GList *uris)
 #endif
 	}
 
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	g_bookmark_file_to_file (bm_file, path, & error);
 #else
 	egg_bookmark_file_to_file (bm_file, path, & error);
@@ -950,7 +950,7 @@ save_uri_list (const gchar *filename, const GList *uris)
 			& error, "%s: cannot save uri list [%s]",
 			G_STRFUNC, path);
 
-#ifdef USE_G_BOOKMARK
+#if GLIB_CHECK_VERSION (2, 12, 0)
 	g_bookmark_file_free (bm_file);
 #else
 	egg_bookmark_file_free (bm_file);

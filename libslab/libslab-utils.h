@@ -7,64 +7,6 @@
 #include <libgnome/gnome-desktop-item.h>
 #include <libgnomevfs/gnome-vfs.h>
 
-#if GLIB_CHECK_VERSION (2, 12, 0)
-#	define USE_G_BOOKMARK
-
-#	define LibSlabBookmarkFile                    GBookmarkFile
-
-#	define libslab_bookmark_file_new              g_bookmark_file_new
-#	define libslab_bookmark_file_free             g_bookmark_file_free
-
-#	define libslab_bookmark_file_load_from_file   g_bookmark_file_load_from_file
-#	define libslab_bookmark_file_to_file          g_bookmark_file_to_file
-
-#	define libslab_bookmark_file_has_item         g_bookmark_file_has_item
-#	define libslab_bookmark_file_remove_item      g_bookmark_file_remove_item
-#	define libslab_bookmark_file_get_uris         g_bookmark_file_get_uris
-#	define libslab_bookmark_file_get_title        g_bookmark_file_get_title
-#	define libslab_bookmark_file_set_title        g_bookmark_file_set_title
-#	define libslab_bookmark_file_get_mime_type    g_bookmark_file_get_mime_type
-#	define libslab_bookmark_file_set_mime_type    g_bookmark_file_set_mime_type
-#	define libslab_bookmark_file_get_modified     g_bookmark_file_get_modified
-#	define libslab_bookmark_file_set_modified     g_bookmark_file_set_modified
-#	define libslab_bookmark_file_get_icon         g_bookmark_file_get_icon
-#	define libslab_bookmark_file_set_icon         g_bookmark_file_set_icon
-#	define libslab_bookmark_file_get_applications g_bookmark_file_get_applications
-#	define libslab_bookmark_file_add_application  g_bookmark_file_add_application
-#	define libslab_bookmark_file_get_app_info     g_bookmark_file_get_app_info
-#	define libslab_bookmark_file_get_groups       g_bookmark_file_get_groups
-#	define libslab_bookmark_file_add_group        g_bookmark_file_add_group
-#	define libslab_bookmark_file_move_item        g_bookmark_file_move_item
-#else
-#	include "eggbookmarkfile.h"
-
-#	define LibSlabBookmarkFile                    EggBookmarkFile
-
-#	define libslab_bookmark_file_new              egg_bookmark_file_new
-#	define libslab_bookmark_file_free             egg_bookmark_file_free
-
-#	define libslab_bookmark_file_load_from_file   egg_bookmark_file_load_from_file
-#	define libslab_bookmark_file_to_file          egg_bookmark_file_to_file
-
-#	define libslab_bookmark_file_has_item         egg_bookmark_file_has_item
-#	define libslab_bookmark_file_remove_item      egg_bookmark_file_remove_item
-#	define libslab_bookmark_file_get_uris         egg_bookmark_file_get_uris
-#	define libslab_bookmark_file_get_title        egg_bookmark_file_get_title
-#	define libslab_bookmark_file_set_title        egg_bookmark_file_set_title
-#	define libslab_bookmark_file_get_mime_type    egg_bookmark_file_get_mime_type
-#	define libslab_bookmark_file_set_mime_type    egg_bookmark_file_set_mime_type
-#	define libslab_bookmark_file_get_modified     egg_bookmark_file_get_modified
-#	define libslab_bookmark_file_set_modified     egg_bookmark_file_set_modified
-#	define libslab_bookmark_file_get_icon         egg_bookmark_file_get_icon
-#	define libslab_bookmark_file_set_icon         egg_bookmark_file_set_icon
-#	define libslab_bookmark_file_add_application  egg_bookmark_file_add_application
-#	define libslab_bookmark_file_get_applications egg_bookmark_file_get_applications
-#	define libslab_bookmark_file_get_app_info     egg_bookmark_file_get_app_info
-#	define libslab_bookmark_file_get_groups       egg_bookmark_file_get_groups
-#	define libslab_bookmark_file_add_group        egg_bookmark_file_add_group
-#	define libslab_bookmark_file_move_item        egg_bookmark_file_move_item
-#endif
-
 G_BEGIN_DECLS
 
 gboolean          libslab_gtk_image_set_by_id (GtkImage *image, const gchar *id);

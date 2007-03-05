@@ -10,6 +10,9 @@ libslab_la_SOURCES =				\
 	app-shell.c				\
 	app-shell-startup.c			\
 	application-tile.c			\
+	bookmark-agent.h			\
+	bookmark-agent-egg.h			\
+	bookmark-agent.c			\
 	directory-tile.c			\
 	document-tile.c				\
 	double-click-detector.c			\

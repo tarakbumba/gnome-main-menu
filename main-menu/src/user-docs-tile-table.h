@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#include "bookmark-tile-table.h"
+#include "tile-table.h"
 
 G_BEGIN_DECLS
 
@@ -35,11 +35,11 @@ G_BEGIN_DECLS
 #define USER_DOCS_TILE_TABLE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), USER_DOCS_TILE_TABLE_TYPE, UserDocsTileTableClass))
 
 typedef struct {
-	BookmarkTileTable bookmark_tile_table;
+	TileTable tile_table;
 } UserDocsTileTable;
 
 typedef struct {
-	BookmarkTileTableClass bookmark_tile_table_class;
+	TileTableClass tile_table_class;
 } UserDocsTileTableClass;
 
 GType user_docs_tile_table_get_type (void);

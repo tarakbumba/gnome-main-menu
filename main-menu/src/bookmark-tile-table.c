@@ -34,7 +34,7 @@ typedef struct {
 
 static void bookmark_tile_table_finalize (GObject *);
 
-static void bookmark_tile_table_update    (TileTable *, TileTableUpdateEvent   *);
+static void bookmark_tile_table_update    (TileTable *, TileTableReorderEvent  *);
 static void bookmark_tile_table_uri_added (TileTable *, TileTableURIAddedEvent *);
 
 static void reload_tiles   (TileTable *);
@@ -52,7 +52,7 @@ bookmark_tile_table_class_init (BookmarkTileTableClass *this_class)
 	g_obj_class->finalize = bookmark_tile_table_finalize;
 
 	tile_table_class->reload    = reload_tiles;
-	tile_table_class->update    = bookmark_tile_table_update;
+	tile_table_class->reorder   = bookmark_tile_table_update;
 	tile_table_class->uri_added = bookmark_tile_table_uri_added;
 
 	g_type_class_add_private (this_class, sizeof (BookmarkTileTablePrivate));
@@ -81,13 +81,13 @@ bookmark_tile_table_finalize (GObject *g_obj)
 }
 
 static void
-bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
+bookmark_tile_table_update (TileTable *this, TileTableReorderEvent *event)
 {
 	gchar *path_old;
 	gchar *path_new;
 
-	LibSlabBookmarkFile *bm_file_old;
-	LibSlabBookmarkFile *bm_file_new;
+	GBookmarkFile *bm_file_old;
+	GBookmarkFile *bm_file_new;
 
 	GError *error = NULL;
 
@@ -100,10 +100,10 @@ bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 	if (! path_new)
 		goto exit;
 
-	bm_file_old = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file_old, path_old, & error);
+	bm_file_old = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file_old, path_old, & error);
 
-	bm_file_new = libslab_bookmark_file_new ();
+	bm_file_new = g_bookmark_file_new ();
 
 	for (node = event->tiles; node; node = node->next)
 		BOOKMARK_TILE_TABLE_GET_CLASS (this)->update_bookmark_store (
@@ -114,7 +114,7 @@ bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 		error = NULL;
 	}
 
-	libslab_bookmark_file_to_file (bm_file_new, path_new, & error);
+	g_bookmark_file_to_file (bm_file_new, path_new, & error);
 
 	if (error)
 		libslab_handle_g_error (
@@ -122,8 +122,8 @@ bookmark_tile_table_update (TileTable *this, TileTableUpdateEvent *event)
 			"%s: couldn't save bookmark file [%s]",
 			G_STRFUNC, path_new);
 
-	libslab_bookmark_file_free (bm_file_old);
-	libslab_bookmark_file_free (bm_file_new);
+	g_bookmark_file_free (bm_file_old);
+	g_bookmark_file_free (bm_file_new);
 
 	g_free (path_new);
 
@@ -138,7 +138,7 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 	gchar *path_old;
 	gchar *path_new;
 
-	LibSlabBookmarkFile *bm_file;
+	GBookmarkFile *bm_file;
 
 	GError *error = NULL;
 
@@ -149,14 +149,14 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 	if (! path_new)
 		goto exit;
 
-	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path_old, & error);
+	bm_file = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file, path_old, & error);
 
-	if (! (error || libslab_bookmark_file_has_item (bm_file, event->uri))) {
+	if (! (error || g_bookmark_file_has_item (bm_file, event->uri))) {
 		BOOKMARK_TILE_TABLE_GET_CLASS (this)->update_bookmark_store (
 			NULL, bm_file, event->uri);
 
-		libslab_bookmark_file_to_file (bm_file, path_new, & error);
+		g_bookmark_file_to_file (bm_file, path_new, & error);
 
 		if (error)
 			libslab_handle_g_error (
@@ -172,7 +172,7 @@ bookmark_tile_table_uri_added (TileTable *this, TileTableURIAddedEvent *event)
 	else
 		/* do nothing */ ;
 
-	libslab_bookmark_file_free (bm_file);
+	g_bookmark_file_free (bm_file);
 
 	g_free (path_new);
 
@@ -185,7 +185,7 @@ static void
 reload_tiles (TileTable *this)
 {
 	gchar *path;
-	LibSlabBookmarkFile *bm_file;
+	GBookmarkFile *bm_file;
 	gchar **uris = NULL;
 
 	GtkWidget *tile;
@@ -199,11 +199,11 @@ reload_tiles (TileTable *this)
 
 	path = BOOKMARK_TILE_TABLE_GET_CLASS (this)->get_store_path (FALSE);
 
-	bm_file = libslab_bookmark_file_new ();
-	libslab_bookmark_file_load_from_file (bm_file, path, & error);
+	bm_file = g_bookmark_file_new ();
+	g_bookmark_file_load_from_file (bm_file, path, & error);
 
 	if (! error) {
-		uris = libslab_bookmark_file_get_uris (bm_file, NULL);
+		uris = g_bookmark_file_get_uris (bm_file, NULL);
 
 		for (i = 0; uris && uris [i]; ++i) {
 			tile = BOOKMARK_TILE_TABLE_GET_CLASS (this)->get_tile (bm_file, uris [i]);
@@ -222,7 +222,7 @@ reload_tiles (TileTable *this)
 			"%s: couldn't load bookmark file [%s]",
 			G_STRFUNC, path);
 
-	libslab_bookmark_file_free (bm_file);
+	g_bookmark_file_free (bm_file);
 	g_list_free (tiles);
 
 	update_monitor (BOOKMARK_TILE_TABLE (this));

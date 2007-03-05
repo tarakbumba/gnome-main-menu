@@ -29,9 +29,9 @@
 
 G_DEFINE_TYPE (UserAppsTileTable, user_apps_tile_table, BOOKMARK_TILE_TABLE_TYPE)
 
-static void update_store (LibSlabBookmarkFile *, LibSlabBookmarkFile *, const gchar *);
+static void update_store (GBookmarkFile *, GBookmarkFile *, const gchar *);
 
-static GtkWidget *get_application_tile (LibSlabBookmarkFile *, const gchar *);
+static GtkWidget *get_application_tile (GBookmarkFile *, const gchar *);
 
 GtkWidget *
 user_apps_tile_table_new ()
@@ -65,7 +65,7 @@ user_apps_tile_table_init (UserAppsTileTable *this)
 }
 
 static void
-update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new,
+update_store (GBookmarkFile *bm_file_old, GBookmarkFile *bm_file_new,
               const gchar *uri)
 {
 	gint uri_len;
@@ -76,13 +76,13 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 	uri_len = strlen (uri);
 
 	if (! strcmp (& uri [uri_len - 8], ".desktop")) {
-		libslab_bookmark_file_set_mime_type   (bm_file_new, uri, "application/x-desktop");
-		libslab_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
+		g_bookmark_file_set_mime_type   (bm_file_new, uri, "application/x-desktop");
+		g_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
 	}
 }
 
 static GtkWidget *
-get_application_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
+get_application_tile (GBookmarkFile *bm_file, const gchar *uri)
 {
 	gint uri_len = strlen (uri);
 

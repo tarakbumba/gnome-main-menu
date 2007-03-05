@@ -27,25 +27,46 @@
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "document-tile.h"
+#include "bookmark-agent.h"
 #include "libslab-utils.h"
 
-G_DEFINE_TYPE (UserDocsTileTable, user_docs_tile_table, BOOKMARK_TILE_TABLE_TYPE)
+G_DEFINE_TYPE (UserDocsTileTable, user_docs_tile_table, TILE_TABLE_TYPE)
 
-static void update_store (LibSlabBookmarkFile *, LibSlabBookmarkFile *, const gchar *);
+typedef struct {
+	BookmarkAgent *agent;
+} UserDocsTileTablePrivate;
 
-static GtkWidget *get_document_tile (LibSlabBookmarkFile *, const gchar *);
+#define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), USER_DOCS_TILE_TABLE_TYPE, UserDocsTileTablePrivate))
+
+static void finalize     (GObject *);
+static void reload_tiles (TileTable *);
+static void reorder      (TileTable *, TileTableReorderEvent  *);
+static void uri_added    (TileTable *, TileTableURIAddedEvent *);
+
+static void agent_update_cb (BookmarkAgent *, gpointer);
 
 GtkWidget *
 user_docs_tile_table_new ()
 {
-	GObject *this = g_object_new (
+	UserDocsTileTable        *this;
+	UserDocsTileTablePrivate *priv;
+	
+	
+	this = g_object_new (
 		USER_DOCS_TILE_TABLE_TYPE,
 		"n-columns",             2,
 		"homogeneous",           TRUE,
 		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_PUSH_PULL,
 		NULL);
+	priv = PRIVATE (this);
+
+	priv->agent = bookmark_agent_get_instance ();
 
 	tile_table_reload (TILE_TABLE (this));
+
+	g_signal_connect (
+		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
+		G_CALLBACK (agent_update_cb), this);
 
 	return GTK_WIDGET (this);
 }
@@ -53,159 +74,116 @@ user_docs_tile_table_new ()
 static void
 user_docs_tile_table_class_init (UserDocsTileTableClass *this_class)
 {
-	BookmarkTileTableClass *bookmark_tile_table_class = BOOKMARK_TILE_TABLE_CLASS (this_class);
+	GObjectClass   *g_obj_class      = G_OBJECT_CLASS   (this_class);
+	TileTableClass *tile_table_class = TILE_TABLE_CLASS (this_class);
 
-	bookmark_tile_table_class->get_store_path        = libslab_get_user_docs_store_path;
-	bookmark_tile_table_class->update_bookmark_store = update_store;
-	bookmark_tile_table_class->get_tile              = get_document_tile;
+	g_obj_class->finalize = finalize;
+
+	tile_table_class->reload    = reload_tiles;
+	tile_table_class->reorder   = reorder;
+	tile_table_class->uri_added = uri_added;
+
+	g_type_class_add_private (this_class, sizeof (UserDocsTileTablePrivate));
 }
 
 static void
 user_docs_tile_table_init (UserDocsTileTable *this)
 {
-	/* nothing to init */
+	PRIVATE (this)->agent = NULL;
 }
 
 static void
-update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new,
-              const gchar *uri)
+finalize (GObject *g_obj)
 {
-	gchar   *mime_type = NULL;
-	time_t   modified  = 0;
-	gchar  **apps      = NULL;
-	gchar  **exec      = NULL;
-	gsize    n_apps    = 0;
+	g_object_unref (G_OBJECT (PRIVATE (g_obj)->agent));
+}
 
-	GnomeVFSFileInfo        *info;
-	GnomeVFSMimeApplication *default_app;
+static void
+reload_tiles (TileTable *this)
+{
+	UserDocsTileTablePrivate *priv = PRIVATE (this);
+
+	BookmarkItem **items = NULL;
+	GList         *tiles = NULL;
+	GtkWidget     *tile;
 
 	gint i;
 
 
-	if (bm_file_old) {
-		mime_type = libslab_bookmark_file_get_mime_type    (bm_file_old, uri, NULL);
-		modified  = libslab_bookmark_file_get_modified     (bm_file_old, uri, NULL);
-		apps      = libslab_bookmark_file_get_applications (bm_file_old, uri, & n_apps, NULL);
+	g_object_get (G_OBJECT (priv->agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
 
-		exec = g_new0 (gchar *, n_apps + 1);
+	for (i = 0; items && items [i]; ++i) {
+		tile = document_tile_new (items [i]->uri, items [i]->mime_type, items [i]->mtime);
 
-		for (i = 0; apps && apps [i]; ++i)
-			libslab_bookmark_file_get_app_info (
-				bm_file_old, uri, apps [i], & exec [i], NULL, NULL, NULL);
-
-		exec [n_apps] = NULL;
+		if (tile)
+			tiles = g_list_append (tiles, tile);
 	}
 
-	if (! (mime_type && apps && apps [0])) {
-		info = gnome_vfs_file_info_new ();
-
-		gnome_vfs_get_file_info (
-			uri, info, 
-			GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FORCE_FAST_MIME_TYPE);
-
-		mime_type = g_strdup (info->mime_type);
-		modified  = info->mtime;
-
-		if (mime_type) {
-			default_app = gnome_vfs_mime_get_default_application (mime_type);
-
-			g_strfreev (apps);
-
-			apps = g_new0 (gchar *, 2);
-			exec = g_new0 (gchar *, 2);
-
-			apps [0] = g_strdup (gnome_vfs_mime_application_get_name (default_app));
-			exec [0] = g_strdup (gnome_vfs_mime_application_get_exec (default_app));
-			apps [1] = NULL;
-			exec [1] = NULL;
-
-			gnome_vfs_mime_application_free (default_app);
-		}
-
-		gnome_vfs_file_info_unref (info);
-	}
-
-	if (! (mime_type && apps && apps [0]))
-		g_warning ("Cannot save info for user doc [%s]\n", uri);
-	else {
-		libslab_bookmark_file_set_mime_type (bm_file_new, uri, mime_type);
-		libslab_bookmark_file_set_modified  (bm_file_new, uri, modified);
-
-		for (i = 0; apps [i]; ++i)
-			libslab_bookmark_file_add_application (bm_file_new, uri, apps [i], exec [i]);
-	}
-
-	g_free (mime_type);
-	g_strfreev (apps);
-	g_strfreev (exec);
+	g_object_set (G_OBJECT (this), TILE_TABLE_TILES_PROP, tiles, NULL);
 }
 
-static GtkWidget *
-get_document_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
+static void
+reorder (TileTable *this, TileTableReorderEvent *event)
 {
-	gchar  *mime_type = NULL;
-	time_t  modified  = 0;
+	UserDocsTileTablePrivate *priv = PRIVATE (this);
 
-	gchar *dir;
-	gchar *file;
-	gchar *path;
-	gchar *uri_new;
-
-	GnomeVFSFileInfo *info;
-
-	GtkWidget *tile;
+	gchar **uris;
+	GList  *node;
+	gint    i;
 
 
-	if (! strcmp (uri, "BLANK_SPREADSHEET") || ! strcmp (uri, "BLANK_DOCUMENT")) {
-		dir = g_build_filename (g_get_home_dir (), "Documents", NULL);
-		g_mkdir_with_parents (dir, 0700);
+	uris = g_new0 (gchar *, g_list_length (event->tiles));
 
-		if (! strcmp (uri, "BLANK_SPREADSHEET"))
-			file = g_strconcat (_("New Spreadsheet"), ".ods", NULL);
-		else
-			file = g_strconcat (_("New Document"), ".odt", NULL);
+	for (node = event->tiles, i = 0; node; node = node->next, ++i)
+		uris [i] = g_strdup (TILE (node->data)->uri);
 
-		path = g_build_filename (dir, file, NULL);
+	bookmark_agent_reorder_items (priv->agent, (const gchar **) uris);
 
-		if (! g_file_test (path, G_FILE_TEST_EXISTS))
-			fclose (g_fopen (path, "w"));
+	g_strfreev (uris);
+}
 
-		uri_new = g_filename_to_uri (path, NULL, NULL);
+static void
+uri_added (TileTable *this, TileTableURIAddedEvent *event)
+{
+	UserDocsTileTablePrivate *priv = PRIVATE (this);
 
-		g_free (dir);
-		g_free (file);
-		g_free (path);
+	BookmarkItem item;
+
+	GnomeVFSFileInfo        *info;
+	GnomeVFSMimeApplication *default_app;
+
+
+	item.uri = event->uri;
+
+	info = gnome_vfs_file_info_new ();
+
+	gnome_vfs_get_file_info (
+		item.uri, info, 
+		GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FORCE_FAST_MIME_TYPE);
+
+	item.mime_type = g_strdup (info->mime_type);
+	item.mtime     = info->mtime;
+
+	if (item.mime_type) {
+		default_app = gnome_vfs_mime_get_default_application (item.mime_type);
+
+		item.app_name = g_strdup (gnome_vfs_mime_application_get_name (default_app));
+		item.app_exec = g_strdup (gnome_vfs_mime_application_get_exec (default_app));
+
+		gnome_vfs_mime_application_free (default_app);
+
+		bookmark_agent_add_item (priv->agent, & item);
+
+		g_free (item.mime_type);
+		g_free (item.app_name);
+		g_free (item.app_exec);
 	}
-	else
-		uri_new = g_strdup (uri);
 
-	if (bm_file) {
-		mime_type = libslab_bookmark_file_get_mime_type (bm_file, uri_new, NULL);
-		modified  = libslab_bookmark_file_get_modified  (bm_file, uri_new, NULL);
-	}
+	gnome_vfs_file_info_unref (info);
+}
 
-	if (! mime_type) {
-		info = gnome_vfs_file_info_new ();
-		gnome_vfs_get_file_info (
-			uri_new, info, 
-			GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FORCE_FAST_MIME_TYPE);
-
-		mime_type = g_strdup (info->mime_type);
-		modified  = info->mtime;
-
-		gnome_vfs_file_info_clear (info);
-	}
-
-	if (! mime_type) {
-		g_warning ("Cannot make document tile [%s]\n", uri_new);
-
-		tile = NULL;
-	}
-	else
-		tile = document_tile_new (uri_new, mime_type, modified);
-
-	g_free (mime_type);
-	g_free (uri_new);
-
-	return tile;
+static void
+agent_update_cb (BookmarkAgent *agent, gpointer user_data)
+{
+	reload_tiles (TILE_TABLE (user_data));
 }

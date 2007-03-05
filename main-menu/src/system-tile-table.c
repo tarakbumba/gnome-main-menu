@@ -27,9 +27,9 @@
 
 G_DEFINE_TYPE (SystemTileTable, system_tile_table, BOOKMARK_TILE_TABLE_TYPE)
 
-static void update_store (LibSlabBookmarkFile *, LibSlabBookmarkFile *, const gchar *);
+static void update_store (GBookmarkFile *, GBookmarkFile *, const gchar *);
 
-static GtkWidget *get_system_tile (LibSlabBookmarkFile *, const gchar *);
+static GtkWidget *get_system_tile (GBookmarkFile *, const gchar *);
 
 GtkWidget *
 system_tile_table_new ()
@@ -63,7 +63,7 @@ system_tile_table_init (SystemTileTable *this)
 }
 
 static void
-update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new,
+update_store (GBookmarkFile *bm_file_old, GBookmarkFile *bm_file_new,
               const gchar *uri)
 {
 	gchar *title = NULL;
@@ -78,20 +78,20 @@ update_store (LibSlabBookmarkFile *bm_file_old, LibSlabBookmarkFile *bm_file_new
 	if (strcmp (& uri [uri_len - 8], ".desktop"))
 		return;
 
-	if (bm_file_old && libslab_bookmark_file_has_item (bm_file_old, uri))
-		title = libslab_bookmark_file_get_title (bm_file_old, uri, NULL);
+	if (bm_file_old && g_bookmark_file_has_item (bm_file_old, uri))
+		title = g_bookmark_file_get_title (bm_file_old, uri, NULL);
 
-	libslab_bookmark_file_set_mime_type (bm_file_new, uri, "application/x-desktop");
-	libslab_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
+	g_bookmark_file_set_mime_type (bm_file_new, uri, "application/x-desktop");
+	g_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
 
 	if (title)
-		libslab_bookmark_file_set_title (bm_file_new, uri, title);
+		g_bookmark_file_set_title (bm_file_new, uri, title);
 
 	g_free (title);
 }
 
 static GtkWidget *
-get_system_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
+get_system_tile (GBookmarkFile *bm_file, const gchar *uri)
 {
 	gchar *title = NULL;
 	gint uri_len;
@@ -107,8 +107,8 @@ get_system_tile (LibSlabBookmarkFile *bm_file, const gchar *uri)
 	if (strcmp (& uri [uri_len - 8], ".desktop"))
 		return NULL;
 
-	if (libslab_bookmark_file_has_item (bm_file, uri))
-		title = libslab_bookmark_file_get_title (bm_file, uri, NULL);
+	if (g_bookmark_file_has_item (bm_file, uri))
+		title = g_bookmark_file_get_title (bm_file, uri, NULL);
 
 	tile = system_tile_new (uri, title);
 

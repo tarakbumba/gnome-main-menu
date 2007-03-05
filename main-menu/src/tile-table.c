@@ -49,7 +49,7 @@ enum {
 };
 
 enum {
-	UPDATE_SIGNAL,
+	REORDER_SIGNAL,
 	URI_ADDED_SIGNAL,
 	LAST_SIGNAL
 };
@@ -70,7 +70,7 @@ static void   update_bins                  (TileTable *, GList *);
 static void   insert_into_bin              (TileTable *, Tile *, gint);
 static void   empty_bin                    (TileTable *, gint);
 static void   resize_table                 (TileTable *, guint, guint); 
-static void   emit_update_signal           (TileTable *, GList *, guint32);
+static void   emit_reorder_signal          (TileTable *, GList *, guint32);
 static GList *reorder_tiles                (TileTable *, gint, gint);
 static void   connect_signal_if_not_exists (Tile *, const gchar *, GCallback, gpointer);
 
@@ -124,7 +124,7 @@ tile_table_class_init (TileTableClass *this_class)
 	widget_class->drag_data_received = tile_table_drag_data_rcv;
 
 	this_class->reload    = NULL;
-	this_class->update    = NULL;
+	this_class->reorder   = NULL;
 	this_class->uri_added = NULL;
 
 	tiles_pspec = g_param_spec_pointer (
@@ -151,11 +151,11 @@ tile_table_class_init (TileTableClass *this_class)
 	g_object_class_install_property (g_obj_class, PROP_REORDER, reorder_pspec);
 	g_object_class_install_property (g_obj_class, PROP_LIMIT,   limit_pspec);
 
-	tile_table_signals [UPDATE_SIGNAL] = g_signal_new (
-		TILE_TABLE_UPDATE_SIGNAL,
+	tile_table_signals [REORDER_SIGNAL] = g_signal_new (
+		TILE_TABLE_REORDER_SIGNAL,
 		G_TYPE_FROM_CLASS (this_class),
 		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-		G_STRUCT_OFFSET (TileTableClass, update),
+		G_STRUCT_OFFSET (TileTableClass, reorder),
 		NULL, NULL, g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1, G_TYPE_POINTER);
 
 	tile_table_signals [URI_ADDED_SIGNAL] = g_signal_new (
@@ -348,7 +348,7 @@ tile_table_drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gi
 	if (reordering) {
 		tiles_new = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
 
-		emit_update_signal (this, tiles_new, (guint32) time);
+		emit_reorder_signal (this, tiles_new, (guint32) time);
 
 		g_list_free (tiles_new);
 	}
@@ -631,11 +631,11 @@ resize_table (TileTable *this, guint n_rows_new, guint n_cols_new)
 }
 
 static void
-emit_update_signal (TileTable *this, GList *tiles_new, guint32 time)
+emit_reorder_signal (TileTable *this, GList *tiles_new, guint32 time)
 {
 	TileTablePrivate *priv = PRIVATE (this);
 
-	TileTableUpdateEvent *update_event;
+	TileTableReorderEvent *event;
 
 	gboolean equal = FALSE;
 
@@ -665,11 +665,11 @@ emit_update_signal (TileTable *this, GList *tiles_new, guint32 time)
 		priv->tiles = g_list_copy (tiles_new);
 		update_bins (this, priv->tiles);
 
-		update_event = g_new0 (TileTableUpdateEvent, 1);
-		update_event->time  = time;
-		update_event->tiles = priv->tiles;
+		event = g_new0 (TileTableReorderEvent, 1);
+		event->time  = time;
+		event->tiles = priv->tiles;
 
-		g_signal_emit (this, tile_table_signals [UPDATE_SIGNAL], 0, update_event);
+		g_signal_emit (this, tile_table_signals [REORDER_SIGNAL], 0, event);
 	}
 }
 
