@@ -60,7 +60,7 @@ user_docs_tile_table_new ()
 		NULL);
 	priv = PRIVATE (this);
 
-	priv->agent = bookmark_agent_get_instance ();
+	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
 
 	tile_table_reload (TILE_TABLE (this));
 
@@ -132,7 +132,7 @@ reorder (TileTable *this, TileTableReorderEvent *event)
 	gint    i;
 
 
-	uris = g_new0 (gchar *, g_list_length (event->tiles));
+	uris = g_new0 (gchar *, g_list_length (event->tiles) + 1);
 
 	for (node = event->tiles, i = 0; node; node = node->next, ++i)
 		uris [i] = g_strdup (TILE (node->data)->uri);

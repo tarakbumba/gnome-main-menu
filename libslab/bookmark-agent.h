@@ -51,6 +51,12 @@ typedef enum {
 	BOOKMARK_STORE_USER
 } BookmarkStoreStatus;
 
+typedef enum {
+	BOOKMARK_STORE_USER_APPS = 0,
+	BOOKMARK_STORE_USER_DOCS = 1,
+	BOOKMARK_STORE_N_TYPES   = 2
+} BookmarkStoreType;
+
 typedef struct {
 	GObject g_object;
 } BookmarkAgent;
@@ -63,7 +69,7 @@ typedef struct {
 
 GType bookmark_agent_get_type (void);
 
-BookmarkAgent *bookmark_agent_get_instance  (void);
+BookmarkAgent *bookmark_agent_get_instance  (BookmarkStoreType type);
 gboolean       bookmark_agent_has_item      (BookmarkAgent *this, const gchar *uri);
 void           bookmark_agent_add_item      (BookmarkAgent *this, const BookmarkItem *item);
 void           bookmark_agent_remove_item   (BookmarkAgent *this, const gchar *uri);

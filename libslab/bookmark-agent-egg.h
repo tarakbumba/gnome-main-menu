@@ -38,6 +38,7 @@ G_BEGIN_DECLS
 #define g_bookmark_file_has_item         egg_bookmark_file_has_item
 #define g_bookmark_file_remove_item      egg_bookmark_file_remove_item
 #define g_bookmark_file_get_uris         egg_bookmark_file_get_uris
+#define g_bookmark_file_get_size         egg_bookmark_file_get_size
 #define g_bookmark_file_get_title        egg_bookmark_file_get_title
 #define g_bookmark_file_set_title        egg_bookmark_file_set_title
 #define g_bookmark_file_get_mime_type    egg_bookmark_file_get_mime_type

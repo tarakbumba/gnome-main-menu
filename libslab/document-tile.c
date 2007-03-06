@@ -354,7 +354,7 @@ document_tile_private_setup (DocumentTile *this)
 
 	priv->recent_monitor = main_menu_recent_monitor_new ();
 
-	priv->agent = bookmark_agent_get_instance ();
+	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
 
 	priv->update_signal_id = g_signal_connect (
 		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
