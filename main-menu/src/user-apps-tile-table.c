@@ -24,26 +24,47 @@
 
 #include "application-tile.h"
 #include "libslab-utils.h"
+#include "bookmark-agent.h"
 
 #define DISABLE_TERMINAL_GCONF_KEY "/desktop/gnome/lockdown/disable_command_line"
 
-G_DEFINE_TYPE (UserAppsTileTable, user_apps_tile_table, BOOKMARK_TILE_TABLE_TYPE)
+G_DEFINE_TYPE (UserAppsTileTable, user_apps_tile_table, TILE_TABLE_TYPE)
 
-static void update_store (GBookmarkFile *, GBookmarkFile *, const gchar *);
+typedef struct {
+	BookmarkAgent *agent;
+} UserAppsTileTablePrivate;
 
-static GtkWidget *get_application_tile (GBookmarkFile *, const gchar *);
+#define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), USER_APPS_TILE_TABLE_TYPE, UserAppsTileTablePrivate))
+
+static void finalize     (GObject *);
+static void reload_tiles (TileTable *);
+static void reorder      (TileTable *, TileTableReorderEvent  *);
+static void uri_added    (TileTable *, TileTableURIAddedEvent *);
+
+static void agent_update_cb (BookmarkAgent *, gpointer);
 
 GtkWidget *
 user_apps_tile_table_new ()
 {
-	GObject *this = g_object_new (
+	UserAppsTileTable        *this;
+	UserAppsTileTablePrivate *priv;
+	
+	
+	this = g_object_new (
 		USER_APPS_TILE_TABLE_TYPE,
 		"n-columns",             2,
 		"homogeneous",           TRUE,
 		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_PUSH_PULL,
 		NULL);
+	priv = PRIVATE (this);
+
+	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_APPS);
 
 	tile_table_reload (TILE_TABLE (this));
+
+	g_signal_connect (
+		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
+		G_CALLBACK (agent_update_cb), this);
 
 	return GTK_WIDGET (this);
 }
@@ -51,50 +72,110 @@ user_apps_tile_table_new ()
 static void
 user_apps_tile_table_class_init (UserAppsTileTableClass *this_class)
 {
-	BookmarkTileTableClass *bookmark_tile_table_class = BOOKMARK_TILE_TABLE_CLASS (this_class);
+	GObjectClass   *g_obj_class      = G_OBJECT_CLASS   (this_class);
+	TileTableClass *tile_table_class = TILE_TABLE_CLASS (this_class);
 
-	bookmark_tile_table_class->get_store_path        = libslab_get_user_apps_store_path;
-	bookmark_tile_table_class->update_bookmark_store = update_store;
-	bookmark_tile_table_class->get_tile              = get_application_tile;
+	g_obj_class->finalize = finalize;
+
+	tile_table_class->reload    = reload_tiles;
+	tile_table_class->reorder   = reorder;
+	tile_table_class->uri_added = uri_added;
+
+	g_type_class_add_private (this_class, sizeof (UserAppsTileTablePrivate));
 }
 
 static void
 user_apps_tile_table_init (UserAppsTileTable *this)
 {
-	/* nothing to init */
+	PRIVATE (this)->agent = NULL;
 }
 
 static void
-update_store (GBookmarkFile *bm_file_old, GBookmarkFile *bm_file_new,
-              const gchar *uri)
+finalize (GObject *g_obj)
 {
-	gint uri_len;
-	
-	if (! uri)
+	g_object_unref (G_OBJECT (PRIVATE (g_obj)->agent));
+}
+
+static void
+reload_tiles (TileTable *this)
+{
+	UserAppsTileTablePrivate *priv = PRIVATE (this);
+
+	BookmarkItem **items = NULL;
+	GList         *tiles = NULL;
+	GtkWidget     *tile;
+
+	gint i;
+
+
+	g_object_get (G_OBJECT (priv->agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
+
+	for (i = 0; items && items [i]; ++i) {
+		tile = application_tile_new (items [i]->uri);
+
+		if (tile)
+			tiles = g_list_append (tiles, tile);
+	}
+
+	g_object_set (G_OBJECT (this), TILE_TABLE_TILES_PROP, tiles, NULL);
+}
+
+static void
+reorder (TileTable *this, TileTableReorderEvent *event)
+{
+	UserAppsTileTablePrivate *priv = PRIVATE (this);
+
+	gchar **uris;
+	GList  *node;
+	gint    i;
+
+
+	uris = g_new0 (gchar *, g_list_length (event->tiles) + 1);
+
+	for (node = event->tiles, i = 0; node; node = node->next, ++i)
+		uris [i] = g_strdup (TILE (node->data)->uri);
+
+	bookmark_agent_reorder_items (priv->agent, (const gchar **) uris);
+
+	g_strfreev (uris);
+}
+
+static void
+uri_added (TileTable *this, TileTableURIAddedEvent *event)
+{
+	UserAppsTileTablePrivate *priv = PRIVATE (this);
+
+	BookmarkItem item;
+
+	gboolean eligible;
+	gint     uri_len;
+
+
+	if (! event->uri);
 		return;
 
-	uri_len = strlen (uri);
+	item.uri = event->uri;
 
-	if (! strcmp (& uri [uri_len - 8], ".desktop")) {
-		g_bookmark_file_set_mime_type   (bm_file_new, uri, "application/x-desktop");
-		g_bookmark_file_add_application (bm_file_new, uri, NULL, NULL);
+	eligible = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+	eligible = eligible && libslab_desktop_item_is_a_terminal (item.uri);
+
+	if (! eligible)
+		return;
+
+	uri_len = strlen (item.uri);
+
+	if (! strcmp (& item.uri [uri_len - 8], ".desktop")) {
+		item.mime_type = "application/x-desktop";
+		item.mtime     = 0;
+		item.app_name  = NULL;
+		item.app_exec  = NULL;
+
+		bookmark_agent_add_item (priv->agent, & item);
 	}
 }
 
-static GtkWidget *
-get_application_tile (GBookmarkFile *bm_file, const gchar *uri)
+static void
+agent_update_cb (BookmarkAgent *agent, gpointer user_data)
 {
-	gint uri_len = strlen (uri);
-
-	gboolean disable_term;
-	gboolean blacklisted;
-
-
-	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
-	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
-
-	if (! blacklisted && ! strcmp (& uri [uri_len - 8], ".desktop"))
-		return application_tile_new (uri);
-
-	return NULL;
+	reload_tiles (TILE_TABLE (user_data));
 }

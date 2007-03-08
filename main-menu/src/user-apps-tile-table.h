@@ -35,11 +35,11 @@ G_BEGIN_DECLS
 #define USER_APPS_TILE_TABLE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), USER_APPS_TILE_TABLE_TYPE, UserAppsTileTableClass))
 
 typedef struct {
-	BookmarkTileTable bookmark_tile_table;
+	TileTable tile_table;
 } UserAppsTileTable;
 
 typedef struct {
-	BookmarkTileTableClass bookmark_tile_table_class;
+	TileTableClass tile_table_class;
 } UserAppsTileTableClass;
 
 GType user_apps_tile_table_get_type (void);
