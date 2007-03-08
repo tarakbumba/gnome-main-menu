@@ -311,7 +311,7 @@ bookmark_agent_init (BookmarkAgent *this)
 
 	priv->items              = NULL;
 	priv->n_items            = 0;
-	priv->status             = BOOKMARK_STORE_DEFAULT;
+	priv->status             = BOOKMARK_STORE_ABSENT;
 
 	priv->store              = NULL;
 
@@ -413,28 +413,27 @@ update_agent (BookmarkAgent *this)
 		if (priv->store_monitor)
 			gnome_vfs_monitor_cancel (priv->store_monitor);
 
-		gnome_vfs_monitor_add (
-			& priv->store_monitor, priv->store_path,
-			GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
+		if (priv->store_path)
+			gnome_vfs_monitor_add (
+				& priv->store_monitor, priv->store_path,
+				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
 	}
 
 	switch (priv->type) {
 		case BOOKMARK_STORE_USER_APPS:
 		case BOOKMARK_STORE_USER_DOCS:
-			g_bookmark_file_load_from_file (priv->store, priv->store_path, & error);
-			break;
+			if (priv->store_path)
+				g_bookmark_file_load_from_file (priv->store, priv->store_path, & error);
+			else {
+				g_bookmark_file_free (priv->store);
+				priv->store = g_bookmark_file_new ();
+			}
 
-		default:
-			break;
-	}
+			if (error)
+				libslab_handle_g_error (
+					& error, "%s: couldn't load bookmark file [%s]\n",
+					G_STRFUNC, priv->store_path);
 
-	if (error)
-		libslab_handle_g_error (
-			& error, "%s: couldn't load bookmark file [%s]\n", G_STRFUNC, priv->store_path);
-
-	switch (priv->type) {
-		case BOOKMARK_STORE_USER_APPS:
-		case BOOKMARK_STORE_USER_DOCS:
 			uris = g_bookmark_file_get_uris (priv->store, & n_uris);
 			break;
 
@@ -511,6 +510,7 @@ save_store (BookmarkAgent *this)
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
 	gchar *store_path;
+	gchar *dir;
 
 	GError *error = NULL;
 
@@ -519,6 +519,10 @@ save_store (BookmarkAgent *this)
 		return;
 
 	store_path = get_store_path (this, TRUE);
+
+	dir = g_path_get_dirname (store_path);
+	g_mkdir_with_parents (dir, 0700);
+	g_free (dir);
 
 	if (! g_bookmark_file_to_file (priv->store, store_path, & error))
 		libslab_handle_g_error (
@@ -532,10 +536,11 @@ get_store_path (BookmarkAgent *this, gboolean writeable)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
-	gboolean  sys_path;
-	gchar    *path = NULL;
-	gchar    *dir;
-	gchar    *user_path = NULL;
+	gchar *user_path = NULL;
+	gchar *sys_path  = NULL;
+	gchar *path      = NULL;
+
+	gchar *user_path_copy;
 
 	BookmarkStoreStatus status;
 
@@ -549,68 +554,67 @@ get_store_path (BookmarkAgent *this, gboolean writeable)
 
 		user_path = g_build_filename (
 			g_get_user_data_dir (), PACKAGE, store_file_names [priv->type], NULL);
+		user_path_copy = g_strdup (user_path);
 
-		if (priv->user_modifiable) {
-			path = g_strdup (user_path);
-
-			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-				if (writeable) {
-					dir = g_path_get_dirname (path);
-					g_mkdir_with_parents (dir, 0700);
-					g_free (dir);
-				}
-				else {
-					g_free (path);
-					path = NULL;
-				}
-			}
-
-			if (path)
-				sys_path = FALSE;
+		if (! priv->user_modifiable || ! (writeable || g_file_test (user_path, G_FILE_TEST_EXISTS))) {
+			g_free (user_path);
+			user_path = NULL;
 		}
 
-		if (! path && ! writeable) {
+		if (! (user_path || writeable)) {
 			dirs = g_get_system_data_dirs ();
 
-			for (i = 0; ! path && dirs && dirs [i]; ++i) {
-				path = g_build_filename (
+			for (i = 0; ! sys_path && dirs && dirs [i]; ++i) {
+				sys_path = g_build_filename (
 					dirs [i], PACKAGE, store_file_names [priv->type], NULL);
 
-				if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-					g_free (path);
-					path = NULL;
+				if (! g_file_test (sys_path, G_FILE_TEST_EXISTS)) {
+					g_free (sys_path);
+					sys_path = NULL;
 				}
 			}
-
-			sys_path = TRUE;
 		}
 
-		if (! priv->user_modifiable)
-			status = BOOKMARK_STORE_DEFAULT_ONLY;
-		else if (! sys_path)
+		if (user_path) {
 			status = BOOKMARK_STORE_USER;
-		else
-			status = BOOKMARK_STORE_DEFAULT;
-
-		if (priv->status != status) {
-			priv->status = status;
-			g_object_notify (G_OBJECT (this), BOOKMARK_AGENT_STORE_STATUS_PROP);
-
-			if (priv->user_store_monitor)
-				gnome_vfs_monitor_cancel (priv->user_store_monitor);
-
-			if (priv->status == BOOKMARK_STORE_DEFAULT)
-				gnome_vfs_monitor_add (
-					& priv->store_monitor, user_path,
-					GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
+			path   = user_path;
 		}
+		else if (sys_path) {
+			if (priv->user_modifiable)
+				status = BOOKMARK_STORE_DEFAULT;
+			else
+				status = BOOKMARK_STORE_DEFAULT_ONLY;
 
-		g_free (user_path);
+			path = sys_path;
+		}
+		else
+			status = BOOKMARK_STORE_ABSENT;
 	}
 	else {
 		path = g_build_filename (g_get_home_dir (), ".recently-used", NULL);
-		priv->status = BOOKMARK_STORE_USER;
+
+		if (g_file_test (sys_path, G_FILE_TEST_EXISTS))
+			status = BOOKMARK_STORE_USER;
+		else
+			status = BOOKMARK_STORE_ABSENT;
 	}
+	
+	if (priv->status != status) {
+		priv->status = status;
+		g_object_notify (G_OBJECT (this), BOOKMARK_AGENT_STORE_STATUS_PROP);
+
+		if (priv->user_store_monitor) {
+			gnome_vfs_monitor_cancel (priv->user_store_monitor);
+			priv->user_store_monitor = NULL;
+		}
+
+		if (priv->status == BOOKMARK_STORE_DEFAULT)
+			gnome_vfs_monitor_add (
+				& priv->store_monitor, user_path_copy,
+				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
+	}
+
+	g_free (user_path_copy);
 
 	return path;
 }
@@ -769,7 +773,7 @@ gconf_notify_cb (GConfClient *client, guint conn_id,
 	gboolean user_modifiable;
 
 
-	user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (MODIFIABLE_DOCS_GCONF_KEY));
+	user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (lockdown_keys [priv->type]));
 
 	if (priv->user_modifiable != user_modifiable) {
 		priv->user_modifiable = user_modifiable;

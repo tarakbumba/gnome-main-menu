@@ -48,7 +48,8 @@ typedef struct {
 typedef enum {
 	BOOKMARK_STORE_DEFAULT_ONLY,
 	BOOKMARK_STORE_DEFAULT,
-	BOOKMARK_STORE_USER
+	BOOKMARK_STORE_USER,
+	BOOKMARK_STORE_ABSENT
 } BookmarkStoreStatus;
 
 typedef enum {
