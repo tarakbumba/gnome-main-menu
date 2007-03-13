@@ -43,7 +43,7 @@ static void reload_tiles (TileTable *);
 static void reorder      (TileTable *, TileTableReorderEvent  *);
 static void uri_added    (TileTable *, TileTableURIAddedEvent *);
 
-static void agent_update_cb (BookmarkAgent *, gpointer);
+static void agent_notify_cb (GObject *, GParamSpec *, gpointer);
 
 GtkWidget *
 user_docs_tile_table_new ()
@@ -65,8 +65,8 @@ user_docs_tile_table_new ()
 	tile_table_reload (TILE_TABLE (this));
 
 	g_signal_connect (
-		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
-		G_CALLBACK (agent_update_cb), this);
+		G_OBJECT (priv->agent), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+		G_CALLBACK (agent_notify_cb), this);
 
 	return GTK_WIDGET (this);
 }
@@ -183,7 +183,7 @@ uri_added (TileTable *this, TileTableURIAddedEvent *event)
 }
 
 static void
-agent_update_cb (BookmarkAgent *agent, gpointer user_data)
+agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
 	reload_tiles (TILE_TABLE (user_data));
 }

@@ -68,7 +68,6 @@ static gboolean rename_entry_key_release_cb (GtkWidget *, GdkEventKey *, gpointe
 static void gconf_enable_delete_cb (GConfClient *, guint, GConfEntry *, gpointer);
 
 static void agent_notify_cb (GObject *, GParamSpec *, gpointer);
-static void agent_update_cb (BookmarkAgent *, gpointer);
 
 typedef struct
 {
@@ -89,7 +88,6 @@ typedef struct
 	BookmarkAgent       *agent;
 	BookmarkStoreStatus  store_status;
 	gboolean             is_bookmarked;
-	gulong               update_signal_id;
 	gulong               notify_signal_id;
 
 	MainMenuRecentMonitor *recent_monitor;
@@ -356,13 +354,8 @@ document_tile_private_setup (DocumentTile *this)
 
 	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
 
-	priv->update_signal_id = g_signal_connect (
-		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
-		G_CALLBACK (agent_update_cb), this);
-
 	priv->notify_signal_id = g_signal_connect (
-		G_OBJECT (priv->agent), "notify::" BOOKMARK_AGENT_STORE_STATUS_PROP,
-		G_CALLBACK (agent_notify_cb), this);
+		G_OBJECT (priv->agent), "notify", G_CALLBACK (agent_notify_cb), this);
 }
 
 static void
@@ -387,7 +380,6 @@ document_tile_init (DocumentTile *tile)
 	priv->agent            = NULL;
 	priv->store_status     = BOOKMARK_STORE_DEFAULT;
 	priv->is_bookmarked    = FALSE;
-	priv->update_signal_id = 0;
 	priv->notify_signal_id = 0;
 
 	priv->recent_monitor  = NULL;
@@ -404,9 +396,6 @@ document_tile_finalize (GObject *g_object)
 	g_free (priv->mime_type);
 
 	gnome_vfs_mime_application_free (priv->default_app);
-
-	if (priv->update_signal_id)
-		g_signal_handler_disconnect (priv->agent, priv->update_signal_id);
 
 	if (priv->notify_signal_id)
 		g_signal_handler_disconnect (priv->agent, priv->notify_signal_id);
@@ -912,12 +901,6 @@ send_to_trigger (Tile *tile, TileEvent *event, TileAction *action)
 	g_free (dirname);
 	g_free (basename);
 	g_strfreev (argv);
-}
-
-static void
-agent_update_cb (BookmarkAgent *agent, gpointer user_data)
-{
-	update_user_list_menu_item (DOCUMENT_TILE (user_data));
 }
 
 static void

@@ -67,7 +67,6 @@ static void run_package_management_command (ApplicationTile *, gchar *);
 
 static void update_user_list_menu_item (ApplicationTile *);
 static void agent_notify_cb (GObject *, GParamSpec *, gpointer);
-static void agent_update_cb (BookmarkAgent *, gpointer);
 
 static StartupStatus get_desktop_item_startup_status (GnomeDesktopItem *);
 static void          update_startup_menu_item (ApplicationTile *);
@@ -85,7 +84,6 @@ typedef struct {
 	BookmarkAgent       *agent;
 	BookmarkStoreStatus  agent_status;
 	gboolean             is_bookmarked;
-	gulong               update_signal_id;
 	gulong               notify_signal_id;
 
 	GnomeVFSMonitorHandle *user_spec_monitor_handle;
@@ -183,7 +181,6 @@ application_tile_init (ApplicationTile *tile)
 	priv->agent            = NULL;
 	priv->agent_status     = BOOKMARK_STORE_ABSENT;
 	priv->is_bookmarked    = FALSE;
-	priv->update_signal_id = 0;
 	priv->notify_signal_id = 0;
 
 	tile->name = tile->description = tile->gconf_prefix = NULL;
@@ -216,9 +213,6 @@ application_tile_finalize (GObject *g_object)
 		g_free (priv->image_id);
 		priv->image_id = NULL;
 	}
-
-	if (priv->update_signal_id)
-		g_signal_handler_disconnect (priv->agent, priv->update_signal_id);
 
 	if (priv->notify_signal_id)
 		g_signal_handler_disconnect (priv->agent, priv->notify_signal_id);
@@ -352,13 +346,8 @@ application_tile_setup (ApplicationTile *this, const gchar *gconf_prefix)
 	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_APPS);
 	g_object_get (G_OBJECT (priv->agent), BOOKMARK_AGENT_STORE_STATUS_PROP, & priv->agent_status, NULL);
 
-	priv->update_signal_id = g_signal_connect (
-		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
-		G_CALLBACK (agent_update_cb), this);
-
 	priv->notify_signal_id = g_signal_connect (
-		G_OBJECT (priv->agent), "notify::" BOOKMARK_AGENT_STORE_STATUS_PROP,
-		G_CALLBACK (agent_notify_cb), this);
+		G_OBJECT (priv->agent), "notify", G_CALLBACK (agent_notify_cb), this);
 
 	priv->startup_status  = get_desktop_item_startup_status (priv->desktop_item);
 
@@ -425,6 +414,11 @@ application_tile_setup (ApplicationTile *this, const gchar *gconf_prefix)
 	}
 
 /* make upgrade action */
+
+	if (this->gconf_prefix && ! g_str_has_prefix (this->gconf_prefix, "/desktop/"))
+		use_new_prefix = TRUE;
+	else
+		use_new_prefix = FALSE;
 
 	if(!use_new_prefix)
 		key = SLAB_UPGRADE_PACKAGE_KEY;
@@ -871,12 +865,6 @@ static void
 header_size_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_data)
 {
 	gtk_widget_set_size_request (widget, alloc->width, -1);
-}
-
-static void
-agent_update_cb (BookmarkAgent *agent, gpointer user_data)
-{
-	update_user_list_menu_item (APPLICATION_TILE (user_data));
 }
 
 static void

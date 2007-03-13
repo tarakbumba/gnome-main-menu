@@ -40,27 +40,42 @@
 
 #define MODIFIABLE_APPS_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps"
 #define MODIFIABLE_DOCS_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_docs"
+#define MODIFIABLE_DIRS_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs"
 
 #define USER_APPS_STORE_FILE_NAME "applications.xbel"
 #define USER_DOCS_STORE_FILE_NAME "documents.xbel"
+#define USER_DIRS_STORE_FILE_NAME "places.xbel"
 
-#define TYPE_IS_USER_SPEC(type) ((type) == BOOKMARK_STORE_USER_APPS || (type) == BOOKMARK_STORE_USER_DOCS)
+#define GTK_BOOKMARKS_FILE ".gtk-bookmarks"
+
+G_DEFINE_TYPE (BookmarkAgent, bookmark_agent, G_TYPE_OBJECT)
 
 typedef struct {
-	BookmarkStoreType      type;
+	BookmarkStoreType          type;
 
-	BookmarkItem         **items;
-	gint                   n_items;
-	BookmarkStoreStatus    status;
+	BookmarkItem             **items;
+	gint                       n_items;
+	BookmarkStoreStatus        status;
 
-	GBookmarkFile         *store;
+	GBookmarkFile             *store;
+	gboolean                   needs_sync;
 
-	gchar                 *store_path;
-	gboolean               user_modifiable;
+	gchar                     *store_path;
+	gchar                     *user_store_path;
+	gboolean                   user_modifiable;
+	gboolean                   reorderable;
+	gchar                     *store_filename;
+	gchar                     *lockdown_key;
 
-	GnomeVFSMonitorHandle *store_monitor;
-	GnomeVFSMonitorHandle *user_store_monitor;
-	guint                  gconf_monitor;
+	GnomeVFSMonitorHandle     *store_monitor;
+	GnomeVFSMonitorHandle     *user_store_monitor;
+	GnomeVFSMonitorHandle     *gtk_store_monitor;
+	guint                      gconf_monitor;
+
+	void                    (* update_path)   (BookmarkAgent *);
+	void                    (* load_store)    (BookmarkAgent *);
+	void                    (* save_store)    (BookmarkAgent *);
+	gchar                 * (* translate_uri) (BookmarkAgent *, const gchar *);
 } BookmarkAgentPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BOOKMARK_AGENT_TYPE, BookmarkAgentPrivate))
@@ -71,82 +86,43 @@ enum {
 	PROP_STATUS
 };
 
-enum {
-	UPDATE_SIGNAL,
-	LAST_SIGNAL
-};
+static BookmarkAgent *instances [BOOKMARK_STORE_N_TYPES];
 
-static guint signals [LAST_SIGNAL] = { 0 };
-
-static BookmarkAgent *instances        [BOOKMARK_STORE_N_TYPES];
-static gchar         *lockdown_keys    [BOOKMARK_STORE_N_TYPES];
-static gchar         *store_file_names [BOOKMARK_STORE_N_TYPES];
-
-static BookmarkAgentClass *bookmark_agent_parent_class = NULL;
-
-static void bookmark_agent_base_init  (BookmarkAgentClass *);
-static void bookmark_agent_class_init (BookmarkAgentClass *);
-static void bookmark_agent_init       (BookmarkAgent      *);
+static BookmarkAgent *bookmark_agent_new (BookmarkStoreType);
 
 static void get_property     (GObject *, guint, GValue *, GParamSpec *);
 static void set_property     (GObject *, guint, const GValue *, GParamSpec *);
 static void finalize         (GObject *);
 
-static void   update_agent   (BookmarkAgent *);
-static void   save_store     (BookmarkAgent *);
-static gchar *get_store_path (BookmarkAgent *, gboolean);
-static gchar *translate_uri  (BookmarkAgent *, const gchar *);
-static void   free_item      (BookmarkItem *);
-static gint   get_rank       (BookmarkAgent *, const gchar *);
-static void   set_rank       (BookmarkAgent *, const gchar *, gint);
+static void   update_agent  (BookmarkAgent *);
+static gint   get_rank      (BookmarkAgent *, const gchar *);
+static void   set_rank      (BookmarkAgent *, const gchar *, gint);
+static void   save_store    (BookmarkAgent *);
+static gchar *translate_uri (BookmarkAgent *, const gchar *);
+static void   free_item     (BookmarkItem *);
+
+static void   load_xbel_store       (BookmarkAgent *);
+static void   update_user_spec_path (BookmarkAgent *);
+static void   save_xbel_store       (BookmarkAgent *);
+static gchar *translate_app_uri     (BookmarkAgent *, const gchar *);
+static gchar *translate_doc_uri     (BookmarkAgent *, const gchar *);
+static gchar *translate_dir_uri     (BookmarkAgent *, const gchar *);
 
 static void store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                               GnomeVFSMonitorEventType, gpointer);
 static void gconf_notify_cb  (GConfClient *, guint, GConfEntry *, gpointer);
 
-GType
-bookmark_agent_get_type ()
-{
-	static GType g_define_type_id = 0;
 
-	if (G_UNLIKELY (g_define_type_id == 0)) {
-		static const GTypeInfo info = {
-			sizeof (BookmarkAgentClass),
-			(GBaseInitFunc) bookmark_agent_base_init,
-			NULL,
-			(GClassInitFunc) bookmark_agent_class_init,
-			NULL, NULL,
-			sizeof (BookmarkAgent), 0,
-			(GInstanceInitFunc) bookmark_agent_init,
-			NULL
-		};
 
-		g_define_type_id = g_type_register_static (
-			G_TYPE_OBJECT, "BookmarkAgent", & info, 0);
-	}
-
-	return g_define_type_id;
-}
 
 BookmarkAgent *
 bookmark_agent_get_instance (BookmarkStoreType type)
 {
-	BookmarkAgentPrivate *priv;
+	g_return_val_if_fail (0 <= type, NULL);
+	g_return_val_if_fail (type < BOOKMARK_STORE_N_TYPES, NULL);
 
-	if (type < 0 || type >= BOOKMARK_STORE_N_TYPES)
-		return NULL;
-
-	if (! instances [type]) {
-		instances [type] = g_object_new (BOOKMARK_AGENT_TYPE, NULL);
-		priv             = PRIVATE (instances [type]);
-
-		priv->type          = type;
-		priv->store         = g_bookmark_file_new ();
-		priv->gconf_monitor = libslab_gconf_notify_add (
-			lockdown_keys [type], gconf_notify_cb, instances [type]);
-
-		update_agent (instances [type]);
-	}
+	if (! instances [type])
+		instances [type] = bookmark_agent_new (type);
 	else
 		g_object_ref (G_OBJECT (instances [type]));
 
@@ -156,19 +132,7 @@ bookmark_agent_get_instance (BookmarkStoreType type)
 gboolean
 bookmark_agent_has_item (BookmarkAgent *this, const gchar *uri)
 {
-	BookmarkAgentPrivate *priv = PRIVATE (this);
-
-	if (! uri)
-		return FALSE;
-
-	switch (priv->type) {
-		case BOOKMARK_STORE_USER_APPS:
-		case BOOKMARK_STORE_USER_DOCS:
-			return g_bookmark_file_has_item (PRIVATE (this)->store, uri);
-
-		default:
-			return TRUE;
-	}
+	return g_bookmark_file_has_item (PRIVATE (this)->store, uri);
 }
 
 void
@@ -176,8 +140,9 @@ bookmark_agent_add_item (BookmarkAgent *this, const BookmarkItem *item)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
-	if (! (item->uri && item->mime_type && TYPE_IS_USER_SPEC (priv->type)))
-		return;
+	g_return_if_fail (priv->user_modifiable);
+	g_return_if_fail (item->uri);
+	g_return_if_fail (item->mime_type);
 
 	g_bookmark_file_set_mime_type (priv->store, item->uri, item->mime_type);
 
@@ -203,22 +168,16 @@ bookmark_agent_remove_item (BookmarkAgent *this, const gchar *uri)
 	gint    i;
 
 
+	g_return_if_fail (priv->user_modifiable);
+
 	if (! bookmark_agent_has_item (this, uri))
 		return;
 
 	rank = get_rank (this, uri);
 
-	switch (priv->type) {
-		case BOOKMARK_STORE_USER_APPS:
-		case BOOKMARK_STORE_USER_DOCS:
-			g_bookmark_file_remove_item (priv->store, uri, NULL);
-			break;
+	g_bookmark_file_remove_item (priv->store, uri, NULL);
 
-		default: 
-			 break;
-	}                
-                         
-	if (rank >= 0 &&  TYPE_IS_USER_SPEC (priv->type)) {
+	if (rank >= 0) {
 		uris = g_bookmark_file_get_uris (priv->store, NULL);
                          
 		for (i =  0; uris && uris [i]; ++i) {
@@ -240,28 +199,12 @@ bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris)
 	gint i;
 
 
-	if (! TYPE_IS_USER_SPEC (priv->type))
-		return;
+	g_return_if_fail (priv->reorderable);
 
 	for (i = 0; uris && uris [i]; ++i)
 		set_rank (this, uris [i], i);
 
 	save_store (this);
-}
-
-static void
-bookmark_agent_base_init (BookmarkAgentClass *this_class)
-{
-	gint i;
-
-	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
-		instances [i] = NULL;
-
-	lockdown_keys [BOOKMARK_STORE_USER_APPS] = MODIFIABLE_APPS_GCONF_KEY;
-	lockdown_keys [BOOKMARK_STORE_USER_DOCS] = MODIFIABLE_DOCS_GCONF_KEY;
-
-	store_file_names [BOOKMARK_STORE_USER_APPS] = USER_APPS_STORE_FILE_NAME;
-	store_file_names [BOOKMARK_STORE_USER_DOCS] = USER_DOCS_STORE_FILE_NAME;
 }
 
 static void
@@ -290,16 +233,7 @@ bookmark_agent_class_init (BookmarkAgentClass *this_class)
 	g_object_class_install_property (g_obj_class, PROP_ITEMS,  items_pspec);
 	g_object_class_install_property (g_obj_class, PROP_STATUS, status_pspec);
 
-	signals [UPDATE_SIGNAL] = g_signal_new (
-		BOOKMARK_AGENT_UPDATE_SIGNAL,
-		G_TYPE_FROM_CLASS (this_class),
-		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-		G_STRUCT_OFFSET (BookmarkAgentClass, update),
-		NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-
 	g_type_class_add_private (this_class, sizeof (BookmarkAgentPrivate));
-
-	bookmark_agent_parent_class = g_type_class_peek_parent (this_class);
 }
 
 static void
@@ -314,13 +248,85 @@ bookmark_agent_init (BookmarkAgent *this)
 	priv->status             = BOOKMARK_STORE_ABSENT;
 
 	priv->store              = NULL;
+	priv->needs_sync         = FALSE;
 
 	priv->store_path         = NULL;
+	priv->user_store_path    = NULL;
 	priv->user_modifiable    = FALSE;
+	priv->reorderable        = FALSE;
+	priv->store_filename     = NULL;
+	priv->lockdown_key       = NULL;
 
 	priv->store_monitor      = NULL;
 	priv->user_store_monitor = NULL;
+	priv->gtk_store_monitor  = NULL;
 	priv->gconf_monitor      = 0;
+
+	priv->update_path        = NULL;
+	priv->load_store         = NULL;
+	priv->save_store         = NULL;
+}
+
+static BookmarkAgent *
+bookmark_agent_new (BookmarkStoreType type)
+{
+	BookmarkAgent        *this;
+	BookmarkAgentPrivate *priv;
+
+	this = g_object_new (BOOKMARK_AGENT_TYPE, NULL);
+	priv = PRIVATE (this);
+
+	priv->type  = type;
+	priv->store = g_bookmark_file_new ();
+
+	switch (type) {
+		case BOOKMARK_STORE_USER_APPS:
+			priv->lockdown_key   = MODIFIABLE_APPS_GCONF_KEY;
+			priv->store_filename = USER_APPS_STORE_FILE_NAME;
+			priv->translate_uri  = translate_app_uri;
+			break;
+
+		case BOOKMARK_STORE_USER_DOCS:
+			priv->lockdown_key   = MODIFIABLE_DOCS_GCONF_KEY;
+			priv->store_filename = USER_DOCS_STORE_FILE_NAME;
+			priv->translate_uri  = translate_doc_uri;
+			break;
+
+		case BOOKMARK_STORE_USER_DIRS:
+			priv->lockdown_key   = MODIFIABLE_DIRS_GCONF_KEY;
+			priv->store_filename = USER_DIRS_STORE_FILE_NAME;
+			priv->translate_uri  = translate_dir_uri;
+
+			priv->user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (priv->lockdown_key));
+			priv->reorderable     = FALSE;
+
+			break;
+
+		default:
+			break;
+	}
+
+	if (type == BOOKMARK_STORE_USER_APPS || type == BOOKMARK_STORE_USER_DOCS || type == BOOKMARK_STORE_USER_DIRS) {
+		priv->user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (priv->lockdown_key));
+
+		priv->user_store_path = g_build_filename (
+			g_get_user_data_dir (), PACKAGE, priv->store_filename, NULL);
+
+		priv->update_path = update_user_spec_path;
+
+		priv->gconf_monitor = libslab_gconf_notify_add (
+			priv->lockdown_key, gconf_notify_cb, this);
+	}
+
+	if (type == BOOKMARK_STORE_USER_APPS || type == BOOKMARK_STORE_USER_DOCS) {
+		priv->reorderable = TRUE;
+		priv->load_store  = load_xbel_store;
+		priv->save_store  = save_xbel_store;
+	}
+
+	update_agent (this);
+
+	return this;
 }
 
 static void
@@ -337,9 +343,6 @@ get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
 
 		case PROP_STATUS:
 			g_value_set_int (value, priv->status);
-			break;
-
-		default:
 			break;
 	}
 }
@@ -363,6 +366,7 @@ finalize (GObject *g_obj)
 
 	g_free (priv->items);
 	g_free (priv->store_path);
+	g_free (priv->user_store_path);
 
 	if (priv->store_monitor)
 		gnome_vfs_monitor_cancel (priv->store_monitor);
@@ -370,12 +374,12 @@ finalize (GObject *g_obj)
 	if (priv->user_store_monitor)
 		gnome_vfs_monitor_cancel (priv->user_store_monitor);
 
+	if (priv->gtk_store_monitor)
+		gnome_vfs_monitor_cancel (priv->gtk_store_monitor);
+
 	libslab_gconf_notify_remove (priv->gconf_monitor);
 
-	if (TYPE_IS_USER_SPEC (priv->type))
-		g_bookmark_file_free (priv->store);
-	else
-		/* FIXME */ ;
+	g_bookmark_file_free (priv->store);
 
 	G_OBJECT_CLASS (bookmark_agent_parent_class)->finalize (g_obj);
 }
@@ -385,7 +389,124 @@ update_agent (BookmarkAgent *this)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
-	gchar *store_path;
+	priv->update_path (this);
+	priv->load_store  (this);
+}
+
+static gint
+get_rank (BookmarkAgent *this, const gchar *uri)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
+
+	gchar **groups;
+	gint    rank;
+
+	gint i;
+
+
+	if (! priv->reorderable)
+		return -1;
+
+	groups = g_bookmark_file_get_groups (priv->store, uri, NULL, NULL);
+	rank   = -1;
+
+	for (i = 0; groups && groups [i]; ++i) {
+		if (g_str_has_prefix (groups [i], "rank-")) {
+			if (rank >= 0)
+				g_warning (
+					"store corruption - multiple ranks for same uri: [%s] [%s]",
+					priv->store_path, uri);
+
+			rank = atoi (& groups [i] [5]);
+		}
+	}
+
+	g_strfreev (groups);
+
+	return rank;
+}
+
+static void
+set_rank (BookmarkAgent *this, const gchar *uri, gint rank)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
+
+	gchar **groups;
+	gchar  *group;
+
+	gint i;
+
+
+	if (! (priv->reorderable && bookmark_agent_has_item (this, uri)))
+		return;
+
+	groups = g_bookmark_file_get_groups (priv->store, uri, NULL, NULL);
+
+	for (i = 0; groups && groups [i]; ++i)
+		if (g_str_has_prefix (groups [i], "rank-"))
+			g_bookmark_file_remove_group (priv->store, uri, groups [i], NULL);
+
+	g_strfreev (groups);
+
+	group = g_strdup_printf ("rank-%d", rank);
+	g_bookmark_file_add_group (priv->store, uri, group);
+	g_free (group);
+}
+
+static void
+save_store (BookmarkAgent *this)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
+
+	gchar *dir;
+
+
+	g_return_if_fail (priv->user_modifiable);
+
+	priv->update_path (this);
+
+	dir = g_path_get_dirname (priv->store_path);
+	g_mkdir_with_parents (dir, 0700);
+	g_free (dir);
+
+	priv->save_store (this);
+}
+
+static gchar *
+translate_uri (BookmarkAgent *this, const gchar *uri)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
+
+	gchar *uri_new;
+
+
+	if (! uri)
+		return NULL;
+
+	uri_new = priv->translate_uri (this, uri);
+
+	if (libslab_strcmp (uri, uri_new))
+		g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
+
+	return uri_new;
+}
+
+static void
+free_item (BookmarkItem *item)
+{
+	g_free (item->uri);
+	g_free (item->title);
+	g_free (item->mime_type);
+	g_free (item->icon);
+	g_free (item->app_name);
+	g_free (item->app_exec);
+	g_free (item);
+}
+
+static void
+load_xbel_store (BookmarkAgent *this)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
 
 	gchar    **uris         = NULL;
 	gchar    **uris_ordered = NULL;
@@ -393,55 +514,23 @@ update_agent (BookmarkAgent *this)
 	gint       rank;
 	gboolean   needs_update = FALSE;
 
-	gchar  *title     = NULL;
-	gchar  *mime_type = NULL;
-	time_t  mtime     = 0;
-	gchar  *app_name  = NULL;
-	gchar  *app_exec  = NULL;
-
 	GError *error = NULL;
 
 	gint i;
 
 
-	store_path = get_store_path (this, FALSE);
+	if (! (priv->store_path && g_bookmark_file_load_from_file (priv->store, priv->store_path, & error))) {
+		g_bookmark_file_free (priv->store);
+		priv->store = g_bookmark_file_new ();
 
-	if (libslab_strcmp (priv->store_path, store_path)) {
-		g_free (priv->store_path);
-		priv->store_path = g_strdup (store_path);
-
-		if (priv->store_monitor)
-			gnome_vfs_monitor_cancel (priv->store_monitor);
-
-		if (priv->store_path)
-			gnome_vfs_monitor_add (
-				& priv->store_monitor, priv->store_path,
-				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
+		libslab_handle_g_error (
+			& error, "%s: couldn't load bookmark file [%s]\n",
+			G_STRFUNC, priv->store_path);
 	}
 
-	switch (priv->type) {
-		case BOOKMARK_STORE_USER_APPS:
-		case BOOKMARK_STORE_USER_DOCS:
-			if (priv->store_path)
-				g_bookmark_file_load_from_file (priv->store, priv->store_path, & error);
-			else {
-				g_bookmark_file_free (priv->store);
-				priv->store = g_bookmark_file_new ();
-			}
-
-			if (error)
-				libslab_handle_g_error (
-					& error, "%s: couldn't load bookmark file [%s]\n",
-					G_STRFUNC, priv->store_path);
-
-			uris = g_bookmark_file_get_uris (priv->store, & n_uris);
-			break;
-
-		default:
-			break;
-	}
-
+	uris = g_bookmark_file_get_uris (priv->store, & n_uris);
 	uris_ordered = g_new0 (gchar *, n_uris + 1);
+	uris_ordered [n_uris] = NULL;
 
 	for (i = 0; uris && uris [i]; ++i) {
 		rank = get_rank (this, uris [i]);
@@ -476,61 +565,223 @@ update_agent (BookmarkAgent *this)
 		priv->items = g_new0 (BookmarkItem *, priv->n_items + 1);
 
 		for (i = 0; uris_ordered && uris_ordered [i]; ++i) {
-			switch (priv->type) {
-				case BOOKMARK_STORE_USER_APPS:
-				case BOOKMARK_STORE_USER_DOCS:
-					title     = g_bookmark_file_get_title     (priv->store, uris_ordered [i], NULL);
-					mime_type = g_bookmark_file_get_mime_type (priv->store, uris_ordered [i], NULL);
-					mtime     = g_bookmark_file_get_modified  (priv->store, uris_ordered [i], NULL);
-					app_name  = NULL;
-					app_exec  = NULL;
-
-				default:
-					break;
-			}
-
 			priv->items [i]            = g_new0 (BookmarkItem, 1);
 			priv->items [i]->uri       = g_strdup (uris_ordered [i]);
-			priv->items [i]->title     = title;
-			priv->items [i]->mime_type = mime_type;
-			priv->items [i]->mtime     = mtime;
-			priv->items [i]->app_name  = app_name;
-			priv->items [i]->app_exec  = app_exec;
+			priv->items [i]->title     = g_bookmark_file_get_title     (priv->store, uris_ordered [i], NULL);
+			priv->items [i]->mime_type = g_bookmark_file_get_mime_type (priv->store, uris_ordered [i], NULL);
+			priv->items [i]->mtime     = g_bookmark_file_get_modified  (priv->store, uris_ordered [i], NULL);
+			priv->items [i]->app_name  = NULL;
+			priv->items [i]->app_exec  = NULL;
+
+			g_bookmark_file_get_icon (priv->store, uris_ordered [i], & priv->items [i]->icon, NULL, NULL);
 		}
 
-		g_signal_emit (this, signals [UPDATE_SIGNAL], 0);
+		g_object_notify (G_OBJECT (this), BOOKMARK_AGENT_ITEMS_PROP);
 	}
 
 	g_strfreev (uris_ordered);
 }
 
 static void
-save_store (BookmarkAgent *this)
+update_user_spec_path (BookmarkAgent *this)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
-	gchar *store_path;
-	gchar *dir;
+	gboolean  use_user_path;
+	gchar    *path = NULL;
+
+	BookmarkStoreStatus status;
+
+	const gchar * const *dirs = NULL;
+	gint                 i;
+
+
+	use_user_path = priv->user_modifiable &&
+		(priv->needs_sync || g_file_test (priv->user_store_path, G_FILE_TEST_EXISTS));
+
+	if (use_user_path)
+		path = g_strdup (priv->user_store_path);
+	else {
+		dirs = g_get_system_data_dirs ();
+
+		for (i = 0; ! path && dirs && dirs [i]; ++i) {
+			path = g_build_filename (dirs [i], PACKAGE, priv->store_filename, NULL);
+
+			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
+				g_free (path);
+				path = NULL;
+			}
+		}
+	}
+
+	if (use_user_path)
+		status = BOOKMARK_STORE_USER;
+	else if (path && priv->user_modifiable)
+		status = BOOKMARK_STORE_DEFAULT;
+	else if (path)
+		status = BOOKMARK_STORE_DEFAULT_ONLY;
+	else
+		status = BOOKMARK_STORE_ABSENT;
+	
+	if (priv->status != status) {
+		priv->status = status;
+		g_object_notify (G_OBJECT (this), BOOKMARK_AGENT_STORE_STATUS_PROP);
+
+		if (priv->user_store_monitor) {
+			gnome_vfs_monitor_cancel (priv->user_store_monitor);
+			priv->user_store_monitor = NULL;
+		}
+
+		if (priv->status == BOOKMARK_STORE_DEFAULT)
+			gnome_vfs_monitor_add (
+				& priv->store_monitor, priv->user_store_path,
+				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
+	}
+
+	if (libslab_strcmp (priv->store_path, path)) {
+		g_free (priv->store_path);
+		priv->store_path = path;
+
+		if (priv->store_monitor)
+			gnome_vfs_monitor_cancel (priv->store_monitor);
+
+		if (priv->store_path)
+			gnome_vfs_monitor_add (
+				& priv->store_monitor, priv->store_path,
+				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
+	}
+	else
+		g_free (path);
+}
+
+static void
+save_xbel_store (BookmarkAgent *this)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
 
 	GError *error = NULL;
 
 
-	if (! TYPE_IS_USER_SPEC (priv->type))
-		return;
-
-	store_path = get_store_path (this, TRUE);
-
-	dir = g_path_get_dirname (store_path);
-	g_mkdir_with_parents (dir, 0700);
-	g_free (dir);
-
-	if (! g_bookmark_file_to_file (priv->store, store_path, & error))
+	if (! g_bookmark_file_to_file (priv->store, priv->store_path, & error))
 		libslab_handle_g_error (
-			& error, "%s: couldn't save bookmark file [%s]\n", G_STRFUNC, store_path);
-
-	g_free (store_path);
+			& error, "%s: couldn't save bookmark file [%s]\n", G_STRFUNC, priv->store_path);
 }
 
+static gchar *
+translate_app_uri (BookmarkAgent *this, const gchar *uri)
+{
+	GnomeDesktopItem *ditem;
+	gchar *uri_new = NULL;
+
+
+	ditem = libslab_gnome_desktop_item_new_from_unknown_id (uri);
+
+	if (ditem) {
+		uri_new = g_strdup (gnome_desktop_item_get_location (ditem));
+		gnome_desktop_item_unref (ditem);
+	}
+
+	return uri_new;
+}
+
+static gchar *
+translate_doc_uri (BookmarkAgent *this, const gchar *uri)
+{
+	gchar *uri_new = NULL;
+	gchar *path;
+	gchar *dir;
+	gchar *file;
+
+
+	if (! (strcmp (uri, "BLANK_SPREADSHEET") && strcmp (uri, "BLANK_DOCUMENT"))) {
+		dir = g_build_filename (g_get_home_dir (), "Documents", NULL);
+
+		if (! strcmp (uri, "BLANK_SPREADSHEET"))
+			file = g_strconcat (_("New Spreadsheet"), ".ods", NULL);
+		else
+			file = g_strconcat (_("New Document"), ".odt", NULL);
+
+		path = g_build_filename (dir, file, NULL);
+
+		if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
+			g_mkdir_with_parents (dir, 0700);
+			fclose (g_fopen (path, "w"));
+		}
+
+		uri_new = g_filename_to_uri (path, NULL, NULL);
+
+		g_free (dir);
+		g_free (file);
+		g_free (path);
+	}
+
+	return uri_new;
+}
+
+static gchar *
+translate_dir_uri (BookmarkAgent *this, const gchar *uri)
+{
+	BookmarkAgentPrivate *priv = PRIVATE (this);
+
+	gchar *uri_new = NULL;
+	gchar *path;
+	gchar *icon = NULL;
+
+
+	if (! strcmp (uri, "HOME")) {
+		uri_new = g_filename_to_uri (g_get_home_dir (), NULL, NULL);
+		icon    = "gnome-fs-home";
+	}
+	else if (! strcmp (uri, "DOCUMENTS")) {
+		path = g_build_filename (g_get_home_dir (), "Documents", NULL);
+		uri_new = g_filename_to_uri (path, NULL, NULL);
+		g_free (path);
+	}
+	else if (! strcmp (uri, "DESKTOP")) {
+		path = g_build_filename (g_get_home_dir (), "Desktop", NULL);
+		uri_new = g_filename_to_uri (path, NULL, NULL);
+		icon = "gnome-fs-desktop";
+		g_free (path);
+	}
+	else if (! strcmp (uri_new, "file:///"))
+		icon = "drive-harddisk";
+	else if (! strcmp (uri_new, "network:"))
+		icon = "network-workgroup";
+	else if (g_str_has_prefix (uri_new, "x-nautilus-search"))
+		icon = "system-search";
+
+	if (icon)
+		g_bookmark_file_set_icon (priv->store, uri, uri_new, "image/png");
+
+	return uri_new;
+}
+
+static void
+store_monitor_cb (GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
+                  const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
+{
+	update_agent (BOOKMARK_AGENT (user_data));
+}
+
+static void
+gconf_notify_cb (GConfClient *client, guint conn_id,
+                 GConfEntry *entry, gpointer user_data)
+{
+	BookmarkAgent        *this = BOOKMARK_AGENT (user_data);
+	BookmarkAgentPrivate *priv = PRIVATE        (this);
+
+	gboolean user_modifiable;
+
+
+	user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (priv->lockdown_key));
+
+	if (priv->user_modifiable != user_modifiable) {
+		priv->user_modifiable = user_modifiable;
+		update_agent (this);
+	}
+}
+
+#if 0
 static gchar *
 get_store_path (BookmarkAgent *this, gboolean writeable)
 {
@@ -618,165 +869,66 @@ get_store_path (BookmarkAgent *this, gboolean writeable)
 
 	return path;
 }
+#endif
 
-static gchar *
-translate_uri (BookmarkAgent *this, const gchar *uri)
-{
-	BookmarkAgentPrivate *priv = PRIVATE (this);
+#if 0
+#endif
 
-	gchar *uri_new = NULL;
-	gchar *path;
-	gchar *dir;
-	gchar *file;
-
-	GnomeDesktopItem *ditem;
-
-
-	if (! uri)
-		return NULL;
-
-	switch (priv->type) {
-		case BOOKMARK_STORE_USER_APPS:
-			ditem = libslab_gnome_desktop_item_new_from_unknown_id (uri);
-			uri_new = g_strdup (gnome_desktop_item_get_location (ditem));
-			gnome_desktop_item_unref (ditem);
-
-			break;
-
-		case BOOKMARK_STORE_USER_DOCS:
-			if (! (strcmp (uri, "BLANK_SPREADSHEET") && strcmp (uri, "BLANK_DOCUMENT"))) {
-				dir = g_build_filename (g_get_home_dir (), "Documents", NULL);
-
-				if (! strcmp (uri, "BLANK_SPREADSHEET"))
-					file = g_strconcat (_("New Spreadsheet"), ".ods", NULL);
-				else
-					file = g_strconcat (_("New Document"), ".odt", NULL);
-
-				path = g_build_filename (dir, file, NULL);
-
-				if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-					g_mkdir_with_parents (dir, 0700);
-					fclose (g_fopen (path, "w"));
-				}
-
-				uri_new = g_filename_to_uri (path, NULL, NULL);
-
-				g_free (dir);
-				g_free (file);
-				g_free (path);
-			}
-
-			break;
-
-		default:
-			break;
-	}
-
-	if (! uri_new)
-		uri_new = g_strdup (uri);
-
-	if (strcmp (uri, uri_new)) {
-		if (TYPE_IS_USER_SPEC (priv->type))
-			g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
-		else
-			/* FIXME */ ;
-	}
-
-	return uri_new;
-}
-
+#if 0
 static void
-free_item (BookmarkItem *item)
-{
-	g_free (item->uri);
-	g_free (item->title);
-	g_free (item->mime_type);
-	g_free (item->app_name);
-	g_free (item->app_exec);
-	g_free (item);
-}
-
-static gint
-get_rank (BookmarkAgent *this, const gchar *uri)
+sync_gtk_bookmarks_to_store (BookmarkAgent *this)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
+	gchar **uris;
 	gchar **groups;
-	gint    rank;
 
-	gint i;
+	gchar *gtk_bookmarks_path;
+
+	gchar  *buf;
+	gchar **folders = NULL;
+
+	gint i, j;
 
 
-	if (! TYPE_IS_USER_SPEC (priv->type))
-		return -1;
+	if (priv->type != BOOKMARK_STORE_USER_DIRS)
+		return;
 
-	groups = g_bookmark_file_get_groups (priv->store, uri, NULL, NULL);
-	rank   = -1;
+	uris = g_bookmark_file_get_uris (priv->store, NULL);
 
-	for (i = 0; groups && groups [i]; ++i) {
-		if (g_str_has_prefix (groups [i], "rank-")) {
-			if (rank >= 0)
-				g_warning (
-					"store corruption - multiple ranks for same uri: [%s] [%s]",
-					priv->store_path, uri);
+	for (i = 0; uris && uris [i]; ++i) {
+		groups = g_bookmark_file_get_groups (priv->store, uris [i], NULL, NULL);
 
-			rank = atoi (& groups [i] [5]);
+		for (j = 0; groups && groups [j]; ++j) {
+			if (! strcmp (groups [j], "gtk-bookmarks")) {
+				g_bookmark_file_remove_item (priv->store, uris [i], NULL);
+
+				break;
+			}
+		}
+
+		g_strfreev (groups);
+	}
+
+	g_strfreev (uris);
+
+	gtk_bookmarks_path = g_build_filename (g_get_home_dir (), GTK_BOOKMARKS_FILE, NULL);
+	g_file_get_contents (gtk_bookmarks_path, & buf, NULL, NULL);
+
+	if (buf) {
+		folders = g_strsplit (buf, "\n", -1);
+		g_free (buf);
+	}
+
+	for (i = 0; folders && folders [i]; ++i) {
+		if (strlen (folders [i]) > 0) {
+			g_bookmark_file_set_mime_type (priv->store, folders [i], "inode/directory");
+			g_bookmark_file_add_application (
+				priv->store, folders [i], "nautilus", "nautilus --browser %u");
+			g_bookmark_file_add_group (priv->store, folders [i], "gtk-bookmarks");
 		}
 	}
 
-	g_strfreev (groups);
-
-	return rank;
+	g_strfreev (folders);
 }
-
-static void
-set_rank (BookmarkAgent *this, const gchar *uri, gint rank)
-{
-	BookmarkAgentPrivate *priv = PRIVATE (this);
-
-	gchar **groups;
-	gchar  *group;
-
-	gint i;
-
-
-	if (! TYPE_IS_USER_SPEC (priv->type) || ! g_bookmark_file_has_item (priv->store, uri))
-		return;
-
-	groups = g_bookmark_file_get_groups (priv->store, uri, NULL, NULL);
-
-	for (i = 0; groups && groups [i]; ++i)
-		if (g_str_has_prefix (groups [i], "rank-"))
-			g_bookmark_file_remove_group (priv->store, uri, groups [i], NULL);
-
-	g_strfreev (groups);
-
-	group = g_strdup_printf ("rank-%d", rank);
-	g_bookmark_file_add_group (priv->store, uri, group);
-	g_free (group);
-}
-
-static void
-store_monitor_cb (GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
-                  const gchar *info_uri, GnomeVFSMonitorEventType type, gpointer user_data)
-{
-	update_agent (BOOKMARK_AGENT (user_data));
-}
-
-static void
-gconf_notify_cb (GConfClient *client, guint conn_id,
-                 GConfEntry *entry, gpointer user_data)
-{
-	BookmarkAgent        *this = BOOKMARK_AGENT (user_data);
-	BookmarkAgentPrivate *priv = PRIVATE        (this);
-
-	gboolean user_modifiable;
-
-
-	user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (lockdown_keys [priv->type]));
-
-	if (priv->user_modifiable != user_modifiable) {
-		priv->user_modifiable = user_modifiable;
-		update_agent (this);
-	}
-}
+#endif

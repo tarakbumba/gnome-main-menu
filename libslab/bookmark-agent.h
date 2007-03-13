@@ -32,7 +32,6 @@ G_BEGIN_DECLS
 #define IS_BOOKMARK_AGENT_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), BOOKMARK_AGENT_TYPE))
 #define BOOKMARK_AGENT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), BOOKMARK_AGENT_TYPE, BookmarkAgentClass))
 
-#define BOOKMARK_AGENT_UPDATE_SIGNAL     "update"
 #define BOOKMARK_AGENT_STORE_STATUS_PROP "store-status"
 #define BOOKMARK_AGENT_ITEMS_PROP        "items"
 
@@ -41,6 +40,7 @@ typedef struct {
 	gchar  *title;
 	gchar  *mime_type;
 	time_t  mtime;
+	gchar  *icon;
 	gchar  *app_name;
 	gchar  *app_exec;
 } BookmarkItem;
@@ -55,7 +55,8 @@ typedef enum {
 typedef enum {
 	BOOKMARK_STORE_USER_APPS = 0,
 	BOOKMARK_STORE_USER_DOCS = 1,
-	BOOKMARK_STORE_N_TYPES   = 2
+	BOOKMARK_STORE_USER_DIRS = 2,
+	BOOKMARK_STORE_N_TYPES   = 3
 } BookmarkStoreType;
 
 typedef struct {
@@ -64,8 +65,6 @@ typedef struct {
 
 typedef struct {
 	GObjectClass g_object_class;
-
-	void (* update) (BookmarkAgent *);
 } BookmarkAgentClass;
 
 GType bookmark_agent_get_type (void);

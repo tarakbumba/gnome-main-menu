@@ -32,6 +32,8 @@ G_DEFINE_TYPE (UserAppsTileTable, user_apps_tile_table, TILE_TABLE_TYPE)
 
 typedef struct {
 	BookmarkAgent *agent;
+
+	gulong agent_notify_handler_id;
 } UserAppsTileTablePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), USER_APPS_TILE_TABLE_TYPE, UserAppsTileTablePrivate))
@@ -41,7 +43,7 @@ static void reload_tiles (TileTable *);
 static void reorder      (TileTable *, TileTableReorderEvent  *);
 static void uri_added    (TileTable *, TileTableURIAddedEvent *);
 
-static void agent_update_cb (BookmarkAgent *, gpointer);
+static void agent_notify_cb (GObject *, GParamSpec *, gpointer);
 
 GtkWidget *
 user_apps_tile_table_new ()
@@ -63,8 +65,8 @@ user_apps_tile_table_new ()
 	tile_table_reload (TILE_TABLE (this));
 
 	g_signal_connect (
-		G_OBJECT (priv->agent), BOOKMARK_AGENT_UPDATE_SIGNAL,
-		G_CALLBACK (agent_update_cb), this);
+		G_OBJECT (priv->agent), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+		G_CALLBACK (agent_notify_cb), this);
 
 	return GTK_WIDGET (this);
 }
@@ -87,13 +89,21 @@ user_apps_tile_table_class_init (UserAppsTileTableClass *this_class)
 static void
 user_apps_tile_table_init (UserAppsTileTable *this)
 {
-	PRIVATE (this)->agent = NULL;
+	UserAppsTileTablePrivate *priv = PRIVATE (this);
+
+	priv->agent                   = NULL;
+	priv->agent_notify_handler_id = 0;
 }
 
 static void
 finalize (GObject *g_obj)
 {
-	g_object_unref (G_OBJECT (PRIVATE (g_obj)->agent));
+	UserAppsTileTablePrivate *priv = PRIVATE (g_obj);
+
+	if (priv->agent_notify_handler_id)
+		g_signal_handler_disconnect (priv->agent, priv->agent_notify_handler_id);
+
+	g_object_unref (G_OBJECT (priv->agent));
 }
 
 static void
@@ -175,7 +185,7 @@ uri_added (TileTable *this, TileTableURIAddedEvent *event)
 }
 
 static void
-agent_update_cb (BookmarkAgent *agent, gpointer user_data)
+agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
 	reload_tiles (TILE_TABLE (user_data));
 }
