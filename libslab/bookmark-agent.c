@@ -48,8 +48,6 @@
 
 #define GTK_BOOKMARKS_FILE ".gtk-bookmarks"
 
-G_DEFINE_TYPE (BookmarkAgent, bookmark_agent, G_TYPE_OBJECT)
-
 typedef struct {
 	BookmarkStoreType          type;
 
@@ -88,7 +86,12 @@ enum {
 
 static BookmarkAgent *instances [BOOKMARK_STORE_N_TYPES];
 
-static BookmarkAgent *bookmark_agent_new (BookmarkStoreType);
+static BookmarkAgentClass *bookmark_agent_parent_class = NULL;
+
+static void           bookmark_agent_base_init  (BookmarkAgentClass *);
+static void           bookmark_agent_class_init (BookmarkAgentClass *);
+static void           bookmark_agent_init       (BookmarkAgent      *);
+static BookmarkAgent *bookmark_agent_new        (BookmarkStoreType   );
 
 static void get_property     (GObject *, guint, GValue *, GParamSpec *);
 static void set_property     (GObject *, guint, const GValue *, GParamSpec *);
@@ -112,8 +115,29 @@ static void store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gcha
                               GnomeVFSMonitorEventType, gpointer);
 static void gconf_notify_cb  (GConfClient *, guint, GConfEntry *, gpointer);
 
+GType
+bookmark_agent_get_type ()
+{
+	static GType g_define_type_id = 0;
 
+	if (G_UNLIKELY (g_define_type_id == 0)) {
+		static const GTypeInfo info = {
+			sizeof (BookmarkAgentClass),
+			(GBaseInitFunc) bookmark_agent_base_init,
+			NULL,
+			(GClassInitFunc) bookmark_agent_class_init,
+			NULL, NULL,
+			sizeof (BookmarkAgent), 0,
+			(GInstanceInitFunc) bookmark_agent_init,
+			NULL
+		};
 
+		g_define_type_id = g_type_register_static (
+			G_TYPE_OBJECT, "BookmarkAgent", & info, 0);
+	}
+
+	return g_define_type_id;
+}
 
 BookmarkAgent *
 bookmark_agent_get_instance (BookmarkStoreType type)
@@ -208,6 +232,15 @@ bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris)
 }
 
 static void
+bookmark_agent_base_init (BookmarkAgentClass *this_class)
+{
+	gint i;
+
+	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
+		instances [i] = NULL;
+}
+
+static void
 bookmark_agent_class_init (BookmarkAgentClass *this_class)
 {
 	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
@@ -234,6 +267,8 @@ bookmark_agent_class_init (BookmarkAgentClass *this_class)
 	g_object_class_install_property (g_obj_class, PROP_STATUS, status_pspec);
 
 	g_type_class_add_private (this_class, sizeof (BookmarkAgentPrivate));
+
+	bookmark_agent_parent_class = g_type_class_peek_parent (this_class);
 }
 
 static void
@@ -284,12 +319,14 @@ bookmark_agent_new (BookmarkStoreType type)
 			priv->lockdown_key   = MODIFIABLE_APPS_GCONF_KEY;
 			priv->store_filename = USER_APPS_STORE_FILE_NAME;
 			priv->translate_uri  = translate_app_uri;
+
 			break;
 
 		case BOOKMARK_STORE_USER_DOCS:
 			priv->lockdown_key   = MODIFIABLE_DOCS_GCONF_KEY;
 			priv->store_filename = USER_DOCS_STORE_FILE_NAME;
 			priv->translate_uri  = translate_doc_uri;
+
 			break;
 
 		case BOOKMARK_STORE_USER_DIRS:
@@ -485,7 +522,9 @@ translate_uri (BookmarkAgent *this, const gchar *uri)
 
 	uri_new = priv->translate_uri (this, uri);
 
-	if (libslab_strcmp (uri, uri_new))
+	if (! uri_new)
+		uri_new = g_strdup (uri);
+	else if (libslab_strcmp (uri, uri_new))
 		g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
 
 	return uri_new;
@@ -510,6 +549,7 @@ load_xbel_store (BookmarkAgent *this)
 
 	gchar    **uris         = NULL;
 	gchar    **uris_ordered = NULL;
+	gchar     *uri_trans    = NULL;
 	gsize      n_uris       = 0;
 	gint       rank;
 	gboolean   needs_update = FALSE;
