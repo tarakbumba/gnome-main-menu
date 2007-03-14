@@ -67,13 +67,15 @@ typedef struct {
 
 	GnomeVFSMonitorHandle   *store_monitor;
 	GnomeVFSMonitorHandle   *user_store_monitor;
-	GnomeVFSMonitorHandle   *gtk_store_monitor;
 	guint                    gconf_monitor;
 
 	void                  (* update_path) (BookmarkAgent *);
 	void                  (* load_store)  (BookmarkAgent *);
 	void                  (* save_store)  (BookmarkAgent *);
 	void                  (* create_item) (BookmarkAgent *, const gchar *);
+
+	gchar                   *gtk_store_path;
+	GnomeVFSMonitorHandle   *gtk_store_monitor;
 } BookmarkAgentPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BOOKMARK_AGENT_TYPE, BookmarkAgentPrivate))
@@ -295,13 +297,15 @@ bookmark_agent_init (BookmarkAgent *this)
 
 	priv->store_monitor       = NULL;
 	priv->user_store_monitor  = NULL;
-	priv->gtk_store_monitor   = NULL;
 	priv->gconf_monitor       = 0;
 
 	priv->update_path         = NULL;
 	priv->load_store          = NULL;
 	priv->save_store          = NULL;
 	priv->create_item         = NULL;
+
+	priv->gtk_store_path      = NULL;
+	priv->gtk_store_monitor   = NULL;
 }
 
 static BookmarkAgent *
@@ -340,6 +344,11 @@ bookmark_agent_new (BookmarkStoreType type)
 			priv->reorderable     = FALSE;
 
 			priv->load_store      = load_places_store;
+
+			priv->gtk_store_path = g_build_filename (g_get_home_dir (), GTK_BOOKMARKS_FILE, NULL);
+			gnome_vfs_monitor_add (
+				& priv->gtk_store_monitor, priv->gtk_store_path,
+				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
 
 			break;
 
@@ -408,6 +417,7 @@ finalize (GObject *g_obj)
 	g_free (priv->items);
 	g_free (priv->store_path);
 	g_free (priv->user_store_path);
+	g_free (priv->gtk_store_path);
 
 	if (priv->store_monitor)
 		gnome_vfs_monitor_cancel (priv->store_monitor);
@@ -632,11 +642,9 @@ load_places_store (BookmarkAgent *this)
 
 	gchar **uris;
 	gchar **groups;
-
-	gchar *gtk_bookmarks_path;
+	gchar **folders = NULL;
 
 	gchar  *buf;
-	gchar **folders = NULL;
 
 	gint i, j;
 
@@ -661,9 +669,7 @@ load_places_store (BookmarkAgent *this)
 
 	g_strfreev (uris);
 
-	gtk_bookmarks_path = g_build_filename (g_get_home_dir (), GTK_BOOKMARKS_FILE, NULL);
-	g_file_get_contents (gtk_bookmarks_path, & buf, NULL, NULL);
-	g_free (gtk_bookmarks_path);
+	g_file_get_contents (priv->gtk_store_path, & buf, NULL, NULL);
 
 	if (buf) {
 		folders = g_strsplit (buf, "\n", -1);
@@ -673,7 +679,7 @@ load_places_store (BookmarkAgent *this)
 	for (i = 0; folders && folders [i]; ++i) {
 		if (strlen (folders [i]) > 0) {
 			g_bookmark_file_add_group (priv->store, folders [i], "gtk-bookmarks");
-			priv->create_item (this, uris [i]);
+			priv->create_item (this, folders [i]);
 		}
 	}
 
@@ -732,7 +738,7 @@ update_user_spec_path (BookmarkAgent *this)
 
 		if (priv->status == BOOKMARK_STORE_DEFAULT)
 			gnome_vfs_monitor_add (
-				& priv->store_monitor, priv->user_store_path,
+				& priv->user_store_monitor, priv->user_store_path,
 				GNOME_VFS_MONITOR_FILE, store_monitor_cb, this);
 	}
 

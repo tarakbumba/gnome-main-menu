@@ -20,42 +20,28 @@
 
 #include "user-dirs-tile-table.h"
 
-#include <string.h>
-#include <glib/gi18n.h>
-
 #include "directory-tile.h"
-#include "libslab-utils.h"
+#include "bookmark-agent.h"
 
-#define GTK_BOOKMARKS_FILE ".gtk-bookmarks"
-
-G_DEFINE_TYPE (UserDirsTileTable, user_dirs_tile_table, BOOKMARK_TILE_TABLE_TYPE)
+G_DEFINE_TYPE (UserDirsTileTable, user_dirs_tile_table, TILE_TABLE_TYPE)
 
 typedef struct {
-	GnomeVFSMonitorHandle *gtk_bookmarks_store_monitor;
-	gchar *gtk_bookmarks_store_path;
+	BookmarkAgent *agent;
 } UserDirsTileTablePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), USER_DIRS_TILE_TABLE_TYPE, UserDirsTileTablePrivate))
 
-static void user_dirs_tile_table_finalize (GObject *);
+static void finalize     (GObject *);
+static void reload_tiles (TileTable *);
 
-static void update_store (GBookmarkFile *, GBookmarkFile *, const gchar *);
-
-static GtkWidget *get_directory_tile (GBookmarkFile *, const gchar *);
-
-static void sync_gtk_bookmarks_to_store (UserDirsTileTable *);
-
-static void gtk_bookmarks_store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
-                                            GnomeVFSMonitorEventType, gpointer);
+static void agent_notify_cb (GObject *, GParamSpec *, gpointer);
 
 GtkWidget *
 user_dirs_tile_table_new ()
 {
-	UserDirsTileTable *this;
+	UserDirsTileTable        *this;
 	UserDirsTileTablePrivate *priv;
-
-	gchar *store_uri;
-
+	
 	
 	this = g_object_new (
 		USER_DIRS_TILE_TABLE_TYPE,
@@ -63,20 +49,15 @@ user_dirs_tile_table_new ()
 		"homogeneous",           TRUE,
 		TILE_TABLE_REORDER_PROP, TILE_TABLE_REORDERING_NONE,
 		NULL);
-
 	priv = PRIVATE (this);
 
-	priv->gtk_bookmarks_store_path = g_build_filename (g_get_home_dir (), GTK_BOOKMARKS_FILE, NULL);
-	store_uri = g_filename_to_uri (priv->gtk_bookmarks_store_path, NULL, NULL);
+	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DIRS);
 
-	gnome_vfs_monitor_add (
-		& priv->gtk_bookmarks_store_monitor, store_uri,
-		GNOME_VFS_MONITOR_FILE, gtk_bookmarks_store_monitor_cb, this);
-
-	g_free (store_uri);
-
-	sync_gtk_bookmarks_to_store (this);
 	tile_table_reload (TILE_TABLE (this));
+
+	g_signal_connect (
+		G_OBJECT (priv->agent), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+		G_CALLBACK (agent_notify_cb), this);
 
 	return GTK_WIDGET (this);
 }
@@ -84,15 +65,12 @@ user_dirs_tile_table_new ()
 static void
 user_dirs_tile_table_class_init (UserDirsTileTableClass *this_class)
 {
-	GObjectClass           *g_obj_class               = G_OBJECT_CLASS            (this_class);
-	BookmarkTileTableClass *bookmark_tile_table_class = BOOKMARK_TILE_TABLE_CLASS (this_class);
+	GObjectClass   *g_obj_class      = G_OBJECT_CLASS   (this_class);
+	TileTableClass *tile_table_class = TILE_TABLE_CLASS (this_class);
 
+	g_obj_class->finalize = finalize;
 
-	g_obj_class->finalize = user_dirs_tile_table_finalize;
-
-	bookmark_tile_table_class->get_store_path        = libslab_get_user_dirs_store_path;
-	bookmark_tile_table_class->update_bookmark_store = update_store;
-	bookmark_tile_table_class->get_tile              = get_directory_tile;
+	tile_table_class->reload = reload_tiles;
 
 	g_type_class_add_private (this_class, sizeof (UserDirsTileTablePrivate));
 }
@@ -100,222 +78,41 @@ user_dirs_tile_table_class_init (UserDirsTileTableClass *this_class)
 static void
 user_dirs_tile_table_init (UserDirsTileTable *this)
 {
-	UserDirsTileTablePrivate *priv = PRIVATE (this);
-
-	priv->gtk_bookmarks_store_monitor = NULL;
-	priv->gtk_bookmarks_store_path    = NULL;
+	PRIVATE (this)->agent = NULL;
 }
 
 static void
-user_dirs_tile_table_finalize (GObject *g_obj)
+finalize (GObject *g_obj)
 {
-	UserDirsTileTablePrivate *priv = PRIVATE (g_obj);
-
-	if (priv->gtk_bookmarks_store_monitor)
-		gnome_vfs_monitor_cancel (priv->gtk_bookmarks_store_monitor);
-
-	g_free (priv->gtk_bookmarks_store_path);
-
-	G_OBJECT_CLASS (user_dirs_tile_table_parent_class)->finalize (g_obj);
+	g_object_unref (G_OBJECT (PRIVATE (g_obj)->agent));
 }
 
 static void
-update_store (GBookmarkFile *bm_file_old, GBookmarkFile *bm_file_new,
-              const gchar *uri)
-{
-	gchar    *title;
-	gchar    *icon;
-	gboolean  found;
-
-
-	g_bookmark_file_set_mime_type   (bm_file_new, uri, "inode/directory");
-	g_bookmark_file_add_application (bm_file_new, uri, "nautilus", "nautilus --browser %u");
-
-	if (bm_file_old) {
-		title = g_bookmark_file_get_title (bm_file_old, uri, NULL);
-		g_bookmark_file_set_title (bm_file_new, uri, title);
-
-		found = g_bookmark_file_get_icon (bm_file_old, uri, & icon, NULL, NULL);
-		g_bookmark_file_set_icon (bm_file_new, uri, icon, NULL);
-
-		g_free (title);
-		g_free (icon);
-	}
-}
-
-static GtkWidget *
-get_directory_tile (GBookmarkFile *bm_file, const gchar *uri)
-{
-	gchar *title   = NULL;
-	gchar *path;
-	gchar *icon    = NULL;
-	gchar *uri_new = NULL;
-
-	gchar *buf;
-	gchar *tag_open_ptr  = NULL;
-	gchar *tag_close_ptr = NULL;
-
-	GtkWidget *tile;
-
-
-	if (! strcmp (uri, "HOME")) {
-		uri_new = g_filename_to_uri (g_get_home_dir (), NULL, NULL);
-		icon = "gnome-fs-home";
-	}
-	else if (! strcmp (uri, "DOCUMENTS")) {
-		path = g_build_filename (g_get_home_dir (), "Documents", NULL);
-
-		if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))
-			uri_new = g_filename_to_uri (path, NULL, NULL);
-
-		g_free (path);
-	}
-	else if (! strcmp (uri, "DESKTOP")) {
-		path = g_build_filename (g_get_home_dir (), "Desktop", NULL);
-
-		if (g_file_test (path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			uri_new = g_filename_to_uri (path, NULL, NULL);
-			icon = "gnome-fs-desktop";
-		}
-
-		g_free (path);
-	}
-	else
-		uri_new = g_strdup (uri);
-
-	if (! strcmp (uri_new, "file:///"))
-		icon = "drive-harddisk";
-	else if (! strcmp (uri_new, "network:"))
-		icon = "network-workgroup";
-	else if (g_str_has_prefix (uri_new, "x-nautilus-search")) {
-		icon = "system-search";
-
-		path = g_build_filename (g_get_home_dir (), ".nautilus", "searches", & uri_new [21], NULL);
-
-		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-			g_file_get_contents (path, & buf, NULL, NULL);
-
-			if (buf) {
-				tag_open_ptr  = strstr (buf, "<text>");
-				tag_close_ptr = strstr (buf, "</text>");
-			}
-
-			if (tag_open_ptr && tag_close_ptr) {
-				tag_close_ptr [0] = '\0';
-
-				title = g_strdup_printf ("\"%s\"", & tag_open_ptr [6]);
-
-				tag_close_ptr [0] = 'a';
-			}
-			else
-				title = g_strdup (_("Search"));
-
-			g_free (buf);
-		}
-		else {
-			g_free (uri_new);
-			uri_new = NULL;
-		}
-
-		g_free (path);
-	}
-	else
-		/* do nothing */ ;
-
-	if (uri_new) {
-		if (! title && bm_file)
-			title = g_bookmark_file_get_title (bm_file, uri, NULL);
-
-		tile = directory_tile_new (uri_new, title, icon);
-	}
-	else
-		tile = NULL;
-
-	g_free (title);
-	g_free (uri_new);
-
-	return tile;
-}
-
-static void
-sync_gtk_bookmarks_to_store (UserDirsTileTable *this)
+reload_tiles (TileTable *this)
 {
 	UserDirsTileTablePrivate *priv = PRIVATE (this);
 
-	gchar *path;
+	BookmarkItem **items = NULL;
+	GList         *tiles = NULL;
+	GtkWidget     *tile;
 
-	GBookmarkFile *bm_file;
-
-	gchar **uris;
-	gchar **groups;
-
-	gchar  *buf;
-	gchar **folders;
-
-	GError *error = NULL;
-
-	gint i, j;
+	gint i;
 
 
-	path = libslab_get_user_dirs_store_path (FALSE);
+	g_object_get (G_OBJECT (priv->agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
 
-	bm_file = g_bookmark_file_new ();
-	g_bookmark_file_load_from_file (bm_file, path, NULL);
+	for (i = 0; items && items [i]; ++i) {
+		tile = directory_tile_new (items [i]->uri, items [i]->title, items [i]->icon);
 
-	uris = g_bookmark_file_get_uris (bm_file, NULL);
-
-	for (i = 0; uris && uris [i]; ++i) {
-		groups = g_bookmark_file_get_groups (bm_file, uris [i], NULL, NULL);
-
-		for (j = 0; groups && groups [j]; ++j) {
-			if (! strcmp (groups [j], "gtk-bookmarks")) {
-				g_bookmark_file_remove_item (bm_file, uris [i], NULL);
-
-				break;
-			}
-		}
-
-		g_strfreev (groups);
+		if (tile)
+			tiles = g_list_append (tiles, tile);
 	}
 
-	g_strfreev (uris);
-
-	g_file_get_contents (priv->gtk_bookmarks_store_path, & buf, NULL, NULL);
-
-	folders = g_strsplit (buf, "\n", -1);
-
-	for (i = 0; folders && folders [i]; ++i) {
-		if (strlen (folders [i]) > 0) {
-			g_bookmark_file_set_mime_type (
-				bm_file, folders [i], "inode/directory");
-			g_bookmark_file_add_application (
-				bm_file, folders [i], "nautilus", "nautilus --browser %u");
-			g_bookmark_file_add_group (
-				bm_file, folders [i], "gtk-bookmarks");
-		}
-	}
-
-	g_free (path);
-
-	path = libslab_get_user_dirs_store_path (TRUE);
-	g_bookmark_file_to_file (bm_file, path, & error);
-
-	if (error)
-		libslab_handle_g_error (
-			& error,
-			"%s: couldn't save bookmark file [%s]",
-			G_STRFUNC, path);
-
-	g_strfreev (folders);
-	g_free (buf);
-
-	g_bookmark_file_free (bm_file);
+	g_object_set (G_OBJECT (this), TILE_TABLE_TILES_PROP, tiles, NULL);
 }
 
 static void
-gtk_bookmarks_store_monitor_cb (GnomeVFSMonitorHandle *handle, const gchar *monitor_uri,
-                                const gchar *info_uri, GnomeVFSMonitorEventType type,
-                                gpointer user_data)
+agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
-	sync_gtk_bookmarks_to_store (USER_DIRS_TILE_TABLE (user_data));
+	reload_tiles (TILE_TABLE (user_data));
 }
