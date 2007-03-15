@@ -157,19 +157,19 @@ uri_added (TileTable *this, TileTableURIAddedEvent *event)
 
 	BookmarkItem item;
 
-	gboolean eligible;
+	gboolean ineligible;
 	gint     uri_len;
 
 
-	if (! event->uri);
+	if (! event->uri)
 		return;
 
 	item.uri = event->uri;
 
-	eligible = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
-	eligible = eligible && libslab_desktop_item_is_a_terminal (item.uri);
+	ineligible = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+	ineligible = ineligible && libslab_desktop_item_is_a_terminal (item.uri);
 
-	if (! eligible)
+	if (ineligible)
 		return;
 
 	uri_len = strlen (item.uri);

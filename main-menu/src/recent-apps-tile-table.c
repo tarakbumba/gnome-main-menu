@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-#include "recent-files.h"
+#include "bookmark-agent.h"
 #include "application-tile.h"
 #include "libslab-utils.h"
 
@@ -32,7 +32,8 @@
 G_DEFINE_TYPE (RecentAppsTileTable, recent_apps_tile_table, TILE_TABLE_TYPE)
 
 typedef struct {
-	MainMenuRecentMonitor *recent_monitor;
+	BookmarkAgent *recent_agent;
+	BookmarkAgent *user_spec_agent;
 } RecentAppsTileTablePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), RECENT_APPS_TILE_TABLE_TYPE, RecentAppsTileTablePrivate))
@@ -43,7 +44,7 @@ static void reload_tiles (TileTable *);
 
 static gboolean uri_is_in_blacklist (const gchar *);
 
-static void recent_monitor_changed_cb (MainMenuRecentMonitor *, gpointer);
+static void agent_notify_cb (GObject *, GParamSpec *, gpointer);
 
 GtkWidget *
 recent_apps_tile_table_new ()
@@ -61,11 +62,12 @@ recent_apps_tile_table_new ()
 
 	priv = PRIVATE (this);
 
-	priv->recent_monitor = main_menu_recent_monitor_new ();
+	priv->recent_agent    = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_APPS);
+	priv->user_spec_agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_APPS);
 
 	g_signal_connect (
-		G_OBJECT (priv->recent_monitor), "changed",
-		G_CALLBACK (recent_monitor_changed_cb), this);
+		G_OBJECT (priv->recent_agent), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+		G_CALLBACK (agent_notify_cb), this);
 
 	reload_tiles (TILE_TABLE (this));
 
@@ -89,13 +91,19 @@ recent_apps_tile_table_class_init (RecentAppsTileTableClass *this_class)
 static void
 recent_apps_tile_table_init (RecentAppsTileTable *this)
 {
-	PRIVATE (this)->recent_monitor = NULL;
+	RecentAppsTileTablePrivate *priv = PRIVATE (this);
+
+	priv->recent_agent    = NULL;
+	priv->user_spec_agent = NULL;
 }
 
 static void
 recent_apps_tile_table_finalize (GObject *g_obj)
 {
-	g_object_unref (PRIVATE (g_obj)->recent_monitor);
+	RecentAppsTileTablePrivate *priv = PRIVATE (g_obj);
+
+	g_object_unref (priv->recent_agent);
+	g_object_unref (priv->user_spec_agent);
 
 	G_OBJECT_CLASS (recent_apps_tile_table_parent_class)->finalize (g_obj);
 }
@@ -105,45 +113,33 @@ reload_tiles (TileTable *this)
 {
 	RecentAppsTileTablePrivate *priv = PRIVATE (this);
 
-	GList              *apps;
-	MainMenuRecentFile *app;
-
-	const gchar *uri;
+	BookmarkItem **items = NULL;
+	GList         *tiles = NULL;
+	GtkWidget     *tile;
 
 	gboolean blacklisted;
 
-	GList     *tiles = NULL;
-	GtkWidget *tile;
-
-	GList *node;
+	gint i;
 
 
-	apps = main_menu_get_recent_apps (priv->recent_monitor);
+	g_object_get (G_OBJECT (priv->recent_agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
 
-	for (node = apps; node; node = node->next) {
-		app = (MainMenuRecentFile *) node->data;
-
-		uri = main_menu_recent_file_get_uri (app);
-
+	for (i = 0; items && items [i]; ++i) {
 		blacklisted =
-			libslab_system_item_store_has_uri (uri) ||
-			libslab_user_apps_store_has_uri   (uri) ||
-			uri_is_in_blacklist               (uri);
+			libslab_system_item_store_has_uri (items [i]->uri)              ||
+			bookmark_agent_has_item (priv->user_spec_agent, items [i]->uri) ||
+			uri_is_in_blacklist (items [i]->uri);
 
-		if (! blacklisted) {
-			tile = application_tile_new (uri);
+		if (! blacklisted)
+			tile = application_tile_new (items [i]->uri);
+		else
+			tile = NULL;
 
-			if (tile)
-				tiles = g_list_append (tiles, tile);
-		}
-
-		g_object_unref (app);
+		if (tile)
+			tiles = g_list_append (tiles, tile);
 	}
 
 	g_object_set (G_OBJECT (this), TILE_TABLE_TILES_PROP, tiles, NULL);
-
-	g_list_free (apps);
-	g_list_free (tiles);
 }
 
 static gboolean
@@ -178,7 +174,7 @@ uri_is_in_blacklist (const gchar *uri)
 }
 
 static void
-recent_monitor_changed_cb (MainMenuRecentMonitor *monitor, gpointer user_data)
+agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
 	reload_tiles (TILE_TABLE (user_data));
 }
