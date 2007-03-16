@@ -625,8 +625,6 @@ create_system_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
-	g_printf ("%s !!\n", G_STRFUNC);
-
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "system-item-table-container"));
 
@@ -696,8 +694,6 @@ create_user_apps_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
-	g_printf ("%s !!\n", G_STRFUNC);
-
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-apps-table-container"));
 
@@ -715,8 +711,6 @@ create_rct_apps_section (MainMenuUI *this)
 
 	GtkContainer *ctnr;
 
-
-	g_printf ("%s !!\n", G_STRFUNC);
 
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-apps-table-container"));
@@ -736,8 +730,6 @@ create_user_docs_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
-	g_printf ("%s !!\n", G_STRFUNC);
-
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-docs-table-container"));
 
@@ -756,8 +748,6 @@ create_rct_docs_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
-	g_printf ("%s !!\n", G_STRFUNC);
-
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-docs-table-container"));
 
@@ -775,8 +765,6 @@ create_user_dirs_section (MainMenuUI *this)
 
 	GtkContainer *ctnr;
 
-
-	g_printf ("%s !!\n", G_STRFUNC);
 
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-dirs-table-container"));
