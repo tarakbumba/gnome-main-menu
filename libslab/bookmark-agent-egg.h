@@ -47,8 +47,8 @@ G_BEGIN_DECLS
 #define g_bookmark_file_set_modified     egg_bookmark_file_set_modified
 #define g_bookmark_file_get_icon         egg_bookmark_file_get_icon
 #define g_bookmark_file_set_icon         egg_bookmark_file_set_icon
-#define g_bookmark_file_get_applications egg_bookmark_file_add_application
-#define g_bookmark_file_add_application  egg_bookmark_file_get_applications
+#define g_bookmark_file_get_applications egg_bookmark_file_get_applications
+#define g_bookmark_file_add_application  egg_bookmark_file_add_application
 #define g_bookmark_file_get_app_info     egg_bookmark_file_get_app_info
 #define g_bookmark_file_get_groups       egg_bookmark_file_get_groups
 #define g_bookmark_file_add_group        egg_bookmark_file_add_group

@@ -25,17 +25,7 @@
 #define MODIFIABLE_DIRS_GCONF_KEY   "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs"
 
 #define DESKTOP_ITEM_TERMINAL_EMULATOR_FLAG "TerminalEmulator"
-
-static gchar                 *get_data_file_path     (const gchar *, gboolean);
-static gboolean               store_has_uri          (const gchar *, const gchar *);
-static GList                 *get_uri_list           (const gchar *);
-static void                   save_uri_list          (const gchar *, const GList *);
-static void                   remove_bookmark_item   (const gchar *, const gchar *, const gchar *);
-static GnomeVFSMonitorHandle *add_store_file_monitor (const gchar *,
-                                                      GnomeVFSMonitorCallback,
-                                                      gpointer);
-
-#define ALTERNATE_DOCPATH_KEY "DocPath"
+#define ALTERNATE_DOCPATH_KEY               "DocPath"
 
 gboolean
 libslab_gtk_image_set_by_id (GtkImage *image, const gchar *id)
@@ -230,6 +220,7 @@ libslab_get_current_time_millis ()
 	return 1000L * t_curr.tv_sec + t_curr.tv_usec / 1000L;
 }
 
+#if 0
 void
 libslab_cclosure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
                                                 GValue       *retval,
@@ -263,6 +254,7 @@ libslab_cclosure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
 		data_0, g_value_peek_pointer (param + 1),
 		g_value_peek_pointer (param + 2), data_1);
 }
+#endif
 
 gint
 libslab_strcmp (const gchar *a, const gchar *b)
@@ -507,6 +499,7 @@ libslab_handle_g_error (GError **error, const gchar *msg_format, ...)
 	g_free (msg);
 }
 
+#if 0
 GList *
 libslab_get_system_item_uris ()
 {
@@ -815,6 +808,7 @@ libslab_user_docs_store_has_uri (const gchar *uri)
 
 	return exists;
 }
+#endif
 
 gboolean
 libslab_desktop_item_is_a_terminal (const gchar *uri)
@@ -876,6 +870,7 @@ libslab_spawn_command (const gchar *cmd)
 	g_strfreev (argv);
 }
 
+#if 0
 static gboolean
 store_has_uri (const gchar *path, const gchar *uri)
 {
@@ -1035,3 +1030,4 @@ add_store_file_monitor (const gchar *filename, GnomeVFSMonitorCallback callback,
 
 	return handle;
 }
+#endif

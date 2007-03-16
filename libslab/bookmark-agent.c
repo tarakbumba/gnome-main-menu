@@ -131,6 +131,7 @@ static void create_dir_item          (BookmarkAgent *, const gchar *);
 static void store_monitor_cb (GnomeVFSMonitorHandle *, const gchar *, const gchar *,
                               GnomeVFSMonitorEventType, gpointer);
 static void gconf_notify_cb  (GConfClient *, guint, GConfEntry *, gpointer);
+static void weak_destroy_cb  (gpointer, GObject *);
 
 #ifdef USE_GTK_RECENT_MANAGER
 static gint recent_item_mru_comp_func (gconstpointer a, gconstpointer b);
@@ -166,8 +167,10 @@ bookmark_agent_get_instance (BookmarkStoreType type)
 	g_return_val_if_fail (0 <= type, NULL);
 	g_return_val_if_fail (type < BOOKMARK_STORE_N_TYPES, NULL);
 
-	if (! instances [type])
+	if (! instances [type]) {
 		instances [type] = bookmark_agent_new (type);
+		g_object_weak_ref (G_OBJECT (instances [type]), weak_destroy_cb, GINT_TO_POINTER (type));
+	}
 	else
 		g_object_ref (G_OBJECT (instances [type]));
 
@@ -194,7 +197,12 @@ bookmark_agent_add_item (BookmarkAgent *this, const BookmarkItem *item)
 	if (item->mtime)
 		g_bookmark_file_set_modified (priv->store, item->uri, item->mtime);
 
+	if (item->title)
+		g_bookmark_file_set_title (priv->store, item->uri, item->title);
+
 	g_bookmark_file_add_application (priv->store, item->uri, item->app_name, item->app_exec);
+
+	g_printf ("adding [%s], making %d\n", item->uri, g_bookmark_file_get_size (priv->store));
 
 	set_rank (this, item->uri, g_bookmark_file_get_size (priv->store) - 1);
 
@@ -280,11 +288,13 @@ bookmark_agent_remove_item (BookmarkAgent *this, const gchar *uri)
 
 		g_bookmark_file_remove_item (priv->store, uri, NULL);
 
+		g_printf ("removing [%s], leaving %d\n", uri, g_bookmark_file_get_size (priv->store));
+
 		if (rank >= 0) {
 			uris = g_bookmark_file_get_uris (priv->store, NULL);
 				 
 			for (i =  0; uris && uris [i]; ++i) {
-				 rank_i = get_rank (this, uris [i]);
+				rank_i = get_rank (this, uris [i]);
 
 				if (rank_i > rank)
 					set_rank (this, uris [i], rank_i - 1);
@@ -699,6 +709,8 @@ set_rank (BookmarkAgent *this, const gchar *uri, gint rank)
 
 	if (! (priv->reorderable && bookmark_agent_has_item (this, uri)))
 		return;
+
+	g_printf ("%s (%s, %d)\n", G_STRFUNC, uri, rank);
 
 	groups = g_bookmark_file_get_groups (priv->store, uri, NULL, NULL);
 
@@ -1156,6 +1168,12 @@ gconf_notify_cb (GConfClient *client, guint conn_id,
 		priv->user_modifiable = user_modifiable;
 		update_agent (this);
 	}
+}
+
+static void
+weak_destroy_cb (gpointer data, GObject *g_obj)
+{
+	instances [GPOINTER_TO_INT (data)] = NULL;
 }
 
 #ifdef USE_GTK_RECENT_MANAGER

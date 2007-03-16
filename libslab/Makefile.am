@@ -27,8 +27,6 @@ libslab_la_SOURCES =				\
 	libslab-utils.c				\
 	libslab-utils.h				\
 	nameplate-tile.c			\
-	recent-files.c				\
-	recent-files.h				\
 	search-bar.c				\
 	search-context-picker.c			\
 	search-entry-watermark.h		\

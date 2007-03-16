@@ -26,36 +26,7 @@ gboolean          libslab_desktop_item_is_a_terminal (const gchar *uri);
 gchar            *libslab_string_replace_once (const gchar *string, const gchar *key, const gchar *value);
 void              libslab_spawn_command (const gchar *cmd);
 
-GList *libslab_get_system_item_uris (void);
-GList *libslab_get_user_app_uris    (void);
-GList *libslab_get_user_doc_uris    (void);
-
-gchar *libslab_get_system_item_store_path (gboolean writeable);
-gchar *libslab_get_user_apps_store_path   (gboolean writeable);
-gchar *libslab_get_user_docs_store_path   (gboolean writeable);
-gchar *libslab_get_user_dirs_store_path   (gboolean writeable);
-
-gboolean libslab_system_item_store_has_uri (const gchar *uri);
-gboolean libslab_user_apps_store_has_uri   (const gchar *uri);
-gboolean libslab_user_docs_store_has_uri   (const gchar *uri);
-
-void libslab_remove_system_item (const gchar *uri);
-void libslab_remove_user_doc    (const gchar *uri);
-
-void libslab_add_user_doc (const gchar *uri, const gchar *mime_type, time_t modified,
-                           const gchar *app_name, const gchar *app_exec);
-
-void libslab_save_system_item_uris (const GList *);
-void libslab_save_app_uris         (const GList *);
-void libslab_save_doc_uris         (const GList *);
-
-GnomeVFSMonitorHandle *libslab_add_system_item_monitor (GnomeVFSMonitorCallback callback,
-                                                        gpointer                user_data);
-GnomeVFSMonitorHandle *libslab_add_apps_monitor        (GnomeVFSMonitorCallback callback,
-                                                        gpointer                user_data);
-GnomeVFSMonitorHandle *libslab_add_docs_monitor        (GnomeVFSMonitorCallback callback,
-                                                        gpointer                user_data);
-
+#if 0
 typedef void (* libslab_marshal_func_VOID__POINTER_POINTER) (gpointer, gpointer, gpointer, gpointer);
 void libslab_cclosure_marshal_VOID__POINTER_POINTER (GClosure     *,
                                                      GValue       *,
@@ -63,6 +34,7 @@ void libslab_cclosure_marshal_VOID__POINTER_POINTER (GClosure     *,
                                                      const GValue *,
                                                      gpointer      ,
                                                      gpointer);
+#endif
 
 G_END_DECLS
 

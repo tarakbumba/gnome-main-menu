@@ -33,7 +33,6 @@
 #include "slab-gnome-util.h"
 #include "gnome-utils.h"
 #include "libslab-utils.h"
-#include "recent-files.h"
 #include "bookmark-agent.h"
 
 #define GCONF_SEND_TO_CMD_KEY       "/desktop/gnome/applications/main-menu/file-area/file_send_to_cmd"
@@ -89,8 +88,6 @@ typedef struct
 	BookmarkStoreStatus  store_status;
 	gboolean             is_bookmarked;
 	gulong               notify_signal_id;
-
-	MainMenuRecentMonitor *recent_monitor;
 } DocumentTilePrivate;
 
 static GnomeThumbnailFactory *thumbnail_factory = NULL;
@@ -350,8 +347,6 @@ document_tile_private_setup (DocumentTile *this)
 
 	g_object_unref (client);
 
-	priv->recent_monitor = main_menu_recent_monitor_new ();
-
 	priv->agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
 
 	priv->notify_signal_id = g_signal_connect (
@@ -381,8 +376,6 @@ document_tile_init (DocumentTile *tile)
 	priv->store_status     = BOOKMARK_STORE_DEFAULT;
 	priv->is_bookmarked    = FALSE;
 	priv->notify_signal_id = 0;
-
-	priv->recent_monitor  = NULL;
 }
 
 static void
@@ -408,8 +401,6 @@ document_tile_finalize (GObject *g_object)
 	gconf_client_remove_dir (client, GCONF_ENABLE_DELETE_KEY_DIR, NULL);
 
 	g_object_unref (client);
-
-	g_object_unref (priv->recent_monitor);
 
 	G_OBJECT_CLASS (document_tile_parent_class)->finalize (g_object);
 }
@@ -588,7 +579,7 @@ rename_entry_activate_cb (GtkEntry *entry, gpointer user_data)
 	dst_uri_str = gnome_vfs_uri_to_string (dst_uri, GNOME_VFS_URI_HIDE_NONE);
 
 	if (retval == GNOME_VFS_OK) {
-		main_menu_rename_recent_file (priv->recent_monitor, TILE (tile)->uri, dst_uri_str);
+		bookmark_agent_move_item (priv->agent, TILE (tile)->uri, dst_uri_str);
 
 		g_free (priv->basename);
 		priv->basename = g_strdup (gtk_entry_get_text (entry));
@@ -784,7 +775,7 @@ move_to_trash_trigger (Tile *tile, TileEvent *event, TileAction *action)
 		GNOME_VFS_XFER_ERROR_MODE_ABORT, GNOME_VFS_XFER_OVERWRITE_MODE_REPLACE, NULL, NULL);
 
 	if (retval == GNOME_VFS_OK)
-		main_menu_remove_recent_file (priv->recent_monitor, TILE (tile)->uri);
+		bookmark_agent_remove_item (priv->agent, TILE (tile)->uri);
 	else {
 		trash_uri_str = gnome_vfs_uri_to_string (trash_uri, GNOME_VFS_URI_HIDE_NONE);
 
@@ -819,7 +810,7 @@ delete_trigger (Tile *tile, TileEvent *event, TileAction *action)
 		GNOME_VFS_XFER_REMOVESOURCE, NULL, NULL);
 
 	if (retval == GNOME_VFS_OK)
-		main_menu_remove_recent_file (priv->recent_monitor, TILE (tile)->uri);
+		bookmark_agent_remove_item (priv->agent, TILE (tile)->uri);
 	else
 		g_warning ("unable to delete [%s]\n", TILE (tile)->uri);
 
