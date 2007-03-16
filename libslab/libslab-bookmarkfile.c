@@ -190,8 +190,8 @@ static void          libslab_bookmark_file_add_item    (LibSlabBookmarkFile  *bo
 static time_t  timestamp_from_iso8601 (const gchar *iso_date);
 static gchar * timestamp_to_iso8601   (time_t       timestamp);
 static time_t mktime_utc (struct tm *tm);
-static gboolean g_time_val_from_iso8601 (const gchar *iso_date, GTimeVal    *time_);
-static gchar * g_time_val_to_iso8601  (GTimeVal *time_);
+static gboolean libslab_time_val_from_iso8601 (const gchar *iso_date, GTimeVal    *time_);
+static gchar * libslab_time_val_to_iso8601  (GTimeVal *time_);
 
 /********************************
  * BookmarkAppInfo              *
@@ -1536,7 +1536,7 @@ timestamp_to_iso8601 (time_t timestamp)
       stamp.tv_usec = 0;
     }
 
-  return g_time_val_to_iso8601 (&stamp);
+  return libslab_time_val_to_iso8601 (&stamp);
 }
 
 static time_t
@@ -1544,7 +1544,7 @@ timestamp_from_iso8601 (const gchar *iso_date)
 {
   GTimeVal stamp;
 
-  if (!g_time_val_from_iso8601 (iso_date, &stamp))
+  if (!libslab_time_val_from_iso8601 (iso_date, &stamp))
     return (time_t) -1;
 
   return (time_t) stamp.tv_sec;
@@ -1597,7 +1597,7 @@ mktime_utc (struct tm *tm)
  * Since: 2.12
  */
 static gboolean
-g_time_val_from_iso8601 (const gchar *iso_date,
+libslab_time_val_from_iso8601 (const gchar *iso_date,
 			 GTimeVal    *time_)
 {
   struct tm tm;
@@ -1686,7 +1686,7 @@ g_time_val_from_iso8601 (const gchar *iso_date,
  * Since: 2.12
  */
 static gchar *
-g_time_val_to_iso8601 (GTimeVal *time_)
+libslab_time_val_to_iso8601 (GTimeVal *time_)
 {
   gchar *retval;
 
