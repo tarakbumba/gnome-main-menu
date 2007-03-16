@@ -5,7 +5,6 @@
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-desktop-item.h>
-#include <libgnomevfs/gnome-vfs.h>
 
 G_BEGIN_DECLS
 
@@ -25,16 +24,6 @@ void              libslab_handle_g_error (GError **error, const gchar *msg_forma
 gboolean          libslab_desktop_item_is_a_terminal (const gchar *uri);
 gchar            *libslab_string_replace_once (const gchar *string, const gchar *key, const gchar *value);
 void              libslab_spawn_command (const gchar *cmd);
-
-#if 0
-typedef void (* libslab_marshal_func_VOID__POINTER_POINTER) (gpointer, gpointer, gpointer, gpointer);
-void libslab_cclosure_marshal_VOID__POINTER_POINTER (GClosure     *,
-                                                     GValue       *,
-                                                     guint         ,
-                                                     const GValue *,
-                                                     gpointer      ,
-                                                     gpointer);
-#endif
 
 G_END_DECLS
 

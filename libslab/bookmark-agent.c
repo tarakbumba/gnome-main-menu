@@ -202,8 +202,6 @@ bookmark_agent_add_item (BookmarkAgent *this, const BookmarkItem *item)
 
 	g_bookmark_file_add_application (priv->store, item->uri, item->app_name, item->app_exec);
 
-	g_printf ("adding [%s], making %d\n", item->uri, g_bookmark_file_get_size (priv->store));
-
 	set_rank (this, item->uri, g_bookmark_file_get_size (priv->store) - 1);
 
 	save_store (this);
@@ -287,8 +285,6 @@ bookmark_agent_remove_item (BookmarkAgent *this, const gchar *uri)
 		rank = get_rank (this, uri);
 
 		g_bookmark_file_remove_item (priv->store, uri, NULL);
-
-		g_printf ("removing [%s], leaving %d\n", uri, g_bookmark_file_get_size (priv->store));
 
 		if (rank >= 0) {
 			uris = g_bookmark_file_get_uris (priv->store, NULL);
@@ -709,8 +705,6 @@ set_rank (BookmarkAgent *this, const gchar *uri, gint rank)
 
 	if (! (priv->reorderable && bookmark_agent_has_item (this, uri)))
 		return;
-
-	g_printf ("%s (%s, %d)\n", G_STRFUNC, uri, rank);
 
 	groups = g_bookmark_file_get_groups (priv->store, uri, NULL, NULL);
 

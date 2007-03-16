@@ -649,14 +649,20 @@ save_reorder (TileTable *this, GList *tiles_new)
 
 	gboolean equal = FALSE;
 
+	gchar **uris;
+	gint    n_items;
+
 	GList *node_u;
 	GList *node_v;
+	gint   i;
 
 
 	if (! tiles_new || priv->tiles == tiles_new)
 		return;
 
-	if (g_list_length (priv->tiles) == g_list_length (tiles_new)) {
+	n_items = g_list_length (priv->tiles);
+
+	if (n_items == g_list_length (tiles_new)) {
 		node_u = priv->tiles;
 		node_v = tiles_new;
 		equal  = TRUE;
@@ -675,7 +681,15 @@ save_reorder (TileTable *this, GList *tiles_new)
 		priv->tiles = g_list_copy (tiles_new);
 		update_bins (this, priv->tiles);
 
+		uris = g_new0 (gchar *, n_items + 1);
+
+		for (node_u = priv->tiles, i = 0; node_u && i < n_items; node_u = node_u->next, ++i)
+			uris [i] = g_strdup (TILE (node_u->data)->uri);
+
+		bookmark_agent_reorder_items (priv->agent, (const gchar **) uris);
 		g_object_notify (G_OBJECT (this), TILE_TABLE_TILES_PROP);
+
+		g_strfreev (uris);
 	}
 }
 

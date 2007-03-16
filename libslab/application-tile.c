@@ -85,8 +85,6 @@ typedef struct {
 	BookmarkStoreStatus  agent_status;
 	gboolean             is_bookmarked;
 	gulong               notify_signal_id;
-
-	GnomeVFSMonitorHandle *user_spec_monitor_handle;
 } ApplicationTilePrivate;
 
 #define APPLICATION_TILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), APPLICATION_TILE_TYPE, ApplicationTilePrivate))
