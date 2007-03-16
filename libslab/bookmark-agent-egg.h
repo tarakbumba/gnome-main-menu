@@ -52,6 +52,7 @@ G_BEGIN_DECLS
 #define g_bookmark_file_get_app_info     egg_bookmark_file_get_app_info
 #define g_bookmark_file_get_groups       egg_bookmark_file_get_groups
 #define g_bookmark_file_add_group        egg_bookmark_file_add_group
+#define g_bookmark_file_remove_group     egg_bookmark_file_remove_group
 #define g_bookmark_file_move_item        egg_bookmark_file_move_item
 
 G_END_DECLS
