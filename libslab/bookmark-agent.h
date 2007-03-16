@@ -58,7 +58,8 @@ typedef enum {
 	BOOKMARK_STORE_USER_DIRS   = 2,
 	BOOKMARK_STORE_RECENT_APPS = 3,
 	BOOKMARK_STORE_RECENT_DOCS = 4,
-	BOOKMARK_STORE_N_TYPES     = 5
+	BOOKMARK_STORE_SYSTEM      = 5,
+	BOOKMARK_STORE_N_TYPES     = 6
 } BookmarkStoreType;
 
 typedef struct {
@@ -77,6 +78,8 @@ void           bookmark_agent_add_item      (BookmarkAgent *this, const Bookmark
 void           bookmark_agent_move_item     (BookmarkAgent *this, const gchar *uri, const gchar *uri_new);
 void           bookmark_agent_remove_item   (BookmarkAgent *this, const gchar *uri);
 void           bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris);
+
+void           bookmark_item_free           (BookmarkItem *item);
 
 G_END_DECLS
 

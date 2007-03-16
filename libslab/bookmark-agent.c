@@ -50,10 +50,12 @@
 #define MODIFIABLE_APPS_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_apps"
 #define MODIFIABLE_DOCS_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_docs"
 #define MODIFIABLE_DIRS_GCONF_KEY "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_dirs"
+#define MODIFIABLE_SYS_GCONF_KEY  "/desktop/gnome/applications/main-menu/lock-down/user_modifiable_system_area"
 
 #define USER_APPS_STORE_FILE_NAME "applications.xbel"
 #define USER_DOCS_STORE_FILE_NAME "documents.xbel"
 #define USER_DIRS_STORE_FILE_NAME "places.xbel"
+#define SYSTEM_STORE_FILE_NAME    "system-items.xbel"
 
 #define GTK_BOOKMARKS_FILE ".gtk-bookmarks"
 
@@ -115,7 +117,6 @@ static void update_items (BookmarkAgent *);
 static void save_store   (BookmarkAgent *);
 static gint get_rank     (BookmarkAgent *, const gchar *);
 static void set_rank     (BookmarkAgent *, const gchar *, gint);
-static void free_item    (BookmarkItem *);
 
 static void load_xbel_store          (BookmarkAgent *);
 static void load_places_store        (BookmarkAgent *);
@@ -310,6 +311,18 @@ bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris)
 	save_store (this);
 }
 
+void
+bookmark_item_free (BookmarkItem *item)
+{
+	g_free (item->uri);
+	g_free (item->title);
+	g_free (item->mime_type);
+	g_free (item->icon);
+	g_free (item->app_name);
+	g_free (item->app_exec);
+	g_free (item);
+}
+
 static void
 bookmark_agent_base_init (BookmarkAgentClass *this_class)
 {
@@ -429,6 +442,7 @@ bookmark_agent_new (BookmarkStoreType type)
 			break;
 
 		case BOOKMARK_STORE_RECENT_APPS:
+		case BOOKMARK_STORE_RECENT_DOCS:
 			priv->user_modifiable = TRUE;
 			priv->reorderable     = FALSE;
 
@@ -447,11 +461,21 @@ bookmark_agent_new (BookmarkStoreType type)
 
 			break;
 
+		case BOOKMARK_STORE_SYSTEM:
+			priv->lockdown_key   = MODIFIABLE_SYS_GCONF_KEY;
+			priv->store_filename = SYSTEM_STORE_FILE_NAME;
+			priv->create_item    = create_app_item;
+
+			break;
+
 		default:
 			break;
 	}
 
-	if (type == BOOKMARK_STORE_USER_APPS || type == BOOKMARK_STORE_USER_DOCS || type == BOOKMARK_STORE_USER_DIRS) {
+	if (
+		type == BOOKMARK_STORE_USER_APPS || type == BOOKMARK_STORE_USER_DOCS ||
+		type == BOOKMARK_STORE_USER_DIRS || type == BOOKMARK_STORE_SYSTEM)
+	{
 		priv->user_modifiable = GPOINTER_TO_INT (libslab_get_gconf_value (priv->lockdown_key));
 
 		priv->user_store_path = g_build_filename (
@@ -463,7 +487,7 @@ bookmark_agent_new (BookmarkStoreType type)
 			priv->lockdown_key, gconf_notify_cb, this);
 	}
 
-	if (type == BOOKMARK_STORE_USER_APPS || type == BOOKMARK_STORE_USER_DOCS) {
+	if (type == BOOKMARK_STORE_USER_APPS || type == BOOKMARK_STORE_USER_DOCS || type == BOOKMARK_STORE_SYSTEM) {
 		priv->reorderable = TRUE;
 		priv->load_store  = load_xbel_store;
 		priv->save_store  = save_xbel_store;
@@ -507,7 +531,7 @@ finalize (GObject *g_obj)
 
 
 	for (i = 0; priv->items && priv->items [i]; ++i)
-		free_item (priv->items [i]);
+		bookmark_item_free (priv->items [i]);
 
 	g_free (priv->items);
 	g_free (priv->store_path);
@@ -582,7 +606,7 @@ update_items (BookmarkAgent *this)
 
 	if (needs_update) {
 		for (i = 0; priv->items && priv->items [i]; ++i)
-			free_item (priv->items [i]);
+			bookmark_item_free (priv->items [i]);
 
 		g_free (priv->items);
 
@@ -687,19 +711,6 @@ set_rank (BookmarkAgent *this, const gchar *uri, gint rank)
 	group = g_strdup_printf ("rank-%d", rank);
 	g_bookmark_file_add_group (priv->store, uri, group);
 	g_free (group);
-}
-
-
-static void
-free_item (BookmarkItem *item)
-{
-	g_free (item->uri);
-	g_free (item->title);
-	g_free (item->mime_type);
-	g_free (item->icon);
-	g_free (item->app_name);
-	g_free (item->app_exec);
-	g_free (item);
 }
 
 static void
@@ -866,7 +877,7 @@ load_recent_store (BookmarkAgent *this)
 		g_bookmark_file_set_mime_type (priv->store, item->uri, item->mime_type);
 		g_bookmark_file_set_modified  (priv->store, item->uri, item->mtime);
 
-		free_item (item);
+		bookmark_item_free (item);
 	}
 }
 

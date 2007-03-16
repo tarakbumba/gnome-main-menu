@@ -33,17 +33,18 @@
 #include <gdk/gdkkeysyms.h>
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
+#include <libgnomevfs/gnome-vfs.h>
+#include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "tile.h"
+#include "application-tile.h"
+#include "document-tile.h"
+#include "directory-tile.h"
+#include "system-tile.h"
 #include "hard-drive-status-tile.h"
 #include "network-status-tile.h"
 
-#include "user-apps-tile-table.h"
-#include "recent-apps-tile-table.h"
-#include "user-docs-tile-table.h"
-#include "recent-docs-tile-table.h"
-#include "user-dirs-tile-table.h"
-#include "system-tile-table.h"
+#include "tile-table.h"
 
 #include "tomboykeybinder.h"
 #include "libslab-utils.h"
@@ -58,6 +59,7 @@
 #define FILE_BROWSER_GCONF_KEY     ROOT_GCONF_DIR "/file_browser"
 #define SEARCH_CMD_GCONF_KEY       ROOT_GCONF_DIR "/search_command"
 #define FILE_MGR_OPEN_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_mgr_open_cmd"
+#define APP_BLACKLIST_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_blacklist"
 
 #define LOCKDOWN_GCONF_DIR          ROOT_GCONF_DIR "/lock-down"
 #define MORE_LINK_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
@@ -95,9 +97,9 @@ typedef struct {
 	GtkWidget   *page_selectors    [3];
 	gint         notebook_page_ids [3];
 
-	TileTable *file_tables     [5];
-	GtkWidget *table_sections  [5];
-	gboolean   allowable_types [5];
+	TileTable     *file_tables     [5];
+	GtkWidget     *table_sections  [5];
+	gboolean       allowable_types [5];
 
 	TileTable *sys_table;
 
@@ -108,6 +110,8 @@ typedef struct {
 
 	GtkWidget *status_section;
 	GtkWidget *system_section;
+
+	BookmarkAgent *bm_agents [BOOKMARK_STORE_N_TYPES];
 
 	guint search_cmd_gconf_mntr_id;
 	guint current_page_gconf_mntr_id;
@@ -145,18 +149,27 @@ static void create_more_buttons      (MainMenuUI *);
 static void setup_file_tables        (MainMenuUI *);
 static void setup_lock_down          (MainMenuUI *);
 
-static void    select_page                (MainMenuUI *);
-static void    update_limits              (MainMenuUI *);
-static void    connect_to_tile_triggers   (MainMenuUI *, TileTable *);
-static void    hide_slab_if_urgent_close  (MainMenuUI *);
-static void    set_search_section_visible (MainMenuUI *);
-static void    set_table_section_visible  (MainMenuUI *, TileTable *);
-static gchar **get_search_argv            (const gchar *);
-static void    reorient_panel_button      (MainMenuUI *);
-static void    bind_beagle_search_key     (MainMenuUI *);
-static void    launch_search              (MainMenuUI *);
-static void    grab_pointer_and_keyboard  (MainMenuUI *, guint32);
-static void    apply_lockdown_settings    (MainMenuUI *);
+static void       select_page                (MainMenuUI *);
+static void       update_limits              (MainMenuUI *);
+static void       connect_to_tile_triggers   (MainMenuUI *, TileTable *);
+static void       hide_slab_if_urgent_close  (MainMenuUI *);
+static void       set_search_section_visible (MainMenuUI *);
+static void       set_table_section_visible  (MainMenuUI *, TileTable *);
+static gchar    **get_search_argv            (const gchar *);
+static void       reorient_panel_button      (MainMenuUI *);
+static void       bind_beagle_search_key     (MainMenuUI *);
+static void       launch_search              (MainMenuUI *);
+static void       grab_pointer_and_keyboard  (MainMenuUI *, guint32);
+static void       apply_lockdown_settings    (MainMenuUI *);
+static gboolean   app_is_in_blacklist        (const gchar *);
+
+static Tile *item_to_user_app_tile   (BookmarkItem *, gpointer);
+static Tile *item_to_recent_app_tile (BookmarkItem *, gpointer);
+static Tile *item_to_doc_tile        (BookmarkItem *, gpointer);
+static Tile *item_to_dir_tile        (BookmarkItem *, gpointer);
+static Tile *item_to_system_tile     (BookmarkItem *, gpointer);
+static BookmarkItem *app_uri_to_item (const gchar *, gpointer);
+static BookmarkItem *doc_uri_to_item (const gchar *, gpointer);
 
 static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
@@ -288,6 +301,9 @@ main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	gint i;
+
+
 	priv->panel_applet                               = NULL;
 	priv->panel_about_dialog                         = NULL;
 
@@ -361,6 +377,9 @@ main_menu_ui_init (MainMenuUI *this)
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
+
+	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
+		priv->bm_agents [i] = bookmark_agent_get_instance (i);
 }
 
 static void
@@ -393,6 +412,9 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->modifiable_docs_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->modifiable_dirs_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->disable_term_gconf_mntr_id);
+
+	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
+		g_object_unref (priv->bm_agents [i]);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -603,10 +625,14 @@ create_system_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
+	g_printf ("%s !!\n", G_STRFUNC);
+
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "system-item-table-container"));
 
-	priv->sys_table = TILE_TABLE (system_tile_table_new ());
+	priv->sys_table = TILE_TABLE (tile_table_new (
+		priv->bm_agents [BOOKMARK_STORE_SYSTEM], -1, 1, TRUE, TRUE,
+		item_to_system_tile, this, app_uri_to_item, NULL));
 
 	connect_to_tile_triggers (this, priv->sys_table);
 
@@ -670,10 +696,14 @@ create_user_apps_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
+	g_printf ("%s !!\n", G_STRFUNC);
+
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-apps-table-container"));
 
-	priv->file_tables [USER_APPS_TABLE] = TILE_TABLE (user_apps_tile_table_new ());
+	priv->file_tables [USER_APPS_TABLE] = TILE_TABLE (tile_table_new (
+		priv->bm_agents [BOOKMARK_STORE_USER_APPS], -1, 2, TRUE, TRUE,
+		item_to_user_app_tile, this, app_uri_to_item, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_APPS_TABLE]));
 }
@@ -686,10 +716,14 @@ create_rct_apps_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
+	g_printf ("%s !!\n", G_STRFUNC);
+
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-apps-table-container"));
 
-	priv->file_tables [RCNT_APPS_TABLE] = TILE_TABLE (recent_apps_tile_table_new ());
+	priv->file_tables [RCNT_APPS_TABLE] = TILE_TABLE (tile_table_new (
+		priv->bm_agents [BOOKMARK_STORE_RECENT_APPS], -1, 2, FALSE, FALSE,
+		item_to_recent_app_tile, this, NULL, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [RCNT_APPS_TABLE]));
 }
@@ -702,10 +736,14 @@ create_user_docs_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
+	g_printf ("%s !!\n", G_STRFUNC);
+
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-docs-table-container"));
 
-	priv->file_tables [USER_DOCS_TABLE] = TILE_TABLE (user_docs_tile_table_new ());
+	priv->file_tables [USER_DOCS_TABLE] = TILE_TABLE (tile_table_new (
+		priv->bm_agents [BOOKMARK_STORE_USER_DOCS], -1, 2, TRUE, TRUE,
+		item_to_doc_tile, this, doc_uri_to_item, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_DOCS_TABLE]));
 }
@@ -718,10 +756,14 @@ create_rct_docs_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
+	g_printf ("%s !!\n", G_STRFUNC);
+
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "recent-docs-table-container"));
 
-	priv->file_tables [RCNT_DOCS_TABLE] = TILE_TABLE (recent_docs_tile_table_new ());
+	priv->file_tables [RCNT_DOCS_TABLE] = TILE_TABLE (tile_table_new (
+		priv->bm_agents [BOOKMARK_STORE_RECENT_DOCS], -1, 2, FALSE, FALSE,
+		item_to_doc_tile, this, NULL, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [RCNT_DOCS_TABLE]));
 }
@@ -734,10 +776,14 @@ create_user_dirs_section (MainMenuUI *this)
 	GtkContainer *ctnr;
 
 
+	g_printf ("%s !!\n", G_STRFUNC);
+
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "user-dirs-table-container"));
 
-	priv->file_tables [USER_DIRS_TABLE] = TILE_TABLE (user_dirs_tile_table_new ());
+	priv->file_tables [USER_DIRS_TABLE] = TILE_TABLE (tile_table_new (
+		priv->bm_agents [BOOKMARK_STORE_USER_DIRS], -1, 2, FALSE, FALSE,
+		item_to_dir_tile, this, NULL, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_DIRS_TABLE]));
 }
@@ -826,6 +872,135 @@ setup_lock_down (MainMenuUI *this)
 		MODIFIABLE_DIRS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->disable_term_gconf_mntr_id = libslab_gconf_notify_add (
 		DISABLE_TERMINAL_GCONF_KEY, lockdown_notify_cb, this);
+}
+
+static Tile *
+item_to_user_app_tile (BookmarkItem *item, gpointer data)
+{
+	if (app_is_in_blacklist (item->uri))
+		return NULL;
+
+	return TILE (application_tile_new (item->uri));
+}
+
+static Tile *
+item_to_recent_app_tile (BookmarkItem *item, gpointer data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (data);
+
+	Tile *tile = NULL;
+
+	gboolean blacklisted;
+
+
+	blacklisted =
+		bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_SYSTEM],    item->uri) ||
+		bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_USER_APPS], item->uri) ||
+		app_is_in_blacklist (item->uri);
+
+	if (! blacklisted)
+		tile = TILE (application_tile_new (item->uri));
+
+	return tile;
+}
+
+static Tile *
+item_to_doc_tile (BookmarkItem *item, gpointer data)
+{
+	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
+}
+
+static Tile *
+item_to_dir_tile (BookmarkItem *item, gpointer data)
+{
+	return TILE (directory_tile_new (item->uri, item->title, item->icon));
+}
+
+static Tile *
+item_to_system_tile (BookmarkItem *item, gpointer data)
+{
+	if (app_is_in_blacklist (item->uri))
+		return NULL;
+
+	return TILE (system_tile_new (item->uri, item->title));
+}
+
+static BookmarkItem *
+app_uri_to_item (const gchar *uri, gpointer data)
+{
+	BookmarkItem *item = g_new0 (BookmarkItem, 1);
+
+	item->uri       = g_strdup (uri);
+	item->mime_type = g_strdup ("application/x-desktop");
+
+	return item;
+}
+
+static BookmarkItem *
+doc_uri_to_item (const gchar *uri, gpointer data)
+{
+	BookmarkItem *item;
+
+	GnomeVFSFileInfo        *info;
+	GnomeVFSMimeApplication *default_app;
+
+
+	item = g_new0 (BookmarkItem, 1);
+
+	item->uri = g_strdup (uri);
+
+	info = gnome_vfs_file_info_new ();
+
+	gnome_vfs_get_file_info (
+		item->uri, info, 
+		GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FORCE_FAST_MIME_TYPE);
+
+	item->mime_type = g_strdup (info->mime_type);
+	item->mtime     = info->mtime;
+
+	if (item->mime_type) {
+		default_app = gnome_vfs_mime_get_default_application (item->mime_type);
+
+		item->app_name = g_strdup (gnome_vfs_mime_application_get_name (default_app));
+		item->app_exec = g_strdup (gnome_vfs_mime_application_get_exec (default_app));
+
+		gnome_vfs_mime_application_free (default_app);
+	}
+
+	gnome_vfs_file_info_unref (info);
+
+	return item;
+}
+
+static gboolean
+app_is_in_blacklist (const gchar *uri)
+{
+	GList *blacklist;
+
+	gboolean disable_term;
+	gboolean blacklisted;
+
+	GList *node;
+
+
+	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
+
+	if (blacklisted)
+		return TRUE;
+
+	blacklist = libslab_get_gconf_value (APP_BLACKLIST_GCONF_KEY);
+
+	for (node = blacklist; node; node = node->next) {
+		if (! blacklisted && strstr (uri, (gchar *) node->data))
+			blacklisted = TRUE;
+
+		g_free (node->data);
+	}
+
+	g_list_free (blacklist);
+
+	return blacklisted;
 }
 
 static void
@@ -1393,13 +1568,9 @@ panel_button_drag_data_rcv_cb (GtkWidget *widget, GdkDragContext *context, gint 
 		uri_len = strlen (uris [i]);
 
 		if (! strcmp (& uris [i] [uri_len - 8], ".desktop"))
-			tile_table_uri_added (
-				priv->file_tables [USER_APPS_TABLE],
-				uris [i], (guint32) time);
+			tile_table_add_uri (priv->file_tables [USER_APPS_TABLE], uris [i]);
 		else
-			tile_table_uri_added (
-				priv->file_tables [USER_DOCS_TABLE],
-				uris [i], (guint32) time);
+			tile_table_add_uri (priv->file_tables [USER_DOCS_TABLE], uris [i]);
 	}
 
 	g_strfreev (uris);
