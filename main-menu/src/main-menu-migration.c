@@ -38,8 +38,6 @@
 
 #define SYSTEM_BOOKMARK_FILENAME "system-items.xbel"
 #define APPS_BOOKMARK_FILENAME   "applications.xbel"
-#define DOCS_BOOKMARK_FILENAME   "documents.xbel"
-#define DIRS_BOOKMARK_FILENAME   "places.xbel"
 
 #define SYSTEM_ITEM_GCONF_KEY    "/desktop/gnome/applications/main-menu/system-area/system_item_list"
 #define HELP_ITEM_GCONF_KEY      "/desktop/gnome/applications/main-menu/system-area/help_item"
@@ -231,6 +229,7 @@ migrate_system_gconf_to_bookmark_file ()
 			libslab_handle_g_error (& error, "%s: cannot save store [%s]", G_STRFUNC, bm_path);
 
 		g_free (bm_path);
+		g_bookmark_file_free (bm_file);
 	}
 
 	g_list_free (gconf_system_list);
@@ -248,32 +247,31 @@ migrate_user_apps_gconf_to_bookmark_file ()
 
 	GList *user_apps_list;
 
-	BookmarkItem **items;
-	BookmarkItem   item;
-
 	GnomeDesktopItem *ditem;
 	const gchar      *loc;
 	gchar            *uri;
 
+	GBookmarkFile *bm_file;
+	gchar         *bm_path;
+
+	GError *error = NULL;
+
 	GList *node;
-	gint   i;
 
 
 	agent = bookmark_agent_get_instance (BOOKMARK_STORE_USER_APPS);
-
 	g_object_get (G_OBJECT (agent), BOOKMARK_AGENT_STORE_STATUS_PROP, & status, NULL);
+	g_object_unref (G_OBJECT (agent));
 
 	if (status == BOOKMARK_STORE_USER || status == BOOKMARK_STORE_DEFAULT_ONLY)
-		goto exit;
+		return;
 
 	user_apps_list = (GList *) libslab_get_gconf_value (USER_APPS_GCONF_KEY);
 
-	if (user_apps_list) {
-		g_object_get (G_OBJECT (agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
+	if (! user_apps_list)
+		return;
 
-		for (i = 0; items && items [i]; ++i)
-			bookmark_agent_remove_item (agent, items [i]->uri);
-	}
+	bm_file = g_bookmark_file_new ();
 
 	for (node = user_apps_list; node; node = node->next) {
 		ditem = libslab_gnome_desktop_item_new_from_unknown_id ((gchar *) node->data);
@@ -290,28 +288,29 @@ migrate_user_apps_gconf_to_bookmark_file ()
 			uri = NULL;
 
 		if (uri) {
-			item.uri = uri;
-			item.mime_type = "application/x-desktop";
-			item.title = NULL;
-			item.mtime = 0;
-			item.icon = NULL;
-			item.app_name = (gchar *) gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME);
-			item.app_exec = (gchar *) gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC);
-
-			bookmark_agent_add_item (agent, & item);
+			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
+			g_bookmark_file_add_application (
+				bm_file, uri,
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
+				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
 		}
 
 		g_free (uri);
 
 		if (ditem)
 			gnome_desktop_item_unref (ditem);
+
+		g_free (node->data);
 	}
 
+	bm_path = g_build_filename (g_get_user_data_dir (), PACKAGE, APPS_BOOKMARK_FILENAME, NULL);
+
+	if (! g_bookmark_file_to_file (bm_file, bm_path, & error))
+		libslab_handle_g_error (& error, "%s: cannot save store [%s]", G_STRFUNC, bm_path);
+
+	g_free (bm_path);
+	g_bookmark_file_free (bm_file);
 	g_list_free (user_apps_list);
-
-exit:
-
-	g_object_unref (G_OBJECT (agent));
 }
 
 void
