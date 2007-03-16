@@ -21,6 +21,7 @@
 #ifndef __BOOKMARK_AGENT_H__
 #define __BOOKMARK_AGENT_H__
 
+#include <time.h>
 #include <glib-object.h>
 
 G_BEGIN_DECLS

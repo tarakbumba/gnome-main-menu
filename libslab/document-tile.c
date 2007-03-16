@@ -824,19 +824,21 @@ user_docs_trigger (Tile *tile, TileEvent *event, TileAction *action)
 	DocumentTile *this        = DOCUMENT_TILE             (tile);
 	DocumentTilePrivate *priv = DOCUMENT_TILE_GET_PRIVATE (this);
 
-	BookmarkItem item;
+	BookmarkItem *item;
 
 
 	if (priv->is_bookmarked)
 		bookmark_agent_remove_item (priv->agent, tile->uri);
 	else {
-		item.uri       = tile->uri;
-		item.mime_type = priv->mime_type;
-		item.mtime     = priv->modified;
-		item.app_name  = (gchar *) gnome_vfs_mime_application_get_name (priv->default_app);
-		item.app_exec  = (gchar *) gnome_vfs_mime_application_get_exec (priv->default_app);
+		item = g_new0 (BookmarkItem, 1);
+		item->uri       = tile->uri;
+		item->mime_type = priv->mime_type;
+		item->mtime     = priv->modified;
+		item->app_name  = (gchar *) gnome_vfs_mime_application_get_name (priv->default_app);
+		item->app_exec  = (gchar *) gnome_vfs_mime_application_get_exec (priv->default_app);
 
-		bookmark_agent_add_item (priv->agent, & item);
+		bookmark_agent_add_item (priv->agent, item);
+		g_free (item);
 	}
 
 	update_user_list_menu_item (this);

@@ -25,6 +25,7 @@
 #include <glib/gfileutils.h>
 #include <glib/gstdio.h>
 #include <gconf/gconf-client.h>
+#include <unistd.h>
 
 #include "slab-gnome-util.h"
 #include "libslab-utils.h"
@@ -516,16 +517,14 @@ add_to_user_list (ApplicationTile *this)
 {
 	ApplicationTilePrivate *priv = APPLICATION_TILE_GET_PRIVATE (this);
 
-	BookmarkItem item;
+	BookmarkItem *item;
 
 
-	item.uri       = TILE (this)->uri;
-	item.mime_type = "application/x-desktop";
-	item.mtime     = 0;
-	item.app_name  = NULL;
-	item.app_exec  = NULL;
+	item = g_new0 (BookmarkItem, 1);
+	item->uri       = TILE (this)->uri;
+	item->mime_type = "application/x-desktop";
 
-	bookmark_agent_add_item (priv->agent, & item);
+	bookmark_agent_add_item (priv->agent, item);
 
 	priv->is_bookmarked = TRUE;
 }

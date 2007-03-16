@@ -361,6 +361,9 @@ drag_motion (GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint t
 	gint bin_index;
 
 
+	if (! priv->reorderable)
+		return FALSE;
+
 	src_tile = gtk_drag_get_source_widget (context);
 
 	if (! (src_tile && IS_TILE (src_tile))) {
@@ -441,9 +444,11 @@ drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
 		reordering = FALSE;
 
 	if (reordering) {
-		tiles_new = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
-		save_reorder (this, tiles_new);
-		g_list_free (tiles_new);
+		if (priv->reorderable) {
+			tiles_new = reorder_tiles (this, priv->reord_bin_orig, priv->reord_bin_curr);
+			save_reorder (this, tiles_new);
+			g_list_free (tiles_new);
+		}
 	}
 	else {
 		uris = gtk_selection_data_get_uris (selection);

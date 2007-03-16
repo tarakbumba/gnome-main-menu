@@ -27,7 +27,7 @@
 #endif
 
 #if ! GLIB_CHECK_VERSION (2, 12, 0)
-#	include "bookmark-agent-egg.h"
+#	include "bookmark-agent-libslab.h"
 #endif
 
 #include <gtk/gtkversion.h>
@@ -188,6 +188,9 @@ bookmark_agent_add_item (BookmarkAgent *this, const BookmarkItem *item)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
+	if (! item)
+		return;
+
 	g_return_if_fail (priv->user_modifiable);
 	g_return_if_fail (item->uri);
 	g_return_if_fail (item->mime_type);
@@ -215,7 +218,7 @@ bookmark_agent_move_item (BookmarkAgent *this, const gchar *uri, const gchar *ur
 #ifdef USE_GTK_RECENT_MANAGER
 	GError *error = NULL;
 #else
-	EggRecentModel *model
+	EggRecentModel *model;
 #endif
 
 
@@ -250,7 +253,7 @@ bookmark_agent_remove_item (BookmarkAgent *this, const gchar *uri)
 #ifdef USE_GTK_RECENT_MANAGER
 	GError *error = NULL;
 #else
-	EggRecentModel *model
+	EggRecentModel *model;
 #endif
 
 	gchar **uris = NULL;
@@ -274,10 +277,7 @@ bookmark_agent_remove_item (BookmarkAgent *this, const gchar *uri)
 				G_STRFUNC, priv->store_path, uri);
 #else
 		model = egg_recent_model_new (EGG_RECENT_MODEL_SORT_NONE);
-
 		egg_recent_model_delete (model, uri);
-		egg_recent_model_add    (model, uri_new);
-
 		g_object_unref (model);
 #endif
 	}
@@ -320,6 +320,9 @@ bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris)
 void
 bookmark_item_free (BookmarkItem *item)
 {
+	if (! item)
+		return;
+
 	g_free (item->uri);
 	g_free (item->title);
 	g_free (item->mime_type);
@@ -579,7 +582,7 @@ update_items (BookmarkAgent *this)
 	gchar    **uris         = NULL;
 	gchar    **uris_ordered = NULL;
 	gsize      n_uris       = 0;
-	gsize      rank         = -1;
+	gint       rank         = -1;
 	gboolean   needs_update = FALSE;
 
 	gint i;
@@ -1010,8 +1013,9 @@ create_app_item (BookmarkAgent *this, const gchar *uri)
 	if (! uri_new)
 		return;
 
-	if (libslab_strcmp (uri, uri_new))
+	if (libslab_strcmp (uri, uri_new)) {
 		g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
+	}
 }
 
 static void

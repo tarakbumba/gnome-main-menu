@@ -11,14 +11,14 @@ libslab_la_SOURCES =				\
 	app-shell-startup.c			\
 	application-tile.c			\
 	bookmark-agent.h			\
-	bookmark-agent-egg.h			\
+	bookmark-agent-libslab.h		\
 	bookmark-agent.c			\
 	directory-tile.c			\
 	document-tile.c				\
 	double-click-detector.c			\
 	double-click-detector.h			\
-	eggbookmarkfile.c			\
-	eggbookmarkfile.h			\
+	libslab-bookmarkfile.c			\
+	libslab-bookmarkfile.h			\
 	egg-recent-item.c			\
 	egg-recent-item.h			\
 	egg-recent-model.c			\

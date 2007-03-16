@@ -147,6 +147,7 @@ static void create_system_section    (MainMenuUI *);
 static void create_status_section    (MainMenuUI *);
 static void create_more_buttons      (MainMenuUI *);
 static void setup_file_tables        (MainMenuUI *);
+static void setup_bookmark_agents    (MainMenuUI *);
 static void setup_lock_down          (MainMenuUI *);
 
 static void       select_page                (MainMenuUI *);
@@ -165,7 +166,8 @@ static gboolean   app_is_in_blacklist        (const gchar *);
 
 static Tile *item_to_user_app_tile   (BookmarkItem *, gpointer);
 static Tile *item_to_recent_app_tile (BookmarkItem *, gpointer);
-static Tile *item_to_doc_tile        (BookmarkItem *, gpointer);
+static Tile *item_to_user_doc_tile   (BookmarkItem *, gpointer);
+static Tile *item_to_recent_doc_tile (BookmarkItem *, gpointer);
 static Tile *item_to_dir_tile        (BookmarkItem *, gpointer);
 static Tile *item_to_system_tile     (BookmarkItem *, gpointer);
 static BookmarkItem *app_uri_to_item (const gchar *, gpointer);
@@ -199,6 +201,8 @@ static void     panel_applet_change_background_cb (PanelApplet *, PanelAppletBac
 static void     slab_window_tomboy_bindkey_cb     (gchar *, gpointer);
 static void     search_tomboy_bindkey_cb          (gchar *, gpointer);
 static gboolean grabbing_window_event_cb          (GtkWidget *, GdkEvent *, gpointer);
+static void     user_app_agent_notify_cb          (GObject *, GParamSpec *, gpointer);
+static void     user_doc_agent_notify_cb          (GObject *, GParamSpec *, gpointer);
 
 static GdkFilterReturn slab_gdk_message_filter (GdkXEvent *, GdkEvent *, gpointer);
 
@@ -263,6 +267,7 @@ main_menu_ui_new (PanelApplet *applet)
 	priv->main_menu_xml    = glade_xml_new (glade_xml_path, "slab-main-menu-window", NULL);
 	priv->panel_button_xml = glade_xml_new (glade_xml_path, "slab-panel-button-root", NULL);
 
+	setup_bookmark_agents    (this);
 	create_panel_button      (this);
 	create_slab_window       (this);
 	create_search_section    (this);
@@ -300,9 +305,6 @@ static void
 main_menu_ui_init (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
-
-	gint i;
-
 
 	priv->panel_applet                               = NULL;
 	priv->panel_about_dialog                         = NULL;
@@ -377,9 +379,6 @@ main_menu_ui_init (MainMenuUI *this)
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
-
-	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
-		priv->bm_agents [i] = bookmark_agent_get_instance (i);
 }
 
 static void
@@ -735,7 +734,7 @@ create_user_docs_section (MainMenuUI *this)
 
 	priv->file_tables [USER_DOCS_TABLE] = TILE_TABLE (tile_table_new (
 		priv->bm_agents [BOOKMARK_STORE_USER_DOCS], -1, 2, TRUE, TRUE,
-		item_to_doc_tile, this, doc_uri_to_item, NULL));
+		item_to_user_doc_tile, this, doc_uri_to_item, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [USER_DOCS_TABLE]));
 }
@@ -753,7 +752,7 @@ create_rct_docs_section (MainMenuUI *this)
 
 	priv->file_tables [RCNT_DOCS_TABLE] = TILE_TABLE (tile_table_new (
 		priv->bm_agents [BOOKMARK_STORE_RECENT_DOCS], -1, 2, FALSE, FALSE,
-		item_to_doc_tile, this, NULL, NULL));
+		item_to_recent_doc_tile, this, NULL, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [RCNT_DOCS_TABLE]));
 }
@@ -836,6 +835,26 @@ setup_file_tables (MainMenuUI *this)
 }
 
 static void
+setup_bookmark_agents (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+	gint i;
+
+	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i) {
+		priv->bm_agents [i] = bookmark_agent_get_instance (i);
+
+		if (i == BOOKMARK_STORE_USER_APPS || i == BOOKMARK_STORE_SYSTEM)
+			g_signal_connect (
+				G_OBJECT (priv->bm_agents [i]), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+				G_CALLBACK (user_app_agent_notify_cb), this);
+		else if (i == BOOKMARK_STORE_USER_DOCS)
+			g_signal_connect (
+				G_OBJECT (priv->bm_agents [i]), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+				G_CALLBACK (user_doc_agent_notify_cb), this);
+	}
+}
+
+static void
 setup_lock_down (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
@@ -893,8 +912,19 @@ item_to_recent_app_tile (BookmarkItem *item, gpointer data)
 }
 
 static Tile *
-item_to_doc_tile (BookmarkItem *item, gpointer data)
+item_to_user_doc_tile (BookmarkItem *item, gpointer data)
 {
+	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
+}
+
+static Tile *
+item_to_recent_doc_tile (BookmarkItem *item, gpointer data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (data);
+
+	if (bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_USER_DOCS], item->uri))
+		return NULL;
+
 	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
 }
 
@@ -956,6 +986,11 @@ doc_uri_to_item (const gchar *uri, gpointer data)
 	}
 
 	gnome_vfs_file_info_unref (info);
+
+	if (! (item->mime_type && item->app_name)) {
+		bookmark_item_free (item);
+		item = NULL;
+	}
 
 	return item;
 }
@@ -2130,4 +2165,16 @@ slab_gdk_message_filter (GdkXEvent *gdk_xevent, GdkEvent *event, gpointer user_d
 		return GDK_FILTER_CONTINUE;
 
 	return GDK_FILTER_REMOVE;
+}
+
+static void
+user_app_agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
+{
+	tile_table_reload (PRIVATE (user_data)->file_tables [RCNT_APPS_TABLE]);
+}
+
+static void
+user_doc_agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
+{
+	tile_table_reload (PRIVATE (user_data)->file_tables [RCNT_DOCS_TABLE]);
 }

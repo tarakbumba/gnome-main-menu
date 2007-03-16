@@ -30,7 +30,7 @@
 #include <unistd.h>
 
 #if ! GLIB_CHECK_VERSION (2, 12, 0)
-#	include "bookmark-agent-egg.h"
+#	include "bookmark-agent-libslab.h"
 #endif
 
 #include "bookmark-agent.h"
