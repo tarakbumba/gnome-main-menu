@@ -35,6 +35,7 @@ void set_gconf_value (const gchar * key, gconstpointer data);
 guint connect_gconf_notify (const gchar * key, GConfClientNotifyFunc cb, gpointer user_data);
 void handle_g_error (GError ** error, const gchar * user_format, ...);
 GtkWidget *get_main_menu_section_header (const gchar * markup);
+gint slab_strcmp (const gchar *a, const gchar *b);
 
 G_END_DECLS
 #endif /* __GNOME_UTILS_H__ */

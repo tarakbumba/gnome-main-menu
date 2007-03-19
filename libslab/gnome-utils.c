@@ -129,7 +129,7 @@ get_gconf_value (const gchar * key)
 
 	if (error || ! value)
 	{
-		handle_g_error (&error, "%s: error getting %s", __FUNCTION__, key);
+		handle_g_error (&error, "%s: error getting %s", G_STRFUNC, key);
 
 		goto exit;
 	}
@@ -204,7 +204,7 @@ set_gconf_value (const gchar * key, gconstpointer data)
 
 	if (error)
 	{
-		handle_g_error (&error, "%s: error getting %s", __FUNCTION__, key);
+		handle_g_error (&error, "%s: error getting %s", G_STRFUNC, key);
 
 		goto exit;
 	}
@@ -261,7 +261,7 @@ set_gconf_value (const gchar * key, gconstpointer data)
 	gconf_client_set (client, key, value, &error);
 
 	if (error)
-		handle_g_error (&error, "%s: error setting %s", __FUNCTION__, key);
+		handle_g_error (&error, "%s: error setting %s", G_STRFUNC, key);
 
       exit:
 
@@ -281,7 +281,7 @@ connect_gconf_notify (const gchar * key, GConfClientNotifyFunc cb, gpointer user
 	conn_id = gconf_client_notify_add (client, key, cb, user_data, NULL, &error);
 
 	if (error)
-		handle_g_error (&error, "%s: error adding notify for (%s)", __FUNCTION__, key);
+		handle_g_error (&error, "%s: error adding notify for (%s)", G_STRFUNC, key);
 
 	g_object_unref (client);
 
@@ -331,6 +331,21 @@ get_main_menu_section_header (const gchar * markup)
 	g_free (text);
 
 	return label;
+}
+
+gint
+slab_strcmp (const gchar *a, const gchar *b)
+{
+	if (! a && ! b)
+		return 0;
+
+	if (! a)
+		return -1;
+
+	if (! b)
+		return 1;
+
+	return strcmp (a, b);
 }
 
 static void

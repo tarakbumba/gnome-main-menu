@@ -4,55 +4,77 @@ INCLUDES =					\
 
 lib_LTLIBRARIES = libslab.la
 
+#	$(MARSHAL_GENERATED)
+#	app-resizer.c
+#	app-shell.c
+#	app-shell-startup.c
+#	application-tile.c
+#	directory-tile.c
+#	nameplate-tile.c
+#	search-bar.c
+#	search-context-picker.c
+#	search-entry-watermark.h
+#	search-entry.c
+#	shell-window.c
+#	system-tile.c
+
 libslab_la_SOURCES =				\
-	$(MARSHAL_GENERATED)			\
-	app-resizer.c				\
-	app-shell.c				\
-	app-shell-startup.c			\
-	application-tile.c			\
+	bookmark-agent.h			\
+	bookmark-agent-libslab.h		\
+	bookmark-agent.c			\
 	document-tile.c				\
 	double-click-detector.c			\
 	double-click-detector.h			\
+	libslab-bookmarkfile.c			\
+	libslab-bookmarkfile.h			\
 	egg-recent-item.c			\
 	egg-recent-item.h			\
 	egg-recent-model.c			\
 	egg-recent-model.h			\
 	gnome-utils.c				\
-	nameplate-tile.c			\
-	recent-files.c				\
-	recent-files.h				\
-	search-bar.c				\
-	search-context-picker.c			\
-	search-entry-watermark.h		\
-	search-entry.c				\
-	shell-window.c				\
+	libslab-utils.c				\
+	libslab-utils.h				\
 	slab-gnome-util.c			\
 	slab-section.c				\
 	themed-icon.c				\
 	themed-icon.h				\
-	tile-action.c				\
-	tile.c
+	tile.c					\
+	tile-attribute.c			\
+	tile-control.c				\
+	tile-view.c				\
+	tile-model.c				\
+	file-tile-model.c			\
+	nameplate-tile-view.c
+
+#	$(BUILT_SOURCES)
+#	app-resizer.h
+#	app-shell.h
+#	app-shell-startup.h
+#	application-tile.h
+#	directory-tile.
+#	nameplate-tile.h
+#	search-bar.h
+#	search-context-picker.h
+#	search-entry.h
+#	shell-window.h
+#	system-tile.h
 
 libslab_includedir = $(includedir)/slab
 libslab_include_HEADERS =			\
-	$(BUILT_SOURCES)			\
-	app-resizer.h				\
-	app-shell.h				\
-	app-shell-startup.h			\
-	application-tile.h			\
 	document-tile.h				\
 	gnome-utils.h				\
-	nameplate-tile.h			\
-	search-bar.h				\
-	search-context-picker.h			\
-	search-entry.h				\
-	shell-window.h				\
 	slab-gnome-util.h			\
 	slab-section.h				\
-	tile.h
+	tile.h					\
+	tile-attribute.h			\
+	tile-control.h				\
+	tile-view.h				\
+	tile-model.h				\
+	file-tile-model.h			\
+	nameplate-tile-view.h
 
-libslab_la_LIBADD =				\
-	$(LIBSLAB_LIBS)
+
+libslab_la_LIBADD = $(LIBSLAB_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libslab.pc

@@ -1,3 +1,212 @@
+2007-03-16  Jim Krehl  <jimmyk@novell.com>
+	* main-menu/src/main-menu-ui.c
+	* main-menu/src/user-apps-tile-table.c
+	* main-menu/src/user-apps-tile-table.h
+	* main-menu/src/system-tile-table.c
+	* main-menu/src/system-tile-table.h
+	* main-menu/src/user-docs-tile-table.c
+	* main-menu/src/user-docs-tile-table.h
+	* main-menu/src/user-dirs-tile-table.c
+	* main-menu/src/user-dirs-tile-table.h
+	* main-menu/src/recent-apps-tile-table.c
+	* main-menu/src/recent-apps-tile-table.h
+	* main-menu/src/bookmark-tile-table.c
+	* main-menu/src/bookmark-tile-table.h
+	* main-menu/src/recent-docs-tile-table.c
+	* main-menu/src/recent-docs-tile-table.h
+	* main-menu/src/tile-table.c 
+	* main-menu/src/tile-table.h:
+	Simplified the TileTable object to make it more generic.  Stop loading
+	tiles after the table limit has been reached, this is to prevent delays
+	associated with large ~/.recently-used{,.xbel} files.  Made the
+	TileTable more responsive to user changes, instead of waiting for those
+	changes to be written to the file system.
+
+	* main-menu/src/main-menu-migration.c
+	* main-menu/etc/documents.xbel
+	* libslab/application-tile.c
+	* libslab/libslab-utils.c
+	* libslab/libslab-utils.h
+	* libslab/libslab-bookmarkfile.c
+	* libslab/system-tile.c
+	* libslab/libslab-bookmarkfile.h
+	* libslab/eggbookmarkfile.c
+	* libslab/eggbookmarkfile.h
+	* libslab/bookmark-agent.c
+	* libslab/bookmark-agent.h
+	* libslab/document-tile.c
+	* libslab/bookmark-agent-libslab.h:
+	Created a BookmarkAgent class to manage various bookmark stores, i.e.
+	XBEL stores, ~/.recently-used, and ~/.gtk-bookmarks.  Now all bookmark
+	store manipulation is centralized and coordinated.  The rank of a
+	bookmark is now independent of serialized order.  Now the bookmark
+	group is used to store it's placement within a table.
+
+2007-03-15  Scott Reeves  <sreeves@novell.com>
+	* libslab/slab-section.c
+	* libslab/app-shell.c:
+	Fix for BNC#250415 - name some widgets to allow for custom theming
+
+2007-03-08  Scott Reeves  <sreeves@novell.com>
+	* main-menu/src/main-menu-ui.c
+	* main-menu/src/bookmark-tile-table.c
+	* libslab/application-tile.c
+	* libslab/slab-gnome-util.c
+	* libslab/nameplate-tile.c
+	* libslab/slab-gnome-util.h
+	* libslab/nameplate-tile.h
+	* libslab/libslab-utils.c
+	* libslab/directory-tile.c
+	* libslab/document-tile.c
+	* libslab/document-tile.h:
+	Various memory leak and array bounds overwrite fixes.
+	Check properly for g-m-m with version-2 changes
+
+2007-02-28  Jim Krehl  <jimmyk@novell.com>
+	* libslab/document-tile.c
+	* libslab/directory-tile.c:
+	Remove extra line separators in the context menu, BNC #240238.
+
+	* main-menu/src/user-dirs-tile-table.c:
+	Properly handle search bookmarks, BNC #246798.
+
+2007-02-26  Jim Krehl  <jimmyk@novell.com>
+	The commit merges in the "version-2" branch.  Many things have been
+	updated/changed for this version ...
+
+	* main-menu/src/bookmark-tile-table.c
+	* main-menu/src/bookmark-tile-table.h
+	* main-menu/src/main-menu.c
+	* main-menu/src/main-menu-ui.c
+	* main-menu/src/main-menu-ui.h
+	* main-menu/src/recent-apps-tile-table.c
+	* main-menu/src/recent-apps-tile-table.h
+	* main-menu/src/recent-docs-tile-table.c
+	* main-menu/src/recent-docs-tile-table.h
+	* main-menu/src/system-tile-table.c
+	* main-menu/src/system-tile-table.h
+	* main-menu/src/tile-table.c
+	* main-menu/src/tile-table.h
+	* main-menu/src/user-apps-tile-table.c
+	* main-menu/src/user-apps-tile-table.h
+	* main-menu/src/user-dirs-tile-table.c
+	* main-menu/src/user-dirs-tile-table.h
+	* main-menu/src/user-docs-tile-table.c
+	* main-menu/src/user-docs-tile-table.h:
+
+	There are now 3 types of items shown in the main section of the menu:
+	Applications, Documents, and Places.  Applications and Documents can be
+	either "Favorite" or "Recent".  Places corresponds to the list of
+	default places and user bookmarked places as in the FileChooser dialog.
+
+	* main-menu/src/slab-window.glade:
+
+	The main-menu is now defined by a glade file.
+
+	* main-menu/etc/applications.xbel
+	* main-menu/etc/documents.xbel
+	* main-menu/etc/places.xbel
+	* main-menu/etc/slab.schemas.in.in
+	* main-menu/etc/system-items.xbel
+	* main-menu/etc/gnome-screensaver-lock.desktop
+	* main-menu/etc/gnome-session-kill.desktop
+	* main-menu/src/main-menu-migration.h
+	* main-menu/src/main-menu-migration.c:
+
+	The lists of user bookmarked Applications and Documents, as well as the
+	list of system items is now maintained in XBEL files in the user's data
+	dir.  Because of the new storage scheme, migration needs to be done to
+	preserve user prefs over upgrade.  The system area now only references
+	.desktop files so for items like "Lock Screen" for which there is no
+	.desktop file the main-menu provides one.
+
+	* main-menu/src/main-menu-common.h
+	* main-menu/src/main-menu-engine.c
+	* main-menu/src/text-button.c
+	* main-menu/src/text-button.h
+	* main-menu/src/file-area-widget.c
+	* main-menu/src/main-menu-conf.c
+	* main-menu/src/file-area-widget.h
+	* main-menu/src/main-menu-conf.h
+	* main-menu/src/slab-window.c
+	* main-menu/src/slab-window.h:
+
+	These files are no longer pertinent.
+
+	* nautilus-main-menu/nautilus-main-menu.c:
+
+	Added a nautilus menu extension so that one can bookmark a document
+	with nautilus.
+
+	This update fixes/obsoletes a number of bugs:
+
+	* BGO #378793 - g-s-m is no longer opened by the disk space tile.
+	* BGO #382004 - PANEL_APPLET_EXPAND_MINOR added to panel applet flags.
+	* BGO #394372 - Ellipses removed.
+	* BGO #394377 - Recent/Favorite tables have been stacked to compact
+	                them.
+	* BGO #394384 - Places menu added.
+	* BGO #394411 - "More <items> ..." button positioning tied to bottom.
+	* BGO #394488 - Side panel rotation follows text rotation convention.
+	* BGO #394750 - Properly handle multi-monitor screens.
+	* BGO #394817 - Do not squash keyboard events on the panel button.
+
+2007-02-22  Scott Reeves  <sreeves@novell.com>
+	* libslab/slab-gnome-util.c
+	* libslab/app-shell.c
+	* libslab/app-resizer.c
+	* libslab/application-tile.c:
+	start of performance optimization work.
+	valgrind work for memory leaks.
+	Patch from Jens Granseuer for leaks - BGO 396110
+	Fix leaks for BGO 395014 based on patch from Paolo Borelli
+
+2007-02-21  Scott Reeves  <sreeves@novell.com>
+	* libslab/app-resizer.c
+	* libslab/app-shell.c
+	* libslab/document-tile.c
+	* main-menu/src/network-status-agent.c:
+	valgrind work for memory leaks.
+	Patch from Kjartan Maraas for compiler warnings and leak - BGO 400533
+	A11y fix. Based on patch from Patrick Wade for BGO 399238
+
+2007-02-15  Scott Reeves  <sreeves@novell.com>
+	* main-menu/src/system-tile.c
+	* main-menu/src/slab-window.c
+	* control-center/src/control-center.c
+	* libslab/application-tile.c
+	* libslab/slab-gnome-util.c
+	* libslab/slab-gnome-util.h
+	* libslab/document-tile.c
+	* libslab/shell-window.c
+	* libslab/slab-section.c
+	* libslab/app-shell.c:
+	Use smaller icons in CC - Partial fix for BGO 405078
+	Patch from Brandon Wright for overdrawn text - BGO 403856
+	Fix memory leaks - BGO 402563 and BNC 229190
+	Don't crash (on debug builds) when no menu file - BGO 407825
+	Check for NULL gconf prefix - BGO 406255
+
+2007-02-14  Rodney Dawes  <dobey@novell.com>
+
+	* libslab/tile.c (tile_expose): Revert previous patch, as it doesn't
+	actually seem to fix the text color, and causes #407481
+
+	Fixes #407481
+	Reopens #398079
+
+2007-02-12  Rodney Dawes  <dobey@novell.com>
+
+	* libslab/tile.c (tile_expose): Modify the fg color to use the
+	SELECTED fg color, if the tile is in the SELECTED state
+
+	Fixes #398079
+
+2007-02-09  Jim Krehl  <jimmyk@novell.com>
+	* main-menu/src/main-menu-ui.c:
+	Connect to the proper AboutDialog signal to close, BNC #212495, BGO
+	#389715.
+
 2007-02-01  Scott Reeves  <sreeves@novell.com>
 	* main-menu/etc/slab.schemas.in.in
 	* libslab/application-tile.c
@@ -21,7 +230,6 @@
 	system-tile's launched twice.
 	* libslab/application-tile.c: - When no GenericName is present then
 	just show and center the Name
-		
 
 2007-01-19  Scott Reeves  <sreeves@novell.com>
 	* control-center/src/control-center.c

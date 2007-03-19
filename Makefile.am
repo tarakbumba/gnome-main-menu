@@ -4,12 +4,13 @@ else
 NAUTILUS_DIR=
 endif
 
+#	application-browser/etc
+#	application-browser/src
+#	control-center/etc
+#	control-center/src
+
 SUBDIRS =				\
 	libslab				\
-	application-browser/etc		\
-	application-browser/src		\
-	control-center/etc		\
-	control-center/src		\
 	main-menu/etc			\
 	main-menu/src			\
 	$(NAUTILUS_DIR)			\

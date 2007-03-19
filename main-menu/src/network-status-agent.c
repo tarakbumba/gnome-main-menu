@@ -130,7 +130,7 @@ init_nm_connection (NetworkStatusAgent * agent)
 
 	if (!priv->nm_conn)
 	{
-		handle_g_error (&error, "%s: dbus_g_bus_get () failed", __FUNCTION__);
+		handle_g_error (&error, "%s: dbus_g_bus_get () failed", G_STRFUNC);
 
 		agent->nm_present = FALSE;
 
@@ -220,7 +220,7 @@ nm_get_devices (NetworkStatusAgent * agent)
 
 	if (error)
 	{
-		handle_g_error (&error, "%s: calling \"getDevices\" failed", __FUNCTION__);
+		handle_g_error (&error, "%s: calling \"getDevices\" failed", G_STRFUNC);
 
 		return NULL;
 	}
@@ -276,7 +276,7 @@ nm_get_device_info (NetworkStatusAgent * agent, DBusGProxy * device)
 
 	if (error)
 	{
-		handle_g_error (&error, "%s: calling \"getProperties\" (A) failed", __FUNCTION__);
+		handle_g_error (&error, "%s: calling \"getProperties\" (A) failed", G_STRFUNC);
 
 		g_free (network_path);
 		g_object_unref (info);
@@ -290,7 +290,7 @@ nm_get_device_info (NetworkStatusAgent * agent, DBusGProxy * device)
 			&info->driver, G_TYPE_INVALID);
 
 		if (error)
-			handle_g_error (&error, "%s: calling \"getDriver\" failed", __FUNCTION__);
+			handle_g_error (&error, "%s: calling \"getDriver\" failed", G_STRFUNC);
 
 		if (info->type == DEVICE_TYPE_802_11_WIRELESS
 			&& string_is_valid_dbus_path (network_path))
@@ -313,7 +313,7 @@ nm_get_device_info (NetworkStatusAgent * agent, DBusGProxy * device)
 
 		if (error)
 			handle_g_error (&error, "%s: calling \"getProperties\" (B) failed",
-				__FUNCTION__);
+				G_STRFUNC);
 	}
 
 	g_free (network_path);
@@ -430,7 +430,8 @@ gtop_get_first_active_device_info ()
 			{
 				g_warning ("error opening socket\n");
 
-				return NULL;
+				info = NULL;
+				break;
 			}
 
 			info = g_object_new (NETWORK_STATUS_INFO_TYPE, NULL);
@@ -443,7 +444,7 @@ gtop_get_first_active_device_info ()
 				info->essid = g_strdup (wl_cfg.essid);
 				info->iface = g_strdup (networks[i]);
 
-				return info;
+				break;
 			}
 			else
 			{
@@ -451,11 +452,12 @@ gtop_get_first_active_device_info ()
 				info->essid = NULL;
 				info->iface = g_strdup (networks[i]);
 
-				return info;
+				break;
 			}
 		}
 	}
 
-	return NULL;
+	g_strfreev (networks);
+	return info;
 }
 

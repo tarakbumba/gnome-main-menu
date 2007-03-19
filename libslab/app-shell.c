@@ -84,8 +84,6 @@ static void tile_activated_cb (Tile * tile, TileEvent * event, gpointer user_dat
 static void handle_launcher_single_clicked (Tile * launcher, gpointer data);
 static void handle_menu_action_performed (Tile * launcher, TileEvent * event, TileAction * action,
 	gpointer data);
-static gint category_name_compare (gconstpointer a, gconstpointer b);
-static gint category_data_compare (gconstpointer a, gconstpointer b);
 static gint application_launcher_compare (gconstpointer a, gconstpointer b);
 static void gmenu_tree_changed_callback (GMenuTree * tree, gpointer user_data);
 gboolean regenerate_categories (AppShellData * app_data);
@@ -122,6 +120,7 @@ create_main_window (AppShellData * app_data, const gchar * app_name, const gchar
 {
 	GtkWidget *main_app = gnome_app_new (app_name, title);
 	app_data->main_gnome_app = main_app;
+	gtk_widget_set_name (main_app, app_name);
 	/* gtk_window_set_default_size(GTK_WINDOW(main_app), width, height); */
 	gtk_window_set_icon_name (GTK_WINDOW (main_app), window_icon);
 	gnome_app_set_contents (GNOME_APP (main_app), app_data->shell);
@@ -381,6 +380,7 @@ create_actions_section (AppShellData * app_data, const gchar * title,
 	GtkWidget *vbox;
 	GSList *actions;
 	AppAction *action;
+	AtkObject *a11y_cat;
 
 	g_assert (app_data != NULL);
 
@@ -405,6 +405,9 @@ create_actions_section (AppShellData * app_data, const gchar * title,
 			g_signal_connect (launcher, "tile-activated", G_CALLBACK (actions_handler),
 				app_data);
 			gtk_box_pack_start (GTK_BOX (vbox), launcher, FALSE, FALSE, 0);
+
+			a11y_cat = gtk_widget_get_accessible (GTK_WIDGET (launcher));
+			atk_object_set_name (a11y_cat, action->name);
 		}
 	}
 
@@ -668,6 +671,7 @@ static void
 create_application_category_sections (AppShellData * app_data)
 {
 	GList *cat_list;
+	AtkObject *a11y_cat;
 	gint pos = 0;
 
 	g_assert (app_data != NULL);
@@ -692,6 +696,8 @@ create_application_category_sections (AppShellData * app_data)
 		pos++;
 		g_signal_connect (data->group_launcher, "tile-activated",
 			G_CALLBACK (handle_group_clicked), app_data);
+		a11y_cat = gtk_widget_get_accessible (GTK_WIDGET (data->group_launcher));
+		atk_object_set_name (a11y_cat, data->category);
 
 		markup = g_markup_printf_escaped ("<span size=\"x-large\" weight=\"bold\">%s</span>",
 			data->category);
@@ -848,8 +854,9 @@ generate_categories (AppShellData * app_data)
 		gmenu_tree_add_monitor (app_data->tree, gmenu_tree_changed_callback, app_data);
 	}
 	root_dir = gmenu_tree_get_root_directory (app_data->tree);
-	contents = gmenu_tree_directory_get_contents (root_dir);
-	if (!contents)
+	if (root_dir)
+		contents = gmenu_tree_directory_get_contents (root_dir);
+	if (!root_dir || !contents)
 	{
 		GtkWidget *dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "Failure loading - %s",
@@ -862,12 +869,13 @@ generate_categories (AppShellData * app_data)
 	for (l = contents; l; l = l->next)
 	{
 		const char *category;
+		GMenuTreeItem *item = l->data;
 
-		switch (gmenu_tree_item_get_type (l->data))
+		switch (gmenu_tree_item_get_type (item))
 		{
 		case GMENU_TREE_ITEM_DIRECTORY:
-			category = gmenu_tree_directory_get_name (l->data);
-			generate_category(category, l->data, app_data, TRUE);
+			category = gmenu_tree_directory_get_name ((GMenuTreeDirectory*)item);
+			generate_category(category, (GMenuTreeDirectory*)item, app_data, TRUE);
 			break;
 		case GMENU_TREE_ITEM_ENTRY:
 			need_misc = TRUE;
@@ -875,7 +883,11 @@ generate_categories (AppShellData * app_data)
 		default:
 			break;
 		}
+
+		gmenu_tree_item_unref (item);
 	}
+	g_slist_free (contents);
+
 	if (need_misc)
 		generate_category (_("Other"), root_dir, app_data, FALSE);
 
@@ -894,26 +906,28 @@ generate_categories (AppShellData * app_data)
 static void
 generate_category (const char * category, GMenuTreeDirectory * root_dir, AppShellData * app_data, gboolean recursive)
 {
-	CategoryData *data = NULL;
+	CategoryData *data;
+	/* This is not needed. GMenu already returns an ordered, non duplicate list
 	GList *list_entry;
-
 	list_entry =
 		g_list_find_custom (app_data->categories_list, category,
 		category_name_compare);
-	
 	if (!list_entry)
 	{
+	*/
 		data = g_new0 (CategoryData, 1);
 		data->category = g_strdup (category);
 		app_data->categories_list =
 			/* use the gmenu order instead of alphabetical */
-			g_list_insert (app_data->categories_list, data, -1);
+			g_list_append (app_data->categories_list, data);
 			/* g_list_insert_sorted (app_data->categories_list, data, category_data_compare); */
+	/*
 	}
 	else
 	{
 		data = list_entry->data;
 	}
+	*/
 
 	if (app_data->hash)	/* used to eliminate dups on a per category basis. */
 		g_hash_table_destroy (app_data->hash);
@@ -983,10 +997,7 @@ generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data, Cate
 	contents = gmenu_tree_directory_get_contents (root_dir);
 	for (l = contents; l; l = l->next)
 	{
-		GMenuTreeItemType item_type;
-
-		item_type = gmenu_tree_item_get_type (l->data);
-		switch (item_type)
+		switch (gmenu_tree_item_get_type (l->data))
 		{
 		case GMENU_TREE_ITEM_DIRECTORY:
 			/* g_message ("Found sub-category %s", gmenu_tree_directory_get_name (l->data)); */
@@ -1025,7 +1036,10 @@ generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data, Cate
 		default:
 			break;
 		}
+
+		gmenu_tree_item_unref (l->data);
 	}
+	g_slist_free (contents);
 }
 
 static void
@@ -1272,6 +1286,7 @@ application_launcher_compare (gconstpointer a, gconstpointer b)
 	return g_ascii_strcasecmp (val1, val2);
 }
 
+/*
 static gint
 category_name_compare (gconstpointer a, gconstpointer b)
 {
@@ -1284,19 +1299,7 @@ category_name_compare (gconstpointer a, gconstpointer b)
 	}
 	return g_ascii_strcasecmp (category, data->category);
 }
-
-static gint
-category_data_compare (gconstpointer a, gconstpointer b)
-{
-	CategoryData *data1 = (CategoryData *) a;
-	CategoryData *data2 = (CategoryData *) b;
-
-	if (data1->category == NULL || data2->category == NULL)
-	{
-		g_assert_not_reached ();
-	}
-	return g_ascii_strcasecmp (data1->category, data2->category);
-}
+*/
 
 static void
 tile_activated_cb (Tile * tile, TileEvent * event, gpointer user_data)
