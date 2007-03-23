@@ -10,7 +10,6 @@ lib_LTLIBRARIES = libslab.la
 #	app-shell-startup.c
 #	application-tile.c
 #	directory-tile.c
-#	nameplate-tile.c
 #	search-bar.c
 #	search-context-picker.c
 #	search-entry-watermark.h
@@ -44,7 +43,7 @@ libslab_la_SOURCES =				\
 	tile-view.c				\
 	tile-model.c				\
 	file-tile-model.c			\
-	nameplate-tile-view.c
+	tile-button-view.c
 
 #	$(BUILT_SOURCES)
 #	app-resizer.h
@@ -52,7 +51,6 @@ libslab_la_SOURCES =				\
 #	app-shell-startup.h
 #	application-tile.h
 #	directory-tile.
-#	nameplate-tile.h
 #	search-bar.h
 #	search-context-picker.h
 #	search-entry.h
@@ -71,7 +69,7 @@ libslab_include_HEADERS =			\
 	tile-view.h				\
 	tile-model.h				\
 	file-tile-model.h			\
-	nameplate-tile-view.h
+	tile-button-view.h
 
 
 libslab_la_LIBADD = $(LIBSLAB_LIBS)

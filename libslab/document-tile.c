@@ -3,13 +3,14 @@
 #include <glib/gi18n.h>
 
 #include "file-tile-model.h"
-#include "nameplate-tile-view.h"
+#include "tile-button-view.h"
 #include "tile-attribute.h"
 #include "tile-control.h"
+#include "libslab-utils.h"
 
 typedef struct {
-	FileTileModel     *model;
-	NameplateTileView *view;
+	FileTileModel  *model;
+	TileButtonView *view;
 
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
@@ -21,9 +22,11 @@ typedef struct {
 static void this_class_init (DocumentTileClass *);
 static void this_init       (DocumentTile *);
 
-static void finalize (GObject *);
+static void       finalize   (GObject *);
+static GtkWidget *get_widget (Tile *);
+static gboolean   equals     (Tile *, gconstpointer);
 
-static void primary_action (Tile *);
+static void clicked_cb (GtkButton *, gpointer);
 
 static void map_mtime_to_string (const GValue *, GValue *, gpointer);
 
@@ -43,36 +46,33 @@ document_tile_get_type ()
 	return type_id;
 }
 
-GtkWidget *
+DocumentTile *
 document_tile_new (const gchar *uri)
 {
-	GtkWidget           *this;
+	DocumentTile        *this;
 	DocumentTilePrivate *priv;
 
-	TileAttribute *icon_attr;
-	TileAttribute *hdr_attr;
-	TileAttribute *subhdr_attr;
 
-
-	g_printf ("%s (%s)\n", G_STRFUNC, uri);
-
-	this = GTK_WIDGET (g_object_new (DOCUMENT_TILE_TYPE, NULL));
+	this = g_object_new (DOCUMENT_TILE_TYPE, NULL);
 	priv = PRIVATE (this);
 
 	priv->model = file_tile_model_new (uri);
-	priv->view  = nameplate_tile_view_new (2);
+	priv->view  = tile_button_view_new (2);
 
-	icon_attr   = tile_attribute_new (G_TYPE_STRING);
-	hdr_attr    = tile_attribute_new (G_TYPE_STRING);
-	subhdr_attr = tile_attribute_new (G_TYPE_STRING);
+	priv->icon_control = tile_control_new (
+		file_tile_model_get_icon_id_attr (priv->model),
+		tile_button_view_get_icon_id_attr (priv->view),
+		NULL, NULL);
+	priv->name_hdr_control = tile_control_new (
+		file_tile_model_get_file_name_attr (priv->model),
+		tile_button_view_get_header_text_attr (priv->view, 0),
+		NULL, NULL);
+	priv->mtime_hdr_control = tile_control_new (
+		file_tile_model_get_mtime_attr (priv->model),
+		tile_button_view_get_header_text_attr (priv->view, 1),
+		map_mtime_to_string, NULL);
 
-	nameplate_tile_view_set_icon_attr   (priv->view, icon_attr);
-	nameplate_tile_view_set_header_attr (priv->view, hdr_attr, 0);
-	nameplate_tile_view_set_header_attr (priv->view, subhdr_attr, 1);
-
-	priv->icon_control      = tile_control_new (TILE_MODEL (priv->model), FILE_TILE_MODEL_ICON_ID_PROP, icon_attr, NULL, NULL);
-	priv->name_hdr_control  = tile_control_new (TILE_MODEL (priv->model), FILE_TILE_MODEL_FILE_NAME_PROP, hdr_attr, NULL, NULL);
-	priv->mtime_hdr_control = tile_control_new (TILE_MODEL (priv->model), FILE_TILE_MODEL_MTIME_PROP, subhdr_attr, map_mtime_to_string, NULL);
+	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
 
 	return this;
 }
@@ -80,8 +80,12 @@ document_tile_new (const gchar *uri)
 static void
 this_class_init (DocumentTileClass *this_class)
 {
-	G_OBJECT_CLASS (this_class)->finalize       = finalize;
-	TILE_CLASS     (this_class)->primary_action = primary_action;
+	TileClass *tile_class = TILE_CLASS (this_class);
+
+	G_OBJECT_CLASS (this_class)->finalize = finalize;
+
+	tile_class->get_widget = get_widget;
+	tile_class->equals     = equals;
 
 	g_type_class_add_private (this_class, sizeof (DocumentTilePrivate));
 
@@ -114,12 +118,34 @@ finalize (GObject *g_obj)
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
 
-static void
-primary_action (Tile *this)
+static GtkWidget *
+get_widget (Tile *this)
 {
-	file_tile_model_open (PRIVATE (this)->model);
+	return GTK_WIDGET (PRIVATE (this)->view);
+}
 
-	tile_action_triggered (this, TILE_ACTION_LAUNCHES_APP);
+static gboolean
+equals (Tile *this, gconstpointer that)
+{
+	const gchar *uri_this;
+	const gchar *uri_that;
+
+	uri_this = tile_model_get_uri (TILE_MODEL (PRIVATE (this)->model));
+
+	if (IS_DOCUMENT_TILE (that))
+		uri_that = tile_model_get_uri (TILE_MODEL (PRIVATE (that)->model));
+	else
+		uri_that = (const gchar *) that;
+
+	return libslab_strcmp (uri_this, uri_that) == 0;
+}
+
+static void
+clicked_cb (GtkButton *button, gpointer data)
+{
+	file_tile_model_open (PRIVATE (data)->model);
+
+	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
 }
 
 static void

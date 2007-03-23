@@ -3,8 +3,6 @@
 
 #include <gtk/gtk.h>
 
-#include "tile-model.h"
-
 G_BEGIN_DECLS
 
 #define TILE_TYPE         (tile_get_type ())
@@ -14,10 +12,6 @@ G_BEGIN_DECLS
 #define IS_TILE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), TILE_TYPE))
 #define TILE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TILE_TYPE, TileClass))
 
-#define TILE_DEBOUNCE_PROP     "tile-debounce"
-#define TILE_URI_PROP          "tile-uri"
-#define TILE_CONTEXT_MENU_PROP "tile-context-menu"
-
 #define TILE_ACTION_TRIGGERED_SIGNAL "tile-action-triggered"
 
 enum {
@@ -25,23 +19,22 @@ enum {
 };
 
 typedef struct {
-	GtkButton gtk_button;
+	GObject g_object;
 } Tile;
 
 typedef struct {
-	GtkButtonClass gtk_button_class;
+	GObjectClass g_object_class;
 
-	void (* primary_action)   (Tile *tile);
-	void (* action_triggered) (Tile *tile, guint action_flags);
+	GtkWidget * (* get_widget) (Tile *this);
+	gboolean    (* equals)     (Tile *this, gconstpointer);
 } TileClass;
 
 GType tile_get_type (void);
 
-const gchar *tile_get_uri (Tile *this);
-
-void     tile_action_triggered (Tile *this, guint action_flags);
-gboolean tile_equals           (gconstpointer a, gconstpointer b);
-gint     tile_compare          (gconstpointer a, gconstpointer b);
+GtkWidget *tile_get_widget           (Tile *this);
+Tile      *tile_get_tile_from_widget (GtkWidget *widget);
+gboolean   tile_equals               (Tile *this, gconstpointer that);
+void       tile_action_triggered     (Tile *this, guint action_flags);
 
 G_END_DECLS
 

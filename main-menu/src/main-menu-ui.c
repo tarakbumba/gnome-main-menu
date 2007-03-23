@@ -37,12 +37,14 @@
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "tile.h"
-#include "application-tile.h"
 #include "document-tile.h"
+#if 0
+#include "application-tile.h"
 #include "directory-tile.h"
 #include "system-tile.h"
 #include "hard-drive-status-tile.h"
 #include "network-status-tile.h"
+#endif
 
 #include "tile-table.h"
 
@@ -152,7 +154,7 @@ static void setup_lock_down          (MainMenuUI *);
 
 static void       select_page                (MainMenuUI *);
 static void       update_limits              (MainMenuUI *);
-static void       connect_to_tile_triggers   (MainMenuUI *, TileTable *);
+static void       setup_tile_table           (MainMenuUI *, TileTable *);
 static void       hide_slab_if_urgent_close  (MainMenuUI *);
 static void       set_search_section_visible (MainMenuUI *);
 static void       set_table_section_visible  (MainMenuUI *, TileTable *);
@@ -632,7 +634,7 @@ create_system_section (MainMenuUI *this)
 		priv->bm_agents [BOOKMARK_STORE_SYSTEM], -1, 1, TRUE, TRUE,
 		item_to_system_tile, this, app_uri_to_item, NULL));
 
-	connect_to_tile_triggers (this, priv->sys_table);
+	setup_tile_table (this, priv->sys_table);
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->sys_table));
 
@@ -820,7 +822,7 @@ setup_file_tables (MainMenuUI *this)
 		gtk_table_set_row_spacings (GTK_TABLE (priv->file_tables [i]), 6);
 		gtk_table_set_col_spacings (GTK_TABLE (priv->file_tables [i]), 6);
 
-		connect_to_tile_triggers (this, priv->file_tables [i]);
+		setup_tile_table (this, priv->file_tables [i]);
 
 		g_object_get (G_OBJECT (priv->file_tables [i]), TILE_TABLE_TILES_PROP, & tiles, NULL);
 
@@ -1129,7 +1131,7 @@ update_limits (MainMenuUI *this)
 }
 
 static void
-connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
+setup_tile_table (MainMenuUI *this, TileTable *table)
 {
 	GList *tiles;
 	GList *node;
@@ -1153,7 +1155,7 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 
 
 		gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
-		gtk_widget_set_size_request (GTK_WIDGET (node->data), 6 * icon_width, -1);
+		gtk_widget_set_size_request (tile_get_widget (TILE (node->data)), 6 * icon_width, -1);
 	}
 }
 
@@ -1933,7 +1935,7 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 	gint table_id;
 
 
-	connect_to_tile_triggers (this, TILE_TABLE (g_obj));
+	setup_tile_table (this, TILE_TABLE (g_obj));
 
 	table_id = GPOINTER_TO_INT (g_object_get_data (g_obj, "table-id"));
 

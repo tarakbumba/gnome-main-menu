@@ -21,7 +21,6 @@
 #include "tile-table.h"
 
 #include "tile.h"
-#include "nameplate-tile.h"
 
 G_DEFINE_TYPE (TileTable, tile_table, GTK_TYPE_TABLE)
 
@@ -71,7 +70,7 @@ static void   empty_bin                    (TileTable *, gint);
 static void   resize_table                 (TileTable *, guint, guint);
 static GList *reorder_tiles                (TileTable *, gint, gint);
 static void   save_reorder                 (TileTable *, GList *);
-static void   connect_signal_if_not_exists (Tile *, const gchar *, GCallback, gpointer);
+static void   connect_signal_if_not_exists (gpointer, const gchar *, GCallback, gpointer);
 
 static void tile_drag_begin_cb (GtkWidget *, GdkDragContext *, gpointer);
 static void tile_drag_end_cb   (GtkWidget *, GdkDragContext *, gpointer);
@@ -116,7 +115,7 @@ tile_table_reload (TileTable *this)
 
 	BookmarkItem **items = NULL;
 	GList         *tiles = NULL;
-	GtkWidget     *tile;
+	Tile          *tile;
 	gint           n_tiles;
 
 	GtkSizeGroup *icon_size_group;
@@ -128,7 +127,7 @@ tile_table_reload (TileTable *this)
 	g_object_get (G_OBJECT (priv->agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
 
 	for (i = 0, n_tiles = 0; (priv->limit < 0 || n_tiles < priv->limit) && items && items [i]; ++i) {
-		tile = GTK_WIDGET (priv->create_tile_func (items [i], priv->tile_func_data));
+		tile = priv->create_tile_func (items [i], priv->tile_func_data);
 
 		if (tile) {
 			tiles = g_list_append (tiles, tile);
@@ -136,8 +135,8 @@ tile_table_reload (TileTable *this)
 		}
 	}
 
-	for (node = priv->tiles; node; node = node->next)
-		gtk_widget_destroy (GTK_WIDGET (node->data));
+/*	for (node = priv->tiles; node; node = node->next)
+		g_object_unref (G_OBJECT (node->data)); */
 
 	g_list_free (priv->tiles);
 
@@ -146,14 +145,14 @@ tile_table_reload (TileTable *this)
 	icon_size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (node = tiles; node; node = node->next) {
-		tile = GTK_WIDGET (node->data);
+		tile = TILE (node->data);
 
 		g_object_set_data (G_OBJECT (node->data), "tile-table", this);
 
 		connect_signal_if_not_exists (
-			TILE (tile), "drag-begin", G_CALLBACK (tile_drag_begin_cb), this);
+			tile_get_widget (tile), "drag-begin", G_CALLBACK (tile_drag_begin_cb), this);
 		connect_signal_if_not_exists (
-			TILE (tile), "drag-end", G_CALLBACK (tile_drag_end_cb), this);
+			tile_get_widget (tile), "drag-end", G_CALLBACK (tile_drag_end_cb), this);
 
 		priv->tiles = g_list_append (priv->tiles, tile);
 
@@ -462,12 +461,12 @@ drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
 }
 
 static void
-connect_signal_if_not_exists (Tile *tile, const gchar *signal, GCallback cb, gpointer user_data)
+connect_signal_if_not_exists (gpointer instance, const gchar *signal, GCallback cb, gpointer user_data)
 {
-	gulong handler_id = g_signal_handler_find (tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, cb, NULL);
+	gulong handler_id = g_signal_handler_find (instance, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, cb, NULL);
 
 	if (! handler_id)
-		g_signal_connect (G_OBJECT (tile), signal, cb, user_data);
+		g_signal_connect (instance, signal, cb, user_data);
 }
 
 static GList *
@@ -547,6 +546,7 @@ insert_into_bin (TileTable *this, Tile *tile, gint index)
 
 	GtkWidget *parent;
 	GtkWidget *child;
+	GtkWidget *tile_widget;
 
 
 	if (! GTK_IS_BIN (priv->bins [index])) {
@@ -563,25 +563,27 @@ insert_into_bin (TileTable *this, Tile *tile, gint index)
 	else {
 		child = gtk_bin_get_child (priv->bins [index]);
 
-		if (! tile_compare (child, tile))
-			return;
-
 		if (child) {
+			if (tile_equals (tile_get_tile_from_widget (child), tile))
+				return;
+
 			g_object_ref (G_OBJECT (child));
 			gtk_container_remove (GTK_CONTAINER (priv->bins [index]), child);
 		}
 	}
 
-	if ((parent = gtk_widget_get_parent (GTK_WIDGET (tile)))) {
-		g_object_ref (G_OBJECT (tile));
-		gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (tile));
-		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile));
-		g_object_unref (G_OBJECT (tile));
+	tile_widget = tile_get_widget (tile);
+
+	if ((parent = gtk_widget_get_parent (tile_widget))) {
+		g_object_ref (G_OBJECT (tile_widget));
+		gtk_container_remove (GTK_CONTAINER (parent), tile_widget);
+		gtk_container_add (GTK_CONTAINER (priv->bins [index]), tile_widget);
+		g_object_unref (G_OBJECT (tile_widget));
 	}
 	else
-		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile));
+		gtk_container_add (GTK_CONTAINER (priv->bins [index]), tile_widget);
 
-	g_object_set_data (G_OBJECT (tile), "tile-table-bin", GINT_TO_POINTER (index));
+	g_object_set_data (G_OBJECT (tile_widget), "tile-table-bin", GINT_TO_POINTER (index));
 }
 
 static void
@@ -672,7 +674,7 @@ save_reorder (TileTable *this, GList *tiles_new)
 		equal  = TRUE;
 
 		while (equal && node_u && node_v) {
-			if (tile_compare (node_u->data, node_v->data))
+			if (tile_equals (TILE (node_u->data), node_v->data))
                 		equal = FALSE;
 
 			node_u = node_u->next;

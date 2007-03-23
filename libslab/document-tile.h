@@ -22,7 +22,7 @@ typedef struct {
 
 GType document_tile_get_type (void);
 
-GtkWidget *document_tile_new (const gchar *uri);
+DocumentTile *document_tile_new (const gchar *uri);
 
 G_END_DECLS
 
