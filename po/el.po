@@ -1,11 +1,62 @@
+# #-#-#-#-#  el.po (YaST (@memory@))  #-#-#-#-#
 # Greek message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002 SuSE Linux AG.
 # Copyright (C) 2001 SuSE GmbH.
 # Bill Giannakopoulos <BillG@hellug.gr>, 2001.
 #
+# #-#-#-#-#  el.po-missing (el)  #-#-#-#-#
+# translation of el.po to
+# translation of el.po to Greek
+# translation of el.po to
+# translation of el.po to
+# translation of el.po to
+# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+# Clean messages should be ok.
+# TODO: There should be a full review and report here.
+# Split in pieces, this is the main piece.
+# kostas: 28Jan2003, updated translation
+# kostas: 13Feb2003, fixed some typos
+# kostas: 18Feb2003, minor typos
+# kostas: 05Mar2003,unfuzzy 2
+# kostas: 13 Jul2003, one more update
+# kostas:15Aug2003, one more update
+# Nikos: 28Aug2003, fixes
+# kostas:30Oct2003, one more update
+# Nikos:22Feb2004, minor fixes, review few messages
+# Nikos:06Jun2004, review
+# Nikos:25Jun2004, review
+# Nikos:26Aug2004, update
+#
+#
+# simos: 652 messages, 19Feb2001, more messages remaining.
+# simos: 713 messages, 20Feb2001, more messages remaining.
+# simos: 935 messages, 20Feb2001, more messages remaining.
+# simos: 1341 messages, 23Feb2001, more messages remaining.
+# simos: 1488 messages, 23Feb2001, more messages remaining.
+# simos: 1579 messages, 25Feb2001, more messages remaining.
+# simos: 1853 messages, 26Feb2001, 79 messages remaining.
+# simos: 1870 messages, 27Feb2001, 79 messages remaining.
+# simos: 1926 messages, 01Mar2001, 86 messages remaining.
+# simos: 2009 messages, 02Mar2001, full translation.
+# simos: 1391 messages, 20Apr2002, 167 remaining.
+# simos: 1454 messages, 26 Oct2002, 71 remaining.
+# simos: 1508 messages, 07Nov2002, 17 remaining.
+# simos: 1525 messages, 11Nov2002, translation completed.
+# kostas: unfuzzy 60, 40 new, 07Jan 2003, updated translation for Gnome 2.1x.
+# kostas: 19Jun2003, 1447 messages, updated translation for Gnome 2.4.
+# kostas:13Dec2003, one more update,1549 messages.
+# kostas:13Jan2004,1523 messages.
+# Nikos:21Jan2004, first review for 2.6 , 1508 messages.
+# Nikos:22Jan2004, second review for 2.6, 1522 messages.
+# Simos Xenitellis <simos74@gmx.net>, 2000, 2001, 2002, 2003.
+# Kostas Papadimas <pkst@gnome.org>, 2003, 2004, 2005.
+# Nikos Charonitakis <charosn@her.forthnet.gr>, 2003, 2004, 2005.
+# Kostas Papadimas <pkst@gnome.org>, 2006.
+#, fuzzy
 msgid ""
 msgstr ""
+"#-#-#-#-#  el.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
@@ -16,6 +67,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"#-#-#-#-#  el.po-missing (el)  #-#-#-#-#\n"
+"Project-Id-Version: el\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-06 21:52+0100\n"
+"PO-Revision-Date: 2006-09-04 13:59+0300\n"
+"Last-Translator: Kostas Papadimas <pkst@gnome.org>\n"
+"Language-Team: Greek <team@gnome.gr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);X-Generator: KBabel 1.11.2\n"
+"X-Generator: KBabel 1.11.2\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -59,12 +122,16 @@ msgstr ""
 
 #: ../application-browser/etc/application-browser.schemas.in.h:8
 #: ../control-center/etc/control-center.schemas.in.h:8
-msgid "Indicates whether to close the shell when an add or remove action is performed"
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
 msgstr ""
 
 #: ../application-browser/etc/application-browser.schemas.in.h:9
 #: ../control-center/etc/control-center.schemas.in.h:9
-msgid "Indicates whether to close the shell when an upgrade or uninstall action is performed"
+msgid ""
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
 msgstr ""
 
 #: ../application-browser/etc/application-browser.schemas.in.h:10
@@ -73,7 +140,9 @@ msgid "Max number of New Applications"
 msgstr "Σειρά Εφαρμογής"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:11
-msgid "The maximum number of applications that will be displayed in the New Applications category"
+msgid ""
+"The maximum number of applications that will be displayed in the New "
+"Applications category"
 msgstr ""
 
 #: ../application-browser/src/application-browser.c:85
@@ -112,16 +181,24 @@ msgid "Task names and associated .desktop files"
 msgstr ""
 
 #: ../control-center/etc/control-center.schemas.in.h:11
-msgid "The task name to be displayed in the control-center (thus needing to be translated) followed by a \";\" separator then the filename of an associated .desktop file to launch for that task."
+msgid ""
+"The task name to be displayed in the control-center (thus needing to be "
+"translated) followed by a \";\" separator then the filename of an "
+"associated .desktop file to launch for that task."
 msgstr ""
 
 #. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
 #: ../control-center/etc/control-center.schemas.in.h:13
-msgid "[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager.desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd.desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST.desktop]"
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
 msgstr ""
 
 #: ../control-center/etc/control-center.schemas.in.h:14
-msgid "if true, the control-center will close when a \"Common Task\" is activated"
+msgid ""
+"if true, the control-center will close when a \"Common Task\" is activated"
 msgstr ""
 
 #: ../control-center/src/control-center.c:62
@@ -370,11 +447,15 @@ msgid ".desktop path for the application browser"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
-msgid "Location of the system-wide directory in which startup programs are found."
+msgid ""
+"Location of the system-wide directory in which startup programs are found."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid "Location of the user directory in which startup programs are found. The dir path should not be absolute, as the value of this key is appended to this path: ~/."
+msgid ""
+"Location of the user directory in which startup programs are found. The dir "
+"path should not be absolute, as the value of this key is appended to this "
+"path: ~/."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:8
@@ -382,19 +463,29 @@ msgid "System-wide autostart program drop dir"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated."
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated. FILE_URI is replaced with a uri corresponding to the dirname of the activated file."
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated. FILE_URI is replaced with a uri corresponding to the dirname "
+"of the activated file."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the \"Send To...\" menu item is activated."
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:12
-msgid "This is the command to execute when the \"Send To...\" menu item is activated. DIRNAME and BASENAME are replaced with the corresponding components of the activated tile."
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated. DIRNAME and BASENAME are replaced with the corresponding "
+"components of the activated tile."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:13
@@ -402,7 +493,9 @@ msgid "This is the command to execute when the search entry is used."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:14
-msgid "This is the command to execute when the search entry is used. SEARCH_STRING is replaced with the entered search text."
+msgid ""
+"This is the command to execute when the search entry is used. SEARCH_STRING "
+"is replaced with the entered search text."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:15
@@ -414,7 +507,9 @@ msgid "command to uninstall packages"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:17
-msgid "command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command"
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:18
@@ -422,15 +517,26 @@ msgid "command to upgrade packages"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command"
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:20
-msgid "contains the list (in no particular order) of allowable file tables to show in the file area. possible values: 0 - show the user-specified or \"Favorite\" applications table, 1 - show the recently used applications table, 2 - show the user-specified or \"Favorite\" documents table, 3 - show the recently used documents table, 4 - show the user-specified of \"Favorite\" directories or \"Places\" table, and 5 - show the recently used directories or \"Places\" table."
+msgid ""
+"contains the list (in no particular order) of allowable file tables to show "
+"in the file area. possible values: 0 - show the user-specified or \"Favorite"
+"\" applications table, 1 - show the recently used applications table, 2 - "
+"show the user-specified or \"Favorite\" documents table, 3 - show the "
+"recently used documents table, 4 - show the user-specified of \"Favorite\" "
+"directories or \"Places\" table, and 5 - show the recently used directories "
+"or \"Places\" table."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid "contains the list of files (including .desktop files) to be excluded from the \"Recently Used Applications\" and \"Recent Files\" lists"
+msgid ""
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:22
@@ -438,11 +544,18 @@ msgid "determines the limit of items in the file-area."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:23
-msgid "determines the limit of items in the file-area. The number favorite items is not limited. This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items. If the number of favorite items exceeds max_total_items - min_recent_items than this limit is ignored."
+msgid ""
+"determines the limit of items in the file-area. The number favorite items is "
+"not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items than this limit is ignored."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:24
-msgid "determines the minimum number of items in the \"recent\" section of the file-area."
+msgid ""
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:25
@@ -454,7 +567,9 @@ msgid "if true, main menu is more anxious to close"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "if true, main menu will close under these additional conditions: tile is activated, search activated"
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:28
@@ -494,7 +609,9 @@ msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:37
-msgid "set to true if the link to the application browser should be visible and active."
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:38
@@ -510,15 +627,21 @@ msgid "set to true if the system area should be visible and active."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" applications."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:42
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" directories or \"Places\"."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:43
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" documents."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
 msgstr ""
 
 #: ../main-menu/src/hard-drive-status-tile.c:110
@@ -725,6 +848,15 @@ msgstr ""
 #, fuzzy
 msgid "Remove the current document from favorites"
 msgstr "Αφαίρεση Καταχωρήσεων fstab"
+
+msgid "Network Servers"
+msgstr "Εξυπηρετητές δικτύου"
+
+msgid "File System"
+msgstr "Σύστημα αρχείων"
+
+msgid "Home"
+msgstr "Αρχικός κατάλογος"
 
 #  progress stages
 #, fuzzy

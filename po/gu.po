@@ -1,136 +1,198 @@
-# Marathi message file for YaST2 (@memory@).
-# Copyright (C) 2007 SUSE Linux Products GmbH.
-#
+# #-#-#-#-#  gu.po-missing (nautilus.HEAD.gu)  #-#-#-#-#
+# translation of nautilus.HEAD.gu.po to Gujarati
+# Ankit Patel <ankit644@yahoo.com>, 2005, 2006.
+# Ankit Patel <ankit@redhat.com>, 2005.
+#, fuzzy
 msgid ""
 msgstr ""
+"#-#-#-#-#  gu.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
-"PO-Revision-Date: 2005-07-29 15:37+0530\n"
-"Last-Translator: i18n@suse.de\n"
-"Language-Team: Gujarati <i18n@suse.de>\n"
+"PO-Revision-Date: 2004-08-09 10:24+0200\n"
+"Last-Translator: Priyavert Sharma <priyavert.sharma@agreeya.com>\n"
+"Language-Team: AgreeYa Solutions <linux_team@agreeya.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"#-#-#-#-#  gu.po-missing (nautilus.HEAD.gu)  #-#-#-#-#\n"
+"Project-Id-Version: nautilus.HEAD.gu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-07-26 02:04+0200\n"
+"PO-Revision-Date: 2006-07-26 10:35+0530\n"
+"Last-Translator: Ankit Patel <ankit644@yahoo.com>\n"
+"Language-Team: Gujarati <indianoss-gujarati@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.9.1\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
 msgid "Application Browser"
-msgstr ""
+msgstr "અનુપ્રયોગ બ્રાઉઝર"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:1
 #: ../control-center/etc/control-center.schemas.in.h:2
 msgid "Exit shell on add or remove action performed"
-msgstr ""
+msgstr "ઉમેરવાની કે દૂર કરવાની ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલમાંથી બહાર નીકળો"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:2
 #: ../control-center/etc/control-center.schemas.in.h:3
 msgid "Exit shell on help action performed"
-msgstr ""
+msgstr "મદદ ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલમાંથી બહાર નીકળો"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:3
 #: ../control-center/etc/control-center.schemas.in.h:4
 msgid "Exit shell on start action performed"
-msgstr ""
+msgstr "શરૂ કરવાની ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલમાંથી બહાર નીકળો"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:4
 #: ../control-center/etc/control-center.schemas.in.h:5
 msgid "Exit shell on upgrade or uninstall action performed"
 msgstr ""
+"આધુનિકકરણ કે સ્થાપન દૂર કરવાની ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલમાંથી બહાર નીકળો"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:5
 msgid "Filename of existing .desktop files"
-msgstr ""
+msgstr "અસ્તિત્વ ધરાવતી .desktop ફાઈલોનું ફાઈલનામ"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:6
 #: ../control-center/etc/control-center.schemas.in.h:6
 msgid "Indicates whether to close the shell when a help action is performed"
-msgstr ""
+msgstr "જ્યારે મદદ ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલ બંધ કરવું કે નહિ તે સૂચવે છે"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:7
 #: ../control-center/etc/control-center.schemas.in.h:7
 msgid "Indicates whether to close the shell when a start action is performed"
-msgstr ""
+msgstr "જ્યારે શરૂ કરવાની ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલ બંધ કરવુ કે નહિ તે સૂચવે છે"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:8
 #: ../control-center/etc/control-center.schemas.in.h:8
-msgid "Indicates whether to close the shell when an add or remove action is performed"
+#, fuzzy
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
 msgstr ""
+"જ્યારે ઉમેરવાની કે દૂર કરવાની ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલ બંધ કરવું કે નહિ તે સૂચવે છે"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:9
 #: ../control-center/etc/control-center.schemas.in.h:9
-msgid "Indicates whether to close the shell when an upgrade or uninstall action is performed"
+#, fuzzy
+msgid ""
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
 msgstr ""
+"જ્યારે આધુનિકકરણ કરવાની કે સ્થાપન દૂર કરવાની ક્રિયાનો અમલ કરવામાં આવે ત્યારે શેલ બંધ કરવું "
+"કે નહિ તે સૂચવે છે"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:10
 msgid "Max number of New Applications"
-msgstr ""
+msgstr "નવા અનુપ્રયોગોની મહત્તમ સંખ્યા"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:11
-msgid "The maximum number of applications that will be displayed in the New Applications category"
-msgstr ""
+#, fuzzy
+msgid ""
+"The maximum number of applications that will be displayed in the New "
+"Applications category"
+msgstr "અનુપ્રયોગોની મહત્તમ સંખ્યા જે નવા અનુપ્રયોગોના પ્રકારમાં દર્શાવવામાં આવશે"
 
 #: ../application-browser/src/application-browser.c:85
-#, fuzzy
 msgid "New Applications"
-msgstr "નવું સ્થાપન"
+msgstr "નવા અનુપ્રયોગો"
 
 #: ../application-browser/src/application-browser.c:90
 #: ../control-center/src/control-center.c:160
 msgid "Filter"
-msgstr ""
+msgstr "ફિલ્ટર"
 
 #: ../application-browser/src/application-browser.c:90
 #: ../control-center/src/control-center.c:160
 msgid "Groups"
-msgstr ""
+msgstr "જૂથો"
 
 #: ../application-browser/src/application-browser.c:90
 msgid "Application Actions"
-msgstr ""
+msgstr "અનુપ્રયોગોની ક્રિયાઓ"
 
 #: ../control-center/etc/control-center.desktop.in.in.h:1
 #: ../control-center/src/control-center.c:164
-#, fuzzy
 msgid "Control Center"
-msgstr "YaST2 નિયંત્રણ કેન્દ્ર"
+msgstr "નિયંત્રણ કેન્દ્ર"
 
 #: ../control-center/etc/control-center.schemas.in.h:1
 msgid "Close the control-center when a task is activated"
-msgstr ""
+msgstr "જ્યારે એક કાર્ય સક્રિય કરવામાં આવે ત્યારે નિયંત્રણ-કેન્દ્ર બંધ કરો"
 
 #: ../control-center/etc/control-center.schemas.in.h:10
 msgid "Task names and associated .desktop files"
-msgstr ""
+msgstr "કાર્યના નામો અને સંબંધિત .desktop ફાઈલો"
 
 #: ../control-center/etc/control-center.schemas.in.h:11
-msgid "The task name to be displayed in the control-center (thus needing to be translated) followed by a \";\" separator then the filename of an associated .desktop file to launch for that task."
+#, fuzzy
+msgid ""
+"The task name to be displayed in the control-center (thus needing to be "
+"translated) followed by a \";\" separator then the filename of an "
+"associated .desktop file to launch for that task."
 msgstr ""
+"નિયંત્રણ-કેન્દ્ર (આ પ્રમાણે અનુવાદ કરવું જરૂરી છે) માં દર્શાવવાનું ક્રિયાનું નામ તેની પાછળ \";"
+"\"જૂદું પાડનાર ત્યાર પછી તે  કાર્ય માટે શરૂ કરવાની સંબંધિત .desktop ફાઈલનું ફાઈલનામ"
 
 #. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
 #: ../control-center/etc/control-center.schemas.in.h:13
-msgid "[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager.desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd.desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST.desktop]"
+#, fuzzy
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
 msgstr ""
+"[ ડેસ્કટોપનું પશ્ચાદભૂ બદલો ; background.desktop, પ્રિન્ટર ઉમેરો; gnome-cups-manager."
+"desktop, નેટવર્ક કન્ફિગર કરો; YaST2/lan.desktop, પાસવર્ડ બદલો; gnome-passwd."
+"desktop, વપરાશકર્તા ઉમેરો; YaST2/users.desktop, પ્રબંધક સેટિંગ્સ ખોલો; YaST.desktop]"
 
 #: ../control-center/etc/control-center.schemas.in.h:14
-msgid "if true, the control-center will close when a \"Common Task\" is activated"
+#, fuzzy
+msgid ""
+"if true, the control-center will close when a \"Common Task\" is activated"
 msgstr ""
+"જો સાચું હશે તો, જ્યારે \"સર્વસામાન્ય કાર્ય \"સક્રિય કરાય ત્યારે નિયંત્રણ-કેન્દ્ર બંધ થશે"
 
 #: ../control-center/src/control-center.c:62
 #, c-format
 msgid "key not found [%s]\n"
-msgstr ""
+msgstr "[%s] કળ મળી નથી\n"
 
 #: ../control-center/src/control-center.c:160
 msgid "Common Tasks"
-msgstr ""
+msgstr "સર્વસામાન્ય કાર્યો"
 
 #. make start action
 #: ../libslab/application-tile.c:316
 #, c-format
 msgid "<b>Start %s</b>"
-msgstr ""
+msgstr "%s શરૂ થશે"
 
 #: ../libslab/application-tile.c:335
 #: ../main-menu/src/main-menu-migration.c:116
@@ -139,93 +201,93 @@ msgid "Help"
 msgstr "મદદ"
 
 #: ../libslab/application-tile.c:342
-#, fuzzy
 msgid "Help Unavailable"
-msgstr "અપ્રાપ્ય"
+msgstr "મદદ અપ્રાપ્ય છે"
 
 #: ../libslab/application-tile.c:381
 msgid "Upgrade"
-msgstr ""
+msgstr "આધુનિકરણ કરો"
 
 #: ../libslab/application-tile.c:390
 msgid "Uninstall"
-msgstr ""
+msgstr "સ્થાપન દૂર કરો"
 
 #: ../libslab/application-tile.c:712 ../libslab/document-tile.c:525
 #: ../nautilus-main-menu/nautilus-main-menu.c:133
 #: ../nautilus-main-menu/nautilus-main-menu.c:138
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "ફેવરિટસમાંથી દૂર કરો"
 
 #: ../libslab/application-tile.c:714 ../libslab/document-tile.c:527
 #: ../nautilus-main-menu/nautilus-main-menu.c:123
 #: ../nautilus-main-menu/nautilus-main-menu.c:128
 msgid "Add to Favorites"
-msgstr ""
+msgstr "ફેવરિટસમાં ઉમેરો"
 
 #: ../libslab/application-tile.c:769
 msgid "Remove from Startup Programs"
-msgstr ""
+msgstr "પ્રારંભિક પ્રોગ્રામોમાંથી દૂર કરો"
 
 #: ../libslab/application-tile.c:771
 msgid "Add to Startup Programs"
-msgstr ""
+msgstr "પ્રારંભિક પ્રોગ્રામોમાંથી ઉમેરો"
 
 #: ../libslab/app-shell.c:740
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<span size=\"large\"><b>No matches found.</b> </span><span>\n"
 "\n"
 " Your filter \"<b>%s</b>\" does not match any items.</span>"
 msgstr ""
+"<span size=\"large\"><b> કોઈ મળતા આવતા મળ્યા નથી </b> </span><span>\n"
+"તમારું ફિલ્ટર \"<b>%s</b>\"કોઈ વસ્તુઓને મળતું આવતું નથી"
 
 #: ../libslab/app-shell.c:879
-#, fuzzy
 msgid "Other"
-msgstr "અન્ય (&O)"
+msgstr ""
 
 #. make open with default action
 #: ../libslab/directory-tile.c:163
+#, fuzzy
 msgid "<b>Open</b>"
-msgstr ""
+msgstr "\"%s\"<b> સાથે ખોલો</b>"
 
 #. make rename action
 #: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
 msgid "Rename..."
-msgstr ""
+msgstr "ફરીથી નામ આપો..."
 
 #. make move to trash action
 #: ../libslab/directory-tile.c:195 ../libslab/document-tile.c:249
 msgid "Move to Trash"
-msgstr ""
+msgstr "નિરર્થક વસ્તુઓમાં ખસેડો"
 
 #: ../libslab/directory-tile.c:205 ../libslab/directory-tile.c:448
 #: ../libslab/document-tile.c:259 ../libslab/document-tile.c:629
-#, fuzzy
 msgid "Delete"
-msgstr "કા&ઢી નાંખો"
+msgstr "કાઢી નાંખો"
 
 #: ../libslab/directory-tile.c:225 ../libslab/directory-tile.c:234
 #: ../libslab/document-tile.c:295 ../libslab/document-tile.c:304
 msgid "Send To..."
-msgstr ""
+msgstr "માં મોકલો...."
 
 #: ../libslab/document-tile.c:154
 msgid "Edited %m/%d/%Y"
-msgstr ""
+msgstr "%m/%d/%Y નું સંપાદન થઇ ગયું છે."
 
 #: ../libslab/document-tile.c:192
 #, c-format
 msgid "<b>Open with \"%s\"</b>"
-msgstr ""
+msgstr "\"%s\"<b> સાથે ખોલો</b>"
 
 #: ../libslab/document-tile.c:204
 msgid "Open with Default Application"
-msgstr ""
+msgstr "પ્રાથમિક અનુપ્રયોગ વડે ખોલો"
 
 #: ../libslab/document-tile.c:220
 msgid "Open in File Manager"
-msgstr ""
+msgstr "ફાઈલ મેનેજરમાં ખોલો"
 
 #: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
 #: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
@@ -295,243 +357,325 @@ msgstr ""
 
 #: ../libslab/search-bar.c:255
 msgid "Find Now"
-msgstr ""
+msgstr "હવે શોધો"
 
 #: ../libslab/system-tile.c:113
-#, c-format
+#, fuzzy, c-format
 msgid "<b>Open %s</b>"
-msgstr ""
+msgstr "\"%s\"<b> સાથે ખોલો</b>"
 
 #: ../libslab/system-tile.c:126
+#, fuzzy
 msgid "Remove from System Items"
-msgstr ""
+msgstr "ફેવરિટસમાંથી દૂર કરો"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
 msgid "Default menu and application browser"
-msgstr ""
+msgstr "પ્રાથમિક મેનુ અને અનુપ્રયોગ બ્રાઉઝર"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
 #: ../main-menu/src/main-menu-ui.c:1560 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
-msgstr ""
+msgstr "GNOME મુખ્ય મેનુ"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
 msgid "GNOME Main Menu Factory"
-msgstr ""
+msgstr "GNOME મુખ્ય મેનુ કારખાનું"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
 msgid "Main Menu"
-msgstr ""
+msgstr "મુખ્ય મેનુ"
 
 #: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
 msgid "_About"
-msgstr ""
+msgstr "_ના વિશે"
 
 #: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
+#, fuzzy
 msgid "_Open Menu"
-msgstr ""
+msgstr "મેનું ખોલો"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:1
 msgid ".desktop file for the YaST2 network_devices utility"
-msgstr ""
+msgstr "YaST2 નેટવર્ક-ઉપકરણોની ઉપયોગિતા માટેની .desktop ફાઈલ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:2
 msgid ".desktop file for the file browser"
-msgstr ""
+msgstr "ફાઈલ બ્રાઉઝર માટેની .desktop ફાઈલ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:3
 msgid ".desktop file for the gnome-system-monitor"
-msgstr ""
+msgstr "gnome-system-monitor માટેની .desktop ફાઈલ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:4
 msgid ".desktop file for the net config tool"
-msgstr ""
+msgstr "નેટવર્ક કન્ફિગરેશન સાધન માટેની .desktop ફાઈલ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:5
 msgid ".desktop path for the application browser"
-msgstr ""
+msgstr "અનુપ્રયોગ બ્રાઉઝર માટેનો .desktop માર્ગ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
-msgid "Location of the system-wide directory in which startup programs are found."
-msgstr ""
+#, fuzzy
+msgid ""
+"Location of the system-wide directory in which startup programs are found."
+msgstr "સિસ્ટમ-વ્યાપક ડિરેકટરી કે જેમાં પ્રારંભિક પ્રોગ્રામ મળે છે તેનું સ્થાન"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid "Location of the user directory in which startup programs are found. The dir path should not be absolute, as the value of this key is appended to this path: ~/."
+#, fuzzy
+msgid ""
+"Location of the user directory in which startup programs are found. The dir "
+"path should not be absolute, as the value of this key is appended to this "
+"path: ~/."
 msgstr ""
+"વપરાશકર્તા ડિરેકટરી કે જેમાં પ્રારંભિક પ્રોગ્રામ મળે છે તેનું સ્થાન ડિરેકટરીનો માર્ગ સંપૂર્ણ ન "
+"હોવો જોઈએ, કેમ કે, આ કળનું મૂલ્ય આ માર્ગ : ~/ સાથે જોડવામાં આવે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:8
 msgid "System-wide autostart program drop dir"
-msgstr ""
+msgstr "સિસ્ટમ-વ્યાપક સ્વંય શરૂ થતાં પ્રોગ્રામની ડ્રોપ ડિરેકટરી"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated."
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated."
 msgstr ""
+"જ્યારે \"ફાઈલ મેનેજરમાં ખોલો \" મેનુ વસ્તુ સક્રિય કરાય છે ત્યારે અમલમાં મૂકવાનો આ આદેશ છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated. FILE_URI is replaced with a uri corresponding to the dirname of the activated file."
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated. FILE_URI is replaced with a uri corresponding to the dirname "
+"of the activated file."
 msgstr ""
+"જ્યારે \"ફાઈલ મેનેજરમાં ખોલો \" મેનુ વસ્તુ સક્રિય કરાય છે ત્યારે અમલમાં મૂકવાનો આ આદેશ છે. "
+"સક્રિય કરાયેલ ફાઈલની ડિરેકટરની નામને અનુરૂપ FILE_URI  ને uri સાથે બદલી કરવામાં આવે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the \"Send To...\" menu item is activated."
-msgstr ""
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated."
+msgstr "જ્યારે \" માં મોકલો \" મેનું વસ્તુ સક્રિય કરાય છે ત્યારે અમલમાં મૂકવાનો આ આદેશ છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:12
-msgid "This is the command to execute when the \"Send To...\" menu item is activated. DIRNAME and BASENAME are replaced with the corresponding components of the activated tile."
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated. DIRNAME and BASENAME are replaced with the corresponding "
+"components of the activated tile."
 msgstr ""
+"જ્યારે \" માં મોકલો \" મેનું વસ્તુ સક્રિય કરાય છે ત્યારે અમલમાં મૂકવાનો આ આદેશ છે. સક્રિય "
+"કરાયેલ ફાઈલના અનુરૂપ ઘટકો સાથે DIRNAME અને BASENAME ની બદલી કરવામાં આવે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:13
 msgid "This is the command to execute when the search entry is used."
-msgstr ""
+msgstr "જ્યારે શોધો એન્ટ્રીનો ઉપયોગ થાય છે ત્યારે અમલમાં મૂકવાનો આ આદેશ છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:14
-msgid "This is the command to execute when the search entry is used. SEARCH_STRING is replaced with the entered search text."
+#, fuzzy
+msgid ""
+"This is the command to execute when the search entry is used. SEARCH_STRING "
+"is replaced with the entered search text."
 msgstr ""
+"જ્યારે શોધો એન્ટ્રીનો ઉપયોગ થાય છે ત્યારે અમલમાં મૂકવાનો આ આદેશ છે.SEARCH_STRING દાખલ "
+"કરાયેલ શોધવાના લખાણ સાથે બદલી કરવામાં આવે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:15
 msgid "User autostart program drop dir (within the home dir)"
-msgstr ""
+msgstr "વપરાશકર્તા સ્વંય શરૂ થતા પ્રોગ્રામની ડ્રોપ ડિરેકટરી (હોમ ડિરેકટરીની અંદર)"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:16
-#, fuzzy
 msgid "command to uninstall packages"
-msgstr "જરૂરી પેકેજીસ સ્થાપવામાં નિષ્ફળત ગયું."
+msgstr "પેકેજીસનું સ્થાપન દૂર કરવાનો આદેશ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:17
-msgid "command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command"
+#, fuzzy
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
 msgstr ""
+"પેકેજીસનું સ્થાપન દૂર કરવાનો આદેશ, PACKAGE_NAME આદેશમાંના પેકેજના નામ સાથે બદલી કરવામાં "
+"આવે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:18
 msgid "command to upgrade packages"
-msgstr ""
+msgstr "પેકેજીસનું આધુનિકરણ કરવાનો આદેશ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command"
+#, fuzzy
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
 msgstr ""
+"પેકેજીસનું આધુનિકરણ કરવાનો આદેશ, PACKAGE_NAME આદેશમાંના પેકેજના નામ સાથે બદલી કરવામાં આવે "
+"છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:20
-msgid "contains the list (in no particular order) of allowable file tables to show in the file area. possible values: 0 - show the user-specified or \"Favorite\" applications table, 1 - show the recently used applications table, 2 - show the user-specified or \"Favorite\" documents table, 3 - show the recently used documents table, 4 - show the user-specified of \"Favorite\" directories or \"Places\" table, and 5 - show the recently used directories or \"Places\" table."
+msgid ""
+"contains the list (in no particular order) of allowable file tables to show "
+"in the file area. possible values: 0 - show the user-specified or \"Favorite"
+"\" applications table, 1 - show the recently used applications table, 2 - "
+"show the user-specified or \"Favorite\" documents table, 3 - show the "
+"recently used documents table, 4 - show the user-specified of \"Favorite\" "
+"directories or \"Places\" table, and 5 - show the recently used directories "
+"or \"Places\" table."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid "contains the list of files (including .desktop files) to be excluded from the \"Recently Used Applications\" and \"Recent Files\" lists"
+#, fuzzy
+msgid ""
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
+"\"તાજેતરમાં ઉપયોગમાં લેવાયેલ અનુપ્રયોગો \"અને \"તાજી ફાઈલો \" ની યાદીઓથી અલગ રાખવાની "
+"ફાઈલો (.desktop ફાઈલો સહિતની) યાદીનો સમાવેશ કરે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:22
+#, fuzzy
 msgid "determines the limit of items in the file-area."
-msgstr ""
+msgstr "ફાઈલ વિસ્તારમાં ટાઈલ્સની હદ નકકી કરે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:23
-msgid "determines the limit of items in the file-area. The number favorite items is not limited. This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items. If the number of favorite items exceeds max_total_items - min_recent_items than this limit is ignored."
+msgid ""
+"determines the limit of items in the file-area. The number favorite items is "
+"not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items than this limit is ignored."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:24
-msgid "determines the minimum number of items in the \"recent\" section of the file-area."
-msgstr ""
+#, fuzzy
+msgid ""
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
+msgstr "ફાઈલ વિસ્તારમાં ટાઈલ્સની હદ નકકી કરે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:25
 msgid "determines which types of files to display in the file area"
-msgstr ""
+msgstr "ફાઈલ વિસ્તારમાં કયા પ્રકારની દર્શાવતી તે નક્કી કરે છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:26
 msgid "if true, main menu is more anxious to close"
-msgstr ""
+msgstr "જો સાચું હોય તો, મુખ્ય મેનુ બંધ થવા માટે વધુ આતુર છે."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "if true, main menu will close under these additional conditions: tile is activated, search activated"
+#, fuzzy
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
 msgstr ""
+"જો સાચું હોય તો મુખ્ય મેનુ આ વધારાની સ્થ્તિઓ હેઠળ બંધ થશે : ટાઇલ સક્રિય કરાયેલ છે, શોધો "
+"સક્રિય કરાયું."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:28
 msgid "lock-down configuration of the file area"
-msgstr ""
+msgstr "ફાઈલ વિસ્તારનું લોક-ડાઉન કન્ફિગ્યુરેશન"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:29
 msgid "lock-down status for the application browser link"
-msgstr ""
+msgstr "અનુપ્રયોગ બ્રાઉઝરની લિંક માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:30
 msgid "lock-down status for the search area"
-msgstr ""
+msgstr "શોધ વિસ્તાર માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:31
 msgid "lock-down status for the status area"
-msgstr ""
+msgstr "સ્થિતિ વિસ્તાર માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:32
 msgid "lock-down status for the system area"
-msgstr ""
+msgstr "સિસ્ટમ વિસ્તાર માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:33
+#, fuzzy
 msgid "lock-down status for the user-specified apps section"
-msgstr ""
+msgstr "શોધ વિસ્તાર માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:34
+#, fuzzy
 msgid "lock-down status for the user-specified dirs section"
-msgstr ""
+msgstr "શોધ વિસ્તાર માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:35
+#, fuzzy
 msgid "lock-down status for the user-specified docs section"
-msgstr ""
+msgstr "શોધ વિસ્તાર માટેની લોક-ડાઉન સ્થિતિ"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:36
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:37
-msgid "set to true if the link to the application browser should be visible and active."
-msgstr ""
+#, fuzzy
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
+msgstr "જો અનુપ્રયોગ બ્રાઉઝરની લિંક દૃશ્યમાન અને સક્રિય હોવી જોઈએ તો સાચું સેટ કરો."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:38
 msgid "set to true if the search area should be visible and active."
-msgstr ""
+msgstr "જો શોધ વિસ્તાર દૃશ્યમાન અને સક્રિય હોવો જોઈએ તો સાચું સેટ કરો."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:39
 msgid "set to true if the status area should be visible and active."
-msgstr ""
+msgstr "જો સ્થિતિવિસ્તાર દૃશ્યમાન અને સક્રિય હોવો જોઈએ તો સાચું સેટ કરો."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:40
 msgid "set to true if the system area should be visible and active."
-msgstr ""
+msgstr "જો સિસ્ટમ વિસ્તાર દૃશ્યમાન અને સક્રિય હોવો જોઈએ તો સાચું સેટ કરો."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" applications."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:42
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" directories or \"Places\"."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:43
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" documents."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
 msgstr ""
 
 #: ../main-menu/src/hard-drive-status-tile.c:110
+#, fuzzy
 msgid "Hard _Drive"
-msgstr ""
+msgstr "હાર્ડ ડ્રાઈવ"
 
 #: ../main-menu/src/hard-drive-status-tile.c:345
 #, c-format
 msgid "%lluG"
-msgstr ""
+msgstr "%lluG"
 
 #: ../main-menu/src/hard-drive-status-tile.c:347
 #, c-format
 msgid "%lluM"
-msgstr ""
+msgstr "%lluM"
 
 #: ../main-menu/src/hard-drive-status-tile.c:349
 #, c-format
 msgid "%lluK"
-msgstr ""
+msgstr "%lluK"
 
 #: ../main-menu/src/hard-drive-status-tile.c:351
 #, c-format
 msgid "%llub"
-msgstr ""
+msgstr "%llub"
 
 #: ../main-menu/src/hard-drive-status-tile.c:372
 #, c-format
 msgid "%s Free / %s Total"
-msgstr ""
+msgstr "%s ખાલી / %s કુલ"
 
 #: ../main-menu/src/main-menu-migration.c:118
 #: ../main-menu/src/main-menu-migration.c:273
@@ -540,12 +684,14 @@ msgstr ""
 
 #: ../main-menu/src/main-menu-migration.c:120
 #: ../main-menu/src/main-menu-migration.c:276
+#, fuzzy
 msgid "Shutdown"
-msgstr ""
+msgstr "દર્શાવો :"
 
 #: ../main-menu/src/main-menu-migration.c:205
+#, fuzzy
 msgid "Lock Screen"
-msgstr ""
+msgstr "સ્ક્રિન લોક કરો..."
 
 #: ../main-menu/src/main-menu-migration.c:207
 msgid "gnome-lockscreen"
@@ -556,103 +702,109 @@ msgid "New Spreadsheet"
 msgstr ""
 
 #: ../main-menu/src/main-menu-migration.c:536
+#, fuzzy
 msgid "New Document"
-msgstr ""
+msgstr "તાજા દસ્તાવેજો"
 
 #: ../main-menu/src/main-menu-ui.c:1561
 msgid "The GNOME Main Menu"
-msgstr ""
+msgstr "GNOME મુખ્ય મેનુ"
 
 #: ../main-menu/src/network-status-tile.c:91
 msgid "Network: None"
-msgstr ""
+msgstr "નેટવર્ક : એક પણ નહીં"
 
 #: ../main-menu/src/network-status-tile.c:94
 #: ../main-menu/src/network-status-tile.c:199
-#, fuzzy
 msgid "Click to configure network"
-msgstr "હજુ સુધી કન્ફિગર થયું નથી."
+msgstr "નેટવર્ક કન્ફિગર કરવા કિલક કરો"
 
 #: ../main-menu/src/network-status-tile.c:198
+#, fuzzy
 msgid "Networ_k: None"
-msgstr ""
+msgstr "નેટવર્ક : એક પણ નહીં"
 
 #: ../main-menu/src/network-status-tile.c:207
 #, c-format
 msgid "Connected to: %s"
-msgstr ""
+msgstr "ની સાથે જોડાયું : %s"
 
 #: ../main-menu/src/network-status-tile.c:210
+#, fuzzy
 msgid "Networ_k: Wireless"
-msgstr ""
+msgstr "નેટવર્ક : વાયરલેસ"
 
 #: ../main-menu/src/network-status-tile.c:215
 #, c-format
 msgid "Using ethernet (%s)"
-msgstr ""
+msgstr "ઈથરનેટ (%s)) નો ઉપયોગ કરી રહેલા છે"
 
 #: ../main-menu/src/network-status-tile.c:219
+#, fuzzy
 msgid "Networ_k: Wired"
-msgstr ""
+msgstr "નેટવર્ક : વાયર્ડ"
 
 #: ../main-menu/src/network-status-tile.c:320
 #, c-format
 msgid "Wireless Ethernet (%s)"
-msgstr ""
+msgstr "વાયરલેસ ઈથરનેટ (%s))"
 
 #: ../main-menu/src/network-status-tile.c:325
 #, c-format
 msgid "Wired Ethernet (%s)"
-msgstr ""
+msgstr "વાયર્ડ ઈથરનેટ (%s))"
 
 #: ../main-menu/src/network-status-tile.c:329
 #: ../main-menu/src/network-status-tile.c:339
 msgid "Unknown"
-msgstr "અજાણી"
+msgstr "અજાણ્યું"
 
 #: ../main-menu/src/network-status-tile.c:337
 #, c-format
 msgid "%d Mb/s"
-msgstr ""
+msgstr "%d Mb/s"
 
 #: ../main-menu/src/slab-window.glade.h:1
 #, fuzzy
 msgid "Applications"
-msgstr "નવું સ્થાપન"
+msgstr "નવા અનુપ્રયોગો"
 
 #: ../main-menu/src/slab-window.glade.h:2
 msgid "Computer"
-msgstr ""
+msgstr "કમ્પ્યૂટર"
 
 #: ../main-menu/src/slab-window.glade.h:3
+#, fuzzy
 msgid "Documents"
-msgstr ""
+msgstr "તાજા દસ્તાવેજો"
 
 #: ../main-menu/src/slab-window.glade.h:4
-#, fuzzy
 msgid "Favorite Applications"
-msgstr "નવું સ્થાપન"
+msgstr "ફેવરિટ અનુપ્રયોગો"
 
 #: ../main-menu/src/slab-window.glade.h:5
+#, fuzzy
 msgid "Favorite Documents"
-msgstr ""
+msgstr "તાજા દસ્તાવેજો"
 
 #: ../main-menu/src/slab-window.glade.h:6
+#, fuzzy
 msgid "Favorite Places"
-msgstr ""
+msgstr "ફેવરિટ અનુપ્રયોગો"
 
 #: ../main-menu/src/slab-window.glade.h:8
-#, fuzzy
 msgid "More Applications..."
-msgstr "નવું સ્થાપન"
+msgstr "વધુ અનુપ્રયોગો.."
 
 #: ../main-menu/src/slab-window.glade.h:9
+#, fuzzy
 msgid "More Documents..."
-msgstr ""
+msgstr "બધા દસ્તાવેજો..."
 
 #: ../main-menu/src/slab-window.glade.h:10
+#, fuzzy
 msgid "More Places..."
-msgstr ""
+msgstr "વધુ અનુપ્રયોગો.."
 
 #: ../main-menu/src/slab-window.glade.h:11
 msgid "Places"
@@ -661,23 +813,23 @@ msgstr ""
 #: ../main-menu/src/slab-window.glade.h:12
 #, fuzzy
 msgid "Recent Applications"
-msgstr "નવું સ્થાપન"
+msgstr "તાજેતરમાં ઉપયોગમાં લેવાયેલ અનુપ્રયોગો"
 
 #: ../main-menu/src/slab-window.glade.h:13
 msgid "Recent Documents"
-msgstr ""
+msgstr "તાજા દસ્તાવેજો"
 
 #: ../main-menu/src/slab-window.glade.h:14
 msgid "Search:"
-msgstr ""
+msgstr "શોધો :"
 
 #: ../main-menu/src/slab-window.glade.h:15
 msgid "Status"
-msgstr ""
+msgstr "સ્થિતિ"
 
 #: ../main-menu/src/slab-window.glade.h:16
 msgid "System"
-msgstr ""
+msgstr "સિસ્ટમ"
 
 #: ../nautilus-main-menu/nautilus-main-menu.c:124
 msgid "Add the current launcher to favorites"
@@ -689,5 +841,119 @@ msgstr ""
 
 #: ../nautilus-main-menu/nautilus-main-menu.c:134
 #: ../nautilus-main-menu/nautilus-main-menu.c:139
+#, fuzzy
 msgid "Remove the current document from favorites"
-msgstr ""
+msgstr "ફેવરિટસમાંથી દૂર કરો"
+
+msgid "Network Servers"
+msgstr "નેટવર્ક સર્વરો"
+
+msgid "File System"
+msgstr "ફાઇલ સિસ્ટમ"
+
+msgid "Home"
+msgstr "ઘર"
+
+#~ msgid "Software Update"
+#~ msgstr "સોફટવેર અદ્યતન કરો"
+
+#~ msgid ".desktop files for \"Favorite Applications\""
+#~ msgstr "\"ફેવરિટ અનુપ્રયોગો \"માટેની .desktop ફાઇલો"
+
+#~ msgid "System area items"
+#~ msgstr "સિસ્ટમ વિસ્તારની વસ્તુઓ"
+
+#~ msgid ""
+#~ "The list of the items which will appear in the System area. "
+#~ "Possiblevalues are HELP = 0, CONTROL_CENTER = 1, PACKAGE_MANAGER = 2,"
+#~ "LOG_OUT = 3, LOCK_SCREEN = 4. HELP, CONTROL_CENTER andPACKAGE_MANAGER "
+#~ "need to the have the appropriate .desktop filesdefined in the, "
+#~ "respectively, \"help_item\", \"control_center_item\"and "
+#~ "\"package_manager_item\"keys."
+#~ msgstr ""
+#~ "સિસ્ટમ વિસ્તારમાં આવતી વસ્તુઓની યાદી. શકય મૂલ્યો મદદ = 0, નિયંત્રણ _ કેન્દ્ર = 1 "
+#~ "પેકેજ_મેનેજર = 2, લોગ_આઉટ = 3, લોક _સ્ક્રીન = 4, મદદ, નિયંત્રણ _ કેન્દ્ર અને પેકેજ_મેનેજર "
+#~ "પાસે અનુક્રમે,\"help_item\", \"control_center_item\"અને \"package_manager_item"
+#~ "\" કળોમાં વ્યાખ્યાયિત બંધબેસતી .desktop ફાઈલો હોવી જરૂરી છે."
+
+#~ msgid ""
+#~ "contains the list (in no particular order) of allowable file typesto show "
+#~ "in the file area. possible values (see also the note for /desktop/gnome/"
+#~ "applications/main-menu/file-area/file_class): 0[USER_SPECIFIED_APPS], 1 "
+#~ "[RECENTLY_USED_APPS], 2 [RECENT_FILES].RECENTLY_USED_APPS is the list of "
+#~ "recently used (instantiated withthe main-menu or the application-"
+#~ "browser). USER_SPECIFIED_APPS isequivalent to \"Favorite Applications\". "
+#~ "RECENT_FILES is the list offiles from ~/.recently-used."
+#~ msgstr ""
+#~ "ફાઈલ વિસ્તારમાં દર્શાવવાના માન્યતાને યોગ્ય ફાઈલના પ્રકારોની યાદી (કોઈ ખાસ ક્રમમાં "
+#~ "નહિ નો સમાવેશ કરે છે. શકય મૂલ્યો (/desktop/gnome/applications/main-menu/file-"
+#~ "area/file_class માટેની નોંધ પણ જુઓ) : 0[USER_SPECIFIED_APPS], 1 "
+#~ "[RECENTLY_USED_APPS], 2 [RECENT_FILES]. RECENTLY_USED_APPS તાજેતરમાં "
+#~ "ઉપયોગમાં લેવાયેલની યાદી છે (મુખ્યમેનુ કે અનુપ્રયોગ બ્રાઉઝર દ્વારા શરૂ કરાયેલ) \"ફેવરિટમાં "
+#~ "અનુપ્રયોગો \"સમાન છે.RECENT_FILES, ~/.recently-used માંની ફાઈલોની યાદી છે."
+
+#~ msgid "control center item .desktop file"
+#~ msgstr "નિયંત્રણ કેન્દ્ર વસ્તુ .desktop ફાઈલ"
+
+#~ msgid ""
+#~ "determines the limit of tiles in the file-area. *Note: this does "
+#~ "notaffect the number of tiles if the file-class is USER_SPECIFIED_*."
+#~ msgstr ""
+#~ "ફાઈલ વિસ્તારમાં ટાઈલ્સની હદ નકકી કરે છે. * નોંધ : જો ફાઈલ વર્ગ USER_SPECIFIED_* "
+#~ "હોય તો આ ટાઈલ્સની સંખ્યાને અસર કરતું નથી."
+
+#~ msgid ""
+#~ "determines the reordering algorithm used when moving tiles aroundthe main-"
+#~ "menu"
+#~ msgstr ""
+#~ "ટાઈલ્સને મુખ્ય મેનુની ફરતે ફેરવતી વખતે ઉપયોગમાં લેવાયેલ પુન: યથાક્રમમાં ગોઠવવાની પદ્ધતિ "
+#~ "નક્કી કરે છે."
+
+#~ msgid "help item .desktop file"
+#~ msgstr "મદદ વસ્તુ .desktop ફાઈલ"
+
+#~ msgid "package manager item .desktop file"
+#~ msgstr "પેકેજ વ્યવસ્થાપક વસ્તુ .desktop ફાઈલ"
+
+#~ msgid ""
+#~ "possible values = 0 [SWAP], 1 [PUSH], 2 [PUSH_PULL]. SWAP indicatesthat "
+#~ "when a tile is dragged onto another tile they should simplyswap position. "
+#~ "PUSH indicates that when a tile, A, is dragged ontoanother tile, B, a "
+#~ "vacant spot is created in tile A's place. tile B(and all tiles after B) "
+#~ "shift down until the new vacant space isfilled. this operation wraps "
+#~ "around in the case that tile A appearsbefore tile B prior to the drag and "
+#~ "drop operation. PUSH_PULL issimilar to PUSH except that when tiles are "
+#~ "shifted they are eitherpushed into the vacant spaced or pulled from the "
+#~ "other direction,depending on which strategy affects the least number of "
+#~ "tiles."
+#~ msgstr ""
+#~ "શકય મૂલ્યો = (અદલાબદલી) 1 (દબાવો), 2 (દબાવો-ખેંચો) અદલાબદલી જયારે એક ટાઈલ બીજા "
+#~ "ટાઈલ બીજા ટાઈલ ઉપર ખેંચવામાં આવે ત્યારે તેઓએ માત્ર સ્થાનની અદલાબદલ કરવી જોઈએ તે સૂચવે "
+#~ "છે. દબાવો જ્યારે એક ટાઈલ, A, બીજી ટાઈલ, B, ઉપર ખેંચમાં આવે ત્યારે, ટાઈલ A ની જગ્યા "
+#~ "ઉપર ખાલી જગ્યાની રચના થવી જોઈએ, તે સૂચવે છે. ટાઈલ B (અને B  પછીની બધી ટાઈલ્સ) "
+#~ "નવી ખાલી જગ્યા ભરાઈ ન જાય ત્યાં સુધી નીચે ખસે છે. ખેંચો અને છોડો પ્રક્રિયા કરતાં પહેલાં "
+#~ "ટાઈલ A ટાઈલ B કરતાં પહેલાં દેખાય તેવી પરિસ્થિતિમાં આ પ્રક્રિયા ફરતે લપેટાયા કરે છે. "
+#~ "દબાવો-ખેંચો દબાવો સમાન જ છે સિવાય કે જ્યારે ટાઈલ્સ ખસેડવામાં આવે છે ત્યારે કઈ તરકીબ "
+#~ "ટાઈલ્સની ઓછામાં ઓછી સંખ્યાને અસર કરે છે તેના આધારિત કયાં તો ખાલી થયેલ જગ્યામાં "
+#~ "દબાવવામાં આવે છે અથવા બીજી દિશામાંથી ખેંચવામાં આવે છે."
+
+#~ msgid ""
+#~ "possible values = 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2"
+#~ "[RECENT_FILES]. RECENTLY_USED_APPS is the list of recently used"
+#~ "(instantiated with the main-menu or the application-browser)."
+#~ "USER_SPECIFIED_APPS is equivalent to \"Favorite Applications\"."
+#~ "RECENT_FILES is the list of files from ~/.recently-used."
+#~ msgstr ""
+#~ "શકય મૂલ્યો = 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 "
+#~ "[RECENT_FILES]. RECENTLY_USED_APPS તાજેતરમાં ઉપયોગમાં લેવાયેલની યાદી છે (મુખ્યમેનુ "
+#~ "કે અનુપ્રયોગ બ્રાઉઝર દ્વારા શરૂ કરાયેલ) \"ફેવરિટમાં અનુપ્રયોગો \"સમાન છે. "
+#~ "RECENT_FILES, ~/.recently-used માંની ફાઈલોની યાદી છે."
+
+#~ msgid "prioritized list of commands to lock the screen"
+#~ msgstr "સ્ક્રીનને અટકાવવા માટેના આદેશોની અગ્રતા નક્કી કરતી યાદી"
+
+#~ msgid "Install Software"
+#~ msgstr "સોફટવેર સ્થાપો"
+
+#~ msgid "Log Out ..."
+#~ msgstr "લોગ આઉટ..."

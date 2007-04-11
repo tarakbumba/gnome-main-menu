@@ -1,3 +1,4 @@
+# #-#-#-#-#  fi.po (gnome-main-menu.fi)  #-#-#-#-#
 # translation of gnome-main-menu.fi.po to
 # translation of fi.po to
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -8,19 +9,55 @@
 # Michael Hintsala <mhintsa@fi.ibm.com>, 2003. 2001.
 # Jyri Palokangas <jmp@netti.fi>, 2006.
 # Ilkka Tuohela <hile@iki.fi>, 2006.
+# #-#-#-#-#  fi.po-missing (nautilus 1.1.2)  #-#-#-#-#
+# Nautilus Finnish translation.
+# Suomennos: http://gnome-fi.sourceforge.net/
+#
+# Copyright (C) 2002 Free Software Foundation, Inc.
+# Pauli Virtanen <pauli.virtanen@hut.fi>, 2000-2005.
+# Ilkka Tuohela <hile@iki.fi>, 2005.
+#
+# Suomennossuositukset tai -ehdotukset:
+#
+# content view = sisältönäkymä
+# emblem = tunnusmerkki
+# sidebar = sivupaneeli
+#
+# inventory (package management) = sisällysluettelo
+# index (medusa) = luettelo
+#
+# Problems:
+#
+# pattern = glob = lauseke (parempi suomennos tarvitaan)
+#
+# script = komentojono
+#
+#, fuzzy
 msgid ""
 msgstr ""
+"#-#-#-#-#  fi.po (gnome-main-menu.fi)  #-#-#-#-#\n"
 "Project-Id-Version: gnome-main-menu.fi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
 "PO-Revision-Date: 2006-06-29 11:08+0300\n"
-"Last-Translator: Jyri Palokangas <jmp@netti.fi>\n"
-"Language-Team:  <en@li.org>\n"
+"Last-Translator: Novell Language <language@novell.com>\n"
+"Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: KBabel 1.11.2\n"
+"#-#-#-#-#  fi.po-missing (nautilus 1.1.2)  #-#-#-#-#\n"
+"Project-Id-Version: nautilus 1.1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-07-29 08:23+0300\n"
+"PO-Revision-Date: 2006-09-12 10:08+0300\n"
+"Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
+"Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -63,20 +100,29 @@ msgstr "Määrittää, suljetaanko kuori, kun käynnistystoiminto on suoritettu"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:8
 #: ../control-center/etc/control-center.schemas.in.h:8
-msgid "Indicates whether to close the shell when an add or remove action is performed"
-msgstr "Määrittää, suljetaanko kuori, kun lisäys- tai poistotoiminto on suoritettu"
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
+msgstr ""
+"Määrittää, suljetaanko kuori, kun lisäys- tai poistotoiminto on suoritettu"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:9
 #: ../control-center/etc/control-center.schemas.in.h:9
-msgid "Indicates whether to close the shell when an upgrade or uninstall action is performed"
-msgstr "Määrittää, suljetaanko kuori, kun paketin päivitys- tai poistotoiminto on suoritettu"
+msgid ""
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
+msgstr ""
+"Määrittää, suljetaanko kuori, kun paketin päivitys- tai poistotoiminto on "
+"suoritettu"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:10
 msgid "Max number of New Applications"
 msgstr "Uusien sovellusten enimmäismäärä"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:11
-msgid "The maximum number of applications that will be displayed in the New Applications category"
+msgid ""
+"The maximum number of applications that will be displayed in the New "
+"Applications category"
 msgstr "Kuinka monta sovellusta voidaan näyttää luokassa Uudet Sovellukset"
 
 #: ../application-browser/src/application-browser.c:85
@@ -111,17 +157,32 @@ msgid "Task names and associated .desktop files"
 msgstr "Tehtävien nimet ja niihin liittyvät .desktop-tiedostot"
 
 #: ../control-center/etc/control-center.schemas.in.h:11
-msgid "The task name to be displayed in the control-center (thus needing to be translated) followed by a \";\" separator then the filename of an associated .desktop file to launch for that task."
-msgstr "Ohjauskeskuksessa näytettävä tehtävän nimi (tämän takia käännettävä), jonka jälkeen erotin \";\" ja tehtävään liittyvän .desktop-tiedoston polkunimi."
+msgid ""
+"The task name to be displayed in the control-center (thus needing to be "
+"translated) followed by a \";\" separator then the filename of an "
+"associated .desktop file to launch for that task."
+msgstr ""
+"Ohjauskeskuksessa näytettävä tehtävän nimi (tämän takia käännettävä), jonka "
+"jälkeen erotin \";\" ja tehtävään liittyvän .desktop-tiedoston polkunimi."
 
 #. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
 #: ../control-center/etc/control-center.schemas.in.h:13
-msgid "[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager.desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd.desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST.desktop]"
-msgstr "[Muuta työpöydän taustaa;background.desktop,Lisää tulostin;gnome-cups-manager.desktop,Verkkoasetukset;YaST2/lan.desktop,Muuta salasana;gnome-passwd.desktop,Lisää käyttäjä,YaST2/users.desktop,Avaa järjestelmävalvojan asetukset;YaST.desktop]"
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[Muuta työpöydän taustaa;background.desktop,Lisää tulostin;gnome-cups-"
+"manager.desktop,Verkkoasetukset;YaST2/lan.desktop,Muuta salasana;gnome-"
+"passwd.desktop,Lisää käyttäjä,YaST2/users.desktop,Avaa järjestelmävalvojan "
+"asetukset;YaST.desktop]"
 
 #: ../control-center/etc/control-center.schemas.in.h:14
-msgid "if true, the control-center will close when a \"Common Task\" is activated"
-msgstr "jos tosi, komentokeskus suljetaan kun \"Yleinen tehtävä\" on käynnistetty"
+msgid ""
+"if true, the control-center will close when a \"Common Task\" is activated"
+msgstr ""
+"jos tosi, komentokeskus suljetaan kun \"Yleinen tehtävä\" on käynnistetty"
 
 #: ../control-center/src/control-center.c:62
 #, c-format
@@ -193,9 +254,8 @@ msgstr "Muu"
 
 #. make open with default action
 #: ../libslab/directory-tile.c:163
-#, fuzzy
 msgid "<b>Open</b>"
-msgstr "<b>Valmistaja:</b>"
+msgstr "<b>Avaa</b>"
 
 #. make rename action
 #: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
@@ -236,36 +296,36 @@ msgstr "Avaa tiedostonhallinnassa"
 
 #: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
 #: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
-#, fuzzy, c-format
+#, c-format
 msgid "Unexpected attribute '%s' for element '%s'"
-msgstr "Odottamaton merkki liitännän nimessä: '%s'"
+msgstr "Löytyi odottamaton attribuutti '%s' osalle '%s'"
 
 #: ../libslab/eggbookmarkfile.c:920 ../libslab/eggbookmarkfile.c:1012
 #: ../libslab/eggbookmarkfile.c:1022 ../libslab/eggbookmarkfile.c:1138
 #, c-format
 msgid "Attribute '%s' of element '%s' not found"
-msgstr ""
+msgstr "Attribuuttia '%s' ei löytynyt elementistä '%s'"
 
 #: ../libslab/eggbookmarkfile.c:1329 ../libslab/eggbookmarkfile.c:1394
 #: ../libslab/eggbookmarkfile.c:1444 ../libslab/eggbookmarkfile.c:1454
 #, c-format
 msgid "Unexpected tag '%s', tag '%s' expected"
-msgstr ""
+msgstr "Odottamaton merkintä '%s', odotettiin merkintää '%s'"
 
 #: ../libslab/eggbookmarkfile.c:1354 ../libslab/eggbookmarkfile.c:1368
 #: ../libslab/eggbookmarkfile.c:1422 ../libslab/eggbookmarkfile.c:1476
 #, c-format
 msgid "Unexpected tag '%s' inside '%s'"
-msgstr ""
+msgstr "Odottamaton merkintä '%s' kohteen '%s' sisällä"
 
 #: ../libslab/eggbookmarkfile.c:2187
 msgid "No valid bookmark file was be found in data dirs"
-msgstr ""
+msgstr "Kelvollista kirjanmerkkitiedostoa ei löytynyt tietohakemistoista"
 
 #: ../libslab/eggbookmarkfile.c:2388
-#, fuzzy, c-format
+#, c-format
 msgid "A bookmark for URI '%s' already exists"
-msgstr "CA-hakemisto on jo olemassa."
+msgstr "URI:n '%s' kirjanmerkki on jo olemassa"
 
 #: ../libslab/eggbookmarkfile.c:2432 ../libslab/eggbookmarkfile.c:2593
 #: ../libslab/eggbookmarkfile.c:2682 ../libslab/eggbookmarkfile.c:2763
@@ -278,41 +338,42 @@ msgstr "CA-hakemisto on jo olemassa."
 #: ../libslab/eggbookmarkfile.c:4053
 #, c-format
 msgid "No bookmark found for URI '%s'"
-msgstr ""
+msgstr "Kirjanmerkkiä ei löytynyt URI:lle '%s'"
 
 #: ../libslab/eggbookmarkfile.c:2772
 #, c-format
 msgid "No MIME type defined in the bookmark for URI '%s'"
-msgstr ""
+msgstr "MIME-tyyppiä ei ole määritetty URI:n '%s' kirjanmerkissä"
 
 #: ../libslab/eggbookmarkfile.c:2857
 #, c-format
 msgid "No private flag has been defined in bookmark for URI '%s'"
-msgstr ""
+msgstr "URI:n '%s' kirjanmerkille ei ole määritetty yksityistä lippua"
 
 #: ../libslab/eggbookmarkfile.c:3236
 #, c-format
 msgid "No groups set in bookmark for URI '%s'"
-msgstr ""
+msgstr "URI:n '%s' kirjanmerkille ei ole määritetty ryhmiä"
 
 #: ../libslab/eggbookmarkfile.c:3634 ../libslab/eggbookmarkfile.c:3775
 #, c-format
 msgid "No application with name '%s' registered a bookmark for '%s'"
 msgstr ""
+"Mikään sovellus, jonka nimi on '%s', ei ole rekisteröinyt kohteen '%s' "
+"kirjanmerkkiä"
 
 #: ../libslab/search-bar.c:255
 msgid "Find Now"
 msgstr "Etsi nyt"
 
 #: ../libslab/system-tile.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Open %s</b>"
-msgstr "<b>Avaa ohjelmalla \"%s\"</b>"
+msgstr "<b>Avaa %s</b>"
 
 #: ../libslab/system-tile.c:126
-#, fuzzy
 msgid "Remove from System Items"
-msgstr "Poista suosikeista"
+msgstr "Poista järjestelmän kohteista"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
 msgid "Default menu and application browser"
@@ -336,9 +397,8 @@ msgid "_About"
 msgstr "T_ietoja"
 
 #: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-#, fuzzy
 msgid "_Open Menu"
-msgstr "Avaa valikko"
+msgstr "_Avaa valikko"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:1
 msgid ".desktop file for the YaST2 network_devices utility"
@@ -361,82 +421,153 @@ msgid ".desktop path for the application browser"
 msgstr ".desktop-polku sovellusselaimelle"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
-msgid "Location of the system-wide directory in which startup programs are found."
+msgid ""
+"Location of the system-wide directory in which startup programs are found."
 msgstr "Järjestelmänlaajuisen käynnistysohjelmien kansion sijainti"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid "Location of the user directory in which startup programs are found. The dir path should not be absolute, as the value of this key is appended to this path: ~/."
-msgstr "Käyttäjän käynnistysohjelmien kansion sijainti. Hakemiston polun tulee olla absoluuttinen, sillä avaimen arvo lisätään merkkijonoon ~/."
+msgid ""
+"Location of the user directory in which startup programs are found. The dir "
+"path should not be absolute, as the value of this key is appended to this "
+"path: ~/."
+msgstr ""
+"Käyttäjän käynnistysohjelmien kansion sijainti. Hakemiston polun tulee olla "
+"absoluuttinen, sillä avaimen arvo lisätään merkkijonoon ~/."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:8
 msgid "System-wide autostart program drop dir"
 msgstr "Järjestelmänlaajuinen automaattikäynnistyksen hakemisto"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated."
-msgstr "Suoritettava komento, kun valikon kohta \"Avaa tiedostojenhallinnassa\" valitaan."
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated."
+msgstr ""
+"Suoritettava komento, kun valikon kohta \"Avaa tiedostojenhallinnassa\" "
+"valitaan."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated. FILE_URI is replaced with a uri corresponding to the dirname of the activated file."
-msgstr "Suoritettava komento, kun valikon kohta \"Avaa tiedostonhallinnassa\" valitaan. FILE_URI korvataan käynnistettävän tiedoston polkunimeä vastaavalla URI:lla."
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated. FILE_URI is replaced with a uri corresponding to the dirname "
+"of the activated file."
+msgstr ""
+"Suoritettava komento, kun valikon kohta \"Avaa tiedostonhallinnassa\" "
+"valitaan. FILE_URI korvataan käynnistettävän tiedoston polkunimeä "
+"vastaavalla URI:lla."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the \"Send To...\" menu item is activated."
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated."
 msgstr "Suoritettava komento, kun valikon kohta \"Lähetä...\" valitaan."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:12
-msgid "This is the command to execute when the \"Send To...\" menu item is activated. DIRNAME and BASENAME are replaced with the corresponding components of the activated tile."
-msgstr "Suoritettava komento, kun valikon kohta \"Lähetä...\" valitaan. DIRNAME ja BASENAME korvataan käynnistettävän laatan vastaavilla kohdilla."
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated. DIRNAME and BASENAME are replaced with the corresponding "
+"components of the activated tile."
+msgstr ""
+"Suoritettava komento, kun valikon kohta \"Lähetä...\" valitaan. DIRNAME ja "
+"BASENAME korvataan käynnistettävän laatan vastaavilla kohdilla."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:13
 msgid "This is the command to execute when the search entry is used."
 msgstr "Käynistettävä komento, kun hakukenttää käytetään."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:14
-msgid "This is the command to execute when the search entry is used. SEARCH_STRING is replaced with the entered search text."
-msgstr "Suoritettava komento, kun hakukenttää käytetään. SEARCU_STRING korvataan haettavalla merkkijonolla."
+msgid ""
+"This is the command to execute when the search entry is used. SEARCH_STRING "
+"is replaced with the entered search text."
+msgstr ""
+"Suoritettava komento, kun hakukenttää käytetään. SEARCU_STRING korvataan "
+"haettavalla merkkijonolla."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:15
 msgid "User autostart program drop dir (within the home dir)"
-msgstr "Käyttäjän automaattisesti käynnistettävien ohjelmien kansio (käyttäjän kotihakemistossa)"
+msgstr ""
+"Käyttäjän automaattisesti käynnistettävien ohjelmien kansio (käyttäjän "
+"kotihakemistossa)"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:16
 msgid "command to uninstall packages"
 msgstr "komento pakettien poistamiseksi"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:17
-msgid "command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command"
-msgstr "komento pakettien poistamiseen. PACKAGE_NAME korvataan avaimessa poistettavan paketin nimellä"
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"komento pakettien poistamiseen. PACKAGE_NAME korvataan avaimessa "
+"poistettavan paketin nimellä"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:18
 msgid "command to upgrade packages"
 msgstr "komento pakettien päivittämiseksi"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command"
-msgstr "komento paketin päivittämiseksi. PACKAGE_NAME korvataan avaimessa päivitettävän paketin nimellä"
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"komento paketin päivittämiseksi. PACKAGE_NAME korvataan avaimessa "
+"päivitettävän paketin nimellä"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:20
-msgid "contains the list (in no particular order) of allowable file tables to show in the file area. possible values: 0 - show the user-specified or \"Favorite\" applications table, 1 - show the recently used applications table, 2 - show the user-specified or \"Favorite\" documents table, 3 - show the recently used documents table, 4 - show the user-specified of \"Favorite\" directories or \"Places\" table, and 5 - show the recently used directories or \"Places\" table."
+msgid ""
+"contains the list (in no particular order) of allowable file tables to show "
+"in the file area. possible values: 0 - show the user-specified or \"Favorite"
+"\" applications table, 1 - show the recently used applications table, 2 - "
+"show the user-specified or \"Favorite\" documents table, 3 - show the "
+"recently used documents table, 4 - show the user-specified of \"Favorite\" "
+"directories or \"Places\" table, and 5 - show the recently used directories "
+"or \"Places\" table."
 msgstr ""
+"sisältää (järjestelemättömän) luettelon sallituista tiedostotaulukoista, "
+"jotka voidaan näyttää tiedostoalueessa. Mahdollisia arvoja: 0 - näyttää "
+"käyttäjän määrittämän taulukon tai \"Suosikki\"-sovellusten taulukon, 1 - "
+"näyttää viimeisimpien käytettyjen sovellusten taulukon, 2 -  näyttää "
+"käyttäjän määrittämän taulukon tai \"Suosikki\"-asiakirjojen taulukon, 3 - "
+"näyttää viimeisimpien käytettyjen asiakirjojen taulukon, 4 - näyttää "
+"käyttäjän määrittämän taulukon \"Suosikki\"- tai \"Paikat\"-taulukoista, ja "
+"5 - näyttää viimeisimpien käytettyjen hakemistojen taulukon tai \"Paikat\"-"
+"taulukon."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid "contains the list of files (including .desktop files) to be excluded from the \"Recently Used Applications\" and \"Recent Files\" lists"
-msgstr "sisältää listan tiedostoja, mukaanlukien .desktop-tiedostot, joita ei näytetä \"Viimeksi käytetyt sovellukset\" ja \"Viimeisimmät tiedostot listoilla"
+msgid ""
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
+msgstr ""
+"sisältää listan tiedostoja, mukaanlukien .desktop-tiedostot, joita ei "
+"näytetä \"Viimeksi käytetyt sovellukset\" ja \"Viimeisimmät tiedostot "
+"listoilla"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:22
-#, fuzzy
 msgid "determines the limit of items in the file-area."
-msgstr "määrittää tiedostoalueella olevien laattojen enimmäismäärän."
+msgstr "määrittää tiedostoalueen kohteiden suurimman sallitun määrän."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:23
-msgid "determines the limit of items in the file-area. The number favorite items is not limited. This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items. If the number of favorite items exceeds max_total_items - min_recent_items than this limit is ignored."
+msgid ""
+"determines the limit of items in the file-area. The number favorite items is "
+"not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items than this limit is ignored."
 msgstr ""
+"määrittää tiedostoalueen kohteiden suurimman sallitun määrän. "
+"Suosikkikohteiden määrää ei ole rajoitettu. Tämä rajoitus koskee "
+"viimeisimpien kohteiden määrää, joten näytettävien viimeisimpien kohteiden "
+"määrä rajoitetaan samaksi kuin kokonaiskohteiden suurin sallittu määrä "
+"miinus suosikkikohteiden määrä. Jos suosikkikohteiden määrä on suurempi kuin "
+"kokonaiskohteiden suurin sallittu määrä miinus viimeisimpien kohteiden "
+"pienin sallittu määrä, tämä rajoitus ohitetaan."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:24
-#, fuzzy
-msgid "determines the minimum number of items in the \"recent\" section of the file-area."
-msgstr "määrittää tiedostoalueella olevien laattojen enimmäismäärän."
+msgid ""
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
+msgstr ""
+"määrittää tiedostoalueen \"viimeisimmät\"-kohdan kohteiden vähimmäismäärän."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:25
 msgid "determines which types of files to display in the file area"
@@ -447,8 +578,12 @@ msgid "if true, main menu is more anxious to close"
 msgstr "jos tosi, päävalikko sulkeutuu innokkaammin"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "if true, main menu will close under these additional conditions: tile is activated, search activated"
-msgstr "jos tosi, päävalikko suljetaan myös seuraavien tapahtumien kohdalla: laatta käynnistetään, haku käynnistetään"
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
+msgstr ""
+"jos tosi, päävalikko suljetaan myös seuraavien tapahtumien kohdalla: laatta "
+"käynnistetään, haku käynnistetään"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:28
 msgid "lock-down configuration of the file area"
@@ -471,27 +606,27 @@ msgid "lock-down status for the system area"
 msgstr "järjestelmäalueen lukitsemisen tila"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:33
-#, fuzzy
 msgid "lock-down status for the user-specified apps section"
-msgstr "hakualueen lukitsemisen tila"
+msgstr "käyttäjän määrittämien sovellusten osan lukitustila"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:34
-#, fuzzy
 msgid "lock-down status for the user-specified dirs section"
-msgstr "hakualueen lukitsemisen tila"
+msgstr "käyttäjän määrittämien hakemistojen osan lukitustila"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:35
-#, fuzzy
 msgid "lock-down status for the user-specified docs section"
-msgstr "hakualueen lukitsemisen tila"
+msgstr "käyttäjän määrittämien asiakirjojen osan lukitustila"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:36
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
-msgstr ""
+msgstr "mahdolliset arvot = 0 [Sovellukset], 1 [Asiakirjat], 2 [Paikat]"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:37
-msgid "set to true if the link to the application browser should be visible and active."
-msgstr "aseta todeksi, jos linkin sovellusselaimeen tulisi olla näkyvä ja käytössä."
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
+msgstr ""
+"aseta todeksi, jos linkin sovellusselaimeen tulisi olla näkyvä ja käytössä."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:38
 msgid "set to true if the search area should be visible and active."
@@ -506,21 +641,32 @@ msgid "set to true if the system area should be visible and active."
 msgstr "aseta todeksi, jos järjestelmäalueen tulisi olla näkyvä ja käytössä."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" applications."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
 msgstr ""
+"määritä todeksi, jos käyttäjä saa muokata käyttäjien määrittämien tai "
+"\"Suosikki\"-sovellusten luetteloa."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:42
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" directories or \"Places\"."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
 msgstr ""
+"määritä todeksi, jos käyttäjä saa muokata käyttäjien määrittämien tai "
+"\"Suosikki\"-hakemistojen luetteloa tai \"Paikat\"-luetteloa."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:43
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" documents."
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
 msgstr ""
+"määritä todeksi, jos käyttäjä saa muokata käyttäjien määrittämien tai "
+"\"Suosikki\"-asiakirjojen luetteloa."
 
 #: ../main-menu/src/hard-drive-status-tile.c:110
-#, fuzzy
 msgid "Hard _Drive"
-msgstr "Kiintolevy"
+msgstr "Kiinto_levy"
 
 #: ../main-menu/src/hard-drive-status-tile.c:345
 #, c-format
@@ -563,16 +709,15 @@ msgstr "Lukitse näyttö"
 
 #: ../main-menu/src/main-menu-migration.c:207
 msgid "gnome-lockscreen"
-msgstr ""
+msgstr "gnome-näytönlukitus"
 
 #: ../main-menu/src/main-menu-migration.c:531
 msgid "New Spreadsheet"
-msgstr ""
+msgstr "Uusi laskentataulukko"
 
 #: ../main-menu/src/main-menu-migration.c:536
-#, fuzzy
 msgid "New Document"
-msgstr "Asiakirja"
+msgstr "Uusi asiakirja"
 
 #: ../main-menu/src/main-menu-ui.c:1561
 msgid "The GNOME Main Menu"
@@ -588,9 +733,8 @@ msgid "Click to configure network"
 msgstr "Napsauta määrittääksesi verkkoyhteys"
 
 #: ../main-menu/src/network-status-tile.c:198
-#, fuzzy
 msgid "Networ_k: None"
-msgstr "Verkko: Ei verkkoa"
+msgstr "Verk_ko: Ei mikään"
 
 #: ../main-menu/src/network-status-tile.c:207
 #, c-format
@@ -598,9 +742,8 @@ msgid "Connected to: %s"
 msgstr "Liitettynä: %s"
 
 #: ../main-menu/src/network-status-tile.c:210
-#, fuzzy
 msgid "Networ_k: Wireless"
-msgstr "Verkko: Langaton"
+msgstr "Verk_ko: Langaton"
 
 #: ../main-menu/src/network-status-tile.c:215
 #, c-format
@@ -608,9 +751,8 @@ msgid "Using ethernet (%s)"
 msgstr "Käyttäen verkkoa (%s)"
 
 #: ../main-menu/src/network-status-tile.c:219
-#, fuzzy
 msgid "Networ_k: Wired"
-msgstr "Verkko: Johdollinen"
+msgstr "Verk_ko: Langallinen"
 
 #: ../main-menu/src/network-status-tile.c:320
 #, c-format
@@ -649,37 +791,32 @@ msgid "Favorite Applications"
 msgstr "Suosikit"
 
 #: ../main-menu/src/slab-window.glade.h:5
-#, fuzzy
 msgid "Favorite Documents"
-msgstr "Omat tiedostot"
+msgstr "Suosikkiasiakirjat"
 
 #: ../main-menu/src/slab-window.glade.h:6
-#, fuzzy
 msgid "Favorite Places"
-msgstr "Suosikit"
+msgstr "Suosikkipaikat"
 
 #: ../main-menu/src/slab-window.glade.h:8
 msgid "More Applications..."
 msgstr "Lisää sovelluksia..."
 
 #: ../main-menu/src/slab-window.glade.h:9
-#, fuzzy
 msgid "More Documents..."
-msgstr "Kaikki asiakirjat..."
+msgstr "Lisää asiakirjoja..."
 
 #: ../main-menu/src/slab-window.glade.h:10
-#, fuzzy
 msgid "More Places..."
-msgstr "Lisää sovelluksia..."
+msgstr "Lisää paikkoja..."
 
 #: ../main-menu/src/slab-window.glade.h:11
 msgid "Places"
 msgstr "Paikat"
 
 #: ../main-menu/src/slab-window.glade.h:12
-#, fuzzy
 msgid "Recent Applications"
-msgstr "Viimeiseksi käytetyt sovellukset"
+msgstr "Viimeksi käytetyt sovellukset"
 
 #: ../main-menu/src/slab-window.glade.h:13
 msgid "Recent Documents"
@@ -699,20 +836,44 @@ msgstr "Järjestelmä"
 
 #: ../nautilus-main-menu/nautilus-main-menu.c:124
 msgid "Add the current launcher to favorites"
-msgstr ""
+msgstr "Lisää viimeisin lataaja suosikkeihin"
 
 #: ../nautilus-main-menu/nautilus-main-menu.c:129
 msgid "Add the current document to favorites"
-msgstr ""
+msgstr "Lisää nykyinen asiakirja suosikkeihin"
 
 #: ../nautilus-main-menu/nautilus-main-menu.c:134
 #: ../nautilus-main-menu/nautilus-main-menu.c:139
-#, fuzzy
 msgid "Remove the current document from favorites"
-msgstr "Poista suosikeista"
+msgstr "Poista nykyinen asiakirja suosikeista"
 
-#~ msgid "contains the list (in no particular order) of allowable file types to show in the file area. possible values (see also the note for /desktop/gnome/applications/main-menu/file-area/file_class): 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 [RECENT_FILES]. RECENTLY_USED_APPS is the list of recently used (instantiated with the main-menu or the application-browser). USER_SPECIFIED_APPS is equivalent to \"Favorite Applications\". RECENT_FILES is the list of files from ~/.recently-used."
-#~ msgstr "sisältää järjestämättömän listan tiedostotyypeistä, joiden näyttäminen on sallittu tiedostoalueella. mahdolliset vaihtoehdot ovat (katso myös huomautus avaimelle /desktop/gnome/applications/main-menu/file-area/file_class) 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 [RECENT_FILES]. RECENTLY_USED_APPS on lista äskettäin päävalikosta tai sovellusselaimesta käynnistetyistä sovelluksista. USER_SPEFICIED_APPS on sama kuin \"Suosikkisovellukset\". RECENT_FILES on tiedostolista tiedostosta ~/.recently-used."
+msgid "Network Servers"
+msgstr "Verkkopalvelimet"
+
+msgid "File System"
+msgstr "Tiedostojärjestelmä"
+
+msgid "Home"
+msgstr "Koti"
+
+#~ msgid ""
+#~ "contains the list (in no particular order) of allowable file types to "
+#~ "show in the file area. possible values (see also the note for /desktop/"
+#~ "gnome/applications/main-menu/file-area/file_class): 0 "
+#~ "[USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 [RECENT_FILES]. "
+#~ "RECENTLY_USED_APPS is the list of recently used (instantiated with the "
+#~ "main-menu or the application-browser). USER_SPECIFIED_APPS is equivalent "
+#~ "to \"Favorite Applications\". RECENT_FILES is the list of files from ~/."
+#~ "recently-used."
+#~ msgstr ""
+#~ "sisältää järjestämättömän listan tiedostotyypeistä, joiden näyttäminen on "
+#~ "sallittu tiedostoalueella. mahdolliset vaihtoehdot ovat (katso myös "
+#~ "huomautus avaimelle /desktop/gnome/applications/main-menu/file-area/"
+#~ "file_class) 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 "
+#~ "[RECENT_FILES]. RECENTLY_USED_APPS on lista äskettäin päävalikosta tai "
+#~ "sovellusselaimesta käynnistetyistä sovelluksista. USER_SPEFICIED_APPS on "
+#~ "sama kuin \"Suosikkisovellukset\". RECENT_FILES on tiedostolista "
+#~ "tiedostosta ~/.recently-used."
 
 #~ msgid "Software Update"
 #~ msgstr "Ohjelmistopäivitykset"
@@ -723,17 +884,35 @@ msgstr "Poista suosikeista"
 #~ msgid "System area items"
 #~ msgstr "Järjestelmäalueen kohdat"
 
-#~ msgid "The list of the items which will appear in the System area. Possible values are HELP = 0, CONTROL_CENTER = 1, PACKAGE_MANAGER = 2, LOG_OUT = 3, LOCK_SCREEN = 4. HELP, CONTROL_CENTER and PACKAGE_MANAGER need to the have the appropriate .desktop files defined in the, respectively, \"help_item\", \"control_center_item\" and \"package_manager_item\" keys."
-#~ msgstr "Lista kohdista, jotka näkyvät järjestelmäalueella. Mahdolliset arvot ovat HELP = 0, CONTROL_CENTER = 1, PACKAGE_MANAGER = 2, LOG_OUT = 3, LOCK_SCREEN = 4. HELP, CONTROL_CENTER ja PACKAGE_MANAGER vaativat myös että toimiva .desktop-tiedosto on määritelty vastaavasti avaimissa \"help_item\", \"control_center_item\" ja \"package_manager_item\""
+#~ msgid ""
+#~ "The list of the items which will appear in the System area. Possible "
+#~ "values are HELP = 0, CONTROL_CENTER = 1, PACKAGE_MANAGER = 2, LOG_OUT = "
+#~ "3, LOCK_SCREEN = 4. HELP, CONTROL_CENTER and PACKAGE_MANAGER need to the "
+#~ "have the appropriate .desktop files defined in the, respectively, "
+#~ "\"help_item\", \"control_center_item\" and \"package_manager_item\" keys."
+#~ msgstr ""
+#~ "Lista kohdista, jotka näkyvät järjestelmäalueella. Mahdolliset arvot ovat "
+#~ "HELP = 0, CONTROL_CENTER = 1, PACKAGE_MANAGER = 2, LOG_OUT = 3, "
+#~ "LOCK_SCREEN = 4. HELP, CONTROL_CENTER ja PACKAGE_MANAGER vaativat myös "
+#~ "että toimiva .desktop-tiedosto on määritelty vastaavasti avaimissa "
+#~ "\"help_item\", \"control_center_item\" ja \"package_manager_item\""
 
 #~ msgid "control center item .desktop file"
 #~ msgstr "ohjauskeskuksen kohdan .desktop-tiedosto"
 
-#~ msgid "determines the limit of tiles in the file-area. *Note: this does not affect the number of tiles if the file-class is USER_SPECIFIED_*."
-#~ msgstr "rajaa laattojen määrää tiedostoalueella. *Huomautus: tämä ei vaikuta laattojen määrään, jos file-class on USER_SPECIFIED_*."
+#~ msgid ""
+#~ "determines the limit of tiles in the file-area. *Note: this does not "
+#~ "affect the number of tiles if the file-class is USER_SPECIFIED_*."
+#~ msgstr ""
+#~ "rajaa laattojen määrää tiedostoalueella. *Huomautus: tämä ei vaikuta "
+#~ "laattojen määrään, jos file-class on USER_SPECIFIED_*."
 
-#~ msgid "determines the reordering algorithm used when moving tiles around the main-menu"
-#~ msgstr "määrittää uudelleenjärjestelyalgoritmin, jota käytetään päävalikon osia siirreltäessä"
+#~ msgid ""
+#~ "determines the reordering algorithm used when moving tiles around the "
+#~ "main-menu"
+#~ msgstr ""
+#~ "määrittää uudelleenjärjestelyalgoritmin, jota käytetään päävalikon osia "
+#~ "siirreltäessä"
 
 #~ msgid "help item .desktop file"
 #~ msgstr "help item .desktop file"
@@ -741,11 +920,40 @@ msgstr "Poista suosikeista"
 #~ msgid "package manager item .desktop file"
 #~ msgstr "package manager item .desktop file"
 
-#~ msgid "possible values = 0 [SWAP], 1 [PUSH], 2 [PUSH_PULL]. SWAP indicates that when a tile is dragged onto another tile they should simply swap position. PUSH indicates that when a tile, A, is dragged onto another tile, B, a vacant spot is created in tile A's place. tile B (and all tiles after B) shift down until the new vacant space is filled. this operation wraps around in the case that tile A appears before tile B prior to the drag and drop operation. PUSH_PULL is similar to PUSH except that when tiles are shifted they are either pushed into the vacant spaced or pulled from the other direction, depending on which strategy affects the least number of tiles."
-#~ msgstr "mahdolliset arvot ovat 0 [SWAP], 1 [PUSH], 2 [PUSH_PULL]. SWAP tarkoittaa, että raahattaessaww laatta toisen laatan päälle ne vaihtavat paikkaa . PUSH tarkoittaa, että raahattaessa laatta A laatan B päälle luodaan laatan A vanhaan paikkaan tyhjä paikka ja laatan A ja B välissä olleita laattoja siirretään siten että laatan B paikka on vapaa laatalle B ja muut ovat siirtyneet kohti laatan A alkuperäistä paikkaa. PUSH_PULL on samanlainen kuin PUSH, paitsi että laattojen 'työntämisen' lisäksi niitä voidaan siirtää  myös vastakkaisesta suunnasta täyttämään tyhjä tila siten, että mahdollisimman vähiä laattoja siirretään kerralla."
+#~ msgid ""
+#~ "possible values = 0 [SWAP], 1 [PUSH], 2 [PUSH_PULL]. SWAP indicates that "
+#~ "when a tile is dragged onto another tile they should simply swap "
+#~ "position. PUSH indicates that when a tile, A, is dragged onto another "
+#~ "tile, B, a vacant spot is created in tile A's place. tile B (and all "
+#~ "tiles after B) shift down until the new vacant space is filled. this "
+#~ "operation wraps around in the case that tile A appears before tile B "
+#~ "prior to the drag and drop operation. PUSH_PULL is similar to PUSH except "
+#~ "that when tiles are shifted they are either pushed into the vacant spaced "
+#~ "or pulled from the other direction, depending on which strategy affects "
+#~ "the least number of tiles."
+#~ msgstr ""
+#~ "mahdolliset arvot ovat 0 [SWAP], 1 [PUSH], 2 [PUSH_PULL]. SWAP "
+#~ "tarkoittaa, että raahattaessaww laatta toisen laatan päälle ne vaihtavat "
+#~ "paikkaa . PUSH tarkoittaa, että raahattaessa laatta A laatan B päälle "
+#~ "luodaan laatan A vanhaan paikkaan tyhjä paikka ja laatan A ja B välissä "
+#~ "olleita laattoja siirretään siten että laatan B paikka on vapaa laatalle "
+#~ "B ja muut ovat siirtyneet kohti laatan A alkuperäistä paikkaa. PUSH_PULL "
+#~ "on samanlainen kuin PUSH, paitsi että laattojen 'työntämisen' lisäksi "
+#~ "niitä voidaan siirtää  myös vastakkaisesta suunnasta täyttämään tyhjä "
+#~ "tila siten, että mahdollisimman vähiä laattoja siirretään kerralla."
 
-#~ msgid "possible values = 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 [RECENT_FILES]. RECENTLY_USED_APPS is the list of recently used (instantiated with the main-menu or the application-browser). USER_SPECIFIED_APPS is equivalent to \"Favorite Applications\". RECENT_FILES is the list of files from ~/.recently-used."
-#~ msgstr "Mahdolliset arvot ovat 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 [RECENT_FILES]. RECENTLY_USER_APPS on lista äskettäin päävalikosta tai sovellusselaimesta käynnistetyistä sovelluksista. USER_SPECIFIED_APPS vastaa kohtaa \"Suosikkisovellukset\". RECENT_FILES on lista tiedostoja tiedostosta ~/.recently-used."
+#~ msgid ""
+#~ "possible values = 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 "
+#~ "[RECENT_FILES]. RECENTLY_USED_APPS is the list of recently used "
+#~ "(instantiated with the main-menu or the application-browser). "
+#~ "USER_SPECIFIED_APPS is equivalent to \"Favorite Applications\". "
+#~ "RECENT_FILES is the list of files from ~/.recently-used."
+#~ msgstr ""
+#~ "Mahdolliset arvot ovat 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 "
+#~ "[RECENT_FILES]. RECENTLY_USER_APPS on lista äskettäin päävalikosta tai "
+#~ "sovellusselaimesta käynnistetyistä sovelluksista. USER_SPECIFIED_APPS "
+#~ "vastaa kohtaa \"Suosikkisovellukset\". RECENT_FILES on lista tiedostoja "
+#~ "tiedostosta ~/.recently-used."
 
 #~ msgid "prioritized list of commands to lock the screen"
 #~ msgstr "järjestetty lista komentoja, jotka lukitaan näytölle"

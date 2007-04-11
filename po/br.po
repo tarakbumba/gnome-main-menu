@@ -1,10 +1,19 @@
+# #-#-#-#-#  br.po (YaST (@memory@))  #-#-#-#-#
 # Breton message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2000 SuSE GmbH.
 # Francoise Lermen <flermen@suse.de>, 2000.
 #
+# #-#-#-#-#  br.po-missing (nautilus)  #-#-#-#-#
+# Breton translation for nautilus
+# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
+# This file is distributed under the same license as the nautilus package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+#
+#, fuzzy
 msgid ""
 msgstr ""
+"#-#-#-#-#  br.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-06-19 15:33+0200\n"
@@ -14,6 +23,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  br.po-missing (nautilus)  #-#-#-#-#\n"
+"Project-Id-Version: nautilus\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-05-13 14:44-0500\n"
+"PO-Revision-Date: 2006-04-25 15:19+0000\n"
+"Last-Translator: Giulia Fraboulet <djoulia@gmail.com>\n"
+"Language-Team: Breton <br@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1\n"
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
@@ -671,6 +691,15 @@ msgstr ""
 #: ../main-menu/src/system-tile.c:117
 msgid "Lock Screen ..."
 msgstr ""
+
+msgid "Network Servers"
+msgstr "Servijerien ar rouedad"
+
+msgid "File System"
+msgstr "Sistem restroù"
+
+msgid "Home"
+msgstr "Kêr"
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
 #, fuzzy
