@@ -44,13 +44,24 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="gnome-session-kill.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+  <bookmark href="gnome-session-logout.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
     <title>Logout</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>
         <bookmark:applications>
-          <bookmark:application name="Logout" exec="gnome-session-save --kill" timestamp="1168926816" count="1"/>
+          <bookmark:application name="Session Logout Dialog" exec="libssui-tool --logout" timestamp="1168926816" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="gnome-session-shutdown.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Shutdown</title>
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-desktop"/>
+        <bookmark:applications>
+          <bookmark:application name="Session Shutdown Dialog" exec="libssui-tool --shutdown" timestamp="1168926816" count="1"/>
         </bookmark:applications>
       </metadata>
     </info>
