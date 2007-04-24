@@ -1605,8 +1605,7 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
 
 	DoubleClickDetector *detector;
-	GTimeVal t_curr;
-	guint32  t_curr_ms;
+	guint64 t_curr_ms;
 
 	gboolean visible;
 
@@ -1614,8 +1613,7 @@ panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (toggle), "double-click-detector"));
 
-	g_get_current_time (& t_curr);
-	t_curr_ms = 1000 * t_curr.tv_sec + t_curr.tv_usec / 1000;
+	t_curr_ms = libslab_get_current_time_millis ();
 
 	visible = GTK_WIDGET_VISIBLE (priv->slab_window);
 
@@ -2047,8 +2045,7 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 	DoubleClickDetector *detector;
-	GTimeVal current_time;
-	guint32 current_time_millis;
+	guint64 t_curr_ms;
 
 	GnomeDesktopItem *ditem;
 	gchar            *ditem_id;
@@ -2062,11 +2059,9 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (button), "double-click-detector"));
 
-	g_get_current_time (& current_time);
+	t_curr_ms = libslab_get_current_time_millis ();
 
-	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
-
-	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
+	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
 		if (GTK_WIDGET (button) == priv->more_buttons [APPS_PAGE])
 			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
 		else if (GTK_WIDGET (button) == priv->more_buttons [DOCS_PAGE]) {

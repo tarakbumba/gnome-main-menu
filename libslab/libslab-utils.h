@@ -13,7 +13,7 @@ GnomeDesktopItem *libslab_gnome_desktop_item_new_from_unknown_id (const gchar *i
 gboolean          libslab_gnome_desktop_item_launch_default (GnomeDesktopItem *item);
 gchar            *libslab_gnome_desktop_item_get_docpath (GnomeDesktopItem *item);
 gboolean          libslab_gnome_desktop_item_open_help (GnomeDesktopItem *item);
-guint32           libslab_get_current_time_millis (void);
+guint64           libslab_get_current_time_millis (void);
 gint              libslab_strcmp (const gchar *a, const gchar *b);
 gint              libslab_strlen (const gchar *a);
 gpointer          libslab_get_gconf_value (const gchar *key);
