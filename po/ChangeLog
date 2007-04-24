@@ -2,6 +2,7 @@
 	* {af,ar,bn,gu,hi,mr,sv,ta,xh}.po:
 	Pulled in corrected translations for string at:
 	../control-center/etc/control-center.schemas.in.h:13
+	BNC #266283
 
 2007-04-11  Jim Krehl  <jimmyk@novell.com>
 
