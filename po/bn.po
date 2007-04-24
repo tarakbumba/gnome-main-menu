@@ -1,13 +1,5 @@
-# #-#-#-#-#  bn.po-missing (Nautilus HEAD)  #-#-#-#-#
-# Bangla Translation of the Nautilus pot file.
-# Copyright (C) 2003-2006 The Nautilus Authors.
-# This file is distributed under the same license as the Nautilus package.
-# Progga <progga@BengaLinux.Org>, 2003-2006.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  bn.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
@@ -18,17 +10,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"#-#-#-#-#  bn.po-missing (Nautilus HEAD)  #-#-#-#-#\n"
-"Project-Id-Version: Nautilus HEAD\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-12 23:34+0100\n"
-"PO-Revision-Date: 2006-03-09 09:00+0600\n"
-"Last-Translator: Progga <progga@BengaLinux.Org>\n"
-"Language-Team: Bangla <gnome-translation@BengaLinux.Org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
+#: ../control-center/etc/control-center.schemas.in.h:13
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[ডেস্কটপের প্রেক্ষাপট পরিবর্তন করুন;background.desktop,প্রিন্টার যুক্ত করুন;gnome-cups-"
+"manager.desktop,নেটওয়ার্ক কনফিগার করুন;YaST2/lan.desktop,পাসওয়ার্ড পরিবর্তনকরুন;"
+"gnome-passwd.desktop,ব্যবহারকারী  যুক্ত করুন ;YaST2/users.desktop,এডমিনিস্ট্রেটর "
+"সেটিং খুলুন;YaST.desktop]"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -140,19 +134,6 @@ msgstr ""
 "নিয়ন্ত্রণ-কেন্দ্রটিতে কাজের নামটি একটি \";\" বিভাজকের পরে প্রদর্শিত হবে(সেইজন্য "
 "অনুবাদ করার প্রয়োজন আছে) এবং তারপরে এই কাজের জন্য সংশিষ্ট .ডেস্কটপ ফাইলের ফাইলের "
 "নাম চালু করা হবে"
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
-"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
-"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
-"desktop]"
-msgstr ""
-"[ডেস্কটপের প্রেক্ষাপট পরিবর্তন করুন;প্রেক্ষাপট.ডেস্কটপ,প্রিন্টার যুক্ত করুন;জিনোম-কাপস-"
-"ম্যানেজার .ডেস্কটপ,  নেটওয়ার্ক কনফিগার করুন; YaST2/lan. ডেস্কটপ ,পাসওয়ার্ড পরিবর্তন "
-"করুন; gnome-passwd.ডেস্কটপ,ব্যবহারকারী  যুক্ত করুন ; YaST2/users.ডেস্কটপ,  "
-"এডমিনিস্ট্রেটর সেটিং খুলুন;YaST.ডেস্কটপ] "
 
 #: ../control-center/etc/control-center.schemas.in.h:14
 msgid ""

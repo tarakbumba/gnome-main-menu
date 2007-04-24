@@ -1,11 +1,5 @@
-# #-#-#-#-#  gu.po-missing (nautilus.HEAD.gu)  #-#-#-#-#
-# translation of nautilus.HEAD.gu.po to Gujarati
-# Ankit Patel <ankit644@yahoo.com>, 2005, 2006.
-# Ankit Patel <ankit@redhat.com>, 2005.
-#, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  gu.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
@@ -16,37 +10,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"#-#-#-#-#  gu.po-missing (nautilus.HEAD.gu)  #-#-#-#-#\n"
-"Project-Id-Version: nautilus.HEAD.gu\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-26 02:04+0200\n"
-"PO-Revision-Date: 2006-07-26 10:35+0530\n"
-"Last-Translator: Ankit Patel <ankit644@yahoo.com>\n"
-"Language-Team: Gujarati <indianoss-gujarati@lists.sourceforge.net>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"\n"
+
+#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
+#: ../control-center/etc/control-center.schemas.in.h:13
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[ ડેસ્કટોપનું પશ્ચાદભૂ બદલો ;background.desktop,પ્રિન્ટર ઉમેરો;gnome-cups-manager."
+"desktop,નેટવર્ક કન્ફિગર કરો;YaST2/lan.desktop,પાસવર્ડ બદલો;gnome-passwd.desktop,"
+"વપરાશકર્તા ઉમેરો;YaST2/users.desktop,પ્રબંધક સેટિંગ્સ ખોલો;YaST.desktop]"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -158,19 +133,6 @@ msgid ""
 msgstr ""
 "નિયંત્રણ-કેન્દ્ર (આ પ્રમાણે અનુવાદ કરવું જરૂરી છે) માં દર્શાવવાનું ક્રિયાનું નામ તેની પાછળ \";"
 "\"જૂદું પાડનાર ત્યાર પછી તે  કાર્ય માટે શરૂ કરવાની સંબંધિત .desktop ફાઈલનું ફાઈલનામ"
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-#, fuzzy
-msgid ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
-"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
-"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
-"desktop]"
-msgstr ""
-"[ ડેસ્કટોપનું પશ્ચાદભૂ બદલો ; background.desktop, પ્રિન્ટર ઉમેરો; gnome-cups-manager."
-"desktop, નેટવર્ક કન્ફિગર કરો; YaST2/lan.desktop, પાસવર્ડ બદલો; gnome-passwd."
-"desktop, વપરાશકર્તા ઉમેરો; YaST2/users.desktop, પ્રબંધક સેટિંગ્સ ખોલો; YaST.desktop]"
 
 #: ../control-center/etc/control-center.schemas.in.h:14
 #, fuzzy

@@ -1,4 +1,3 @@
-# #-#-#-#-#  sv.po (YaST (@memory@))  #-#-#-#-#
 # Swedish message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002 SuSE Linux AG.
@@ -6,21 +5,8 @@
 # Mattias Newzella <newzella@linux.nu>, 2001.
 # Gudmund Areskoug <fta@algonet.se>, 2001.
 #
-# #-#-#-#-#  sv.po-missing (nautilus)  #-#-#-#-#
-# Swedish messages for nautilus.
-# Copyright (C) 2000-2006 Free Software Foundation, Inc.
-# Daniel Nylander <po@danielnylander.se>, 2006.
-# Andreas Hyden <a.hyden@cyberpoint.se>, 2000.
-# Richard Hult <rhult@hem.passagen.se>, 2000.
-# Christian Rose <menthos@menthos.com>, 2000, 2001, 2002, 2003, 2004, 2005.
-# Martin Norbäck <d95mback@dtek.chalmers.se>, 2000, 2001.
-#
-# $Id: sv.po,v 1.312 2006/08/16 05:40:35 dnylande Exp $
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  sv.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
@@ -31,17 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"#-#-#-#-#  sv.po-missing (nautilus)  #-#-#-#-#\n"
-"Project-Id-Version: nautilus\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-15 17:18+0200\n"
-"PO-Revision-Date: 2006-08-15 19:41+0100\n"
-"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
-"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
+#: ../control-center/etc/control-center.schemas.in.h:13
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[Byt skrivbordsbakgrund;background.desktop,Lägg till skrivare;gnome-cups-"
+"manager.desktop,Ställ in nätverk;YaST2/lan.desktop,Ändra lösenord;gnome-"
+"passwd.desktop,Lägg till användare;YaST2/users.desktop,Öppna "
+"Administratörsinställningar;YaST.desktop]"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -149,19 +137,6 @@ msgstr ""
 "Det aktivitetsnamn som ska visas i styrcentalen (och som behöver "
 "konverteras) följt av avgränsaren ; och filnamnet på en tillhörande .desktop-"
 "fil som ska startas för aktiviteten."
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
-"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
-"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
-"desktop]"
-msgstr ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-"
-"manager. desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-"
-"passwd. desktop,Add User;YaST2/users.desktop,Open Administrator Settings;"
-"YaST. desktop]"
 
 #: ../control-center/etc/control-center.schemas.in.h:14
 msgid ""

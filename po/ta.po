@@ -1,15 +1,5 @@
-# #-#-#-#-#  ta.po-missing (nautilus.HEAD.ta)  #-#-#-#-#
-# translation of nautilus.HEAD.ta.po to Tamil
-# translation of ta.po to Tamil
-# This file is distributed under the same license as the PACKAGE package.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
-# Jayaradha N <jaya@pune.redhat.com>, 2004.
-# Felix <ifelix@redhat.com>, 2006.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  ta.po (Checkhardware)  #-#-#-#-#\n"
 "Project-Id-Version: Checkhardware\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
@@ -20,22 +10,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"#-#-#-#-#  ta.po-missing (nautilus.HEAD.ta)  #-#-#-#-#\n"
-"Project-Id-Version: nautilus.HEAD.ta\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-01 13:31+0200\n"
-"PO-Revision-Date: 2006-09-03 17:39+0530\n"
-"Last-Translator: Felix <ifelix@redhat.com>\n"
-"Language-Team: Tamil <ta@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"X-Generator: KBabel 1.9.1\n"
+
+#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
+#: ../control-center/etc/control-center.schemas.in.h:13
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[டெஸ்க்டாப் பின்னணியை மாற்றவும்;background.desktop,பிரிண்டரை சேர்க்கவும்;gnome-cups-"
+"manager.desktop,உள்ளமைக்கவும்;YaST2/lan.desktop,கடவுச்சொல்லை மாற்றவும்;gnome-"
+"password.desktop,பயனாளரை சேர்க்கவும்;YaST2/users.desktop,நிர்வாக அமைப்புகளைத் "
+"திறக்கவும்;YaST.desktop]"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -145,18 +132,6 @@ msgstr ""
 "பணியை செயல்படுத்துவதற்கு, கட்டுப்பாட்டு மையத்தில் காட்டப்பட வேண்டிய பணி பெயரைத் தொடர்ந்து "
 "(இதன் காரணமாக மொழிபெயர்க்கப்பட வேண்டியது) பிரிவுக்குறியாக ஒரு \";\" பின்னர் "
 "தொடர்புடைய .டெஸ்க்டாப் கோப்பிற்கான ஒரு பெயர் அளிக்கப்பட வேண்டும்."
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
-"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
-"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
-"desktop]"
-msgstr ""
-"[டெஸ்க்டாப் பின்னணியை மாற்றவும்;பின்னணி.டெஸ்க்டாப், பிரிண்டரை சேர்க்கவும்; உள்ளமைக்கவும்;"
-"YaST2/லான்.டெஸ்க்டாப்,கடவுச்சொல்லை மாற்றவும்; நோம் -கடவுச்சொல்.டெஸ்க்டாப்,பயனாளரை "
-"சேர்க்கவும்;YaST2/பயனாளர்கள். டெஸ்க்டாப்,நிர்வாக அமைப்புகளைத் திறக்கவும் ;YaST. டெஸ்க்டாப்]"
 
 #: ../control-center/etc/control-center.schemas.in.h:14
 msgid ""

@@ -1,25 +1,11 @@
-# #-#-#-#-#  ar.po (YaST (@memory@))  #-#-#-#-#
 # Arabic message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002 SuSE Linux AG.
 # Copyright (C) 1999 SuSE GmbH.
 # Ghayss Tarraf <jodi@suse.de>, 2000.
 #
-# #-#-#-#-#  ar.po-missing (nautilus)  #-#-#-#-#
-# translation of nautilus.HEAD.ar.po to
-# translation of nautilus.po to Arabic
-# This file is distributed under the same license as the nautilus.HEAD.ar package.
-# Copyright (C) 2004 THE nautilus.HEAD.ar'S COPYRIGHT HOLDER.
-#  <>, 2004.
-# Sayed Jaffer Al-Mosawi <mosawi@arabeyes.org>, 2002, 2004.
-# Abdulaziz Al-Arfaj <alarfaj0@yahoo.com>, 2004.
-# Ayman Hourieh <aymanh@gmail.com>, 2004.
-#
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  ar.po (YaST (@memory@))  #-#-#-#-#\n"
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-02-06 17:53+0100\n"
@@ -29,20 +15,18 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"#-#-#-#-#  ar.po-missing (nautilus)  #-#-#-#-#\n"
-"Project-Id-Version: nautilus\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-10 12:02+0100\n"
-"PO-Revision-Date: 2004-09-15 02:20+0300\n"
-"Last-Translator: Ayman Hourieh <aymanh@gmail.com>\n"
-"Language-Team: Arabic <support@arabeyes.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.3.1\n"
-"Plural-Forms: nplurals=4; plural=n==1 ? 0 : n==2 ? 1 : n>=3 && n<=10 ? 2 : "
-"3\n"
-"\n"
+
+#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
+#: ../control-center/etc/control-center.schemas.in.h:13
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[تغيير خلفية سطح المكتب;background.desktop,وإضافة طابعة;gnome-cups-manager."
+"desktop,وتكوين الشبكة;YaST2/lan.desktop,وتغيير كلمة السر;gnome-passwd."
+"desktop,وإضافة مستخدم;YaST2/users.desktop,وفتح إعدادات المسؤول;YaST.desktop]"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -149,18 +133,6 @@ msgid ""
 msgstr ""
 "يتبع اسم المهمة المطلوب عرضها في مركز التحكم فاصل \";\" (وبالتالي يجب "
 "ترجمته) ثم اسم الملف لملف .desktop المقترن المطلوب تشغيله لهذه المهمة."
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
-"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
-"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
-"desktop]"
-msgstr ""
-"[تغيير خلفية سطح المكتب؛background.desktop وإضافة طابعة؛gnome-cups-manager. "
-"desktop وتكوين الشبكة؛YaST2/lan.desktop وتغيير كلمة السر؛gnome-passwd. "
-"desktop وإضافة مستخدم؛YaST2/users.desktop وفتح إعدادات المسؤول؛YaST. desktop]"
 
 #: ../control-center/etc/control-center.schemas.in.h:14
 msgid ""
