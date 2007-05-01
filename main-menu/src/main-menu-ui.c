@@ -158,19 +158,20 @@ static void setup_file_tables        (MainMenuUI *);
 static void setup_bookmark_agents    (MainMenuUI *);
 static void setup_lock_down          (MainMenuUI *);
 
-static void       select_page                (MainMenuUI *);
-static void       update_limits              (MainMenuUI *);
-static void       connect_to_tile_triggers   (MainMenuUI *, TileTable *);
-static void       hide_slab_if_urgent_close  (MainMenuUI *);
-static void       set_search_section_visible (MainMenuUI *);
-static void       set_table_section_visible  (MainMenuUI *, TileTable *);
-static gchar    **get_search_argv            (const gchar *);
-static void       reorient_panel_button      (MainMenuUI *);
-static void       bind_beagle_search_key     (MainMenuUI *);
-static void       launch_search              (MainMenuUI *);
-static void       grab_pointer_and_keyboard  (MainMenuUI *, guint32);
-static void       apply_lockdown_settings    (MainMenuUI *);
-static gboolean   app_is_in_blacklist        (const gchar *);
+static void       select_page                 (MainMenuUI *);
+static void       update_limits               (MainMenuUI *);
+static void       connect_to_tile_triggers    (MainMenuUI *, TileTable *);
+static void       hide_slab_if_urgent_close   (MainMenuUI *);
+static void       set_search_section_visible  (MainMenuUI *);
+static void       set_table_section_visible   (MainMenuUI *, TileTable *);
+static gchar    **get_search_argv             (const gchar *);
+static void       reorient_panel_button       (MainMenuUI *);
+static void       bind_beagle_search_key      (MainMenuUI *);
+static void       launch_search               (MainMenuUI *);
+static void       grab_pointer_and_keyboard   (MainMenuUI *, guint32);
+static void       ungrab_pointer_and_keyboard (MainMenuUI *, guint32);
+static void       apply_lockdown_settings     (MainMenuUI *);
+static gboolean   app_is_in_blacklist         (const gchar *);
 
 static Tile *item_to_user_app_tile   (BookmarkItem *, gpointer);
 static Tile *item_to_recent_app_tile (BookmarkItem *, gpointer);
@@ -183,6 +184,8 @@ static BookmarkItem *doc_uri_to_item (const gchar *, gpointer);
 
 static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
+static gboolean panel_button_button_release_cb    (GtkWidget *, GdkEventButton *, gpointer);
+static gboolean panel_button_enter_notify_cb      (GtkWidget *, GdkEventCrossing *, gpointer);
 static void     panel_button_drag_data_rcv_cb     (GtkWidget *, GdkDragContext *, gint, gint,
                                                    GtkSelectionData *, guint, guint, gpointer);
 static gboolean slab_window_expose_cb             (GtkWidget *, GdkEventExpose *, gpointer);
@@ -190,6 +193,7 @@ static gboolean slab_window_key_press_cb          (GtkWidget *, GdkEventKey *, g
 static gboolean slab_window_button_press_cb       (GtkWidget *, GdkEventButton *, gpointer);
 static void     slab_window_allocate_cb           (GtkWidget *, GtkAllocation *, gpointer);
 static void     slab_window_map_event_cb          (GtkWidget *, GdkEvent *, gpointer);
+static gboolean slab_window_enter_notify_cb       (GtkWidget *, GdkEventCrossing *, gpointer);
 static void     slab_window_unmap_event_cb        (GtkWidget *, GdkEvent *, gpointer);
 static gboolean slab_window_grab_broken_cb        (GtkWidget *, GdkEvent *, gpointer);
 static void     search_entry_activate_cb          (GtkEntry *, gpointer);
@@ -488,6 +492,14 @@ create_panel_button (MainMenuUI *this)
 			G_OBJECT (priv->panel_buttons [i]), "button_press_event",
 			G_CALLBACK (panel_button_button_press_cb), this);
 
+		g_signal_connect (
+			G_OBJECT (priv->panel_buttons [i]), "button_release_event",
+			G_CALLBACK (panel_button_button_release_cb), this);
+
+		g_signal_connect (
+			G_OBJECT (priv->panel_buttons [i]), "enter_notify_event",
+			G_CALLBACK (panel_button_enter_notify_cb), this);
+
 		gtk_drag_dest_set (
 			GTK_WIDGET (priv->panel_buttons [i]),
 			GTK_DEST_DEFAULT_ALL, NULL, 0, GDK_ACTION_COPY | GDK_ACTION_MOVE);
@@ -566,6 +578,10 @@ create_slab_window (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "map-event",
 		G_CALLBACK (slab_window_map_event_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->slab_window), "enter_notify_event",
+		G_CALLBACK (slab_window_enter_notify_cb), this);
 
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "unmap-event",
@@ -1427,22 +1443,20 @@ grab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
 	GdkGrabStatus status;
 
 
-	if (time == 0)
-		time = GDK_CURRENT_TIME;
-
 	if (GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY))) {
-		gtk_widget_grab_focus (priv->slab_window);
-		gtk_grab_add          (priv->slab_window);
+		if (! priv->ptr_is_grabbed) {
+			status = gdk_pointer_grab (
+				priv->slab_window->window, TRUE, GDK_BUTTON_PRESS_MASK,
+				NULL, NULL, time);
 
-		status = gdk_pointer_grab (
-			priv->slab_window->window, TRUE, GDK_BUTTON_PRESS_MASK,
-			NULL, NULL, time);
+			priv->ptr_is_grabbed = (status == GDK_GRAB_SUCCESS);
+		}
 
-		priv->ptr_is_grabbed = (status == GDK_GRAB_SUCCESS);
+		if (! priv->kbd_is_grabbed) {
+			status = gdk_keyboard_grab (priv->slab_window->window, TRUE, time);
 
-		status = gdk_keyboard_grab (priv->slab_window->window, TRUE, time);
-
-		priv->kbd_is_grabbed = (status == GDK_GRAB_SUCCESS);
+			priv->kbd_is_grabbed = (status == GDK_GRAB_SUCCESS);
+		}
 	}
 	else {
 		if (priv->ptr_is_grabbed) {
@@ -1454,8 +1468,22 @@ grab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
 			gdk_keyboard_ungrab (time);
 			priv->kbd_is_grabbed = FALSE;
 		}
+	}
+}
 
-		gtk_grab_remove (priv->slab_window);
+static void
+ungrab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	if (priv->ptr_is_grabbed) {
+		gdk_pointer_ungrab (time);
+		priv->ptr_is_grabbed = FALSE;
+	}
+
+	if (priv->kbd_is_grabbed) {
+		gdk_keyboard_ungrab (time);
+		priv->kbd_is_grabbed = FALSE;
 	}
 }
 
@@ -1599,34 +1627,15 @@ exit:
 static void
 panel_button_clicked_cb (GtkButton *button, gpointer user_data)
 {
-	MainMenuUI        *this = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = PRIVATE      (this);
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
-	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
+	g_printf ("%s: slab visible = %d\n", G_STRFUNC, GTK_WIDGET_VISIBLE (priv->slab_window));
 
-	DoubleClickDetector *detector;
-	guint64 t_curr_ms;
-
-	gboolean visible;
-
-
-	detector = DOUBLE_CLICK_DETECTOR (
-		g_object_get_data (G_OBJECT (toggle), "double-click-detector"));
-
-	t_curr_ms = libslab_get_current_time_millis ();
-
-	visible = GTK_WIDGET_VISIBLE (priv->slab_window);
-
-	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
-		if (! visible)
-			gtk_window_present_with_time (GTK_WINDOW (priv->slab_window), t_curr_ms);
-		else
-			gtk_widget_hide (priv->slab_window);
-
-		visible = GTK_WIDGET_VISIBLE (priv->slab_window);
-	}
-
-	gtk_toggle_button_set_active (priv->panel_button, visible);
+	if (GTK_WIDGET_VISIBLE (priv->slab_window))
+		gtk_widget_hide (priv->slab_window);
+	else
+		gtk_window_present_with_time (
+			GTK_WINDOW (priv->slab_window), gtk_get_current_event_time ());
 }
 
 static gboolean
@@ -1634,12 +1643,48 @@ panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer
 {
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
+	DoubleClickDetector *dcd;
+	gboolean is_dc;
+
+
+	g_printf ("%s: event->button = %d\n", G_STRFUNC, event->button);
+
 	if (event->button != 1)
 		g_signal_stop_emission_by_name (widget, "button_press_event");
-	else if (! gtk_toggle_button_get_active (priv->panel_button))
-		gtk_toggle_button_set_active (priv->panel_button, TRUE);
-	else
-		/* do nothing */ ;
+	else {
+		dcd = DOUBLE_CLICK_DETECTOR (
+			g_object_get_data (G_OBJECT (widget), "double-click-detector"));
+		is_dc = double_click_detector_is_double_click (dcd, gtk_get_current_event_time (), TRUE);
+
+		g_printf ("%s: is_dc = %d\n", G_STRFUNC, is_dc);
+
+		if (is_dc)
+			g_signal_stop_emission_by_name (widget, "button_press_event");
+		else
+			gtk_toggle_button_set_active (
+				GTK_TOGGLE_BUTTON (widget), ! GTK_WIDGET_VISIBLE (priv->slab_window));
+	}
+
+	return FALSE;
+}
+
+static gboolean
+panel_button_button_release_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	g_printf ("%s: event->button = %d\n", G_STRFUNC, event->button);
+
+	if (event->button == 1)
+		g_signal_stop_emission_by_name (widget, "button_release_event");
+
+	return FALSE;
+}
+
+static gboolean
+panel_button_enter_notify_cb (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
+{
+	g_printf ("%s\n", G_STRFUNC);
+
+	ungrab_pointer_and_keyboard (MAIN_MENU_UI (user_data), event->time);
 
 	return FALSE;
 }
@@ -1842,6 +1887,8 @@ slab_window_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer 
 	
 	ptr_window = gdk_window_at_pointer (NULL, NULL);
 
+	g_printf ("%s: ptr_window = %p, slab_window = %p, panel_button_window = %p\n", G_STRFUNC, ptr_window, priv->slab_window->window, GTK_WIDGET (priv->panel_button)->window);
+
 	if (priv->slab_window->window != ptr_window) {
 		hide_slab_if_urgent_close (this);
 
@@ -1925,25 +1972,27 @@ slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 static void
 slab_window_map_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-	grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
+	g_printf ("%s\n", G_STRFUNC);
+
+/*	grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event)); */
+}
+
+static gboolean
+slab_window_enter_notify_cb (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
+{
+	g_printf ("%s\n", G_STRFUNC);
+
+	grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), event->time);
+
+	return FALSE;
 }
 
 static void
 slab_window_unmap_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
+	g_printf ("%s\n", G_STRFUNC);
 
-	if (priv->ptr_is_grabbed) {
-		gdk_pointer_ungrab (gdk_event_get_time (event));
-		priv->ptr_is_grabbed = FALSE;
-	}
-
-	if (priv->kbd_is_grabbed) {
-		gdk_keyboard_ungrab (gdk_event_get_time (event));
-		priv->kbd_is_grabbed = FALSE;
-	}
-
-	gtk_grab_remove (widget);
+	ungrab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
 }
 
 static gboolean
@@ -2059,7 +2108,7 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (button), "double-click-detector"));
 
-	t_curr_ms = libslab_get_current_time_millis ();
+	t_curr_ms = gtk_get_current_event_time ();
 
 	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
 		if (GTK_WIDGET (button) == priv->more_buttons [APPS_PAGE])

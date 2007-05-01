@@ -1,3 +1,10 @@
+2007-05-01  Jim Krehl  <jimmyk@novell.com>
+	* main-menu/src/main-menu-ui.c:
+	Moved double-click debouncing to the button press handler of the panel
+	button and adjusted the ptr/kbd grabbing design to pass clicks outside
+	of the main-menu window but inside of the panel button to the panel
+	button.  Fixes, BNC #255065.
+
 2007-04-24  Jim Krehl  <jimmyk@novell.com>
 	* main-menu/src/main-menu-ui.c
 	* libslab/libslab-utils.c
