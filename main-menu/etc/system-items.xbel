@@ -44,6 +44,7 @@
     </info>
   </bookmark>
   <bookmark href="gnome-screensaver-lock.desktop" added="2007-01-16T05:53:36Z" modified="2007-01-16T05:53:36Z" visited="2007-01-16T05:53:36Z">
+    <title>Lock Screen</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="application/x-desktop"/>

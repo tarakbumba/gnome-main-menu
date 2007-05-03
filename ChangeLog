@@ -1,3 +1,9 @@
+2007-05-03  Jim Krehl  <jimmyk@novell.com>
+	* main-menu/etc/system-items.xbel
+	* libslab/bookmark-agent.c:
+	Make sure that display names for main-menu tiles are translated, BNC
+	#254817.
+
 2007-05-01  Jim Krehl  <jimmyk@novell.com>
 	* main-menu/src/main-menu-ui.c:
 	Moved double-click debouncing to the button press handler of the panel
