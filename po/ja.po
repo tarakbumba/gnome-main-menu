@@ -19,27 +19,18 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  ja.po (YaST (@memory@))  #-#-#-#-#\n"
-"Project-Id-Version: YaST (@memory@)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-06 17:53+0100\n"
-"PO-Revision-Date: 2006-06-23 14:56\n"
-"Last-Translator: Novell Language <language@novell.com>\n"
-"Language-Team: Novell Language <language@novell.com>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"#-#-#-#-#  ja.po-missing (nautilus HEAD)  #-#-#-#-#\n"
 "Project-Id-Version: nautilus HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-15 03:26+0900\n"
+"POT-Creation-Date: 2007-05-02 18:55-0400\n"
 "PO-Revision-Date: 2006-04-15 08:15+0900\n"
 "Last-Translator: Satoru SATOH <ss@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  ja.po (YaST (@memory@))  #-#-#-#-#\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"#-#-#-#-#  ja.po-missing (nautilus HEAD)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
@@ -178,50 +169,46 @@ msgid "Common Tasks"
 msgstr "共通タスク "
 
 #. make start action
-#: ../libslab/application-tile.c:316
+#: ../libslab/application-tile.c:362
 #, c-format
 msgid "<b>Start %s</b>"
 msgstr "<b>起動 %s</b>"
 
-#: ../libslab/application-tile.c:335
-#: ../main-menu/src/main-menu-migration.c:116
-#: ../main-menu/src/main-menu-migration.c:270
+#: ../libslab/application-tile.c:381 ../libslab/bookmark-agent.c:1049
+#: ../main-menu/src/main-menu-migration.c:93
+#: ../main-menu/src/main-menu-migration.c:217
 msgid "Help"
 msgstr "ヘルプ"
 
-#: ../libslab/application-tile.c:342
-msgid "Help Unavailable"
-msgstr "利用できないヘルプ"
-
-#: ../libslab/application-tile.c:381
+#: ../libslab/application-tile.c:428
 msgid "Upgrade"
 msgstr "アップグレード"
 
-#: ../libslab/application-tile.c:390
+#: ../libslab/application-tile.c:443
 msgid "Uninstall"
 msgstr "アンインストール"
 
-#: ../libslab/application-tile.c:712 ../libslab/document-tile.c:525
+#: ../libslab/application-tile.c:770 ../libslab/document-tile.c:526
 #: ../nautilus-main-menu/nautilus-main-menu.c:133
 #: ../nautilus-main-menu/nautilus-main-menu.c:138
 msgid "Remove from Favorites"
 msgstr "お気に入りからの削除"
 
-#: ../libslab/application-tile.c:714 ../libslab/document-tile.c:527
+#: ../libslab/application-tile.c:772 ../libslab/document-tile.c:528
 #: ../nautilus-main-menu/nautilus-main-menu.c:123
 #: ../nautilus-main-menu/nautilus-main-menu.c:128
 msgid "Add to Favorites"
 msgstr "お気に入りへの追加"
 
-#: ../libslab/application-tile.c:769
+#: ../libslab/application-tile.c:857
 msgid "Remove from Startup Programs"
 msgstr "起動プログラムからの削除"
 
-#: ../libslab/application-tile.c:771
+#: ../libslab/application-tile.c:859
 msgid "Add to Startup Programs"
 msgstr "起動プログラムへの追加"
 
-#: ../libslab/app-shell.c:740
+#: ../libslab/app-shell.c:747
 #, c-format
 msgid ""
 "<span size=\"large\"><b>No matches found.</b> </span><span>\n"
@@ -233,114 +220,174 @@ msgstr ""
 "\n"
 " あなたのフィルター \"<b>%s</b>\" はどのアイテムにも該当しません。</span>"
 
-#: ../libslab/app-shell.c:879
+#: ../libslab/app-shell.c:897
 msgid "Other"
 msgstr "その他"
 
+#: ../libslab/bookmark-agent.c:1051 ../main-menu/src/main-menu-migration.c:159
+msgid "Lock Screen"
+msgstr "画面のロック"
+
+#: ../libslab/bookmark-agent.c:1053 ../main-menu/src/main-menu-migration.c:97
+#: ../main-menu/src/main-menu-migration.c:219
+msgid "Logout"
+msgstr "ログアウト"
+
+#: ../libslab/bookmark-agent.c:1055 ../main-menu/src/main-menu-migration.c:101
+#: ../main-menu/src/main-menu-migration.c:221
+msgid "Shutdown"
+msgstr "シャットダウン"
+
+#: ../libslab/bookmark-agent.c:1079
+msgid "New Spreadsheet"
+msgstr "新しいスプレッドシート"
+
+#: ../libslab/bookmark-agent.c:1083
+msgid "New Document"
+msgstr "新しいドキュメント"
+
+#: ../libslab/bookmark-agent.c:1133
+msgid "Home"
+msgstr "ホーム"
+
+#: ../libslab/bookmark-agent.c:1138 ../main-menu/src/slab-window.glade.h:3
+msgid "Documents"
+msgstr "ドキュメント"
+
+#: ../libslab/bookmark-agent.c:1144
+msgid "Desktop"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1151
+msgid "File System"
+msgstr "ファイルシステム"
+
+#: ../libslab/bookmark-agent.c:1155
+msgid "Network Servers"
+msgstr "ネットワーク・サーバ"
+
+#: ../libslab/bookmark-agent.c:1184
+msgid "Search"
+msgstr "検索"
+
 #. make open with default action
-#: ../libslab/directory-tile.c:163
+#: ../libslab/directory-tile.c:168
 msgid "<b>Open</b>"
 msgstr "<b>開く</b>"
 
 #. make rename action
-#: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
+#: ../libslab/directory-tile.c:187 ../libslab/document-tile.c:232
 msgid "Rename..."
 msgstr "名前の変更..."
 
-#. make move to trash action
-#: ../libslab/directory-tile.c:195 ../libslab/document-tile.c:249
-msgid "Move to Trash"
-msgstr "トラッシュへの移動"
-
-#: ../libslab/directory-tile.c:205 ../libslab/directory-tile.c:448
-#: ../libslab/document-tile.c:259 ../libslab/document-tile.c:629
-msgid "Delete"
-msgstr "削除"
-
-#: ../libslab/directory-tile.c:225 ../libslab/directory-tile.c:234
-#: ../libslab/document-tile.c:295 ../libslab/document-tile.c:304
+#: ../libslab/directory-tile.c:201 ../libslab/directory-tile.c:210
+#: ../libslab/document-tile.c:246 ../libslab/document-tile.c:255
 msgid "Send To..."
 msgstr "送信先..."
 
-#: ../libslab/document-tile.c:154
+#. make move to trash action
+#: ../libslab/directory-tile.c:225 ../libslab/document-tile.c:281
+msgid "Move to Trash"
+msgstr "トラッシュへの移動"
+
+#: ../libslab/directory-tile.c:235 ../libslab/directory-tile.c:448
+#: ../libslab/document-tile.c:291 ../libslab/document-tile.c:639
+msgid "Delete"
+msgstr "削除"
+
+#: ../libslab/document-tile.c:153
 msgid "Edited %m/%d/%Y"
 msgstr "編集済み %Y/%m/%d"
 
-#: ../libslab/document-tile.c:192
+#: ../libslab/document-tile.c:193
 #, c-format
 msgid "<b>Open with \"%s\"</b>"
 msgstr "<b>「%s」で開く</b>"
 
-#: ../libslab/document-tile.c:204
+#: ../libslab/document-tile.c:205
 msgid "Open with Default Application"
 msgstr "デフォルトのアプリケーションで開く"
 
-#: ../libslab/document-tile.c:220
+#: ../libslab/document-tile.c:216
 msgid "Open in File Manager"
 msgstr "ファイルマネージャで開く "
 
-#: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
-#: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
+#: ../libslab/libslab-bookmarkfile.c:700 ../libslab/libslab-bookmarkfile.c:777
+#: ../libslab/libslab-bookmarkfile.c:856 ../libslab/libslab-bookmarkfile.c:903
 #, c-format
 msgid "Unexpected attribute '%s' for element '%s'"
 msgstr "予期しない属性「%s」が要素「%s」にあります"
 
-#: ../libslab/eggbookmarkfile.c:920 ../libslab/eggbookmarkfile.c:1012
-#: ../libslab/eggbookmarkfile.c:1022 ../libslab/eggbookmarkfile.c:1138
+#: ../libslab/libslab-bookmarkfile.c:711 ../libslab/libslab-bookmarkfile.c:788
+#: ../libslab/libslab-bookmarkfile.c:798 ../libslab/libslab-bookmarkfile.c:914
 #, c-format
 msgid "Attribute '%s' of element '%s' not found"
 msgstr "属性「%s」が要素「%s」にありません"
 
-#: ../libslab/eggbookmarkfile.c:1329 ../libslab/eggbookmarkfile.c:1394
-#: ../libslab/eggbookmarkfile.c:1444 ../libslab/eggbookmarkfile.c:1454
+#: ../libslab/libslab-bookmarkfile.c:1087
+#: ../libslab/libslab-bookmarkfile.c:1152
+#: ../libslab/libslab-bookmarkfile.c:1216
+#: ../libslab/libslab-bookmarkfile.c:1226
 #, c-format
 msgid "Unexpected tag '%s', tag '%s' expected"
 msgstr "予期しないタグ「%s」があります、タグ「%s」が予定されています"
 
-#: ../libslab/eggbookmarkfile.c:1354 ../libslab/eggbookmarkfile.c:1368
-#: ../libslab/eggbookmarkfile.c:1422 ../libslab/eggbookmarkfile.c:1476
+#: ../libslab/libslab-bookmarkfile.c:1112
+#: ../libslab/libslab-bookmarkfile.c:1126
+#: ../libslab/libslab-bookmarkfile.c:1194
+#: ../libslab/libslab-bookmarkfile.c:1246
 #, c-format
 msgid "Unexpected tag '%s' inside '%s'"
 msgstr "予期しないタグ「%s」が「%s」内にあります"
 
-#: ../libslab/eggbookmarkfile.c:2187
-msgid "No valid bookmark file was be found in data dirs"
+#: ../libslab/libslab-bookmarkfile.c:1929
+#, fuzzy
+msgid "No valid bookmark file found in data dirs"
 msgstr "データディレクトリに有効なブックマークファイルが見つかりません"
 
-#: ../libslab/eggbookmarkfile.c:2388
+#: ../libslab/libslab-bookmarkfile.c:2130
 #, c-format
 msgid "A bookmark for URI '%s' already exists"
 msgstr "URI「%s」のブックマークはすでに存在しています"
 
-#: ../libslab/eggbookmarkfile.c:2432 ../libslab/eggbookmarkfile.c:2593
-#: ../libslab/eggbookmarkfile.c:2682 ../libslab/eggbookmarkfile.c:2763
-#: ../libslab/eggbookmarkfile.c:2848 ../libslab/eggbookmarkfile.c:2931
-#: ../libslab/eggbookmarkfile.c:3009 ../libslab/eggbookmarkfile.c:3088
-#: ../libslab/eggbookmarkfile.c:3130 ../libslab/eggbookmarkfile.c:3227
-#: ../libslab/eggbookmarkfile.c:3350 ../libslab/eggbookmarkfile.c:3540
-#: ../libslab/eggbookmarkfile.c:3616 ../libslab/eggbookmarkfile.c:3765
-#: ../libslab/eggbookmarkfile.c:3830 ../libslab/eggbookmarkfile.c:3919
-#: ../libslab/eggbookmarkfile.c:4053
+#: ../libslab/libslab-bookmarkfile.c:2176
+#: ../libslab/libslab-bookmarkfile.c:2333
+#: ../libslab/libslab-bookmarkfile.c:2418
+#: ../libslab/libslab-bookmarkfile.c:2499
+#: ../libslab/libslab-bookmarkfile.c:2584
+#: ../libslab/libslab-bookmarkfile.c:2667
+#: ../libslab/libslab-bookmarkfile.c:2745
+#: ../libslab/libslab-bookmarkfile.c:2824
+#: ../libslab/libslab-bookmarkfile.c:2866
+#: ../libslab/libslab-bookmarkfile.c:2963
+#: ../libslab/libslab-bookmarkfile.c:3089
+#: ../libslab/libslab-bookmarkfile.c:3279
+#: ../libslab/libslab-bookmarkfile.c:3355
+#: ../libslab/libslab-bookmarkfile.c:3508
+#: ../libslab/libslab-bookmarkfile.c:3573
+#: ../libslab/libslab-bookmarkfile.c:3663
+#: ../libslab/libslab-bookmarkfile.c:3790
 #, c-format
 msgid "No bookmark found for URI '%s'"
 msgstr "URI「%s」のブックマークが見つかりません"
 
-#: ../libslab/eggbookmarkfile.c:2772
+#: ../libslab/libslab-bookmarkfile.c:2508
 #, c-format
 msgid "No MIME type defined in the bookmark for URI '%s'"
 msgstr "URI「%s」のブックマークにMIMEタイプが定義されていません"
 
-#: ../libslab/eggbookmarkfile.c:2857
+#: ../libslab/libslab-bookmarkfile.c:2593
 #, c-format
 msgid "No private flag has been defined in bookmark for URI '%s'"
 msgstr "URI「%s」のブックマークにプライベートフラグが定義されていません"
 
-#: ../libslab/eggbookmarkfile.c:3236
+#: ../libslab/libslab-bookmarkfile.c:2972
 #, c-format
 msgid "No groups set in bookmark for URI '%s'"
 msgstr "URI「%s」のブックマークにグループが設定されていません"
 
-#: ../libslab/eggbookmarkfile.c:3634 ../libslab/eggbookmarkfile.c:3775
+#: ../libslab/libslab-bookmarkfile.c:3373
+#: ../libslab/libslab-bookmarkfile.c:3518
 #, c-format
 msgid "No application with name '%s' registered a bookmark for '%s'"
 msgstr ""
@@ -351,12 +398,12 @@ msgstr ""
 msgid "Find Now"
 msgstr "今すぐ検索"
 
-#: ../libslab/system-tile.c:113
+#: ../libslab/system-tile.c:128
 #, c-format
 msgid "<b>Open %s</b>"
 msgstr "<b>%sを開く</b>"
 
-#: ../libslab/system-tile.c:126
+#: ../libslab/system-tile.c:141
 msgid "Remove from System Items"
 msgstr "ファイルシステムから削除"
 
@@ -365,7 +412,7 @@ msgid "Default menu and application browser"
 msgstr "デフォルトメニューとアプリケーションブラウザ"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:1560 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOMEメインメニュー "
 
@@ -407,31 +454,13 @@ msgstr "アプリケーションブラウザ用の.desktopパス"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
 msgid ""
-"Location of the system-wide directory in which startup programs are found."
-msgstr "起動プログラムが配置されているシステム全体のディレクトリの場所"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid ""
-"Location of the user directory in which startup programs are found. The dir "
-"path should not be absolute, as the value of this key is appended to this "
-"path: ~/."
-msgstr ""
-"起動プログラムが配置されているユーザディレクトリの場所。 このキーの値が次のパ"
-"スに追加されるのでディレクトリパスは絶対パスである必要はありません: ~/."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid "System-wide autostart program drop dir"
-msgstr "システムワイド自動起動プログラムドロップディレクトリ"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
 msgstr ""
 "このコマンドは、「ファイルマネージャで開く」メニュー項目が有効な場合に実行し"
 "ます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:10
+#: ../main-menu/etc/slab.schemas.in.in.h:7
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -440,13 +469,13 @@ msgstr ""
 "このコマンドは「ファイルマネージャで開く」メニュー項目が有効な場合に実行しま"
 "す。 FILE_URIは有効ファイルのディレクトリ名に該当するURIに置き換えられます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:11
+#: ../main-menu/etc/slab.schemas.in.in.h:8
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
 msgstr "このコマンドは、「送信先」メニュー項目が有効な場合に実行します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:12
+#: ../main-menu/etc/slab.schemas.in.in.h:9
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -455,11 +484,11 @@ msgstr ""
 "このコマンドは、「送信先」メニュー項目が有効な場合に実行します。DIRNAMEと"
 "BASENAMEは、有効タイルの該当するコンポーネントに置き換えられます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:13
+#: ../main-menu/etc/slab.schemas.in.in.h:10
 msgid "This is the command to execute when the search entry is used."
 msgstr "これは検索エントリを使用する際に実行するコマンドです。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:14
+#: ../main-menu/etc/slab.schemas.in.in.h:11
 msgid ""
 "This is the command to execute when the search entry is used. SEARCH_STRING "
 "is replaced with the entered search text."
@@ -467,15 +496,11 @@ msgstr ""
 "これは検索エントリを使用する際に実行するコマンドです。 SEARCH_STRINGは入力し"
 "た検索テキストに置き換えられます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:15
-msgid "User autostart program drop dir (within the home dir)"
-msgstr "ユーザ自動起動プログラムドロップディレクトリ(ホームディレクトリ内)"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:16
+#: ../main-menu/etc/slab.schemas.in.in.h:12
 msgid "command to uninstall packages"
 msgstr "パッケージをアンインストールするコマンド"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:17
+#: ../main-menu/etc/slab.schemas.in.in.h:13
 msgid ""
 "command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
@@ -483,11 +508,11 @@ msgstr ""
 "パッケージをアンインストールするコマンドのPACKAGE_NAMEは、コマンドではパッ"
 "ケージ名に置き換えられます。 "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:18
+#: ../main-menu/etc/slab.schemas.in.in.h:14
 msgid "command to upgrade packages"
 msgstr "パッケージをアップグレードするコマンド"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:19
+#: ../main-menu/etc/slab.schemas.in.in.h:15
 msgid ""
 "command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
@@ -495,7 +520,7 @@ msgstr ""
 "パッケージをアップグレードするコマンドのPACKAGE_NAMEは、コマンドではパッケー"
 "ジ名に置き換えられます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:20
+#: ../main-menu/etc/slab.schemas.in.in.h:16
 msgid ""
 "contains the list (in no particular order) of allowable file tables to show "
 "in the file area. possible values: 0 - show the user-specified or \"Favorite"
@@ -513,7 +538,7 @@ msgstr ""
 "の「お気に入り」ディレクトリまたは「場所」テーブルを表示します、5 - 最近使わ"
 "れたディレクトリまたは「場所」テーブルを表示します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:21
+#: ../main-menu/etc/slab.schemas.in.in.h:17
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
@@ -521,11 +546,11 @@ msgstr ""
 "「最近使用されたアプリケーション」と「最近のファイル」リストから削除される"
 "ファイルのリスト(.desktopファイルを含む)を含みます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:22
+#: ../main-menu/etc/slab.schemas.in.in.h:18
 msgid "determines the limit of items in the file-area."
 msgstr "ファイルエリア中の項目数の制限値を決定します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:23
+#: ../main-menu/etc/slab.schemas.in.in.h:19
 msgid ""
 "determines the limit of items in the file-area. The number favorite items is "
 "not limited. This limit applies to the number of recent items, i.e. the "
@@ -539,21 +564,21 @@ msgstr ""
 "気に入り項目数が「max_total_items -  min_recent_items」を超えた場合、この制限"
 "値は無視されます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:24
+#: ../main-menu/etc/slab.schemas.in.in.h:20
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
 msgstr "ファイルエリアの「recent」セクションの最小項目数を決定します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:25
+#: ../main-menu/etc/slab.schemas.in.in.h:21
 msgid "determines which types of files to display in the file area"
 msgstr "ファイルエリアに表示されるファイルのタイプを指定します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:26
+#: ../main-menu/etc/slab.schemas.in.in.h:22
 msgid "if true, main menu is more anxious to close"
 msgstr "TRUEの場合、メインメニューは閉じられます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:27
+#: ../main-menu/etc/slab.schemas.in.in.h:23
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
@@ -561,43 +586,43 @@ msgstr ""
 "TRUEの場合、メインメニューは次の追加条件の下で閉じられます: タイルと検索が有"
 "効である場合"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:28
+#: ../main-menu/etc/slab.schemas.in.in.h:24
 msgid "lock-down configuration of the file area"
 msgstr "ファイルエリアのロックダウン設定"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:29
+#: ../main-menu/etc/slab.schemas.in.in.h:25
 msgid "lock-down status for the application browser link"
 msgstr "アプリケーションブラウザリンクのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:30
+#: ../main-menu/etc/slab.schemas.in.in.h:26
 msgid "lock-down status for the search area"
 msgstr "検索エリアのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:31
+#: ../main-menu/etc/slab.schemas.in.in.h:27
 msgid "lock-down status for the status area"
 msgstr "ステータスエリアのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:32
+#: ../main-menu/etc/slab.schemas.in.in.h:28
 msgid "lock-down status for the system area"
 msgstr "システムエリアのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:33
+#: ../main-menu/etc/slab.schemas.in.in.h:29
 msgid "lock-down status for the user-specified apps section"
 msgstr "ユーザ指定のappsセクションのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:34
+#: ../main-menu/etc/slab.schemas.in.in.h:30
 msgid "lock-down status for the user-specified dirs section"
 msgstr "ユーザ指定のdirsセクションのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:35
+#: ../main-menu/etc/slab.schemas.in.in.h:31
 msgid "lock-down status for the user-specified docs section"
 msgstr "ユーザ指定のdocsセクションのロックダウンステータス"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:36
+#: ../main-menu/etc/slab.schemas.in.in.h:32
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr "可能な値 = 0 [アプリケーション]、1 [ドキュメント]、2 [場所]"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:37
+#: ../main-menu/etc/slab.schemas.in.in.h:33
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
@@ -605,19 +630,26 @@ msgstr ""
 "アプリケーションブラウザへのリンクが表示されていて有効な場合はTRUEに設定され"
 "ます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:38
+#: ../main-menu/etc/slab.schemas.in.in.h:34
 msgid "set to true if the search area should be visible and active."
 msgstr "検索エリアが表示されていて有効な場合はTRUEに設定されます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:39
+#: ../main-menu/etc/slab.schemas.in.in.h:35
 msgid "set to true if the status area should be visible and active."
 msgstr "ステータスエリアが表示されていて有効な場合はTRUEに設定されます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:40
+#: ../main-menu/etc/slab.schemas.in.in.h:36
 msgid "set to true if the system area should be visible and active."
 msgstr "システムエリアが表示されていて有効な場合はTRUEに設定されます。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:41
+#: ../main-menu/etc/slab.schemas.in.in.h:37
+#, fuzzy
+msgid "set to true if the user is allowed to modify the list of system items."
+msgstr ""
+"ユーザ指定または「お気に入り」のドキュメントリストの変更を許可する場合はtrue"
+"を設定します。"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:38
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
@@ -625,7 +657,7 @@ msgstr ""
 "ユーザ指定または「お気に入り」のアプリケーションリストの変更を許可する場合は"
 "trueを設定します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:42
+#: ../main-menu/etc/slab.schemas.in.in.h:39
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
@@ -633,7 +665,7 @@ msgstr ""
 "ユーザ指定または「お気に入り」のディレクトリまたは「場所」リストの変更を許可"
 "する場合はtrueを設定します。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:43
+#: ../main-menu/etc/slab.schemas.in.in.h:40
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
@@ -670,33 +702,11 @@ msgstr "%llub"
 msgid "%s Free / %s Total"
 msgstr "%s 空き/ %s 合計"
 
-#: ../main-menu/src/main-menu-migration.c:118
-#: ../main-menu/src/main-menu-migration.c:273
-msgid "Logout"
-msgstr "ログアウト"
-
-#: ../main-menu/src/main-menu-migration.c:120
-#: ../main-menu/src/main-menu-migration.c:276
-msgid "Shutdown"
-msgstr "シャットダウン"
-
-#: ../main-menu/src/main-menu-migration.c:205
-msgid "Lock Screen"
-msgstr "画面のロック"
-
-#: ../main-menu/src/main-menu-migration.c:207
+#: ../main-menu/src/main-menu-migration.c:161
 msgid "gnome-lockscreen"
 msgstr "gnome-lockscreen"
 
-#: ../main-menu/src/main-menu-migration.c:531
-msgid "New Spreadsheet"
-msgstr "新しいスプレッドシート"
-
-#: ../main-menu/src/main-menu-migration.c:536
-msgid "New Document"
-msgstr "新しいドキュメント"
-
-#: ../main-menu/src/main-menu-ui.c:1561
+#: ../main-menu/src/main-menu-ui.c:2190
 msgid "The GNOME Main Menu"
 msgstr "GNOMEメインメニュー "
 
@@ -759,10 +769,6 @@ msgstr "アプリケーション"
 msgid "Computer"
 msgstr "コンピュータ"
 
-#: ../main-menu/src/slab-window.glade.h:3
-msgid "Documents"
-msgstr "ドキュメント"
-
 #: ../main-menu/src/slab-window.glade.h:4
 msgid "Favorite Applications"
 msgstr "お気に入りのアプリケーション"
@@ -824,14 +830,27 @@ msgstr "お気に入りに現在のドキュメントを追加"
 msgid "Remove the current document from favorites"
 msgstr "お気に入りから現在のドキュメントを削除"
 
-msgid "Network Servers"
-msgstr "ネットワーク・サーバ"
+#~ msgid "Help Unavailable"
+#~ msgstr "利用できないヘルプ"
 
-msgid "File System"
-msgstr "ファイルシステム"
+#~ msgid ""
+#~ "Location of the system-wide directory in which startup programs are found."
+#~ msgstr "起動プログラムが配置されているシステム全体のディレクトリの場所"
 
-msgid "Home"
-msgstr "ホーム"
+#~ msgid ""
+#~ "Location of the user directory in which startup programs are found. The "
+#~ "dir path should not be absolute, as the value of this key is appended to "
+#~ "this path: ~/."
+#~ msgstr ""
+#~ "起動プログラムが配置されているユーザディレクトリの場所。 このキーの値が次"
+#~ "のパスに追加されるのでディレクトリパスは絶対パスである必要はありません: "
+#~ "~/."
+
+#~ msgid "System-wide autostart program drop dir"
+#~ msgstr "システムワイド自動起動プログラムドロップディレクトリ"
+
+#~ msgid "User autostart program drop dir (within the home dir)"
+#~ msgstr "ユーザ自動起動プログラムドロップディレクトリ(ホームディレクトリ内)"
 
 #~ msgid "Software Update"
 #~ msgstr "ソフトウェアのアップデート"
@@ -951,6 +970,3 @@ msgstr "ホーム"
 
 #~ msgid "All Applications..."
 #~ msgstr "すべてのアプリケーション..."
-
-#~ msgid "Search"
-#~ msgstr "検索"

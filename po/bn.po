@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-06 17:53+0100\n"
+"POT-Creation-Date: 2007-05-02 18:55-0400\n"
 "PO-Revision-Date: 2004-08-09 10:24+0200\n"
 "Last-Translator: Priyavert Sharma<priyavert.sharma@agreeya.com>\n"
 "Language-Team: AgreeYa Solutions <linux_team@agreeya.com>\n"
@@ -10,19 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid ""
-"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
-"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
-"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
-"desktop]"
-msgstr ""
-"[ডেস্কটপের প্রেক্ষাপট পরিবর্তন করুন;background.desktop,প্রিন্টার যুক্ত করুন;gnome-cups-"
-"manager.desktop,নেটওয়ার্ক কনফিগার করুন;YaST2/lan.desktop,পাসওয়ার্ড পরিবর্তনকরুন;"
-"gnome-passwd.desktop,ব্যবহারকারী  যুক্ত করুন ;YaST2/users.desktop,এডমিনিস্ট্রেটর "
-"সেটিং খুলুন;YaST.desktop]"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -135,6 +122,19 @@ msgstr ""
 "অনুবাদ করার প্রয়োজন আছে) এবং তারপরে এই কাজের জন্য সংশিষ্ট .ডেস্কটপ ফাইলের ফাইলের "
 "নাম চালু করা হবে"
 
+#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
+#: ../control-center/etc/control-center.schemas.in.h:13
+msgid ""
+"[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager."
+"desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd."
+"desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST."
+"desktop]"
+msgstr ""
+"[ডেস্কটপের প্রেক্ষাপট পরিবর্তন করুন;background.desktop,প্রিন্টার যুক্ত করুন;gnome-cups-"
+"manager.desktop,নেটওয়ার্ক কনফিগার করুন;YaST2/lan.desktop,পাসওয়ার্ড পরিবর্তনকরুন;"
+"gnome-passwd.desktop,ব্যবহারকারী  যুক্ত করুন ;YaST2/users.desktop,এডমিনিস্ট্রেটর "
+"সেটিং খুলুন;YaST.desktop]"
+
 #: ../control-center/etc/control-center.schemas.in.h:14
 msgid ""
 "if true, the control-center will close when a \"Common Task\" is activated"
@@ -152,50 +152,46 @@ msgid "Common Tasks"
 msgstr "সাধারণ কাজগুলি"
 
 #. make start action
-#: ../libslab/application-tile.c:316
+#: ../libslab/application-tile.c:362
 #, fuzzy, c-format
 msgid "<b>Start %s</b>"
 msgstr "<b>প্যাচ: </b>"
 
-#: ../libslab/application-tile.c:335
-#: ../main-menu/src/main-menu-migration.c:116
-#: ../main-menu/src/main-menu-migration.c:270
+#: ../libslab/application-tile.c:381 ../libslab/bookmark-agent.c:1049
+#: ../main-menu/src/main-menu-migration.c:93
+#: ../main-menu/src/main-menu-migration.c:217
 msgid "Help"
 msgstr "সাহায্য"
 
-#: ../libslab/application-tile.c:342
-msgid "Help Unavailable"
-msgstr "উপস্থিত নেই"
-
-#: ../libslab/application-tile.c:381
+#: ../libslab/application-tile.c:428
 msgid "Upgrade"
 msgstr "পরিবর্ধন"
 
-#: ../libslab/application-tile.c:390
+#: ../libslab/application-tile.c:443
 msgid "Uninstall"
 msgstr "ইনস্টল করো"
 
-#: ../libslab/application-tile.c:712 ../libslab/document-tile.c:525
+#: ../libslab/application-tile.c:770 ../libslab/document-tile.c:526
 #: ../nautilus-main-menu/nautilus-main-menu.c:133
 #: ../nautilus-main-menu/nautilus-main-menu.c:138
 msgid "Remove from Favorites"
 msgstr "প্রিয়গুলি থেকে অপসারণ করুন"
 
-#: ../libslab/application-tile.c:714 ../libslab/document-tile.c:527
+#: ../libslab/application-tile.c:772 ../libslab/document-tile.c:528
 #: ../nautilus-main-menu/nautilus-main-menu.c:123
 #: ../nautilus-main-menu/nautilus-main-menu.c:128
 msgid "Add to Favorites"
 msgstr "প্রিয়গুলিতে যুক্ত করুন"
 
-#: ../libslab/application-tile.c:769
+#: ../libslab/application-tile.c:857
 msgid "Remove from Startup Programs"
 msgstr "শুরু করার কার্যক্রমগুলি থেকে অপসারণ করুন"
 
-#: ../libslab/application-tile.c:771
+#: ../libslab/application-tile.c:859
 msgid "Add to Startup Programs"
 msgstr "শুরু করার কার্যক্রমগুলিতে যুক্ত"
 
-#: ../libslab/app-shell.c:740
+#: ../libslab/app-shell.c:747
 #, c-format
 msgid ""
 "<span size=\"large\"><b>No matches found.</b> </span><span>\n"
@@ -206,115 +202,179 @@ msgstr ""
 "\n"
 " আপনার ফিল্টার \"<b>%s</b>\"  কোনো বিষয়ের সঙ্গে মিলছে না।</প্রসার>"
 
-#: ../libslab/app-shell.c:879
+#: ../libslab/app-shell.c:897
 msgid "Other"
 msgstr ""
 
+#: ../libslab/bookmark-agent.c:1051 ../main-menu/src/main-menu-migration.c:159
+#, fuzzy
+msgid "Lock Screen"
+msgstr "স্ক্রীণ তালাবন্ধ করুন..."
+
+#: ../libslab/bookmark-agent.c:1053 ../main-menu/src/main-menu-migration.c:97
+#: ../main-menu/src/main-menu-migration.c:219
+msgid "Logout"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1055 ../main-menu/src/main-menu-migration.c:101
+#: ../main-menu/src/main-menu-migration.c:221
+#, fuzzy
+msgid "Shutdown"
+msgstr "দেখান:"
+
+#: ../libslab/bookmark-agent.c:1079
+msgid "New Spreadsheet"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1083
+#, fuzzy
+msgid "New Document"
+msgstr "ডকুমেন্ট"
+
+#: ../libslab/bookmark-agent.c:1133
+msgid "Home"
+msgstr "ব্যক্তিগত ফোল্ডার"
+
+#: ../libslab/bookmark-agent.c:1138 ../main-menu/src/slab-window.glade.h:3
+#, fuzzy
+msgid "Documents"
+msgstr "ডকুমেন্ট"
+
+#: ../libslab/bookmark-agent.c:1144
+msgid "Desktop"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1151
+msgid "File System"
+msgstr "ফাইল-সিস্টেম"
+
+#: ../libslab/bookmark-agent.c:1155
+msgid "Network Servers"
+msgstr "নেটওয়ার্ক সার্ভার"
+
+#: ../libslab/bookmark-agent.c:1184
+#, fuzzy
+msgid "Search"
+msgstr "খোঁজো (&h):"
+
 #. make open with default action
-#: ../libslab/directory-tile.c:163
+#: ../libslab/directory-tile.c:168
 #, fuzzy
 msgid "<b>Open</b>"
 msgstr "<b>দ্বন্দ্ব আছে:</b>"
 
 #. make rename action
-#: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
+#: ../libslab/directory-tile.c:187 ../libslab/document-tile.c:232
 msgid "Rename..."
 msgstr "প্রতিস্থাপন... (&R)"
 
-#. make move to trash action
-#: ../libslab/directory-tile.c:195 ../libslab/document-tile.c:249
-msgid "Move to Trash"
-msgstr " আবর্জনায় স্থানান্তরিত করুন"
-
-#: ../libslab/directory-tile.c:205 ../libslab/directory-tile.c:448
-#: ../libslab/document-tile.c:259 ../libslab/document-tile.c:629
-msgid "Delete"
-msgstr "মোছো"
-
-#: ../libslab/directory-tile.c:225 ../libslab/directory-tile.c:234
-#: ../libslab/document-tile.c:295 ../libslab/document-tile.c:304
+#: ../libslab/directory-tile.c:201 ../libslab/directory-tile.c:210
+#: ../libslab/document-tile.c:246 ../libslab/document-tile.c:255
 msgid "Send To..."
 msgstr "পাঠিয়ে দিন..."
 
-#: ../libslab/document-tile.c:154
+#. make move to trash action
+#: ../libslab/directory-tile.c:225 ../libslab/document-tile.c:281
+msgid "Move to Trash"
+msgstr " আবর্জনায় স্থানান্তরিত করুন"
+
+#: ../libslab/directory-tile.c:235 ../libslab/directory-tile.c:448
+#: ../libslab/document-tile.c:291 ../libslab/document-tile.c:639
+msgid "Delete"
+msgstr "মোছো"
+
+#: ../libslab/document-tile.c:153
 msgid "Edited %m/%d/%Y"
 msgstr "%m/%d/%Y সম্পাদনা করা হয়েছে"
 
-#: ../libslab/document-tile.c:192
+#: ../libslab/document-tile.c:193
 #, fuzzy, c-format
 msgid "<b>Open with \"%s\"</b>"
 msgstr "<b>দ্বন্দ্ব আছে:</b>"
 
-#: ../libslab/document-tile.c:204
+#: ../libslab/document-tile.c:205
 msgid "Open with Default Application"
 msgstr "ডিফল্ট প্রয়োগ দিয়ে খুলুন"
 
-#: ../libslab/document-tile.c:220
+#: ../libslab/document-tile.c:216
 msgid "Open in File Manager"
 msgstr "ফাইল ম্যনেজারের মধ্যে  খুলুন"
 
-#: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
-#: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
+#: ../libslab/libslab-bookmarkfile.c:700 ../libslab/libslab-bookmarkfile.c:777
+#: ../libslab/libslab-bookmarkfile.c:856 ../libslab/libslab-bookmarkfile.c:903
 #, c-format
 msgid "Unexpected attribute '%s' for element '%s'"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:920 ../libslab/eggbookmarkfile.c:1012
-#: ../libslab/eggbookmarkfile.c:1022 ../libslab/eggbookmarkfile.c:1138
+#: ../libslab/libslab-bookmarkfile.c:711 ../libslab/libslab-bookmarkfile.c:788
+#: ../libslab/libslab-bookmarkfile.c:798 ../libslab/libslab-bookmarkfile.c:914
 #, c-format
 msgid "Attribute '%s' of element '%s' not found"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:1329 ../libslab/eggbookmarkfile.c:1394
-#: ../libslab/eggbookmarkfile.c:1444 ../libslab/eggbookmarkfile.c:1454
+#: ../libslab/libslab-bookmarkfile.c:1087
+#: ../libslab/libslab-bookmarkfile.c:1152
+#: ../libslab/libslab-bookmarkfile.c:1216
+#: ../libslab/libslab-bookmarkfile.c:1226
 #, c-format
 msgid "Unexpected tag '%s', tag '%s' expected"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:1354 ../libslab/eggbookmarkfile.c:1368
-#: ../libslab/eggbookmarkfile.c:1422 ../libslab/eggbookmarkfile.c:1476
+#: ../libslab/libslab-bookmarkfile.c:1112
+#: ../libslab/libslab-bookmarkfile.c:1126
+#: ../libslab/libslab-bookmarkfile.c:1194
+#: ../libslab/libslab-bookmarkfile.c:1246
 #, c-format
 msgid "Unexpected tag '%s' inside '%s'"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:2187
-msgid "No valid bookmark file was be found in data dirs"
+#: ../libslab/libslab-bookmarkfile.c:1929
+msgid "No valid bookmark file found in data dirs"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:2388
+#: ../libslab/libslab-bookmarkfile.c:2130
 #, c-format
 msgid "A bookmark for URI '%s' already exists"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:2432 ../libslab/eggbookmarkfile.c:2593
-#: ../libslab/eggbookmarkfile.c:2682 ../libslab/eggbookmarkfile.c:2763
-#: ../libslab/eggbookmarkfile.c:2848 ../libslab/eggbookmarkfile.c:2931
-#: ../libslab/eggbookmarkfile.c:3009 ../libslab/eggbookmarkfile.c:3088
-#: ../libslab/eggbookmarkfile.c:3130 ../libslab/eggbookmarkfile.c:3227
-#: ../libslab/eggbookmarkfile.c:3350 ../libslab/eggbookmarkfile.c:3540
-#: ../libslab/eggbookmarkfile.c:3616 ../libslab/eggbookmarkfile.c:3765
-#: ../libslab/eggbookmarkfile.c:3830 ../libslab/eggbookmarkfile.c:3919
-#: ../libslab/eggbookmarkfile.c:4053
+#: ../libslab/libslab-bookmarkfile.c:2176
+#: ../libslab/libslab-bookmarkfile.c:2333
+#: ../libslab/libslab-bookmarkfile.c:2418
+#: ../libslab/libslab-bookmarkfile.c:2499
+#: ../libslab/libslab-bookmarkfile.c:2584
+#: ../libslab/libslab-bookmarkfile.c:2667
+#: ../libslab/libslab-bookmarkfile.c:2745
+#: ../libslab/libslab-bookmarkfile.c:2824
+#: ../libslab/libslab-bookmarkfile.c:2866
+#: ../libslab/libslab-bookmarkfile.c:2963
+#: ../libslab/libslab-bookmarkfile.c:3089
+#: ../libslab/libslab-bookmarkfile.c:3279
+#: ../libslab/libslab-bookmarkfile.c:3355
+#: ../libslab/libslab-bookmarkfile.c:3508
+#: ../libslab/libslab-bookmarkfile.c:3573
+#: ../libslab/libslab-bookmarkfile.c:3663
+#: ../libslab/libslab-bookmarkfile.c:3790
 #, c-format
 msgid "No bookmark found for URI '%s'"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:2772
+#: ../libslab/libslab-bookmarkfile.c:2508
 #, c-format
 msgid "No MIME type defined in the bookmark for URI '%s'"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:2857
+#: ../libslab/libslab-bookmarkfile.c:2593
 #, c-format
 msgid "No private flag has been defined in bookmark for URI '%s'"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:3236
+#: ../libslab/libslab-bookmarkfile.c:2972
 #, c-format
 msgid "No groups set in bookmark for URI '%s'"
 msgstr ""
 
-#: ../libslab/eggbookmarkfile.c:3634 ../libslab/eggbookmarkfile.c:3775
+#: ../libslab/libslab-bookmarkfile.c:3373
+#: ../libslab/libslab-bookmarkfile.c:3518
 #, c-format
 msgid "No application with name '%s' registered a bookmark for '%s'"
 msgstr ""
@@ -323,12 +383,12 @@ msgstr ""
 msgid "Find Now"
 msgstr "এখন সন্ধান করুন"
 
-#: ../libslab/system-tile.c:113
+#: ../libslab/system-tile.c:128
 #, fuzzy, c-format
 msgid "<b>Open %s</b>"
 msgstr "<b>দ্বন্দ্ব আছে:</b>"
 
-#: ../libslab/system-tile.c:126
+#: ../libslab/system-tile.c:141
 #, fuzzy
 msgid "Remove from System Items"
 msgstr "প্রিয়গুলি থেকে অপসারণ করুন"
@@ -338,7 +398,7 @@ msgid "Default menu and application browser"
 msgstr "ডিফল্ট মেনু এবং প্রয়োগের ব্রাঊজার"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:1560 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "মূল  মেনু"
 
@@ -381,32 +441,12 @@ msgstr "প্রয়োগের ব্রাইজারের জন্য ড
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
 msgid ""
-"Location of the system-wide directory in which startup programs are found."
-msgstr ""
-"শুরু করার কার্যক্রমগুলি যে সিস্টেম-ওয়াইড ডাইরেক্টরীর মধ্যে পাওয়া গেছে  তার অবস্থান। "
-
-#: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid ""
-"Location of the user directory in which startup programs are found. The dir "
-"path should not be absolute, as the value of this key is appended to this "
-"path: ~/."
-msgstr ""
-"শুরু করার কার্যক্রমগুলি যে ব্যবহারকারীর ডাইরেক্টরীর মধ্যে পাওয়া গেছে তার অবস্থান। "
-"ডাইরেক্টরীর পথটি অসীম হওয়া উচিত নয়, যেহেতু এই  সংকেতের মান এই পথটির সঙ্গে সংযুক্ত "
-"করা হয়েছে: ~/."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid "System-wide autostart program drop dir"
-msgstr "সিস্টেম-প্রসারিত স্বয়ংক্রিয়শুরু কার্যক্রমের ড্রপ ডাইরেক্টরী"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
 msgstr ""
 "এই আদেশটি সম্পাদন করতে হবে যখন \"ফাইল ম্যানেজারে খুলুন\" মেনু  বিষয়টি সক্রিয় হবে। "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:10
+#: ../main-menu/etc/slab.schemas.in.in.h:7
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -416,7 +456,7 @@ msgstr ""
 "হবে।সক্রিয়  ফাইলটির ডাইরেক্তরীনাম-এর সঙ্গে সাদৃশ্যপূর্ণ  একটি ইউআরআই-এর দ্বারা "
 "ফাইল_ইউআরআই প্রতিস্থাপন করা হয়েছে। "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:11
+#: ../main-menu/etc/slab.schemas.in.in.h:8
 #, fuzzy
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
@@ -424,7 +464,7 @@ msgid ""
 msgstr ""
 "এই আদেশটি সম্পাদন করতে হবে যখন \"ফাইল ম্যানেজারে খুলুন\" মেনু  বিষয়টি সক্রিয় হবে। "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:12
+#: ../main-menu/etc/slab.schemas.in.in.h:9
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -433,12 +473,12 @@ msgstr ""
 "এই আদেশটি সম্পাদন করতে হবে যখন \"-এ প্রেরণ করুন…\" মেনু বিষয়টি সক্রিয় হবে।সক্রিয় "
 "টাইলের সংশ্লিষ্ট কম্পোনেন্ট দ্বারা DIRNAME এবং BASENAME প্রতিস্থাপিত হয়।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:13
+#: ../main-menu/etc/slab.schemas.in.in.h:10
 msgid "This is the command to execute when the search entry is used."
 msgstr ""
 "এই আদেশটি সম্পাদন করতে হবে যখন \"ফাইল ম্যানেজারে খুলুন\" মেনু বিষয়টি সক্রিয় হবে।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:14
+#: ../main-menu/etc/slab.schemas.in.in.h:11
 msgid ""
 "This is the command to execute when the search entry is used. SEARCH_STRING "
 "is replaced with the entered search text."
@@ -446,15 +486,11 @@ msgstr ""
 "অনুসন্ধান এনট্রি ব্যবহারের সময়ে এই আদেশটি রূপায়ণ করতে হবে।SEARCH_STRING লিখিত "
 "অনুসন্ধান পাঠ্য দ্বারা প্রতিস্থাপিত হয়।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:15
-msgid "User autostart program drop dir (within the home dir)"
-msgstr "ব্যবহারকারী স্বয়ংক্রিয় শুরু কার্যক্রম ড্রপ ডাইরেক্টরী (হোম ডাইরেক্টরীর মধ্যে)"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:16
+#: ../main-menu/etc/slab.schemas.in.in.h:12
 msgid "command to uninstall packages"
 msgstr "প্যাকেজ আনইনস্টল করার আদেশ"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:17
+#: ../main-menu/etc/slab.schemas.in.in.h:13
 msgid ""
 "command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
@@ -462,11 +498,11 @@ msgstr ""
 "প্যাকেজ আনইনস্টল করার আদেশ,আদেশটির মধ্যের প্যাকেজের নামের দ্বারা  প্যাকেজ_নাম "
 "প্রতিস্থাপিত হয়েছে। "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:18
+#: ../main-menu/etc/slab.schemas.in.in.h:14
 msgid "command to upgrade packages"
 msgstr "প্যাকেজ উন্নত করার আদেশ"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:19
+#: ../main-menu/etc/slab.schemas.in.in.h:15
 msgid ""
 "command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
@@ -474,7 +510,7 @@ msgstr ""
 "প্যাকেজ উন্নত করার আদেশ, আদেশটির মধ্যের প্যাকেজের নামের দ্বারা  প্যাকেজ_নাম "
 "প্রতিস্থাপিত হয়েছে। "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:20
+#: ../main-menu/etc/slab.schemas.in.in.h:16
 msgid ""
 "contains the list (in no particular order) of allowable file tables to show "
 "in the file area. possible values: 0 - show the user-specified or \"Favorite"
@@ -485,7 +521,7 @@ msgid ""
 "or \"Places\" table."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:21
+#: ../main-menu/etc/slab.schemas.in.in.h:17
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
@@ -493,12 +529,12 @@ msgstr ""
 "\"সাম্প্রতিক_ব্যবহৃত_প্রয়োগগুলি\"  এবং \"সাম্প্রতিক_ফাইলগুলি\"  থেকে ফাইলগুলির "
 "তালিকাটি (.ডেস্কটপ ফাইল সহ)  বাতিল করতে হবে "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:22
+#: ../main-menu/etc/slab.schemas.in.in.h:18
 #, fuzzy
 msgid "determines the limit of items in the file-area."
 msgstr "ফাইল-ক্ষেত্রটিতে টাইলের সীমা নির্ধারণ করে।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:23
+#: ../main-menu/etc/slab.schemas.in.in.h:19
 msgid ""
 "determines the limit of items in the file-area. The number favorite items is "
 "not limited. This limit applies to the number of recent items, i.e. the "
@@ -507,22 +543,22 @@ msgid ""
 "min_recent_items than this limit is ignored."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:24
+#: ../main-menu/etc/slab.schemas.in.in.h:20
 #, fuzzy
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
 msgstr "ফাইল-ক্ষেত্রটিতে টাইলের সীমা নির্ধারণ করে।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:25
+#: ../main-menu/etc/slab.schemas.in.in.h:21
 msgid "determines which types of files to display in the file area"
 msgstr "ফাইল-ক্ষেত্রটিতে কোন প্রকারের ফাইল প্রদর্শ করা হবে তা নির্ধারণ করে।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:26
+#: ../main-menu/etc/slab.schemas.in.in.h:22
 msgid "if true, main menu is more anxious to close"
 msgstr " যদি ঠিক হয়, তাহলে মূল মেনু বন্ধ করা আরো জটিল"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:27
+#: ../main-menu/etc/slab.schemas.in.in.h:23
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
@@ -530,77 +566,82 @@ msgstr ""
 "যদি ঠিক হয়, তাহলে মূল মেনু এই অতিরিক্ত শর্তগুলির অধীনে বন্ধ হবে:টাইল সক্রিয়, সন্ধান "
 "সক্রিয়"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:28
+#: ../main-menu/etc/slab.schemas.in.in.h:24
 msgid "lock-down configuration of the file area"
 msgstr "ফাইল-ক্ষেত্রটির লক-ডাউন কনফিগারেশন"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:29
+#: ../main-menu/etc/slab.schemas.in.in.h:25
 msgid "lock-down status for the application browser link"
 msgstr "প্রয়োগ ব্রাউজার লিঙ্ক-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:30
+#: ../main-menu/etc/slab.schemas.in.in.h:26
 msgid "lock-down status for the search area"
 msgstr "সন্ধান ক্ষেত্র-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:31
+#: ../main-menu/etc/slab.schemas.in.in.h:27
 msgid "lock-down status for the status area"
 msgstr "সন্ধান ক্ষেত্র-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:32
+#: ../main-menu/etc/slab.schemas.in.in.h:28
 msgid "lock-down status for the system area"
 msgstr "সিস্টেম ক্ষেত্র-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:33
+#: ../main-menu/etc/slab.schemas.in.in.h:29
 #, fuzzy
 msgid "lock-down status for the user-specified apps section"
 msgstr "সন্ধান ক্ষেত্র-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:34
+#: ../main-menu/etc/slab.schemas.in.in.h:30
 #, fuzzy
 msgid "lock-down status for the user-specified dirs section"
 msgstr "সন্ধান ক্ষেত্র-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:35
+#: ../main-menu/etc/slab.schemas.in.in.h:31
 #, fuzzy
 msgid "lock-down status for the user-specified docs section"
 msgstr "সন্ধান ক্ষেত্র-এর জন্য লক-ডাউন অবস্থা "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:36
+#: ../main-menu/etc/slab.schemas.in.in.h:32
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:37
+#: ../main-menu/etc/slab.schemas.in.in.h:33
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
 msgstr ""
 "যদি প্রয়োগের ব্রাউজারের লিঙ্কটি দৃশ্যমাণ এবং সক্রিয় করতে হয় তাহলে  ঠিক-এ স্থির করুন। "
 
-#: ../main-menu/etc/slab.schemas.in.in.h:38
+#: ../main-menu/etc/slab.schemas.in.in.h:34
 msgid "set to true if the search area should be visible and active."
 msgstr "যদি সন্ধান ক্ষেত্রটি দৃশ্যমাণ এবং সক্রিয় করতে হয় তাহলে ঠিক-এ স্থির করুন।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:39
+#: ../main-menu/etc/slab.schemas.in.in.h:35
 msgid "set to true if the status area should be visible and active."
 msgstr "যদি অবস্থার ক্ষেত্রটি দৃশ্যমাণ এবং সক্রিয় করতে হয় তাহলে ঠিক-এ স্থির করুন।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:40
+#: ../main-menu/etc/slab.schemas.in.in.h:36
 msgid "set to true if the system area should be visible and active."
 msgstr "যদি সিস্টেম  ক্ষেত্রটি দৃশ্যমাণ এবং সক্রিয় করতে হয় তাহলে ঠিক-এ স্থির করুন।"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:41
+#: ../main-menu/etc/slab.schemas.in.in.h:37
+#, fuzzy
+msgid "set to true if the user is allowed to modify the list of system items."
+msgstr "যদি সন্ধান ক্ষেত্রটি দৃশ্যমাণ এবং সক্রিয় করতে হয় তাহলে ঠিক-এ স্থির করুন।"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:38
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:42
+#: ../main-menu/etc/slab.schemas.in.in.h:39
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:43
+#: ../main-menu/etc/slab.schemas.in.in.h:40
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
@@ -636,36 +677,11 @@ msgstr "%llub"
 msgid "%s Free / %s Total"
 msgstr "%s মুক্ত  / %sমোট"
 
-#: ../main-menu/src/main-menu-migration.c:118
-#: ../main-menu/src/main-menu-migration.c:273
-msgid "Logout"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:120
-#: ../main-menu/src/main-menu-migration.c:276
-#, fuzzy
-msgid "Shutdown"
-msgstr "দেখান:"
-
-#: ../main-menu/src/main-menu-migration.c:205
-#, fuzzy
-msgid "Lock Screen"
-msgstr "স্ক্রীণ তালাবন্ধ করুন..."
-
-#: ../main-menu/src/main-menu-migration.c:207
+#: ../main-menu/src/main-menu-migration.c:161
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-migration.c:531
-msgid "New Spreadsheet"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:536
-#, fuzzy
-msgid "New Document"
-msgstr "ডকুমেন্ট"
-
-#: ../main-menu/src/main-menu-ui.c:1561
+#: ../main-menu/src/main-menu-ui.c:2190
 msgid "The GNOME Main Menu"
 msgstr "GNOME মূল মেনুটি"
 
@@ -731,11 +747,6 @@ msgstr "নতুন ইনস্টলেশন"
 #: ../main-menu/src/slab-window.glade.h:2
 msgid "Computer"
 msgstr "কম্পিঊটার"
-
-#: ../main-menu/src/slab-window.glade.h:3
-#, fuzzy
-msgid "Documents"
-msgstr "ডকুমেন্ট"
 
 #: ../main-menu/src/slab-window.glade.h:4
 msgid "Favorite Applications"
@@ -804,14 +815,29 @@ msgstr ""
 msgid "Remove the current document from favorites"
 msgstr "প্রিয়গুলি থেকে অপসারণ করুন"
 
-msgid "Network Servers"
-msgstr "নেটওয়ার্ক সার্ভার"
+#~ msgid "Help Unavailable"
+#~ msgstr "উপস্থিত নেই"
 
-msgid "File System"
-msgstr "ফাইল-সিস্টেম"
+#~ msgid ""
+#~ "Location of the system-wide directory in which startup programs are found."
+#~ msgstr ""
+#~ "শুরু করার কার্যক্রমগুলি যে সিস্টেম-ওয়াইড ডাইরেক্টরীর মধ্যে পাওয়া গেছে  তার "
+#~ "অবস্থান। "
 
-msgid "Home"
-msgstr "ব্যক্তিগত ফোল্ডার"
+#~ msgid ""
+#~ "Location of the user directory in which startup programs are found. The "
+#~ "dir path should not be absolute, as the value of this key is appended to "
+#~ "this path: ~/."
+#~ msgstr ""
+#~ "শুরু করার কার্যক্রমগুলি যে ব্যবহারকারীর ডাইরেক্টরীর মধ্যে পাওয়া গেছে তার অবস্থান। "
+#~ "ডাইরেক্টরীর পথটি অসীম হওয়া উচিত নয়, যেহেতু এই  সংকেতের মান এই পথটির সঙ্গে "
+#~ "সংযুক্ত করা হয়েছে: ~/."
+
+#~ msgid "System-wide autostart program drop dir"
+#~ msgstr "সিস্টেম-প্রসারিত স্বয়ংক্রিয়শুরু কার্যক্রমের ড্রপ ডাইরেক্টরী"
+
+#~ msgid "User autostart program drop dir (within the home dir)"
+#~ msgstr "ব্যবহারকারী স্বয়ংক্রিয় শুরু কার্যক্রম ড্রপ ডাইরেক্টরী (হোম ডাইরেক্টরীর মধ্যে)"
 
 #~ msgid "Install Software"
 #~ msgstr "সোর্স ইনস্টল করো"

@@ -14,27 +14,18 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  zh_CN.po (YaST (@memory@))  #-#-#-#-#\n"
-"Project-Id-Version: YaST (@memory@)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-06 17:53+0100\n"
-"PO-Revision-Date: 2006-06-23 14:00\n"
-"Last-Translator: Novell Language <language@novell.com>\n"
-"Language-Team: Novell Language <language@novell.com>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"#-#-#-#-#  zh_CN.po-missing (nautilus)  #-#-#-#-#\n"
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-09 08:17+0200\n"
+"POT-Creation-Date: 2007-05-02 18:55-0400\n"
 "PO-Revision-Date: 2006-05-02 13:09+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  zh_CN.po (YaST (@memory@))  #-#-#-#-#\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"#-#-#-#-#  zh_CN.po-missing (nautilus)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
@@ -167,50 +158,46 @@ msgid "Common Tasks"
 msgstr "公共任务"
 
 #. make start action
-#: ../libslab/application-tile.c:316
+#: ../libslab/application-tile.c:362
 #, c-format
 msgid "<b>Start %s</b>"
 msgstr "<b>启动 %s</b>"
 
-#: ../libslab/application-tile.c:335
-#: ../main-menu/src/main-menu-migration.c:116
-#: ../main-menu/src/main-menu-migration.c:270
+#: ../libslab/application-tile.c:381 ../libslab/bookmark-agent.c:1049
+#: ../main-menu/src/main-menu-migration.c:93
+#: ../main-menu/src/main-menu-migration.c:217
 msgid "Help"
 msgstr "帮助"
 
-#: ../libslab/application-tile.c:342
-msgid "Help Unavailable"
-msgstr "不提供帮助"
-
-#: ../libslab/application-tile.c:381
+#: ../libslab/application-tile.c:428
 msgid "Upgrade"
 msgstr "升级"
 
-#: ../libslab/application-tile.c:390
+#: ../libslab/application-tile.c:443
 msgid "Uninstall"
 msgstr "卸装"
 
-#: ../libslab/application-tile.c:712 ../libslab/document-tile.c:525
+#: ../libslab/application-tile.c:770 ../libslab/document-tile.c:526
 #: ../nautilus-main-menu/nautilus-main-menu.c:133
 #: ../nautilus-main-menu/nautilus-main-menu.c:138
 msgid "Remove from Favorites"
 msgstr "从\"收藏夹\"中除去"
 
-#: ../libslab/application-tile.c:714 ../libslab/document-tile.c:527
+#: ../libslab/application-tile.c:772 ../libslab/document-tile.c:528
 #: ../nautilus-main-menu/nautilus-main-menu.c:123
 #: ../nautilus-main-menu/nautilus-main-menu.c:128
 msgid "Add to Favorites"
 msgstr "添加至\"收藏夹\""
 
-#: ../libslab/application-tile.c:769
+#: ../libslab/application-tile.c:857
 msgid "Remove from Startup Programs"
 msgstr "从启动程序中除去"
 
-#: ../libslab/application-tile.c:771
+#: ../libslab/application-tile.c:859
 msgid "Add to Startup Programs"
 msgstr "添加至启动程序"
 
-#: ../libslab/app-shell.c:740
+#: ../libslab/app-shell.c:747
 #, c-format
 msgid ""
 "<span size=\"large\"><b>No matches found.</b> </span><span>\n"
@@ -221,114 +208,174 @@ msgstr ""
 "\n"
 " 您的过滤器“<b>%s</b>”不匹配任何项。</span>"
 
-#: ../libslab/app-shell.c:879
+#: ../libslab/app-shell.c:897
 msgid "Other"
 msgstr "其他"
 
+#: ../libslab/bookmark-agent.c:1051 ../main-menu/src/main-menu-migration.c:159
+msgid "Lock Screen"
+msgstr "锁定屏幕"
+
+#: ../libslab/bookmark-agent.c:1053 ../main-menu/src/main-menu-migration.c:97
+#: ../main-menu/src/main-menu-migration.c:219
+msgid "Logout"
+msgstr "注销"
+
+#: ../libslab/bookmark-agent.c:1055 ../main-menu/src/main-menu-migration.c:101
+#: ../main-menu/src/main-menu-migration.c:221
+msgid "Shutdown"
+msgstr "关机"
+
+#: ../libslab/bookmark-agent.c:1079
+msgid "New Spreadsheet"
+msgstr "新建电子表格"
+
+#: ../libslab/bookmark-agent.c:1083
+msgid "New Document"
+msgstr "新建文档"
+
+#: ../libslab/bookmark-agent.c:1133
+msgid "Home"
+msgstr "主文件夹"
+
+#: ../libslab/bookmark-agent.c:1138 ../main-menu/src/slab-window.glade.h:3
+msgid "Documents"
+msgstr "文档"
+
+#: ../libslab/bookmark-agent.c:1144
+msgid "Desktop"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1151
+msgid "File System"
+msgstr "文件系统"
+
+#: ../libslab/bookmark-agent.c:1155
+msgid "Network Servers"
+msgstr "网络服务器"
+
+#: ../libslab/bookmark-agent.c:1184
+msgid "Search"
+msgstr "搜索"
+
 #. make open with default action
-#: ../libslab/directory-tile.c:163
+#: ../libslab/directory-tile.c:168
 msgid "<b>Open</b>"
 msgstr "<b>打开</b>"
 
 #. make rename action
-#: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
+#: ../libslab/directory-tile.c:187 ../libslab/document-tile.c:232
 msgid "Rename..."
 msgstr "重命名..."
 
-#. make move to trash action
-#: ../libslab/directory-tile.c:195 ../libslab/document-tile.c:249
-msgid "Move to Trash"
-msgstr "移动到废纸篓"
-
-#: ../libslab/directory-tile.c:205 ../libslab/directory-tile.c:448
-#: ../libslab/document-tile.c:259 ../libslab/document-tile.c:629
-msgid "Delete"
-msgstr "删除"
-
-#: ../libslab/directory-tile.c:225 ../libslab/directory-tile.c:234
-#: ../libslab/document-tile.c:295 ../libslab/document-tile.c:304
+#: ../libslab/directory-tile.c:201 ../libslab/directory-tile.c:210
+#: ../libslab/document-tile.c:246 ../libslab/document-tile.c:255
 msgid "Send To..."
 msgstr "发送到..."
 
-#: ../libslab/document-tile.c:154
+#. make move to trash action
+#: ../libslab/directory-tile.c:225 ../libslab/document-tile.c:281
+msgid "Move to Trash"
+msgstr "移动到废纸篓"
+
+#: ../libslab/directory-tile.c:235 ../libslab/directory-tile.c:448
+#: ../libslab/document-tile.c:291 ../libslab/document-tile.c:639
+msgid "Delete"
+msgstr "删除"
+
+#: ../libslab/document-tile.c:153
 msgid "Edited %m/%d/%Y"
 msgstr "已编辑 %m/%d/%Y"
 
-#: ../libslab/document-tile.c:192
+#: ../libslab/document-tile.c:193
 #, c-format
 msgid "<b>Open with \"%s\"</b>"
 msgstr "<b>使用\"%s\"打开</b>"
 
-#: ../libslab/document-tile.c:204
+#: ../libslab/document-tile.c:205
 msgid "Open with Default Application"
 msgstr "使用默认的应用程序打开"
 
-#: ../libslab/document-tile.c:220
+#: ../libslab/document-tile.c:216
 msgid "Open in File Manager"
 msgstr "在文件管理器中打开"
 
-#: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
-#: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
+#: ../libslab/libslab-bookmarkfile.c:700 ../libslab/libslab-bookmarkfile.c:777
+#: ../libslab/libslab-bookmarkfile.c:856 ../libslab/libslab-bookmarkfile.c:903
 #, c-format
 msgid "Unexpected attribute '%s' for element '%s'"
 msgstr "意外属性“%s”（元素“%s”）"
 
-#: ../libslab/eggbookmarkfile.c:920 ../libslab/eggbookmarkfile.c:1012
-#: ../libslab/eggbookmarkfile.c:1022 ../libslab/eggbookmarkfile.c:1138
+#: ../libslab/libslab-bookmarkfile.c:711 ../libslab/libslab-bookmarkfile.c:788
+#: ../libslab/libslab-bookmarkfile.c:798 ../libslab/libslab-bookmarkfile.c:914
 #, c-format
 msgid "Attribute '%s' of element '%s' not found"
 msgstr "找不到属性“%s”（元素“%s”）"
 
-#: ../libslab/eggbookmarkfile.c:1329 ../libslab/eggbookmarkfile.c:1394
-#: ../libslab/eggbookmarkfile.c:1444 ../libslab/eggbookmarkfile.c:1454
+#: ../libslab/libslab-bookmarkfile.c:1087
+#: ../libslab/libslab-bookmarkfile.c:1152
+#: ../libslab/libslab-bookmarkfile.c:1216
+#: ../libslab/libslab-bookmarkfile.c:1226
 #, c-format
 msgid "Unexpected tag '%s', tag '%s' expected"
 msgstr "意外标记“%s”，应该是标记“%s”"
 
-#: ../libslab/eggbookmarkfile.c:1354 ../libslab/eggbookmarkfile.c:1368
-#: ../libslab/eggbookmarkfile.c:1422 ../libslab/eggbookmarkfile.c:1476
+#: ../libslab/libslab-bookmarkfile.c:1112
+#: ../libslab/libslab-bookmarkfile.c:1126
+#: ../libslab/libslab-bookmarkfile.c:1194
+#: ../libslab/libslab-bookmarkfile.c:1246
 #, c-format
 msgid "Unexpected tag '%s' inside '%s'"
 msgstr "意外标记“%s”（“%s”中）"
 
-#: ../libslab/eggbookmarkfile.c:2187
-msgid "No valid bookmark file was be found in data dirs"
+#: ../libslab/libslab-bookmarkfile.c:1929
+#, fuzzy
+msgid "No valid bookmark file found in data dirs"
 msgstr "数据目录中找不到有效书签文件"
 
-#: ../libslab/eggbookmarkfile.c:2388
+#: ../libslab/libslab-bookmarkfile.c:2130
 #, c-format
 msgid "A bookmark for URI '%s' already exists"
 msgstr "URI“%s”的书签已存在"
 
-#: ../libslab/eggbookmarkfile.c:2432 ../libslab/eggbookmarkfile.c:2593
-#: ../libslab/eggbookmarkfile.c:2682 ../libslab/eggbookmarkfile.c:2763
-#: ../libslab/eggbookmarkfile.c:2848 ../libslab/eggbookmarkfile.c:2931
-#: ../libslab/eggbookmarkfile.c:3009 ../libslab/eggbookmarkfile.c:3088
-#: ../libslab/eggbookmarkfile.c:3130 ../libslab/eggbookmarkfile.c:3227
-#: ../libslab/eggbookmarkfile.c:3350 ../libslab/eggbookmarkfile.c:3540
-#: ../libslab/eggbookmarkfile.c:3616 ../libslab/eggbookmarkfile.c:3765
-#: ../libslab/eggbookmarkfile.c:3830 ../libslab/eggbookmarkfile.c:3919
-#: ../libslab/eggbookmarkfile.c:4053
+#: ../libslab/libslab-bookmarkfile.c:2176
+#: ../libslab/libslab-bookmarkfile.c:2333
+#: ../libslab/libslab-bookmarkfile.c:2418
+#: ../libslab/libslab-bookmarkfile.c:2499
+#: ../libslab/libslab-bookmarkfile.c:2584
+#: ../libslab/libslab-bookmarkfile.c:2667
+#: ../libslab/libslab-bookmarkfile.c:2745
+#: ../libslab/libslab-bookmarkfile.c:2824
+#: ../libslab/libslab-bookmarkfile.c:2866
+#: ../libslab/libslab-bookmarkfile.c:2963
+#: ../libslab/libslab-bookmarkfile.c:3089
+#: ../libslab/libslab-bookmarkfile.c:3279
+#: ../libslab/libslab-bookmarkfile.c:3355
+#: ../libslab/libslab-bookmarkfile.c:3508
+#: ../libslab/libslab-bookmarkfile.c:3573
+#: ../libslab/libslab-bookmarkfile.c:3663
+#: ../libslab/libslab-bookmarkfile.c:3790
 #, c-format
 msgid "No bookmark found for URI '%s'"
 msgstr "找不到 URI“%s”的书签"
 
-#: ../libslab/eggbookmarkfile.c:2772
+#: ../libslab/libslab-bookmarkfile.c:2508
 #, c-format
 msgid "No MIME type defined in the bookmark for URI '%s'"
 msgstr "URI“%s”的书签中未定义 MIME 类型"
 
-#: ../libslab/eggbookmarkfile.c:2857
+#: ../libslab/libslab-bookmarkfile.c:2593
 #, c-format
 msgid "No private flag has been defined in bookmark for URI '%s'"
 msgstr "URI“%s”的书签中未定义私用标志"
 
-#: ../libslab/eggbookmarkfile.c:3236
+#: ../libslab/libslab-bookmarkfile.c:2972
 #, c-format
 msgid "No groups set in bookmark for URI '%s'"
 msgstr "URI“%s”的书签中未设置群组"
 
-#: ../libslab/eggbookmarkfile.c:3634 ../libslab/eggbookmarkfile.c:3775
+#: ../libslab/libslab-bookmarkfile.c:3373
+#: ../libslab/libslab-bookmarkfile.c:3518
 #, c-format
 msgid "No application with name '%s' registered a bookmark for '%s'"
 msgstr "没有名称为“%s”的应用程序为“%s”注册书签"
@@ -337,12 +384,12 @@ msgstr "没有名称为“%s”的应用程序为“%s”注册书签"
 msgid "Find Now"
 msgstr "立即查找"
 
-#: ../libslab/system-tile.c:113
+#: ../libslab/system-tile.c:128
 #, c-format
 msgid "<b>Open %s</b>"
 msgstr "<b>打开 %s</b>"
 
-#: ../libslab/system-tile.c:126
+#: ../libslab/system-tile.c:141
 msgid "Remove from System Items"
 msgstr "从系统项目去除"
 
@@ -351,7 +398,7 @@ msgid "Default menu and application browser"
 msgstr "默认菜单和应用程序浏览器"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:1560 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOME 主菜单"
 
@@ -393,29 +440,11 @@ msgstr "应用程序浏览器的 .desktop 路径"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
 msgid ""
-"Location of the system-wide directory in which startup programs are found."
-msgstr "启动程序所在的系统范围目录的位置。"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid ""
-"Location of the user directory in which startup programs are found. The dir "
-"path should not be absolute, as the value of this key is appended to this "
-"path: ~/."
-msgstr ""
-"启动程序所在的用户目录的位置。dir  路径不应是绝对路径，因为该关键字的值被追加"
-"到以下路径：~/."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid "System-wide autostart program drop dir"
-msgstr "系统范围的自动启动程序丢弃 dir"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
 msgstr "这是激活\"在文件管理器中打开\"菜单项时执行的命令。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:10
+#: ../main-menu/etc/slab.schemas.in.in.h:7
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -424,13 +453,13 @@ msgstr ""
 "这是激活\"在文件管理器中打开\"菜单项时执行的命令。FILE_URI 被替换为与激活文件"
 "的 dirname 对应的 uri。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:11
+#: ../main-menu/etc/slab.schemas.in.in.h:8
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
 msgstr "这是激活\"发送到...\"菜单项时执行的命令。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:12
+#: ../main-menu/etc/slab.schemas.in.in.h:9
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -439,41 +468,37 @@ msgstr ""
 "这是激活\"发送到...\"菜单项时执行的命令。DIRNAME 和 BASENAME 被替换为激活碎片"
 "的对应组件。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:13
+#: ../main-menu/etc/slab.schemas.in.in.h:10
 msgid "This is the command to execute when the search entry is used."
 msgstr "这是使用搜索项时执行的命令。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:14
+#: ../main-menu/etc/slab.schemas.in.in.h:11
 msgid ""
 "This is the command to execute when the search entry is used. SEARCH_STRING "
 "is replaced with the entered search text."
 msgstr "这是使用搜索项时执行的命令。SEARCH_STRING  被替换为输入的搜索文本。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:15
-msgid "User autostart program drop dir (within the home dir)"
-msgstr "用户自动启动程序丢弃 dir（在主目录中）"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:16
+#: ../main-menu/etc/slab.schemas.in.in.h:12
 msgid "command to uninstall packages"
 msgstr "卸装包的命令"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:17
+#: ../main-menu/etc/slab.schemas.in.in.h:13
 msgid ""
 "command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
 msgstr "卸装包的命令，在此命令中，PACKAGE_NAME 被替换为包的名称。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:18
+#: ../main-menu/etc/slab.schemas.in.in.h:14
 msgid "command to upgrade packages"
 msgstr "升级包的命令"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:19
+#: ../main-menu/etc/slab.schemas.in.in.h:15
 msgid ""
 "command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
 msgstr "升级包的命令，在此命令中，PACKAGE_NAME 被替换为包的名称。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:20
+#: ../main-menu/etc/slab.schemas.in.in.h:16
 msgid ""
 "contains the list (in no particular order) of allowable file tables to show "
 "in the file area. possible values: 0 - show the user-specified or \"Favorite"
@@ -488,7 +513,7 @@ msgstr ""
 "或“收藏夹”文档表，3 – 显示最近使用的文档表，4 – 显示用户指定的或“收藏夹”目录"
 "或“地点”表，5 – 显示最近使用的目录或“地点”表。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:21
+#: ../main-menu/etc/slab.schemas.in.in.h:17
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
@@ -496,11 +521,11 @@ msgstr ""
 "包含要从\"最近使用过的应用程序\"和\"最近的文件\"列表中排除的文件列表（包括 ."
 "desktop 文件）。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:22
+#: ../main-menu/etc/slab.schemas.in.in.h:18
 msgid "determines the limit of items in the file-area."
 msgstr "确定文件区域中的项目限制。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:23
+#: ../main-menu/etc/slab.schemas.in.in.h:19
 msgid ""
 "determines the limit of items in the file-area. The number favorite items is "
 "not limited. This limit applies to the number of recent items, i.e. the "
@@ -512,93 +537,98 @@ msgstr ""
 "量，即显示的最近项目的数量限制为 max_total_items（收藏夹项目的数量）。 如果收"
 "藏夹项目数量超过 max_total_items，则忽略超过此限制的 min_recent_items。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:24
+#: ../main-menu/etc/slab.schemas.in.in.h:20
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
 msgstr "确定文件区域中“最近”部分的最小项目数量。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:25
+#: ../main-menu/etc/slab.schemas.in.in.h:21
 msgid "determines which types of files to display in the file area"
 msgstr "确定在文件区域显示的文件类型"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:26
+#: ../main-menu/etc/slab.schemas.in.in.h:22
 msgid "if true, main menu is more anxious to close"
 msgstr "如果为 true，则主菜单更渴望关闭"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:27
+#: ../main-menu/etc/slab.schemas.in.in.h:23
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
 msgstr "如果为 true，主菜单将在以下附加条件下关闭：碎片已激活，搜索已激活"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:28
+#: ../main-menu/etc/slab.schemas.in.in.h:24
 msgid "lock-down configuration of the file area"
 msgstr "文件区域的锁定配置"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:29
+#: ../main-menu/etc/slab.schemas.in.in.h:25
 msgid "lock-down status for the application browser link"
 msgstr "应用程序浏览器链接的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:30
+#: ../main-menu/etc/slab.schemas.in.in.h:26
 msgid "lock-down status for the search area"
 msgstr "搜索区域的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:31
+#: ../main-menu/etc/slab.schemas.in.in.h:27
 msgid "lock-down status for the status area"
 msgstr "状态区域的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:32
+#: ../main-menu/etc/slab.schemas.in.in.h:28
 msgid "lock-down status for the system area"
 msgstr "系统区域的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:33
+#: ../main-menu/etc/slab.schemas.in.in.h:29
 msgid "lock-down status for the user-specified apps section"
 msgstr "用户指定的应用程序部分的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:34
+#: ../main-menu/etc/slab.schemas.in.in.h:30
 msgid "lock-down status for the user-specified dirs section"
 msgstr "用户指定的目录部分的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:35
+#: ../main-menu/etc/slab.schemas.in.in.h:31
 msgid "lock-down status for the user-specified docs section"
 msgstr "用户指定的文档部分的锁定状态"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:36
+#: ../main-menu/etc/slab.schemas.in.in.h:32
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr "可能的值 = 0 [应用程序]，1 [文档]，2 [地点]"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:37
+#: ../main-menu/etc/slab.schemas.in.in.h:33
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
 msgstr "如果应用程序浏览器的链接是可见和活动的，则设置为 true。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:38
+#: ../main-menu/etc/slab.schemas.in.in.h:34
 msgid "set to true if the search area should be visible and active."
 msgstr "如果搜索区域是可见和活动的，则设置为 true。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:39
+#: ../main-menu/etc/slab.schemas.in.in.h:35
 msgid "set to true if the status area should be visible and active."
 msgstr "如果状态区域是可见和活动的，则设置为 true。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:40
+#: ../main-menu/etc/slab.schemas.in.in.h:36
 msgid "set to true if the system area should be visible and active."
 msgstr "如果系统区域是可见和活动的，则设置为 true。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:41
+#: ../main-menu/etc/slab.schemas.in.in.h:37
+#, fuzzy
+msgid "set to true if the user is allowed to modify the list of system items."
+msgstr "如果允许用户修改用户指定的或“收藏夹”文档，则设置为 true。"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:38
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
 msgstr "如果允许用户修改用户指定的或“收藏夹”应用程序，则设置为 true。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:42
+#: ../main-menu/etc/slab.schemas.in.in.h:39
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
 msgstr "如果允许用户修改用户指定的或“收藏夹”目录或“地点”，则设置为 true。"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:43
+#: ../main-menu/etc/slab.schemas.in.in.h:40
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
@@ -633,33 +663,11 @@ msgstr "%llub"
 msgid "%s Free / %s Total"
 msgstr "%s 可用空间/共 %s 可用空间 "
 
-#: ../main-menu/src/main-menu-migration.c:118
-#: ../main-menu/src/main-menu-migration.c:273
-msgid "Logout"
-msgstr "注销"
-
-#: ../main-menu/src/main-menu-migration.c:120
-#: ../main-menu/src/main-menu-migration.c:276
-msgid "Shutdown"
-msgstr "关机"
-
-#: ../main-menu/src/main-menu-migration.c:205
-msgid "Lock Screen"
-msgstr "锁定屏幕"
-
-#: ../main-menu/src/main-menu-migration.c:207
+#: ../main-menu/src/main-menu-migration.c:161
 msgid "gnome-lockscreen"
 msgstr "gnome-lockscreen"
 
-#: ../main-menu/src/main-menu-migration.c:531
-msgid "New Spreadsheet"
-msgstr "新建电子表格"
-
-#: ../main-menu/src/main-menu-migration.c:536
-msgid "New Document"
-msgstr "新建文档"
-
-#: ../main-menu/src/main-menu-ui.c:1561
+#: ../main-menu/src/main-menu-ui.c:2190
 msgid "The GNOME Main Menu"
 msgstr "GNOME 主菜单"
 
@@ -722,10 +730,6 @@ msgstr "应用程序"
 msgid "Computer"
 msgstr "计算机"
 
-#: ../main-menu/src/slab-window.glade.h:3
-msgid "Documents"
-msgstr "文档"
-
 #: ../main-menu/src/slab-window.glade.h:4
 msgid "Favorite Applications"
 msgstr "收藏的应用程序"
@@ -787,14 +791,26 @@ msgstr "将当前文档添加到收藏夹"
 msgid "Remove the current document from favorites"
 msgstr "从收藏夹去除当前文档"
 
-msgid "Network Servers"
-msgstr "网络服务器"
+#~ msgid "Help Unavailable"
+#~ msgstr "不提供帮助"
 
-msgid "File System"
-msgstr "文件系统"
+#~ msgid ""
+#~ "Location of the system-wide directory in which startup programs are found."
+#~ msgstr "启动程序所在的系统范围目录的位置。"
 
-msgid "Home"
-msgstr "主文件夹"
+#~ msgid ""
+#~ "Location of the user directory in which startup programs are found. The "
+#~ "dir path should not be absolute, as the value of this key is appended to "
+#~ "this path: ~/."
+#~ msgstr ""
+#~ "启动程序所在的用户目录的位置。dir  路径不应是绝对路径，因为该关键字的值被"
+#~ "追加到以下路径：~/."
+
+#~ msgid "System-wide autostart program drop dir"
+#~ msgstr "系统范围的自动启动程序丢弃 dir"
+
+#~ msgid "User autostart program drop dir (within the home dir)"
+#~ msgstr "用户自动启动程序丢弃 dir（在主目录中）"
 
 #~ msgid "Software Update"
 #~ msgstr "软件更新"
@@ -906,6 +922,3 @@ msgstr "主文件夹"
 
 #~ msgid "All Applications..."
 #~ msgstr "所有应用程序..."
-
-#~ msgid "Search"
-#~ msgstr "搜索"

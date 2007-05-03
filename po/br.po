@@ -13,31 +13,22 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  br.po (YaST (@memory@))  #-#-#-#-#\n"
-"Project-Id-Version: YaST (@memory@)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-19 15:33+0200\n"
-"PO-Revision-Date: 2001-07-18 10:57+0200\n"
-"Last-Translator: Francoise Lermen <flermen@suse.de>\n"
-"Language-Team: i18n <i18n@suse.de>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"#-#-#-#-#  br.po-missing (nautilus)  #-#-#-#-#\n"
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-13 14:44-0500\n"
+"POT-Creation-Date: 2007-05-02 18:55-0400\n"
 "PO-Revision-Date: 2006-04-25 15:19+0000\n"
 "Last-Translator: Giulia Fraboulet <djoulia@gmail.com>\n"
 "Language-Team: Breton <br@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  br.po (YaST (@memory@))  #-#-#-#-#\n"
+"#-#-#-#-#  br.po-missing (nautilus)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:69
+#: ../application-browser/src/application-browser.c:93
 #, fuzzy
 msgid "Application Browser"
 msgstr "Arloadoù X"
@@ -103,32 +94,31 @@ msgid ""
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
-#: ../application-browser/src/application-browser.c:62
+#: ../application-browser/src/application-browser.c:85
 #, fuzzy
 msgid "New Applications"
 msgstr "Arloadoù X"
 
 # TLABEL ../../db/printer_macros.ycp.noloc:29
-#: ../application-browser/src/application-browser.c:66
-#: ../control-center/src/control-center.c:112
+#: ../application-browser/src/application-browser.c:90
+#: ../control-center/src/control-center.c:160
 #, fuzzy
 msgid "Filter"
 msgstr "letter"
 
-#: ../application-browser/src/application-browser.c:66
-#: ../control-center/src/control-center.c:112
+#: ../application-browser/src/application-browser.c:90
+#: ../control-center/src/control-center.c:160
 msgid "Groups"
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
-#: ../application-browser/src/application-browser.c:66
+#: ../application-browser/src/application-browser.c:90
 #, fuzzy
 msgid "Application Actions"
 msgstr "Arloadoù X"
 
 #: ../control-center/etc/control-center.desktop.in.in.h:1
-#: ../control-center/src/control-center.c:115
-#: ../main-menu/src/system-tile.c:95
+#: ../control-center/src/control-center.c:164
 msgid "Control Center"
 msgstr ""
 
@@ -161,57 +151,60 @@ msgid ""
 "if true, the control-center will close when a \"Common Task\" is activated"
 msgstr ""
 
-#: ../control-center/src/control-center.c:112
+#: ../control-center/src/control-center.c:62
+#, c-format
+msgid "key not found [%s]\n"
+msgstr ""
+
+#: ../control-center/src/control-center.c:160
 msgid "Common Tasks"
 msgstr ""
 
 #. make start action
-#: ../libslab/src/application-tile.c:322
+#: ../libslab/application-tile.c:362
 #, c-format
 msgid "<b>Start %s</b>"
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:822
-#: ../libslab/src/application-tile.c:343 ../main-menu/src/system-tile.c:83
+#: ../libslab/application-tile.c:381 ../libslab/bookmark-agent.c:1049
+#: ../main-menu/src/main-menu-migration.c:93
+#: ../main-menu/src/main-menu-migration.c:217
 #, fuzzy
 msgid "Help"
 msgstr "&Skoazell"
 
-# TLABEL /usr/lib/YaST2/clients/printconf_manuf_model.ycp:123
-#: ../libslab/src/application-tile.c:350
-#, fuzzy
-msgid "Help Unavailable"
-msgstr "N'eus titour ebet."
-
-#. make upgrade action
-#: ../libslab/src/application-tile.c:388
+#: ../libslab/application-tile.c:428
 msgid "Upgrade"
 msgstr ""
 
 # TLABEL modules/inst_doit.ycp:127
-#. make uninstall action
-#: ../libslab/src/application-tile.c:395
+#: ../libslab/application-tile.c:443
 #, fuzzy
 msgid "Uninstall"
 msgstr "&Ya - staliañ"
 
-#: ../libslab/src/application-tile.c:790
+#: ../libslab/application-tile.c:770 ../libslab/document-tile.c:526
+#: ../nautilus-main-menu/nautilus-main-menu.c:133
+#: ../nautilus-main-menu/nautilus-main-menu.c:138
 msgid "Remove from Favorites"
 msgstr ""
 
-#: ../libslab/src/application-tile.c:792
+#: ../libslab/application-tile.c:772 ../libslab/document-tile.c:528
+#: ../nautilus-main-menu/nautilus-main-menu.c:123
+#: ../nautilus-main-menu/nautilus-main-menu.c:128
 msgid "Add to Favorites"
 msgstr ""
 
-#: ../libslab/src/application-tile.c:852
+#: ../libslab/application-tile.c:857
 msgid "Remove from Startup Programs"
 msgstr ""
 
-#: ../libslab/src/application-tile.c:854
+#: ../libslab/application-tile.c:859
 msgid "Add to Startup Programs"
 msgstr ""
 
-#: ../libslab/src/app-shell.c:644
+#: ../libslab/app-shell.c:747
 #, c-format
 msgid ""
 "<span size=\"large\"><b>No matches found.</b> </span><span>\n"
@@ -219,16 +212,194 @@ msgid ""
 " Your filter \"<b>%s</b>\" does not match any items.</span>"
 msgstr ""
 
-#: ../libslab/src/search-bar.c:235
+#: ../libslab/app-shell.c:897
+msgid "Other"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1051 ../main-menu/src/main-menu-migration.c:159
+msgid "Lock Screen"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1053 ../main-menu/src/main-menu-migration.c:97
+#: ../main-menu/src/main-menu-migration.c:219
+msgid "Logout"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1055 ../main-menu/src/main-menu-migration.c:101
+#: ../main-menu/src/main-menu-migration.c:221
+msgid "Shutdown"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1079
+msgid "New Spreadsheet"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1083
+msgid "New Document"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1133
+msgid "Home"
+msgstr "Kêr"
+
+#: ../libslab/bookmark-agent.c:1138 ../main-menu/src/slab-window.glade.h:3
+msgid "Documents"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1144
+msgid "Desktop"
+msgstr ""
+
+#: ../libslab/bookmark-agent.c:1151
+msgid "File System"
+msgstr "Sistem restroù"
+
+#: ../libslab/bookmark-agent.c:1155
+msgid "Network Servers"
+msgstr "Servijerien ar rouedad"
+
+# TLABEL /usr/lib/YaST2/clients/sound_manual.ycp:226
+#: ../libslab/bookmark-agent.c:1184
+msgid "Search"
+msgstr "Arglask"
+
+#. make open with default action
+#: ../libslab/directory-tile.c:168
+msgid "<b>Open</b>"
+msgstr ""
+
+#. make rename action
+#: ../libslab/directory-tile.c:187 ../libslab/document-tile.c:232
+msgid "Rename..."
+msgstr ""
+
+# TLABEL /usr/lib/YaST2/clients/lan_ypclient.ycp:249
+#: ../libslab/directory-tile.c:201 ../libslab/directory-tile.c:210
+#: ../libslab/document-tile.c:246 ../libslab/document-tile.c:255
+#, fuzzy
+msgid "Send To..."
+msgstr "Kadaviñ ..."
+
+#. make move to trash action
+#: ../libslab/directory-tile.c:225 ../libslab/document-tile.c:281
+msgid "Move to Trash"
+msgstr ""
+
+# TLABEL /usr/lib/YaST2/clients/lan_nfs_exports.ycp:141
+#: ../libslab/directory-tile.c:235 ../libslab/directory-tile.c:448
+#: ../libslab/document-tile.c:291 ../libslab/document-tile.c:639
+msgid "Delete"
+msgstr "Dilemel"
+
+#: ../libslab/document-tile.c:153
+msgid "Edited %m/%d/%Y"
+msgstr ""
+
+#: ../libslab/document-tile.c:193
+#, c-format
+msgid "<b>Open with \"%s\"</b>"
+msgstr ""
+
+# TLABEL /usr/lib/YaST2/clients/lan_inetd_start.ycp:58
+#: ../libslab/document-tile.c:205
+#, fuzzy
+msgid "Open with Default Application"
+msgstr "Gweredekaet gant ar c'hefluniad &skoueriek"
+
+#: ../libslab/document-tile.c:216
+msgid "Open in File Manager"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:700 ../libslab/libslab-bookmarkfile.c:777
+#: ../libslab/libslab-bookmarkfile.c:856 ../libslab/libslab-bookmarkfile.c:903
+#, c-format
+msgid "Unexpected attribute '%s' for element '%s'"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:711 ../libslab/libslab-bookmarkfile.c:788
+#: ../libslab/libslab-bookmarkfile.c:798 ../libslab/libslab-bookmarkfile.c:914
+#, c-format
+msgid "Attribute '%s' of element '%s' not found"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:1087
+#: ../libslab/libslab-bookmarkfile.c:1152
+#: ../libslab/libslab-bookmarkfile.c:1216
+#: ../libslab/libslab-bookmarkfile.c:1226
+#, c-format
+msgid "Unexpected tag '%s', tag '%s' expected"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:1112
+#: ../libslab/libslab-bookmarkfile.c:1126
+#: ../libslab/libslab-bookmarkfile.c:1194
+#: ../libslab/libslab-bookmarkfile.c:1246
+#, c-format
+msgid "Unexpected tag '%s' inside '%s'"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:1929
+msgid "No valid bookmark file found in data dirs"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:2130
+#, c-format
+msgid "A bookmark for URI '%s' already exists"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:2176
+#: ../libslab/libslab-bookmarkfile.c:2333
+#: ../libslab/libslab-bookmarkfile.c:2418
+#: ../libslab/libslab-bookmarkfile.c:2499
+#: ../libslab/libslab-bookmarkfile.c:2584
+#: ../libslab/libslab-bookmarkfile.c:2667
+#: ../libslab/libslab-bookmarkfile.c:2745
+#: ../libslab/libslab-bookmarkfile.c:2824
+#: ../libslab/libslab-bookmarkfile.c:2866
+#: ../libslab/libslab-bookmarkfile.c:2963
+#: ../libslab/libslab-bookmarkfile.c:3089
+#: ../libslab/libslab-bookmarkfile.c:3279
+#: ../libslab/libslab-bookmarkfile.c:3355
+#: ../libslab/libslab-bookmarkfile.c:3508
+#: ../libslab/libslab-bookmarkfile.c:3573
+#: ../libslab/libslab-bookmarkfile.c:3663
+#: ../libslab/libslab-bookmarkfile.c:3790
+#, c-format
+msgid "No bookmark found for URI '%s'"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:2508
+#, c-format
+msgid "No MIME type defined in the bookmark for URI '%s'"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:2593
+#, c-format
+msgid "No private flag has been defined in bookmark for URI '%s'"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:2972
+#, c-format
+msgid "No groups set in bookmark for URI '%s'"
+msgstr ""
+
+#: ../libslab/libslab-bookmarkfile.c:3373
+#: ../libslab/libslab-bookmarkfile.c:3518
+#, c-format
+msgid "No application with name '%s' registered a bookmark for '%s'"
+msgstr ""
+
+#: ../libslab/search-bar.c:255
 msgid "Find Now"
 msgstr ""
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "Open Menu"
+#: ../libslab/system-tile.c:128
+#, c-format
+msgid "<b>Open %s</b>"
 msgstr ""
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_About"
+#: ../libslab/system-tile.c:141
+msgid "Remove from System Items"
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
@@ -238,7 +409,7 @@ msgid "Default menu and application browser"
 msgstr "Arloadoù X"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:309
+#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr ""
 
@@ -250,8 +421,12 @@ msgstr ""
 msgid "Main Menu"
 msgstr ""
 
-#: ../main-menu/etc/main-menu-rug.desktop.in.h:1
-msgid "Software Update"
+#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
+msgid "_About"
+msgstr ""
+
+#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
+msgid "_Open Menu"
 msgstr ""
 
 #: ../main-menu/etc/slab.schemas.in.in.h:1
@@ -270,442 +445,399 @@ msgstr ""
 msgid ".desktop file for the net config tool"
 msgstr ""
 
-# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
 #: ../main-menu/etc/slab.schemas.in.in.h:5
-#, fuzzy
-msgid ".desktop files for \"Favorite Applications\""
-msgstr "Arloadoù X"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:6
 msgid ".desktop path for the application browser"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid ""
-"Location of the system-wide directory in which startup programs are found."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid ""
-"Location of the user directory in which startup programs are found. The dir "
-"path should not be absolute, as the value of this key is appended to this "
-"path: ~/."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "System area items"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "System-wide autostart program drop dir"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid ""
-"The list of the items which will appear in the System area. Possible values "
-"are HELP = 0, CONTROL_CENTER = 1, PACKAGE_MANAGER = 2, LOG_OUT = 3, "
-"LOCK_SCREEN = 4. HELP, CONTROL_CENTER and PACKAGE_MANAGER need to the have "
-"the appropriate .desktop files defined in the, respectively, \"help_item\", "
-"\"control_center_item\" and \"package_manager_item\" keys."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:12
+#: ../main-menu/etc/slab.schemas.in.in.h:6
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:13
+#: ../main-menu/etc/slab.schemas.in.in.h:7
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
 "of the activated file."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:14
+#: ../main-menu/etc/slab.schemas.in.in.h:8
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:15
+#: ../main-menu/etc/slab.schemas.in.in.h:9
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
 "components of the activated tile."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:16
+#: ../main-menu/etc/slab.schemas.in.in.h:10
 msgid "This is the command to execute when the search entry is used."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:17
+#: ../main-menu/etc/slab.schemas.in.in.h:11
 msgid ""
 "This is the command to execute when the search entry is used. SEARCH_STRING "
 "is replaced with the entered search text."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:18
-msgid "User autostart program drop dir (within the home dir)"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:19
+#: ../main-menu/etc/slab.schemas.in.in.h:12
 msgid "command to uninstall packages"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:20
+#: ../main-menu/etc/slab.schemas.in.in.h:13
 msgid ""
 "command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:21
+#: ../main-menu/etc/slab.schemas.in.in.h:14
 msgid "command to upgrade packages"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:22
+#: ../main-menu/etc/slab.schemas.in.in.h:15
 msgid ""
 "command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:23
+#: ../main-menu/etc/slab.schemas.in.in.h:16
 msgid ""
-"contains the list (in no particular order) of allowable file types to show "
-"in the file area. possible values (see also the note for /desktop/gnome/"
-"applications/main-menu/file-area/file_class): 0 [USER_SPECIFIED_APPS], 1 "
-"[RECENTLY_USED_APPS], 2 [RECENT_FILES]. RECENTLY_USED_APPS is the list of "
-"recently used (instantiated with the main-menu or the application-browser). "
-"USER_SPECIFIED_APPS is equivalent to \"Favorite Applications\". RECENT_FILES "
-"is the list of files from ~/.recently-used."
+"contains the list (in no particular order) of allowable file tables to show "
+"in the file area. possible values: 0 - show the user-specified or \"Favorite"
+"\" applications table, 1 - show the recently used applications table, 2 - "
+"show the user-specified or \"Favorite\" documents table, 3 - show the "
+"recently used documents table, 4 - show the user-specified of \"Favorite\" "
+"directories or \"Places\" table, and 5 - show the recently used directories "
+"or \"Places\" table."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:24
+#: ../main-menu/etc/slab.schemas.in.in.h:17
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:25
-msgid "control center item .desktop file"
+#: ../main-menu/etc/slab.schemas.in.in.h:18
+msgid "determines the limit of items in the file-area."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:26
-msgid "determines the limit of tiles in the file-area."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:27
+#: ../main-menu/etc/slab.schemas.in.in.h:19
 msgid ""
-"determines the limit of tiles in the file-area. *Note: this does not affect "
-"the number of tiles if the file-class is USER_SPECIFIED_*."
+"determines the limit of items in the file-area. The number favorite items is "
+"not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items than this limit is ignored."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:28
+#: ../main-menu/etc/slab.schemas.in.in.h:20
 msgid ""
-"determines the reordering algorithm used when moving tiles around the main-"
-"menu"
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:29
+#: ../main-menu/etc/slab.schemas.in.in.h:21
 msgid "determines which types of files to display in the file area"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:30
-msgid "help item .desktop file"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:31
+#: ../main-menu/etc/slab.schemas.in.in.h:22
 msgid "if true, main menu is more anxious to close"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:32
+#: ../main-menu/etc/slab.schemas.in.in.h:23
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:33
+#: ../main-menu/etc/slab.schemas.in.in.h:24
 msgid "lock-down configuration of the file area"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:34
+#: ../main-menu/etc/slab.schemas.in.in.h:25
 msgid "lock-down status for the application browser link"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:35
+#: ../main-menu/etc/slab.schemas.in.in.h:26
 msgid "lock-down status for the search area"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:36
+#: ../main-menu/etc/slab.schemas.in.in.h:27
 msgid "lock-down status for the status area"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:37
+#: ../main-menu/etc/slab.schemas.in.in.h:28
 msgid "lock-down status for the system area"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:38
-msgid "package manager item .desktop file"
+#: ../main-menu/etc/slab.schemas.in.in.h:29
+msgid "lock-down status for the user-specified apps section"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:39
-msgid ""
-"possible values = 0 [SWAP], 1 [PUSH], 2 [PUSH_PULL]. SWAP indicates that "
-"when a tile is dragged onto another tile they should simply swap position. "
-"PUSH indicates that when a tile, A, is dragged onto another tile, B, a "
-"vacant spot is created in tile A's place. tile B (and all tiles after B) "
-"shift down until the new vacant space is filled. this operation wraps around "
-"in the case that tile A appears before tile B prior to the drag and drop "
-"operation. PUSH_PULL is similar to PUSH except that when tiles are shifted "
-"they are either pushed into the vacant spaced or pulled from the other "
-"direction, depending on which strategy affects the least number of tiles."
+#: ../main-menu/etc/slab.schemas.in.in.h:30
+msgid "lock-down status for the user-specified dirs section"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:40
-msgid ""
-"possible values = 0 [USER_SPECIFIED_APPS], 1 [RECENTLY_USED_APPS], 2 "
-"[RECENT_FILES]. RECENTLY_USED_APPS is the list of recently used "
-"(instantiated with the main-menu or the application-browser). "
-"USER_SPECIFIED_APPS is equivalent to \"Favorite Applications\". RECENT_FILES "
-"is the list of files from ~/.recently-used."
+#: ../main-menu/etc/slab.schemas.in.in.h:31
+msgid "lock-down status for the user-specified docs section"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "prioritized list of commands to lock the screen"
+#: ../main-menu/etc/slab.schemas.in.in.h:32
+msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:42
+#: ../main-menu/etc/slab.schemas.in.in.h:33
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:43
+#: ../main-menu/etc/slab.schemas.in.in.h:34
 msgid "set to true if the search area should be visible and active."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:44
+#: ../main-menu/etc/slab.schemas.in.in.h:35
 msgid "set to true if the status area should be visible and active."
 msgstr ""
 
-#: ../main-menu/etc/slab.schemas.in.in.h:45
+#: ../main-menu/etc/slab.schemas.in.in.h:36
 msgid "set to true if the system area should be visible and active."
 msgstr ""
 
-#: ../main-menu/src/document-tile.c:119
-msgid "Edited %m/%d/%Y"
+#: ../main-menu/etc/slab.schemas.in.in.h:37
+msgid "set to true if the user is allowed to modify the list of system items."
 msgstr ""
 
-#: ../main-menu/src/document-tile.c:153
-#, c-format
-msgid "<b>Open with \"%s\"</b>"
+#: ../main-menu/etc/slab.schemas.in.in.h:38
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
 msgstr ""
 
-# TLABEL /usr/lib/YaST2/clients/lan_inetd_start.ycp:58
-#: ../main-menu/src/document-tile.c:163
-#, fuzzy
-msgid "Open with Default Application"
-msgstr "Gweredekaet gant ar c'hefluniad &skoueriek"
-
-#: ../main-menu/src/document-tile.c:181
-msgid "Open in File Manager"
+#: ../main-menu/etc/slab.schemas.in.in.h:39
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
 msgstr ""
 
-#. make rename action
-#: ../main-menu/src/document-tile.c:199
-msgid "Rename..."
-msgstr ""
-
-#. make move to trash action
-#: ../main-menu/src/document-tile.c:212
-msgid "Move to Trash"
-msgstr ""
-
-# TLABEL /usr/lib/YaST2/clients/lan_nfs_exports.ycp:141
-#: ../main-menu/src/document-tile.c:221 ../main-menu/src/document-tile.c:594
-msgid "Delete"
-msgstr "Dilemel"
-
-# TLABEL /usr/lib/YaST2/clients/lan_ypclient.ycp:249
-#: ../main-menu/src/document-tile.c:242 ../main-menu/src/document-tile.c:249
-#, fuzzy
-msgid "Send To..."
-msgstr "Kadaviñ ..."
-
-#: ../main-menu/src/file-area-widget.c:130
-msgid "Show:"
-msgstr ""
-
-# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
-#: ../main-menu/src/file-area-widget.c:179
-#, fuzzy
-msgid "Favorite Applications"
-msgstr "Arloadoù X"
-
-# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
-#: ../main-menu/src/file-area-widget.c:209
-#, fuzzy
-msgid "Recently Used Applications"
-msgstr "Arloadoù X"
-
-#: ../main-menu/src/file-area-widget.c:229
-msgid "Recent Documents"
-msgstr ""
-
-# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
-#: ../main-menu/src/file-area-widget.c:381
-#, fuzzy
-msgid "More Applications..."
-msgstr "Arloadoù X"
-
-#: ../main-menu/src/file-area-widget.c:385
-msgid "All Documents..."
+#: ../main-menu/etc/slab.schemas.in.in.h:40
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
 msgstr ""
 
 # TLABEL ../../db/printers.ycp.noloc:1547
-#: ../main-menu/src/hard-drive-status-tile.c:83
+#: ../main-menu/src/hard-drive-status-tile.c:110
 #, fuzzy
-msgid "Hard Drive"
+msgid "Hard _Drive"
 msgstr "Sturier"
 
-#: ../main-menu/src/hard-drive-status-tile.c:316
+#: ../main-menu/src/hard-drive-status-tile.c:345
 #, c-format
 msgid "%lluG"
 msgstr ""
 
-#: ../main-menu/src/hard-drive-status-tile.c:318
+#: ../main-menu/src/hard-drive-status-tile.c:347
 #, c-format
 msgid "%lluM"
 msgstr ""
 
-#: ../main-menu/src/hard-drive-status-tile.c:320
+#: ../main-menu/src/hard-drive-status-tile.c:349
 #, c-format
 msgid "%lluK"
 msgstr ""
 
-#: ../main-menu/src/hard-drive-status-tile.c:322
+#: ../main-menu/src/hard-drive-status-tile.c:351
 #, c-format
 msgid "%llub"
 msgstr ""
 
-#: ../main-menu/src/hard-drive-status-tile.c:342
+#: ../main-menu/src/hard-drive-status-tile.c:372
 #, c-format
 msgid "%s Free / %s Total"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:310
+#: ../main-menu/src/main-menu-migration.c:161
+msgid "gnome-lockscreen"
+msgstr ""
+
+#: ../main-menu/src/main-menu-ui.c:2190
 msgid "The GNOME Main Menu"
 msgstr ""
 
-# TLABEL /usr/lib/YaST2/clients/tune.ycp:29
-#: ../main-menu/src/main-menu-ui.c:432
-#, fuzzy
-msgid "System"
-msgstr "Peurreizhañ ar reizhiad"
-
-# TLABEL /usr/lib/YaST2/clients/lan_inetd_custom.ycp:754
-#: ../main-menu/src/main-menu-ui.c:436
-msgid "Status"
-msgstr "Stad"
-
-# TLABEL ../../db/printers.ycp.noloc:1163
-#: ../main-menu/src/main-menu-ui.c:630
-#, fuzzy
-msgid "Computer"
-msgstr "Re all"
-
-# TLABEL /usr/lib/YaST2/clients/sound_manual.ycp:226
-#: ../main-menu/src/main-menu-ui.c:965
-#, fuzzy
-msgid "Search:"
-msgstr "Arglask"
-
 # TLABEL /usr/lib/YaST2/clients/inst_ask_config.ycp:146
-#: ../main-menu/src/network-status-tile.c:72
-#: ../main-menu/src/network-status-tile.c:184
+#: ../main-menu/src/network-status-tile.c:91
 #, fuzzy
 msgid "Network: None"
 msgstr "Rouedad"
 
 # TLABEL /usr/lib/YaST2/clients/inst_ask_config.ycp:157
-#: ../main-menu/src/network-status-tile.c:75
-#: ../main-menu/src/network-status-tile.c:185
+#: ../main-menu/src/network-status-tile.c:94
+#: ../main-menu/src/network-status-tile.c:199
 #, fuzzy
 msgid "Click to configure network"
 msgstr "Kefluniadur ar &rouedad"
 
-#: ../main-menu/src/network-status-tile.c:191
+# TLABEL /usr/lib/YaST2/clients/inst_ask_config.ycp:146
+#: ../main-menu/src/network-status-tile.c:198
+#, fuzzy
+msgid "Networ_k: None"
+msgstr "Rouedad"
+
+#: ../main-menu/src/network-status-tile.c:207
 #, c-format
 msgid "Connected to: %s"
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/lan_inetd_start.ycp:99
-#: ../main-menu/src/network-status-tile.c:194
+#: ../main-menu/src/network-status-tile.c:210
 #, fuzzy
-msgid "Network: Wireless"
+msgid "Networ_k: Wireless"
 msgstr "Servijoù rouedad"
 
-#: ../main-menu/src/network-status-tile.c:199
+#: ../main-menu/src/network-status-tile.c:215
 #, c-format
 msgid "Using ethernet (%s)"
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/lan_inetd_start.ycp:99
-#: ../main-menu/src/network-status-tile.c:202
+#: ../main-menu/src/network-status-tile.c:219
 #, fuzzy
-msgid "Network: Wired"
+msgid "Networ_k: Wired"
 msgstr "Servijoù rouedad"
 
-#: ../main-menu/src/network-status-tile.c:308
+#: ../main-menu/src/network-status-tile.c:320
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr ""
 
-#: ../main-menu/src/network-status-tile.c:312
+#: ../main-menu/src/network-status-tile.c:325
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr ""
 
 # TLABEL /usr/lib/YaST2/clients/dialup_detection.ycp:212
-#: ../main-menu/src/network-status-tile.c:316
-#: ../main-menu/src/network-status-tile.c:326
-#: ../main-menu/src/system-tile.c:127
+#: ../main-menu/src/network-status-tile.c:329
+#: ../main-menu/src/network-status-tile.c:339
 msgid "Unknown"
 msgstr "Dizanv"
 
-#: ../main-menu/src/network-status-tile.c:324
+#: ../main-menu/src/network-status-tile.c:337
 #, c-format
 msgid "%d Mb/s"
 msgstr ""
 
-# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:97
-#: ../main-menu/src/system-tile.c:107
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:1
 #, fuzzy
-msgid "Install Software"
-msgstr "Meziantoù diabarzh SuSE"
+msgid "Applications"
+msgstr "Arloadoù X"
 
-#: ../main-menu/src/system-tile.c:112
-msgid "Log Out ..."
+# TLABEL ../../db/printers.ycp.noloc:1163
+#: ../main-menu/src/slab-window.glade.h:2
+#, fuzzy
+msgid "Computer"
+msgstr "Re all"
+
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:4
+#, fuzzy
+msgid "Favorite Applications"
+msgstr "Arloadoù X"
+
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:5
+#, fuzzy
+msgid "Favorite Documents"
+msgstr "Arloadoù X"
+
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:6
+#, fuzzy
+msgid "Favorite Places"
+msgstr "Arloadoù X"
+
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:8
+#, fuzzy
+msgid "More Applications..."
+msgstr "Arloadoù X"
+
+#: ../main-menu/src/slab-window.glade.h:9
+msgid "More Documents..."
 msgstr ""
 
-#: ../main-menu/src/system-tile.c:117
-msgid "Lock Screen ..."
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:10
+#, fuzzy
+msgid "More Places..."
+msgstr "Arloadoù X"
+
+#: ../main-menu/src/slab-window.glade.h:11
+msgid "Places"
 msgstr ""
 
-msgid "Network Servers"
-msgstr "Servijerien ar rouedad"
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#: ../main-menu/src/slab-window.glade.h:12
+#, fuzzy
+msgid "Recent Applications"
+msgstr "Arloadoù X"
 
-msgid "File System"
-msgstr "Sistem restroù"
+#: ../main-menu/src/slab-window.glade.h:13
+msgid "Recent Documents"
+msgstr ""
 
-msgid "Home"
-msgstr "Kêr"
+# TLABEL /usr/lib/YaST2/clients/sound_manual.ycp:226
+#: ../main-menu/src/slab-window.glade.h:14
+#, fuzzy
+msgid "Search:"
+msgstr "Arglask"
+
+# TLABEL /usr/lib/YaST2/clients/lan_inetd_custom.ycp:754
+#: ../main-menu/src/slab-window.glade.h:15
+msgid "Status"
+msgstr "Stad"
+
+# TLABEL /usr/lib/YaST2/clients/tune.ycp:29
+#: ../main-menu/src/slab-window.glade.h:16
+#, fuzzy
+msgid "System"
+msgstr "Peurreizhañ ar reizhiad"
+
+#: ../nautilus-main-menu/nautilus-main-menu.c:124
+msgid "Add the current launcher to favorites"
+msgstr ""
+
+#: ../nautilus-main-menu/nautilus-main-menu.c:129
+msgid "Add the current document to favorites"
+msgstr ""
+
+#: ../nautilus-main-menu/nautilus-main-menu.c:134
+#: ../nautilus-main-menu/nautilus-main-menu.c:139
+msgid "Remove the current document from favorites"
+msgstr ""
+
+# TLABEL /usr/lib/YaST2/clients/printconf_manuf_model.ycp:123
+#, fuzzy
+#~ msgid "Help Unavailable"
+#~ msgstr "N'eus titour ebet."
+
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
+#, fuzzy
+#~ msgid ".desktop files for \"Favorite Applications\""
+#~ msgstr "Arloadoù X"
+
+# TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:97
+#, fuzzy
+#~ msgid "Install Software"
+#~ msgstr "Meziantoù diabarzh SuSE"
 
 # TLABEL /usr/lib/YaST2/clients/inst_sw_single.ycp:107
 #, fuzzy
 #~ msgid "All Applications..."
 #~ msgstr "Arloadoù X"
-
-# TLABEL /usr/lib/YaST2/clients/sound_manual.ycp:226
-#~ msgid "Search"
-#~ msgstr "Arglask"
