@@ -1,3 +1,7 @@
+2007-05-03  Jim Krehl  <jimmyk@novell.com>
+	* *.po:
+	Reran make update-po, added string "Desktop" from nautilus.
+
 2007-04-23  Jim Krehl  <jimmyk@novell.com>
 	* {af,ar,bn,gu,hi,mr,sv,ta,xh}.po:
 	Pulled in corrected translations for string at:

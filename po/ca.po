@@ -1,3 +1,14 @@
+# #-#-#-#-#  ca.po.add (nautilus 2.9.91)  #-#-#-#-#
+# nautilus translation to Catalan.
+# Copyright © 2000-2006 Free Software Foundation, Inc.
+# Softcatalà <info@softcatala.org>, 2000, 2001.
+# Valentín Trilles <vtrilles@yahoo.es>, 2002.
+# Sinner from the Prairy <sinner@escomposlinux.org>, 2002.
+# Jordi Mallach <jordi@sindominio.net>, 2002, 2003, 2004, 2005.
+# Aleix Badia i Bosch <abadia@ica.es>, 2004.
+# Josep Puigdemont <josep.puigdemont@gmail.com>, 2006.
+#
+# #-#-#-#-#  ca.po (nautilus 2.9.91)  #-#-#-#-#
 # #-#-#-#-#  ca.po (YaST (@memory@))  #-#-#-#-#
 # Catalan message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -20,13 +31,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 2.9.91\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-08-25 01:07+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  ca.po.add (nautilus 2.9.91)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=n!=1;\n"
+"#-#-#-#-#  ca.po (nautilus 2.9.91)  #-#-#-#-#\n"
 "#-#-#-#-#  ca.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "#-#-#-#-#  ca.po-missing (nautilus 2.9.91)  #-#-#-#-#\n"
@@ -262,7 +276,7 @@ msgstr "Documents"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Escriptori"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -421,7 +435,7 @@ msgid "Default menu and application browser"
 msgstr "Menú i navegador d'aplicació per defecte"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "Menú principal del GNOME"
 
@@ -726,7 +740,7 @@ msgstr "%s lliures / %s total"
 msgid "gnome-lockscreen"
 msgstr "gnome-lockscreen"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "Menú principal del GNOME"
 

@@ -1,3 +1,29 @@
+# #-#-#-#-#  nl.po.add (Nautilus)  #-#-#-#-#
+# Dutch Translation of Nautilus
+#
+# Copyright (C) 2000 Free Software Foundation, Inc.
+#
+# Dennis Smit <synap@area101.penguin.nl>, 2001. (Fixes / >>LITTLE<< update).
+# Dirk-Jan C. Binnema <dirkjan@gnome.org>, 2001.
+# Mendel Mobach <mendel@mobach.nl>, 2000.
+# Almer S. Tigelaar <almer1@dds.nl>, 2000. (I only did a little correcting here and there)
+# Ludootje <ludootje@linux.be>, 2001.
+# Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2002.
+# Ronald Hummelink <ronald@hummelink.xs4all.nl>, 2002.
+# Jordi Bosveld <jotti@jotti.dhs.org>, 2002.
+# Reinout van Schouwen <reinout@cs.vu.nl>, 2002-2006
+# Tino Meinen <a.t.meinen@chello.nl>, 2006
+# Wouter Bolsterlee <uws+gnome@xs4all.nl>, 2006.
+#
+# Op 20 augustus 2006 heb ik alle "quotes" vervangen door typografisch meer
+# correcte ‘quotes’ en alle niet-gebruikte strings weggemikt (om te voorkomen
+# dat oude strings met wellicht incorrecte vertalingen (er is een hoop
+# veranderd de laatste tijd, toch?) toch weer opduiken. (Wouter Bolsterlee)
+#
+# Op 15 september 2006 is het cd/dvd-gedoe definitief beslist: het is vanaf
+# heden "cd/dvd branden". (Wouter Bolsterlee)
+#
+# #-#-#-#-#  nl.po (Nautilus)  #-#-#-#-#
 # #-#-#-#-#  nl.po (YaST (@memory@))  #-#-#-#-#
 # Dutch message file for YaST 2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -39,13 +65,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-09-15 16:37+0200 \n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  nl.po.add (Nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"#-#-#-#-#  nl.po (Nautilus)  #-#-#-#-#\n"
 "#-#-#-#-#  nl.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "#-#-#-#-#  nl.po-missing (Nautilus)  #-#-#-#-#\n"
@@ -280,7 +309,7 @@ msgstr "Documenten"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Bureaublad"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -434,7 +463,7 @@ msgid "Default menu and application browser"
 msgstr "Standaardbrowser voor menu's en toepassingen"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOME Hoofdmenu"
 
@@ -742,7 +771,7 @@ msgstr "%s vrij / %s totaal"
 msgid "gnome-lockscreen"
 msgstr "gnome-schermvergrendeling"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "Het GNOME-menu"
 

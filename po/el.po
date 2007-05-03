@@ -1,3 +1,52 @@
+# #-#-#-#-#  el.po.add (el)  #-#-#-#-#
+# translation of el.po to
+# translation of el.po to Greek
+# translation of el.po to
+# translation of el.po to
+# translation of el.po to
+# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+# Clean messages should be ok.
+# TODO: There should be a full review and report here.
+# Split in pieces, this is the main piece.
+# kostas: 28Jan2003, updated translation
+# kostas: 13Feb2003, fixed some typos
+# kostas: 18Feb2003, minor typos
+# kostas: 05Mar2003,unfuzzy 2
+# kostas: 13 Jul2003, one more update
+# kostas:15Aug2003, one more update
+# Nikos: 28Aug2003, fixes
+# kostas:30Oct2003, one more update
+# Nikos:22Feb2004, minor fixes, review few messages
+# Nikos:06Jun2004, review
+# Nikos:25Jun2004, review
+# Nikos:26Aug2004, update
+#
+#
+# simos: 652 messages, 19Feb2001, more messages remaining.
+# simos: 713 messages, 20Feb2001, more messages remaining.
+# simos: 935 messages, 20Feb2001, more messages remaining.
+# simos: 1341 messages, 23Feb2001, more messages remaining.
+# simos: 1488 messages, 23Feb2001, more messages remaining.
+# simos: 1579 messages, 25Feb2001, more messages remaining.
+# simos: 1853 messages, 26Feb2001, 79 messages remaining.
+# simos: 1870 messages, 27Feb2001, 79 messages remaining.
+# simos: 1926 messages, 01Mar2001, 86 messages remaining.
+# simos: 2009 messages, 02Mar2001, full translation.
+# simos: 1391 messages, 20Apr2002, 167 remaining.
+# simos: 1454 messages, 26 Oct2002, 71 remaining.
+# simos: 1508 messages, 07Nov2002, 17 remaining.
+# simos: 1525 messages, 11Nov2002, translation completed.
+# kostas: unfuzzy 60, 40 new, 07Jan 2003, updated translation for Gnome 2.1x.
+# kostas: 19Jun2003, 1447 messages, updated translation for Gnome 2.4.
+# kostas:13Dec2003, one more update,1549 messages.
+# kostas:13Jan2004,1523 messages.
+# Nikos:21Jan2004, first review for 2.6 , 1508 messages.
+# Nikos:22Jan2004, second review for 2.6, 1522 messages.
+# Simos Xenitellis <simos74@gmx.net>, 2000, 2001, 2002, 2003.
+# Kostas Papadimas <pkst@gnome.org>, 2003, 2004, 2005.
+# Nikos Charonitakis <charosn@her.forthnet.gr>, 2003, 2004, 2005.
+# Kostas Papadimas <pkst@gnome.org>, 2006.
+# #-#-#-#-#  el.po (el)  #-#-#-#-#
 # #-#-#-#-#  el.po (YaST (@memory@))  #-#-#-#-#
 # Greek message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -58,13 +107,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-09-04 13:59+0300\n"
 "Last-Translator: Kostas Papadimas <pkst@gnome.org>\n"
 "Language-Team: Greek <team@gnome.gr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  el.po.add (el)  #-#-#-#-#\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);X-Generator: KBabel 1.11.2\n"
+"X-Generator: KBabel 1.11.2\n"
+"#-#-#-#-#  el.po (el)  #-#-#-#-#\n"
 "#-#-#-#-#  el.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "#-#-#-#-#  el.po-missing (el)  #-#-#-#-#\n"
@@ -294,7 +347,7 @@ msgstr "Έγγραφο"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Επιφάνεια Εργασίας"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -454,7 +507,7 @@ msgid "Default menu and application browser"
 msgstr "Σειρά Εφαρμογής"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr ""
 
@@ -711,7 +764,7 @@ msgstr ""
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr ""
 

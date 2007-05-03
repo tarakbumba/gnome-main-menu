@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Check hardware-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-11-13 12:55+0530\n"
 "Last-Translator: Priyavert Sharma <priyavert.sharma@agreeya.com>\n"
 "Language-Team: AgreeYa Solutions <linux_team@agreeya.com>\n"
@@ -390,7 +390,7 @@ msgid "Default menu and application browser"
 msgstr "डिफॉल्ट मेन्यू व अप्लिकेशन ब्राऊझर"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "ग्नोम प्रमुख मेन्यू"
 
@@ -664,7 +664,7 @@ msgstr "%s मोफत / %s एकूण"
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "ग्नोम मुख्य मेन्यू"
 

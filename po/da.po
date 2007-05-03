@@ -1,3 +1,37 @@
+# #-#-#-#-#  da.po.add (nautilus)  #-#-#-#-#
+# Danish translation of Nautilus.
+# Copyright (C) 2000-2006
+# This file is distributed under the same license as the nautilus package.
+# Kenneth Christiansen <kenneth@gnu.org>, 2000, 2001.
+# Keld Simonsen <keld@dkuug.dk>, 2000.
+# Kim Schulz <kim@schulz.dk>, 2001.
+# Ole Laursen <olau@hardworking.dk>, 2001, 02, 03, 04.
+# Martin Willemoes Hansen <mwh@sysrq.dk>, 2004, 05.
+# Lasse Bang Mikkelsen <lbm@fatalerror.dk>, 2006.
+#
+# Konventioner:
+#
+#   browse filesystem -> navigér filsystem
+#   browser window -> navigeringsvindue
+#   custom -> eget/egen, brugerdefineret
+#   go menu -> navigationsmenu
+#   hardware -> udstyr
+#   items -> filer, objekter, elementer
+#   lay out -> arrangere (f.eks. objekterne i ikonfremvisningen)
+#   link -> henvisning (ifølge ordlisten), (som udsagnsord) kæde sammen
+#   location -> placering, sted
+#   permissions -> rettigheder
+#   script -> program, tekstprogram (når distinktion er nødvendig)
+#   selected items -> valgte objekter (da de er udvalgte snarere end markerede)
+#   service -> tjeneste
+#   side bar -> sidepanel (alle andre 'bar' er linjer)
+#   trash -> papirkurven
+#   location bar -> adresselinje
+#   pathbar -> stivælger
+#
+# Husk at tilføje dig i credit-listen (msgid "translator-credits")
+#
+# #-#-#-#-#  da.po (nautilus)  #-#-#-#-#
 # #-#-#-#-#  da.po (YaST (@memory@))  #-#-#-#-#
 # Danish message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -43,13 +77,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-03-28 00:17+0200\n"
 "Last-Translator: Lasse Bang Mikkelsen <lbm@fatalerror.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  da.po.add (nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"#-#-#-#-#  da.po (nautilus)  #-#-#-#-#\n"
 "#-#-#-#-#  da.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "#-#-#-#-#  da.po-missing (nautilus)  #-#-#-#-#\n"
@@ -283,7 +320,7 @@ msgstr "Dokumenter"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Skrivebord"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -441,7 +478,7 @@ msgid "Default menu and application browser"
 msgstr "Standardmenu og programbrowser"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOME hovedmenu"
 
@@ -743,7 +780,7 @@ msgstr "%s fri / %s total"
 msgid "gnome-lockscreen"
 msgstr "gnome-låseskærmbillede"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "GNOME hovedmenu"
 

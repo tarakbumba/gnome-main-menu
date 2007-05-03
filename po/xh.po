@@ -1,17 +1,29 @@
+# #-#-#-#-#  xh.po.add (nautilus)  #-#-#-#-#
+# Xhosa translation of nautilus
+# Copyright (C) 2005 Canonical Ltd.
+# This file is distributed under the same license as the nautilus package.
+# Translation by Canonical Ltd <translations@canonical.com> with thanks to
+# Translation World CC in South Africa, 2005.
+#
+# #-#-#-#-#  xh.po (gnome-main-menu)  #-#-#-#-#
 # Copyright (C) 2006 SuSE Linux Products GmbH, Nuernberg
 # This file is distributed under the same license as the package.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-main-menu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-11-03 12:03\n"
 "Last-Translator: Novell Language <language@novell.com>\n"
 "Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  xh.po.add (nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=n!=1;\n"
+"#-#-#-#-#  xh.po (gnome-main-menu)  #-#-#-#-#\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:93
@@ -251,7 +263,7 @@ msgstr "Amaxwebhu"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "i-Desktop"
 
 #: ../libslab/bookmark-agent.c:1151
 #, fuzzy
@@ -408,7 +420,7 @@ msgid "Default menu and application browser"
 msgstr "Imenyu ehlala ikhona nesikhangeli senkqubo"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "Imenyu Engundoqo ye-GNOME"
 
@@ -709,7 +721,7 @@ msgstr "%s Okukhululekileyo / %s Isixa esipheleleyo"
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "Imenyu Engundoqo ye-GNOME"
 

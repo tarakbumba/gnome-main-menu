@@ -1,3 +1,29 @@
+# #-#-#-#-#  mk.po.add (nautilus.HEAD.mk)  #-#-#-#-#
+# translation of nautilus.HEAD.mk.po to Macedonian
+# translation of nautilus.HEAD.mk.po to
+# translation of nautilus.HEAD.po to
+# translation of nautilus.HEAD.mk.po to
+# Copyright (C) 2002,2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+#
+#
+# Дамјан Георгиевски, 2002.
+# Арангел Ангов, 2002.
+# Maratonec <kjdskjds@dksjd>, 2002.
+# <maraton@petlica>, 2002.
+# Igor Petreski <dierektor@pcinfo.com.mk>, 2002.
+# Ivan Stojmirov <stojmir@linux.net.mk>, 2002,2003.
+# Ime Prezime <email@adresa.com>, 2003.
+# Milorad Pesevski <miki78@mt.net.mk>, 2003.
+# Arangel Angov <ufo@linux.net.mk>, 2003.
+# Marko Ivanoski <marko@programmer.net>, 2003.
+# Dushan Vasilevski-DUVIX <dule_boki@mt.net.mk>, 2003.
+# Васко Митанов <vasko@accent.com.mk>, 2003.
+# Tomislav Markovski <herrera@users.sourceforge.net>, 2004.
+# Tomislav Markovski <herrera@users.sourceforge.net>, 2005.
+# Arangel Angov <ufo@linux.net.mk>, 2005, 2006.
+# Арангел Ангов <ufo@linux.net.mk>, 2005.
+# Jovan Naumovski <jovan@lugola.net>, 2006.
+# #-#-#-#-#  mk.po (nautilus.HEAD.mk)  #-#-#-#-#
 # #-#-#-#-#  mk.po (YaST (@memory@))  #-#-#-#-#
 # Macedonian message file for YaST2 (@memory@).
 # Copyright (C) 2006 SUSE Linux Products GmbH.
@@ -33,13 +59,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.HEAD.mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-09-01 01:17+0200\n"
 "Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  mk.po.add (nautilus.HEAD.mk)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=3; plural= n==1 || n%10==1 ? 0 : 1\n"
+"X-Generator: KBabel 1.11.2\n"
+"#-#-#-#-#  mk.po (nautilus.HEAD.mk)  #-#-#-#-#\n"
 "#-#-#-#-#  mk.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "#-#-#-#-#  mk.po-missing (nautilus.HEAD.mk)  #-#-#-#-#\n"
@@ -254,7 +284,7 @@ msgstr ""
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Работна површина"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -407,7 +437,7 @@ msgid "Default menu and application browser"
 msgstr ""
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr ""
 
@@ -662,7 +692,7 @@ msgstr ""
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr ""
 

@@ -1,3 +1,10 @@
+# #-#-#-#-#  br.po.add (nautilus)  #-#-#-#-#
+# Breton translation for nautilus
+# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
+# This file is distributed under the same license as the nautilus package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+#
+# #-#-#-#-#  br.po (nautilus)  #-#-#-#-#
 # #-#-#-#-#  br.po (YaST (@memory@))  #-#-#-#-#
 # Breton message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -15,13 +22,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-04-25 15:19+0000\n"
 "Last-Translator: Giulia Fraboulet <djoulia@gmail.com>\n"
 "Language-Team: Breton <br@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  br.po.add (nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=n > 1\n"
+"#-#-#-#-#  br.po (nautilus)  #-#-#-#-#\n"
 "#-#-#-#-#  br.po (YaST (@memory@))  #-#-#-#-#\n"
 "#-#-#-#-#  br.po-missing (nautilus)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
@@ -248,7 +258,7 @@ msgstr ""
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Burev"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -409,7 +419,7 @@ msgid "Default menu and application browser"
 msgstr "Arloadoù X"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr ""
 
@@ -666,7 +676,7 @@ msgstr ""
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr ""
 

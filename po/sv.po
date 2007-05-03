@@ -1,3 +1,15 @@
+# #-#-#-#-#  sv.po.add (nautilus)  #-#-#-#-#
+# Swedish messages for nautilus.
+# Copyright (C) 2000-2006 Free Software Foundation, Inc.
+# Daniel Nylander <po@danielnylander.se>, 2006.
+# Andreas Hyden <a.hyden@cyberpoint.se>, 2000.
+# Richard Hult <rhult@hem.passagen.se>, 2000.
+# Christian Rose <menthos@menthos.com>, 2000, 2001, 2002, 2003, 2004, 2005.
+# Martin Norbäck <d95mback@dtek.chalmers.se>, 2000, 2001.
+#
+# $Id: sv.po,v 1.312 2006/08/16 05:40:35 dnylande Exp $
+#
+# #-#-#-#-#  sv.po (YaST (@memory@))  #-#-#-#-#
 # Swedish message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002 SuSE Linux AG.
@@ -5,17 +17,21 @@
 # Mattias Newzella <newzella@linux.nu>, 2001.
 # Gudmund Areskoug <fta@algonet.se>, 2001.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2002-01-04 13:30+0100\n"
 "Last-Translator: Novell Language <language@novell.com>\n"
 "Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  sv.po.add (nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"#-#-#-#-#  sv.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
@@ -239,7 +255,7 @@ msgstr "Dokument"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Skrivbord"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -393,7 +409,7 @@ msgid "Default menu and application browser"
 msgstr "Standardläsare för menyer och program"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOME Main Menu"
 
@@ -689,7 +705,7 @@ msgstr "%s ledigt / %s totalt"
 msgid "gnome-lockscreen"
 msgstr "gnome-lockscreen"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "GNOME Main Menu"
 

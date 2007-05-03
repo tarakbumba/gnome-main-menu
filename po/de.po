@@ -1,3 +1,38 @@
+# #-#-#-#-#  de.po.add (nautilus)  #-#-#-#-#
+# German Nautilus translation
+# Copyright (C) 2000-2004 Free Software Foundation, Inc.
+# Benedikt Roth <Benedikt.Roth@gmx.net>, 2000, 2001.
+# Matthias Warkus <mawarkus@gnome.org>, 2000, 2001.
+# Christian Meyer <chrisime@gnome.org>, 2000-2002.
+# Christian Neumair <chris@gnome-de.org>, 2002-2004.
+# Hendrik Richter <hendrikr@gnome.org>, 2004, 2005, 2006.
+# Jens Seidel <jseidel@cvs.gnome.org>, 2005.
+#
+# item		= Objekt
+# home		= Persönlicher Ordner
+# selected	= (aus)gewählt
+# zoom		= vergrößern/verkleinern
+# trash		= Müll
+# location	= Ort
+# location bar	= Adressleiste
+# side bar	= Seitenleiste
+# tool bar	= Werkzeugleiste
+# status bar	= Statusleiste
+# history	= Chronik
+# date modified	= Änderungsdatum
+# date changed	= Änderungsdatum
+# sidebarpanel	= Seitenleistenkarte
+# Factory	= Fabrik
+# URL		= Adresse
+# (un)mount	= einbinden/aushängen
+# Volume	= Datenträger
+# Media		= Medium
+#
+# Übersetzung der GPL wie unter http://www.gnu.de/gpl-ger.html gemäß
+# "Es ist jedermann gestattet, diese Lizenzurkunde zu vervielfältigen und
+#  unveränderte Kopien zu verbreiten; Änderungen sind jedoch nicht erlaubt."
+#
+# #-#-#-#-#  de.po (nautilus)  #-#-#-#-#
 # #-#-#-#-#  de.po (@PACKAGE@)  #-#-#-#-#
 # @TITLE@
 # Copyright (C) 2006, SUSE Linux GmbH, Nuremberg
@@ -44,13 +79,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-08-25 15:49+0200\n"
 "Last-Translator: Hendrik Richter <hendrikr@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  de.po.add (nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"#-#-#-#-#  de.po (nautilus)  #-#-#-#-#\n"
 "#-#-#-#-#  de.po (@PACKAGE@)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "#-#-#-#-#  de.po-missing (nautilus)  #-#-#-#-#\n"
@@ -289,7 +327,7 @@ msgstr "Dokumente"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Desktop"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -445,7 +483,7 @@ msgid "Default menu and application browser"
 msgstr "Standardmenü und Application Browser"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOME-Hauptmenü"
 
@@ -764,7 +802,7 @@ msgstr "%s frei/%s insgesamt"
 msgid "gnome-lockscreen"
 msgstr "gnome-lockscreen"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "Das GNOME-Hauptmenü"
 

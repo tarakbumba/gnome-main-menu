@@ -1,3 +1,13 @@
+# #-#-#-#-#  vi.po.add (Nautilus 2.14.0 HEAD)  #-#-#-#-#
+# Vietnamese Translation for Nautilus.
+# Copyright © 2006 Gnome i18n Project for Vietnamese.
+# Hoang Ngoc Tu <hntu@gmx.de>, 2001-2002.
+# Joern v. Kattchee <kattchee@gmx.net>, 2001-2002.
+# Nguyen Thai Ngoc Duy <pclouds@vnlinux.org>, 2002,2004.
+# Trinh Minh Thanh <tmthanh@yahoo.com>, 2002-2003, 2005.
+# Clytie Siddall <clytie@riverland.net.au>, 2005-2006.
+# 
+# #-#-#-#-#  vi.po (Nautilus 2.14.0 HEAD)  #-#-#-#-#
 # #-#-#-#-#  vi.po (YaST (@memory@))  #-#-#-#-#
 # Vietnamese translation for YaST2 (@memory@).
 # Copyright © 2006 SUSE Linux Products GmbH.
@@ -19,13 +29,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nautilus 2.14.0 HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-08-17 20:50+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  vi.po.add (Nautilus 2.14.0 HEAD)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: LocFactoryEditor 1.6fc1\n"
+"#-#-#-#-#  vi.po (Nautilus 2.14.0 HEAD)  #-#-#-#-#\n"
 "#-#-#-#-#  vi.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "#-#-#-#-#  vi.po-missing (Nautilus 2.14.0 HEAD)  #-#-#-#-#\n"
@@ -240,7 +254,7 @@ msgstr ""
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Màn hình nền"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -393,7 +407,7 @@ msgid "Default menu and application browser"
 msgstr ""
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr ""
 
@@ -648,7 +662,7 @@ msgstr ""
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr ""
 

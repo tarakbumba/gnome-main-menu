@@ -1,3 +1,8 @@
+# #-#-#-#-#  uk.po.add (nautilus)  #-#-#-#-#
+# Copyright (C) 2000-2002 Free Software Foundation, Inc.
+# Yuri Syrota <rasta@renome.rovno.ua>, 2000-2002.
+# Maxim Dzumanenko <dziumanenko@gmail.com>, 2002-2006
+# #-#-#-#-#  uk.po (nautilus)  #-#-#-#-#
 # #-#-#-#-#  uk.po (YaST (@memory@))  #-#-#-#-#
 # Ukrainian message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -13,13 +18,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-09-01 12:55+0300\n"
 "Last-Translator: Maxim Dzumanenko <dziumanenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  uk.po.add (nautilus)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"#-#-#-#-#  uk.po (nautilus)  #-#-#-#-#\n"
 "#-#-#-#-#  uk.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
@@ -246,7 +255,7 @@ msgstr "Документи"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Стільниця"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -406,7 +415,7 @@ msgid "Default menu and application browser"
 msgstr "Порядок програм"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "Головне меню GNOME"
 
@@ -663,7 +672,7 @@ msgstr "Вільно - %s / Всього - %s"
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "Головне меню GNOME"
 

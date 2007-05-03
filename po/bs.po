@@ -1,3 +1,10 @@
+# #-#-#-#-#  bs.po.add (nautilus.HEAD.bs)  #-#-#-#-#
+# translation of nautilus.HEAD.bs.po to Bosnian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER, 2004.
+# Kenan Hadžiavdić <kenan@bgnett.no>, 2004.
+#
+# #-#-#-#-#  bs.po (nautilus.HEAD.bs)  #-#-#-#-#
 # #-#-#-#-#  bs.po (YaST (@memory@))  #-#-#-#-#
 # Bosnian message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
@@ -17,13 +24,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.HEAD.bs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2004-07-31 15:21+0200\n"
 "Last-Translator: Kenan Hadžiavdić <kenan@bgnett.no>\n"
 "Language-Team: Bosnian <lokal@linux.org.ba>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  bs.po.add (nautilus.HEAD.bs)  #-#-#-#-#\n"
+"X-Generator: KBabel 1.3\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"#-#-#-#-#  bs.po (nautilus.HEAD.bs)  #-#-#-#-#\n"
 "#-#-#-#-#  bs.po (YaST (@memory@))  #-#-#-#-#\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
@@ -247,7 +259,7 @@ msgstr ""
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Desktop"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -400,7 +412,7 @@ msgid "Default menu and application browser"
 msgstr ""
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr ""
 
@@ -656,7 +668,7 @@ msgstr ""
 msgid "gnome-lockscreen"
 msgstr ""
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr ""
 

@@ -1,3 +1,9 @@
+# #-#-#-#-#  dz.po.add (nautilus.HEAD.dz)  #-#-#-#-#
+# Dzongkha translation of nautilus.
+# Copyright @ 2006 Free software foundation, Inc.
+# Mindu Dorji.
+#
+# #-#-#-#-#  dz.po (nautilus.HEAD.dz)  #-#-#-#-#
 # #-#-#-#-#  dz.po (gnome-main-menu.HEAD.pot)  #-#-#-#-#
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -14,13 +20,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.HEAD.dz\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-08-09 10:11+0530\n"
 "Last-Translator: Mindu Dorji\n"
 "Language-Team: DZONGKHA <pgeyleg@dit.gov.bt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  dz.po.add (nautilus.HEAD.dz)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Poedit-Language: Dzongkha\n"
+"X-Poedit-Country: BHUTAN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"#-#-#-#-#  dz.po (nautilus.HEAD.dz)  #-#-#-#-#\n"
 "#-#-#-#-#  dz.po (gnome-main-menu.HEAD.pot)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Poedit-Language: Dzongkha\n"
@@ -258,7 +270,7 @@ msgstr "གྱི་ཡིག་ཆ་ཚུ་"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "ཌེསིཀ་ཊོཔ།"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -416,7 +428,7 @@ msgid "Default menu and application browser"
 msgstr "སྔོན་སྒྲིག་དཀར་ཆག་དང་གློག་རིམ་བརའུ་ཟར་"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "ཇི་ནོམ་དཀར་ཆག་གཙོ་བོ་"
 
@@ -714,7 +726,7 @@ msgstr "%s བར་སྟོང་ / %s བསྡོམས་"
 msgid "gnome-lockscreen"
 msgstr "ཇི་ནོམ་-གསལ་གཞི་བསྡམ་བཞག"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "ཇི་ནོམ་དཀར་ཆག་གཙོ་བོ་འདི་"
 

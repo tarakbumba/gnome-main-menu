@@ -1,3 +1,27 @@
+# #-#-#-#-#  fi.po.add (nautilus 1.1.2)  #-#-#-#-#
+# Nautilus Finnish translation.
+# Suomennos: http://gnome-fi.sourceforge.net/
+#
+# Copyright (C) 2002 Free Software Foundation, Inc.
+# Pauli Virtanen <pauli.virtanen@hut.fi>, 2000-2005.
+# Ilkka Tuohela <hile@iki.fi>, 2005.
+#
+# Suomennossuositukset tai -ehdotukset:
+#
+# content view = sisältönäkymä
+# emblem = tunnusmerkki
+# sidebar = sivupaneeli
+#
+# inventory (package management) = sisällysluettelo
+# index (medusa) = luettelo
+#
+# Problems:
+#
+# pattern = glob = lauseke (parempi suomennos tarvitaan)
+#
+# script = komentojono
+#
+# #-#-#-#-#  fi.po (nautilus 1.1.2)  #-#-#-#-#
 # #-#-#-#-#  fi.po (gnome-main-menu.fi)  #-#-#-#-#
 # translation of gnome-main-menu.fi.po to
 # translation of fi.po to
@@ -37,13 +61,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 1.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-02 18:55-0400\n"
+"POT-Creation-Date: 2007-05-03 14:03-0400\n"
 "PO-Revision-Date: 2006-09-12 10:08+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  fi.po.add (nautilus 1.1.2)  #-#-#-#-#\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"#-#-#-#-#  fi.po (nautilus 1.1.2)  #-#-#-#-#\n"
 "#-#-#-#-#  fi.po (gnome-main-menu.fi)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: KBabel 1.11.2\n"
@@ -271,7 +298,7 @@ msgstr "Asiakirjat"
 
 #: ../libslab/bookmark-agent.c:1144
 msgid "Desktop"
-msgstr ""
+msgstr "Työpöytä"
 
 #: ../libslab/bookmark-agent.c:1151
 msgid "File System"
@@ -428,7 +455,7 @@ msgid "Default menu and application browser"
 msgstr "Oletusvalikon ja sovellusten selain"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2189 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2160 ../main-menu/src/slab-window.glade.h:7
 msgid "GNOME Main Menu"
 msgstr "GNOME päävalikko"
 
@@ -728,7 +755,7 @@ msgstr "%s Vapaana / %s Yhteensä"
 msgid "gnome-lockscreen"
 msgstr "gnome-näytönlukitus"
 
-#: ../main-menu/src/main-menu-ui.c:2190
+#: ../main-menu/src/main-menu-ui.c:2161
 msgid "The GNOME Main Menu"
 msgstr "GNOME päävalikko"
 
