@@ -4,6 +4,10 @@
 	Make sure that display names for main-menu tiles are translated, BNC
 	#254817.
 
+	* main-menu/src/tile-table.c:
+	Do not allow drag and drop into Recent {Applications,Documents} tables,
+	BNC #268932.
+
 2007-05-01  Jim Krehl  <jimmyk@novell.com>
 	* main-menu/src/main-menu-ui.c:
 	Moved double-click debouncing to the button press handler of the panel
@@ -71,7 +75,7 @@
 	* main-menu/src/bookmark-tile-table.h
 	* main-menu/src/recent-docs-tile-table.c
 	* main-menu/src/recent-docs-tile-table.h
-	* main-menu/src/tile-table.c 
+	* main-menu/src/tile-table.c
 	* main-menu/src/tile-table.h:
 	Simplified the TileTable object to make it more generic.  Stop loading
 	tiles after the table limit has been reached, this is to prevent delays

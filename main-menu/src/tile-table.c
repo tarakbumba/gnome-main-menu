@@ -433,6 +433,9 @@ drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
 	gint    i;
 
 
+	if (! priv->modifiable)
+		return;
+
 	src_tile = gtk_drag_get_source_widget (context);
 
 	if (src_tile && IS_TILE (src_tile)) {
