@@ -194,14 +194,14 @@ libslab_gnome_desktop_item_open_help (GnomeDesktopItem *item)
 	return retval;
 }
 
-guint32
+guint64
 libslab_get_current_time_millis ()
 {
 	GTimeVal t_curr;
 
 	g_get_current_time (& t_curr);
 
-	return 1000L * t_curr.tv_sec + t_curr.tv_usec / 1000L;
+	return 1000 * ((guint64) t_curr.tv_sec) + ((guint64) t_curr.tv_usec) / 1000;
 }
 
 gint

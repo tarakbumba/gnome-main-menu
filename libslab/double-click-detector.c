@@ -21,6 +21,7 @@
 #include "double-click-detector.h"
 
 #include <gtk/gtksettings.h>
+#include <glib/gstdio.h>
 
 #include "libslab-utils.h"
 
@@ -89,7 +90,7 @@ double_click_detector_dispose (GObject * obj)
 }
 
 gboolean
-double_click_detector_is_double_click (DoubleClickDetector *this, guint32 event_time,
+double_click_detector_is_double_click (DoubleClickDetector *this, guint64 event_time,
                                        gboolean auto_update)
 {
 	gint32 delta;
@@ -113,7 +114,7 @@ double_click_detector_is_double_click (DoubleClickDetector *this, guint32 event_
 }
 
 void
-double_click_detector_update_click_time (DoubleClickDetector *this, guint32 event_time)
+double_click_detector_update_click_time (DoubleClickDetector *this, guint64 event_time)
 {
 	if (event_time <= 0)
 		event_time = libslab_get_current_time_millis ();

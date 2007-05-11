@@ -1,10 +1,15 @@
-2007-04-09  Scott Reeves  <sreeves@novell.com>
-	* configure.in
+2007-05-11  Scott Reeves  <sreeves@novell.com>
+	* main-menu/src/main-menu-ui.c
+	* main-menu/src/tile-table.c
 	* main-menu/etc/system-items.xbel
-	* libslab/Makefile.am
-	* Makefile.am:
-	Fix for BNC#255943
-	   Remove CC from g-m-m since it's now shipped by g-c-c 
+	* configure.in
+	* libslab/libslab-utils.c
+	* libslab/libslab-utils.h
+	* libslab/bookmark-agent.c
+	* libslab/double-click-detector.c
+	* libslab/double-click-detector.h:
+	Merge in SLED10-SP1 branch from it's creation to 05/10/2007 (-r 252:272)
+	Merged in all changes except for po changes.
 
 2007-03-29  Jim Krehl  <jimmyk@novell.com>
 	* main-menu/src/main-menu-ui.c:

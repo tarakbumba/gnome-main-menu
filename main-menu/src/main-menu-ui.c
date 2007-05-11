@@ -158,19 +158,21 @@ static void setup_file_tables        (MainMenuUI *);
 static void setup_bookmark_agents    (MainMenuUI *);
 static void setup_lock_down          (MainMenuUI *);
 
-static void       select_page                (MainMenuUI *);
-static void       update_limits              (MainMenuUI *);
-static void       connect_to_tile_triggers   (MainMenuUI *, TileTable *);
-static void       hide_slab_if_urgent_close  (MainMenuUI *);
-static void       set_search_section_visible (MainMenuUI *);
-static void       set_table_section_visible  (MainMenuUI *, TileTable *);
-static gchar    **get_search_argv            (const gchar *);
-static void       reorient_panel_button      (MainMenuUI *);
-static void       bind_beagle_search_key     (MainMenuUI *);
-static void       launch_search              (MainMenuUI *);
-static void       grab_pointer_and_keyboard  (MainMenuUI *, guint32);
-static void       apply_lockdown_settings    (MainMenuUI *);
-static gboolean   app_is_in_blacklist        (const gchar *);
+static void       select_page                      (MainMenuUI *);
+static void       update_limits                    (MainMenuUI *);
+static void       connect_to_tile_triggers         (MainMenuUI *, TileTable *);
+static void       hide_slab_if_urgent_close        (MainMenuUI *);
+static void       set_search_section_visible       (MainMenuUI *);
+static void       set_table_section_visible        (MainMenuUI *, TileTable *);
+static gchar    **get_search_argv                  (const gchar *);
+static void       reorient_panel_button            (MainMenuUI *);
+static void       bind_beagle_search_key           (MainMenuUI *);
+static void       launch_search                    (MainMenuUI *);
+static void       grab_pointer_and_keyboard        (MainMenuUI *, guint32);
+static void       apply_lockdown_settings          (MainMenuUI *);
+static gboolean   app_is_in_blacklist              (const gchar *);
+static void       toggle_panel_button              (MainMenuUI *);
+static void       handle_panel_button_button_press (MainMenuUI *, guint64);
 
 static Tile *item_to_user_app_tile   (BookmarkItem *, gpointer);
 static Tile *item_to_recent_app_tile (BookmarkItem *, gpointer);
@@ -181,7 +183,7 @@ static Tile *item_to_system_tile     (BookmarkItem *, gpointer);
 static BookmarkItem *app_uri_to_item (const gchar *, gpointer);
 static BookmarkItem *doc_uri_to_item (const gchar *, gpointer);
 
-static void     panel_button_clicked_cb           (GtkButton *, gpointer);
+static void     panel_button_toggled_cb           (GtkToggleButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
 static void     panel_button_drag_data_rcv_cb     (GtkWidget *, GdkDragContext *, gint, gint,
                                                    GtkSelectionData *, guint, guint, gpointer);
@@ -481,8 +483,8 @@ create_panel_button (MainMenuUI *this)
 			GTK_CONTAINER (button_parent), GTK_WIDGET (priv->panel_buttons [i]));
 
 		g_signal_connect (
-			G_OBJECT (priv->panel_buttons [i]), "clicked",
-			G_CALLBACK (panel_button_clicked_cb), this);
+			G_OBJECT (priv->panel_buttons [i]), "toggled",
+			G_CALLBACK (panel_button_toggled_cb), this);
 
 		g_signal_connect (
 			G_OBJECT (priv->panel_buttons [i]), "button_press_event",
@@ -1113,6 +1115,34 @@ app_is_in_blacklist (const gchar *uri)
 }
 
 static void
+toggle_panel_button (MainMenuUI *this)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	gboolean active = gtk_toggle_button_get_active (priv->panel_button);
+
+	gtk_toggle_button_set_active (priv->panel_button, ! active);
+}
+
+static void
+handle_panel_button_button_press (MainMenuUI *this, guint64 time)
+{
+	MainMenuUIPrivate *priv = PRIVATE (this);
+
+	DoubleClickDetector *dcd;
+	gboolean             is_dc;
+
+	dcd = DOUBLE_CLICK_DETECTOR (
+		g_object_get_data (G_OBJECT (priv->panel_button),
+			"double-click-detector"));
+
+	is_dc = double_click_detector_is_double_click (dcd, time, TRUE);
+
+	if (! is_dc)
+		toggle_panel_button (this);
+}
+
+static void
 select_page (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
@@ -1597,51 +1627,27 @@ exit:
 }
 
 static void
-panel_button_clicked_cb (GtkButton *button, gpointer user_data)
+panel_button_toggled_cb (GtkToggleButton *toggle, gpointer user_data)
 {
-	MainMenuUI        *this = MAIN_MENU_UI (user_data);
-	MainMenuUIPrivate *priv = PRIVATE      (this);
+	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
-	GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (button);
-
-	DoubleClickDetector *detector;
-	GTimeVal t_curr;
-	guint32  t_curr_ms;
-
-	gboolean visible;
-
-
-	detector = DOUBLE_CLICK_DETECTOR (
-		g_object_get_data (G_OBJECT (toggle), "double-click-detector"));
-
-	g_get_current_time (& t_curr);
-	t_curr_ms = 1000 * t_curr.tv_sec + t_curr.tv_usec / 1000;
-
-	visible = GTK_WIDGET_VISIBLE (priv->slab_window);
-
-	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
-		if (! visible)
-			gtk_window_present_with_time (GTK_WINDOW (priv->slab_window), t_curr_ms);
-		else
-			gtk_widget_hide (priv->slab_window);
-
-		visible = GTK_WIDGET_VISIBLE (priv->slab_window);
-	}
-
-	gtk_toggle_button_set_active (priv->panel_button, visible);
+	if (! GTK_WIDGET_VISIBLE (priv->slab_window))
+		gtk_window_present_with_time (
+			GTK_WINDOW (priv->slab_window), gtk_get_current_event_time ());
+	else
+		gtk_widget_hide (priv->slab_window);
 }
 
 static gboolean
 panel_button_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
-	MainMenuUIPrivate *priv = PRIVATE (user_data);
-
 	if (event->button != 1)
 		g_signal_stop_emission_by_name (widget, "button_press_event");
-	else if (! gtk_toggle_button_get_active (priv->panel_button))
-		gtk_toggle_button_set_active (priv->panel_button, TRUE);
-	else
-		/* do nothing */ ;
+	else {
+		handle_panel_button_button_press (MAIN_MENU_UI (user_data), event->time);
+
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -1839,13 +1845,25 @@ slab_window_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer 
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
-	GdkWindow *ptr_window;
+	GdkWindow *ptr_window    = NULL;
+	gpointer   window_widget = NULL;
 	
 	
 	ptr_window = gdk_window_at_pointer (NULL, NULL);
 
-	if (priv->slab_window->window != ptr_window) {
+	if (ptr_window)
+		gdk_window_get_user_data (ptr_window, & window_widget);
+
+	if (priv->slab_window->window != ptr_window && window_widget != priv->panel_button) {
 		hide_slab_if_urgent_close (this);
+
+		return TRUE;
+	}
+
+	if (window_widget == priv->panel_button) {
+		g_signal_stop_emission_by_name (widget, "button_press_event");
+
+		handle_panel_button_button_press (this, event->time);
 
 		return TRUE;
 	}
@@ -2047,8 +2065,7 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 	DoubleClickDetector *detector;
-	GTimeVal current_time;
-	guint32 current_time_millis;
+	guint64 t_curr_ms;
 
 	GnomeDesktopItem *ditem;
 	gchar            *ditem_id;
@@ -2062,11 +2079,9 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (button), "double-click-detector"));
 
-	g_get_current_time (& current_time);
+	t_curr_ms = gtk_get_current_event_time ();
 
-	current_time_millis = 1000 * current_time.tv_sec + current_time.tv_usec / 1000;
-
-	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
+	if (! double_click_detector_is_double_click (detector, t_curr_ms, TRUE)) {
 		if (GTK_WIDGET (button) == priv->more_buttons [APPS_PAGE])
 			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
 		else if (GTK_WIDGET (button) == priv->more_buttons [DOCS_PAGE]) {
