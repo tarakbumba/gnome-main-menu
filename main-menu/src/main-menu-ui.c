@@ -191,7 +191,7 @@ static void     page_button_clicked_cb            (GtkButton *, gpointer);
 static void     tile_table_notify_cb              (GObject *, GParamSpec *, gpointer);
 static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb          (Tile *, guint, gpointer);
-static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
+static void     more_buttons_clicked_cb           (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
 static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
 static void     lockdown_notify_cb                (GConfClient *, guint, GConfEntry *, gpointer);
