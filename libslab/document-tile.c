@@ -4,17 +4,21 @@
 
 #include "file-tile-model.h"
 #include "tile-button-view.h"
+#include "context-menu-view.h"
 #include "tile-attribute.h"
 #include "tile-control.h"
 #include "libslab-utils.h"
 
 typedef struct {
-	FileTileModel  *model;
-	TileButtonView *view;
+	FileTileModel   *model;
+	TileButtonView  *view;
+	ContextMenuView *menu;
 
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
 	TileControl *mtime_hdr_control;
+
+	TileControl *open_menu_item_control;
 } DocumentTilePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DOCUMENT_TILE_TYPE, DocumentTilePrivate))
@@ -26,9 +30,11 @@ static void       finalize   (GObject *);
 static GtkWidget *get_widget (Tile *);
 static gboolean   equals     (Tile *, gconstpointer);
 
-static void clicked_cb (GtkButton *, gpointer);
+static void     clicked_cb        (GtkButton *, gpointer);
+static gboolean button_release_cb (GtkWidget *, GdkEventButton *, gpointer);
 
-static void map_mtime_to_string (const GValue *, GValue *, gpointer);
+static void map_mtime_to_string  (const GValue *, GValue *, gpointer);
+static void map_app_to_menu_item (const GValue *, GValue *, gpointer);
 
 static TileClass *this_parent_class = NULL;
 
@@ -52,12 +58,16 @@ document_tile_new (const gchar *uri)
 	DocumentTile        *this;
 	DocumentTilePrivate *priv;
 
+	GtkWidget *menu_item;
+	gint       menu_item_id;
+
 
 	this = g_object_new (DOCUMENT_TILE_TYPE, NULL);
 	priv = PRIVATE (this);
 
 	priv->model = file_tile_model_new (uri);
 	priv->view  = tile_button_view_new (2);
+	priv->menu  = context_menu_view_new ();
 
 	priv->icon_control = tile_control_new (
 		file_tile_model_get_icon_id_attr (priv->model),
@@ -72,7 +82,20 @@ document_tile_new (const gchar *uri)
 		tile_button_view_get_header_text_attr (priv->view, 1),
 		map_mtime_to_string, NULL);
 
+	menu_item = gtk_menu_item_new_with_label ("");
+	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	menu_item_id = GPOINTER_TO_INT (g_object_get_data (
+		G_OBJECT (menu_item), CONTEXT_MENU_VIEW_MENU_ITEM_ID_KEY));
+
+	priv->open_menu_item_control = tile_control_new (
+		file_tile_model_get_icon_id_attr (priv->model),
+		context_menu_view_get_menu_item_attr (priv->menu, menu_item_id),
+		map_app_to_menu_item, NULL);
+
+	gtk_widget_show_all (GTK_WIDGET (priv->menu));
+
 	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
+	g_signal_connect (priv->view, "button-release-event", G_CALLBACK (button_release_cb), this);
 
 	return this;
 }
@@ -97,11 +120,13 @@ this_init (DocumentTile *this)
 {
 	DocumentTilePrivate *priv = PRIVATE (this);
 
-	priv->model             = NULL;
-	priv->view              = NULL;
-	priv->icon_control      = NULL;
-	priv->name_hdr_control  = NULL;
-	priv->mtime_hdr_control = NULL;
+	priv->model                  = NULL;
+	priv->view                   = NULL;
+	priv->menu                   = NULL;
+	priv->icon_control           = NULL;
+	priv->name_hdr_control       = NULL;
+	priv->mtime_hdr_control      = NULL;
+	priv->open_menu_item_control = NULL;
 }
 
 static void
@@ -110,10 +135,16 @@ finalize (GObject *g_obj)
 	DocumentTilePrivate *priv = PRIVATE (g_obj);
 
 	g_object_unref (priv->model);
-/*	g_object_unref (priv->view); */
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
 	g_object_unref (priv->mtime_hdr_control);
+	g_object_unref (priv->open_menu_item_control);
+
+	if (G_IS_OBJECT (priv->view))
+		g_object_unref (priv->view);
+
+	if (priv->menu)
+		gtk_object_sink (GTK_OBJECT (priv->menu));
 
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
@@ -148,6 +179,20 @@ clicked_cb (GtkButton *button, gpointer data)
 	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
 }
 
+static gboolean
+button_release_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	DocumentTilePrivate *priv = PRIVATE (user_data);
+	
+	if (event->button == 3 && GTK_IS_MENU (priv->menu)) {
+		gtk_menu_popup (GTK_MENU (priv->menu), NULL, NULL, NULL, NULL, event->button, event->time);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 map_mtime_to_string (const GValue *val_mtime, GValue *val_string, gpointer data)
 {
@@ -164,4 +209,12 @@ map_mtime_to_string (const GValue *val_mtime, GValue *val_string, gpointer data)
 	g_date_free (time);
 
 	g_value_set_string (val_string, time_str);
+}
+
+static void
+map_app_to_menu_item (const GValue *val_app, GValue *val_string, gpointer data)
+{
+	g_value_set_string (
+		val_string,
+		g_strdup_printf ("<b>Open with %s</b>", g_value_get_string (val_app)));
 }

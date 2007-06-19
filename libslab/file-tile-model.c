@@ -189,7 +189,7 @@ update_model (FileTileModel *this)
 
 	gchar *basename;
 
-	GList               *uri_list = NULL;
+	GList *uri_list = NULL;
 
 
 	g_free (priv->icon_id);
@@ -280,9 +280,16 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 
 	priv->default_app = gnome_vfs_mime_get_default_application (priv->mime_type);
 
+	g_free (priv->icon_id);
+	priv->icon_id = gnome_icon_lookup (
+		gtk_icon_theme_get_default (), thumbnail_factory, priv->uri, NULL,
+		result->file_info, priv->mime_type, 0, NULL);
+
+	g_value_set_string (tile_attribute_get_value (priv->icon_id_attr),   priv->icon_id);
 	g_value_set_string (tile_attribute_get_value (priv->file_name_attr), priv->file_name);
 	g_value_set_long   (tile_attribute_get_value (priv->mtime_attr),     priv->mtime);
 
+	g_object_notify (G_OBJECT (priv->icon_id_attr),   TILE_ATTRIBUTE_VALUE_PROP);
 	g_object_notify (G_OBJECT (priv->file_name_attr), TILE_ATTRIBUTE_VALUE_PROP);
 	g_object_notify (G_OBJECT (priv->mtime_attr),     TILE_ATTRIBUTE_VALUE_PROP);
 }

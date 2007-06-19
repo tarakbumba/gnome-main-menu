@@ -47,7 +47,7 @@ main (int argc, char **argv)
 	txt_tile = document_tile_new ("file:///home/jimmyk/slab/libtile/hehe.txt");
 
 	vbox = gtk_vbox_new (FALSE, 6);
-	gtk_box_pack_start (GTK_BOX (vbox), entry,     FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (odp_tile)),  FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (png_tile)),  FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (txt_tile)),  FALSE, FALSE, 0);
@@ -58,6 +58,10 @@ main (int argc, char **argv)
 	gtk_widget_show_all (window);
     
 	gtk_main ();
+
+	g_object_unref (G_OBJECT (odp_tile));
+	g_object_unref (G_OBJECT (png_tile));
+	g_object_unref (G_OBJECT (txt_tile));
     
 	return 0;
 }

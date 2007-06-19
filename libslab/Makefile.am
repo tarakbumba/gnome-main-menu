@@ -21,6 +21,7 @@ libslab_la_SOURCES =				\
 	bookmark-agent.h			\
 	bookmark-agent-libslab.h		\
 	bookmark-agent.c			\
+	context-menu-view.c			\
 	document-tile.c				\
 	double-click-detector.c			\
 	double-click-detector.h			\
@@ -59,6 +60,7 @@ libslab_la_SOURCES =				\
 
 libslab_includedir = $(includedir)/slab
 libslab_include_HEADERS =			\
+	context-menu-view.h			\
 	document-tile.h				\
 	gnome-utils.h				\
 	slab-gnome-util.h			\
