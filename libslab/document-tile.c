@@ -1,6 +1,7 @@
 #include "document-tile.h"
 
 #include <glib/gi18n.h>
+#include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "file-tile-model.h"
 #include "tile-button-view.h"
@@ -30,8 +31,10 @@ static void       finalize   (GObject *);
 static GtkWidget *get_widget (Tile *);
 static gboolean   equals     (Tile *, gconstpointer);
 
-static void     clicked_cb        (GtkButton *, gpointer);
-static gboolean button_release_cb (GtkWidget *, GdkEventButton *, gpointer);
+static void     clicked_cb                  (GtkButton *, gpointer);
+static gboolean button_release_cb           (GtkWidget *, GdkEventButton *, gpointer);
+static void     open_item_activate_cb       (GtkMenuItem *, gpointer);
+static void     open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
 
 static void map_mtime_to_string  (const GValue *, GValue *, gpointer);
 static void map_app_to_menu_item (const GValue *, GValue *, gpointer);
@@ -58,8 +61,8 @@ document_tile_new (const gchar *uri)
 	DocumentTile        *this;
 	DocumentTilePrivate *priv;
 
-	GtkWidget *menu_item;
-	gint       menu_item_id;
+	GtkWidget     *menu_item;
+	TileAttribute *menu_attr;
 
 
 	this = g_object_new (DOCUMENT_TILE_TYPE, NULL);
@@ -82,15 +85,20 @@ document_tile_new (const gchar *uri)
 		tile_button_view_get_header_text_attr (priv->view, 1),
 		map_mtime_to_string, NULL);
 
-	menu_item = gtk_menu_item_new_with_label ("");
-	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
-	menu_item_id = GPOINTER_TO_INT (g_object_get_data (
-		G_OBJECT (menu_item), CONTEXT_MENU_VIEW_MENU_ITEM_ID_KEY));
+/* make open in default app menu-item/attr */
+
+	menu_attr = context_menu_view_add_menu_item (priv->menu, & menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (open_item_activate_cb), this);
 
 	priv->open_menu_item_control = tile_control_new (
-		file_tile_model_get_icon_id_attr (priv->model),
-		context_menu_view_get_menu_item_attr (priv->menu, menu_item_id),
+		file_tile_model_get_app_attr (priv->model), menu_attr,
 		map_app_to_menu_item, NULL);
+
+/* make open in file browser menu-item */
+
+	menu_item = gtk_menu_item_new_with_label (_("Open in File Manager"));
+	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (open_in_fb_item_activate_cb), this);
 
 	gtk_widget_show_all (GTK_WIDGET (priv->menu));
 
@@ -194,6 +202,18 @@ button_release_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 }
 
 static void
+open_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	file_tile_model_open (PRIVATE (data)->model);
+}
+
+static void
+open_in_fb_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	file_tile_model_open_in_file_browser (PRIVATE (data)->model);
+}
+
+static void
 map_mtime_to_string (const GValue *val_mtime, GValue *val_string, gpointer data)
 {
 	GDate *time;
@@ -214,7 +234,11 @@ map_mtime_to_string (const GValue *val_mtime, GValue *val_string, gpointer data)
 static void
 map_app_to_menu_item (const GValue *val_app, GValue *val_string, gpointer data)
 {
-	g_value_set_string (
-		val_string,
-		g_strdup_printf ("<b>Open with %s</b>", g_value_get_string (val_app)));
+	GnomeVFSMimeApplication *app = (GnomeVFSMimeApplication *) g_value_get_pointer (val_app);
+
+	if (app)
+		g_value_set_string (
+			val_string, g_strdup_printf (_("<b>Open with %s</b>"), app->name));
+	else
+		g_value_set_string (val_string, _("Open with Default Application"));
 }

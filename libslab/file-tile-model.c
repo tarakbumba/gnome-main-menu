@@ -16,6 +16,7 @@ typedef struct {
 	TileAttribute *file_name_attr;
 	TileAttribute *icon_id_attr;
 	TileAttribute *mtime_attr;
+	TileAttribute *app_attr;
 
 	gchar *uri;
 
@@ -25,6 +26,8 @@ typedef struct {
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), FILE_TILE_MODEL_TYPE, FileTileModelPrivate))
 
+#define OPEN_IN_FILE_BROWSER_CMD_KEY "/desktop/gnome/applications/main-menu/file-area/file_mgr_open_cmd"
+
 #define DEFAULT_ICON_ID  "gnome-fs-regular"
 #define MAX_DESC_STR_LEN 1024
 
@@ -33,7 +36,8 @@ static void this_init       (FileTileModel *);
 
 static void finalize (GObject *);
 
-static void update_model (FileTileModel *);
+static void update_model      (FileTileModel *);
+static void update_attributes (FileTileModel *);
 
 static void thumbnail_factory_destroy_cb (gpointer, GObject *);
 static void uri_notify_cb (GObject *, GParamSpec *, gpointer);
@@ -70,6 +74,7 @@ file_tile_model_new (const gchar *uri)
 	priv->file_name_attr = tile_attribute_new (G_TYPE_STRING);
 	priv->icon_id_attr   = tile_attribute_new (G_TYPE_STRING);
 	priv->mtime_attr     = tile_attribute_new (G_TYPE_LONG);
+	priv->app_attr       = tile_attribute_new (G_TYPE_POINTER);
 
 	priv->uri = g_strdup (tile_model_get_uri (TILE_MODEL (this)));
 
@@ -99,6 +104,12 @@ file_tile_model_get_mtime_attr (FileTileModel *this)
 	return PRIVATE (this)->mtime_attr;
 }
 
+TileAttribute *
+file_tile_model_get_app_attr (FileTileModel *this)
+{
+	return PRIVATE (this)->app_attr;
+}
+
 void
 file_tile_model_open (FileTileModel *this)
 {
@@ -124,6 +135,38 @@ file_tile_model_open (FileTileModel *this)
 	}
 }
 
+void
+file_tile_model_open_in_file_browser (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	gchar *filename;
+	gchar *dirname;
+	gchar *uri;
+
+	gchar *cmd;
+
+	filename = g_filename_from_uri (priv->uri, NULL, NULL);
+	dirname  = g_path_get_dirname (filename);
+	uri      = g_filename_to_uri (dirname, NULL, NULL);
+
+	if (! uri)
+		g_warning ("error getting dirname for [%s]\n", priv->uri);
+	else {
+		cmd = libslab_string_replace_once (
+			(gchar *) libslab_get_gconf_value (OPEN_IN_FILE_BROWSER_CMD_KEY),
+			"FILE_URI", uri);
+
+		libslab_spawn_command (cmd);
+
+		g_free (cmd);
+	}
+
+	g_free (filename);
+	g_free (dirname);
+	g_free (uri);
+}
+
 static void
 this_class_init (FileTileModelClass *this_class)
 {
@@ -147,6 +190,7 @@ this_init (FileTileModel *this)
 	priv->file_name_attr = NULL;
 	priv->icon_id_attr   = NULL;
 	priv->mtime_attr     = NULL;
+	priv->app_attr       = NULL;
 
 	priv->uri            = NULL;
 
@@ -178,6 +222,7 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->file_name_attr);
 	g_object_unref (priv->icon_id_attr);
 	g_object_unref (priv->mtime_attr);
+	g_object_unref (priv->app_attr);
 
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
@@ -207,13 +252,7 @@ update_model (FileTileModel *this)
 
 	g_free (basename);
 
-	g_value_set_string (tile_attribute_get_value (priv->file_name_attr), priv->file_name);
-	g_value_set_string (tile_attribute_get_value (priv->icon_id_attr),   priv->icon_id);
-	g_value_set_long   (tile_attribute_get_value (priv->mtime_attr),     priv->mtime);
-
-	g_object_notify (G_OBJECT (priv->file_name_attr), TILE_ATTRIBUTE_VALUE_PROP);
-	g_object_notify (G_OBJECT (priv->icon_id_attr),   TILE_ATTRIBUTE_VALUE_PROP);
-	g_object_notify (G_OBJECT (priv->mtime_attr),     TILE_ATTRIBUTE_VALUE_PROP);
+	update_attributes (this);
 
 	uri_list = g_list_append (uri_list, gnome_vfs_uri_new (priv->uri));
 
@@ -285,11 +324,21 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 		gtk_icon_theme_get_default (), thumbnail_factory, priv->uri, NULL,
 		result->file_info, priv->mime_type, 0, NULL);
 
-	g_value_set_string (tile_attribute_get_value (priv->icon_id_attr),   priv->icon_id);
-	g_value_set_string (tile_attribute_get_value (priv->file_name_attr), priv->file_name);
-	g_value_set_long   (tile_attribute_get_value (priv->mtime_attr),     priv->mtime);
+	update_attributes (FILE_TILE_MODEL (this));
+}
 
-	g_object_notify (G_OBJECT (priv->icon_id_attr),   TILE_ATTRIBUTE_VALUE_PROP);
+static void
+update_attributes (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	g_value_set_string  (tile_attribute_get_value (priv->file_name_attr), priv->file_name);
+	g_value_set_string  (tile_attribute_get_value (priv->icon_id_attr),   priv->icon_id);
+	g_value_set_long    (tile_attribute_get_value (priv->mtime_attr),     priv->mtime);
+	g_value_set_pointer (tile_attribute_get_value (priv->app_attr),       priv->default_app);
+
 	g_object_notify (G_OBJECT (priv->file_name_attr), TILE_ATTRIBUTE_VALUE_PROP);
+	g_object_notify (G_OBJECT (priv->icon_id_attr),   TILE_ATTRIBUTE_VALUE_PROP);
 	g_object_notify (G_OBJECT (priv->mtime_attr),     TILE_ATTRIBUTE_VALUE_PROP);
+	g_object_notify (G_OBJECT (priv->app_attr),       TILE_ATTRIBUTE_VALUE_PROP);
 }
