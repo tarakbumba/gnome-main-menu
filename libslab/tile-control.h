@@ -27,8 +27,9 @@ typedef struct {
 
 GType tile_control_get_type (void);
 
-TileControl *tile_control_new (TileAttribute *source, TileAttribute *destination,
-                               TileControlMappingFunc func, gpointer data);
+TileControl *tile_control_new                   (TileAttribute *source, TileAttribute *destination);
+TileControl *tile_control_new_with_mapping_func (TileAttribute *source, TileAttribute *destination,
+                                                 TileControlMappingFunc func, gpointer data);
 
 G_END_DECLS
 

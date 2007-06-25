@@ -18,6 +18,7 @@ typedef struct {
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
 	TileControl *mtime_hdr_control;
+	TileControl *rename_hdr_control;
 
 	TileControl *open_menu_item_control;
 } DocumentTilePrivate;
@@ -35,6 +36,8 @@ static void     clicked_cb                  (GtkButton *, gpointer);
 static gboolean button_release_cb           (GtkWidget *, GdkEventButton *, gpointer);
 static void     open_item_activate_cb       (GtkMenuItem *, gpointer);
 static void     open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
+static void     rename_item_activate_cb     (GtkMenuItem *, gpointer);
+static void     view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
 static void map_mtime_to_string  (const GValue *, GValue *, gpointer);
 static void map_app_to_menu_item (const GValue *, GValue *, gpointer);
@@ -74,13 +77,11 @@ document_tile_new (const gchar *uri)
 
 	priv->icon_control = tile_control_new (
 		file_tile_model_get_icon_id_attr (priv->model),
-		tile_button_view_get_icon_id_attr (priv->view),
-		NULL, NULL);
+		tile_button_view_get_icon_id_attr (priv->view));
 	priv->name_hdr_control = tile_control_new (
 		file_tile_model_get_file_name_attr (priv->model),
-		tile_button_view_get_header_text_attr (priv->view, 0),
-		NULL, NULL);
-	priv->mtime_hdr_control = tile_control_new (
+		tile_button_view_get_header_text_attr (priv->view, 0));
+	priv->mtime_hdr_control = tile_control_new_with_mapping_func (
 		file_tile_model_get_mtime_attr (priv->model),
 		tile_button_view_get_header_text_attr (priv->view, 1),
 		map_mtime_to_string, NULL);
@@ -90,7 +91,7 @@ document_tile_new (const gchar *uri)
 	menu_attr = context_menu_view_add_menu_item (priv->menu, & menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (open_item_activate_cb), this);
 
-	priv->open_menu_item_control = tile_control_new (
+	priv->open_menu_item_control = tile_control_new_with_mapping_func (
 		file_tile_model_get_app_attr (priv->model), menu_attr,
 		map_app_to_menu_item, NULL);
 
@@ -100,10 +101,25 @@ document_tile_new (const gchar *uri)
 	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (open_in_fb_item_activate_cb), this);
 
+/* insert separator */
+
+	gtk_menu_append (GTK_MENU (priv->menu), gtk_separator_menu_item_new ());
+
+/* make rename menu-item */
+
+	menu_item = gtk_menu_item_new_with_label (_("Rename..."));
+	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (rename_item_activate_cb), this);
+
 	gtk_widget_show_all (GTK_WIDGET (priv->menu));
 
 	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
 	g_signal_connect (priv->view, "button-release-event", G_CALLBACK (button_release_cb), this);
+
+	g_signal_connect (
+		tile_button_view_get_header_text_attr (priv->view, 0), 
+		"notify::" TILE_ATTRIBUTE_VALUE_PROP,
+		G_CALLBACK (view_name_attr_notify_cb), this);
 
 	return this;
 }
@@ -134,6 +150,7 @@ this_init (DocumentTile *this)
 	priv->icon_control           = NULL;
 	priv->name_hdr_control       = NULL;
 	priv->mtime_hdr_control      = NULL;
+	priv->rename_hdr_control     = NULL;
 	priv->open_menu_item_control = NULL;
 }
 
@@ -146,6 +163,7 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
 	g_object_unref (priv->mtime_hdr_control);
+	g_object_unref (priv->rename_hdr_control);
 	g_object_unref (priv->open_menu_item_control);
 
 	if (G_IS_OBJECT (priv->view))
@@ -211,6 +229,20 @@ static void
 open_in_fb_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 {
 	file_tile_model_open_in_file_browser (PRIVATE (data)->model);
+}
+
+static void
+rename_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	tile_button_view_activate_header_edit (PRIVATE (data)->view, 0);
+}
+
+static void
+view_name_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
+{
+	GValue *val = tile_attribute_get_value (TILE_ATTRIBUTE (g_obj));
+
+	file_tile_model_rename (PRIVATE (data)->model, g_value_get_string (val));
 }
 
 static void

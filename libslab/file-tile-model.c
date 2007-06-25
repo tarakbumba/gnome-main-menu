@@ -6,19 +6,16 @@
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "libslab-utils.h"
+#include "bookmark-agent.h"
 
 typedef struct {
-	gchar  *file_name;
-	gchar  *mime_type;
-	time_t  mtime;
-	gchar  *icon_id;
+	gchar *uri;
+	gchar *mime_type;
 
 	TileAttribute *file_name_attr;
 	TileAttribute *icon_id_attr;
 	TileAttribute *mtime_attr;
 	TileAttribute *app_attr;
-
-	gchar *uri;
 
 	GnomeVFSAsyncHandle     *handle;
 	GnomeVFSMimeApplication *default_app;
@@ -37,11 +34,11 @@ static void this_init       (FileTileModel *);
 static void finalize (GObject *);
 
 static void update_model      (FileTileModel *);
-static void update_attributes (FileTileModel *);
+static void update_mime_type  (FileTileModel *, const gchar *);
 
 static void thumbnail_factory_destroy_cb (gpointer, GObject *);
-static void uri_notify_cb (GObject *, GParamSpec *, gpointer);
-static void file_info_cb (GnomeVFSAsyncHandle *, GList *, gpointer);
+static void uri_notify_cb                (GObject *, GParamSpec *, gpointer);
+static void file_info_cb                 (GnomeVFSAsyncHandle *, GList *, gpointer);
 
 static GnomeThumbnailFactory *thumbnail_factory = NULL;
 
@@ -167,6 +164,58 @@ file_tile_model_open_in_file_browser (FileTileModel *this)
 	g_free (uri);
 }
 
+void
+file_tile_model_rename (FileTileModel *this, const gchar *name)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	GnomeVFSURI *src_uri;
+	GnomeVFSURI *dst_uri;
+
+	gchar *dirname;
+	gchar *dst_path;
+	gchar *src_uri_str;
+
+	BookmarkAgent *rct_docs_agent;
+
+	GnomeVFSResult retval;
+
+
+	src_uri = gnome_vfs_uri_new (priv->uri);
+	dirname = gnome_vfs_uri_extract_dirname (src_uri);
+
+	dst_path = g_build_filename (dirname, name, NULL);
+	dst_uri  = gnome_vfs_uri_new (dst_path);
+
+	if (! gnome_vfs_uri_equal (src_uri, dst_uri)) {
+		retval = gnome_vfs_xfer_uri (
+			src_uri, dst_uri,
+			GNOME_VFS_XFER_REMOVESOURCE,
+			GNOME_VFS_XFER_ERROR_MODE_ABORT,
+			GNOME_VFS_XFER_OVERWRITE_MODE_SKIP,
+			NULL, NULL);
+
+		if (retval == GNOME_VFS_OK) {
+			src_uri_str = priv->uri;
+			priv->uri   = gnome_vfs_uri_to_string (dst_uri, GNOME_VFS_URI_HIDE_NONE);
+
+			update_model (this);
+
+			rct_docs_agent = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_DOCS);
+			bookmark_agent_move_item (rct_docs_agent, src_uri_str, priv->uri);
+			g_object_unref (rct_docs_agent);
+
+			g_free (src_uri_str);
+		}
+	}
+
+	gnome_vfs_uri_unref (src_uri);
+	gnome_vfs_uri_unref (dst_uri);
+
+	g_free (dirname);
+	g_free (dst_path);
+}
+
 static void
 this_class_init (FileTileModelClass *this_class)
 {
@@ -182,17 +231,13 @@ this_init (FileTileModel *this)
 {
 	FileTileModelPrivate *priv = PRIVATE (this);
 
-	priv->file_name      = NULL;
+	priv->uri            = NULL;
 	priv->mime_type      = NULL;
-	priv->mtime          = 0;
-	priv->icon_id        = NULL;
 
 	priv->file_name_attr = NULL;
 	priv->icon_id_attr   = NULL;
 	priv->mtime_attr     = NULL;
 	priv->app_attr       = NULL;
-
-	priv->uri            = NULL;
 
 	priv->handle         = NULL;
 	priv->default_app    = NULL;
@@ -212,8 +257,6 @@ finalize (GObject *g_obj)
 
 	gnome_vfs_async_cancel (priv->handle);
 
-	g_free (priv->icon_id);
-	g_free (priv->file_name);
 	g_free (priv->uri);
 	g_free (priv->mime_type);
 
@@ -233,34 +276,50 @@ update_model (FileTileModel *this)
 	FileTileModelPrivate *priv = PRIVATE (this);
 
 	gchar *basename;
+	gchar *file_name;
 
-	GList *uri_list = NULL;
+	GnomeVFSURI *uri;
+	GList       *uri_list = NULL;
 
-
-	g_free (priv->icon_id);
-	g_free (priv->file_name);
-	g_free (priv->mime_type);
 
 	basename = g_path_get_basename (priv->uri);
 
-	priv->file_name = gnome_vfs_unescape_string (basename, NULL);
-	priv->icon_id   = g_strdup (DEFAULT_ICON_ID);
-	priv->mime_type = g_strdup (gnome_vfs_get_mime_type_for_name (basename));
-	priv->mtime     = 0;
+	file_name = gnome_vfs_unescape_string (basename, NULL);
+	tile_attribute_set_string (priv->file_name_attr, file_name);
+	g_free (file_name);
 
-	priv->default_app = gnome_vfs_mime_get_default_application (priv->mime_type);
+	update_mime_type (this, gnome_vfs_get_mime_type_for_name (basename));
 
 	g_free (basename);
 
-	update_attributes (this);
+	tile_attribute_set_string (priv->icon_id_attr, DEFAULT_ICON_ID);
 
-	uri_list = g_list_append (uri_list, gnome_vfs_uri_new (priv->uri));
+	uri      = gnome_vfs_uri_new (priv->uri);
+	uri_list = g_list_append (uri_list, uri);
 
 	gnome_vfs_async_get_file_info (
 		& priv->handle, uri_list, GNOME_VFS_FILE_INFO_GET_MIME_TYPE,
 		GNOME_VFS_PRIORITY_DEFAULT, file_info_cb, this);
 
+	gnome_vfs_uri_unref (uri);
 	g_list_free (uri_list);
+}
+
+static void
+update_mime_type (FileTileModel *this, const gchar *mime_type)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	if (! libslab_strcmp (priv->mime_type, mime_type))
+		return;
+
+	g_free (priv->mime_type);
+	priv->mime_type = g_strdup (mime_type);
+
+	gnome_vfs_mime_application_free (priv->default_app);
+	priv->default_app = gnome_vfs_mime_get_default_application (priv->mime_type);
+
+	tile_attribute_set_pointer (priv->app_attr, priv->default_app);
 }
 
 static void
@@ -280,6 +339,7 @@ uri_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 	uri = tile_model_get_uri (TILE_MODEL (data));
 
 	if (libslab_strcmp (uri, priv->uri)) {
+		g_free (priv->uri);
 		priv->uri = g_strdup (uri);
 		update_model (FILE_TILE_MODEL (data));
 	}
@@ -293,6 +353,8 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 
 	GnomeVFSGetFileInfoResult *result;
 
+	gchar *icon_id;
+
 
 	if (! results)
 		return;
@@ -302,43 +364,17 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 	if (! (result && result->result == GNOME_VFS_OK))
 		return;
 
-	g_free (priv->file_name);
-	priv->file_name = g_strdup (result->file_info->name);
-
-	g_free (priv->mime_type);
+	tile_attribute_set_string (priv->file_name_attr, result->file_info->name);
 
 	if (result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MIME_TYPE)
-		priv->mime_type = g_strdup (result->file_info->mime_type);
-	else
-		priv->mime_type = NULL;
+		update_mime_type (FILE_TILE_MODEL (this), result->file_info->mime_type);
 
 	if (result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MTIME)
-		priv->mtime = result->file_info->mtime;
-	else
-		priv->mtime = 0;
+		tile_attribute_set_long (priv->mtime_attr, result->file_info->mtime);
 
-	priv->default_app = gnome_vfs_mime_get_default_application (priv->mime_type);
-
-	g_free (priv->icon_id);
-	priv->icon_id = gnome_icon_lookup (
+	icon_id = gnome_icon_lookup (
 		gtk_icon_theme_get_default (), thumbnail_factory, priv->uri, NULL,
 		result->file_info, priv->mime_type, 0, NULL);
-
-	update_attributes (FILE_TILE_MODEL (this));
-}
-
-static void
-update_attributes (FileTileModel *this)
-{
-	FileTileModelPrivate *priv = PRIVATE (this);
-
-	g_value_set_string  (tile_attribute_get_value (priv->file_name_attr), priv->file_name);
-	g_value_set_string  (tile_attribute_get_value (priv->icon_id_attr),   priv->icon_id);
-	g_value_set_long    (tile_attribute_get_value (priv->mtime_attr),     priv->mtime);
-	g_value_set_pointer (tile_attribute_get_value (priv->app_attr),       priv->default_app);
-
-	g_object_notify (G_OBJECT (priv->file_name_attr), TILE_ATTRIBUTE_VALUE_PROP);
-	g_object_notify (G_OBJECT (priv->icon_id_attr),   TILE_ATTRIBUTE_VALUE_PROP);
-	g_object_notify (G_OBJECT (priv->mtime_attr),     TILE_ATTRIBUTE_VALUE_PROP);
-	g_object_notify (G_OBJECT (priv->app_attr),       TILE_ATTRIBUTE_VALUE_PROP);
+	tile_attribute_set_string (priv->icon_id_attr, icon_id);
+	g_free (icon_id);
 }

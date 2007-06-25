@@ -15,13 +15,14 @@ typedef struct {
 	gchar               *uri;
 	gchar               *icon_id;
 
+	GtkVBox             *hdr_box;
+
 	gboolean             debounce;
 	DoubleClickDetector *dcd;
 } TileButtonViewPrivate;
 
 #define DEFAULT_ICON_SIZE  GTK_ICON_SIZE_DND
 #define DEFAULT_ICON_ID    "stock_unknown"
-#define WIDTH_HEIGHT_RATIO 6
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_BUTTON_VIEW_TYPE, TileButtonViewPrivate))
 
@@ -43,6 +44,8 @@ static TileAttribute *get_attribute_by_id (TileView *, const gchar *);
 static void uri_attr_notify_cb  (GObject *, GParamSpec *, gpointer);
 static void icon_attr_notify_cb (GObject *, GParamSpec *, gpointer);
 static void hdr_attr_notify_cb  (GObject *, GParamSpec *, gpointer);
+
+static void edit_header_entry_activate_cb (GtkEntry *, gpointer);
 
 enum {
 	PROP_0,
@@ -79,7 +82,6 @@ tile_button_view_new (gint n_hdrs)
 	TileButtonViewPrivate *priv;
 
 	GtkWidget *hbox;
-	GtkWidget *vbox;
 	GtkWidget *alignment;
 
 	gint i;
@@ -97,9 +99,9 @@ tile_button_view_new (gint n_hdrs)
 	g_object_set (G_OBJECT (this->icon), "icon-size", DEFAULT_ICON_SIZE, NULL);
 	gtk_box_pack_start (GTK_BOX (hbox), this->icon, FALSE, FALSE, 0);
 
-	vbox = gtk_vbox_new (FALSE, 0);
+	priv->hdr_box = GTK_VBOX (gtk_vbox_new (FALSE, 0));
 	alignment = gtk_alignment_new (0.0, 0.5, 1.0, 0.0);
-	gtk_container_add (GTK_CONTAINER (alignment), vbox);
+	gtk_container_add (GTK_CONTAINER (alignment), GTK_WIDGET (priv->hdr_box));
 	gtk_box_pack_start (GTK_BOX (hbox), alignment, TRUE, TRUE, 0);
 
 	this->n_hdrs    = n_hdrs;
@@ -116,13 +118,14 @@ tile_button_view_new (gint n_hdrs)
 				this->headers [i], GTK_STATE_NORMAL,
 				& this->headers [i]->style->fg [GTK_STATE_INSENSITIVE]);
 
-		gtk_box_pack_start (GTK_BOX (vbox), this->headers [i], TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (priv->hdr_box), this->headers [i], TRUE, TRUE, 0);
 
 		priv->hdr_attrs [i] = tile_attribute_new (G_TYPE_STRING);
 		g_object_set_data (G_OBJECT (priv->hdr_attrs [i]), "header-index", GINT_TO_POINTER (i));
 
 		g_signal_connect (
-			G_OBJECT (priv->hdr_attrs [i]), "notify", G_CALLBACK (hdr_attr_notify_cb), this);
+			G_OBJECT (priv->hdr_attrs [i]), "notify::" TILE_ATTRIBUTE_VALUE_PROP,
+			G_CALLBACK (hdr_attr_notify_cb), this);
 	}
 
 	priv->uri_attr  = tile_attribute_new (G_TYPE_STRING);
@@ -151,6 +154,60 @@ tile_button_view_get_header_text_attr (TileButtonView *this, gint index)
 	g_return_val_if_fail (0 <= index && index < this->n_hdrs, NULL);
 
 	return PRIVATE (this)->hdr_attrs [index];
+}
+
+void
+tile_button_view_activate_header_edit (TileButtonView *this, gint index)
+{
+	TileButtonViewPrivate *priv = PRIVATE (this);
+
+	GtkWidget *entry;
+
+
+	g_return_if_fail (0 <= index && index < this->n_hdrs);
+
+	entry = gtk_entry_new ();
+	gtk_entry_set_text (
+		GTK_ENTRY (entry),
+		gtk_label_get_text (GTK_LABEL (this->headers [index])));
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+
+	gtk_widget_destroy (this->headers [index]);
+
+	gtk_container_add_with_properties (
+		GTK_CONTAINER (priv->hdr_box), entry,
+		"position", index, NULL);
+
+	g_signal_connect (
+		G_OBJECT (entry), "activate",
+		G_CALLBACK (edit_header_entry_activate_cb), this);
+
+	gtk_widget_show (entry);
+	gtk_widget_grab_focus (entry);
+
+#if 0
+	entry = gtk_entry_new ();
+	gtk_entry_set_text (GTK_ENTRY (entry), this->headers [index]);
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+
+	g_object_ref (G_OBJECT (this->headers [index]));
+	gtk_container_remove
+
+	child = gtk_bin_get_child (priv->header_bin);
+
+	if (child)
+		gtk_widget_destroy (child);
+
+	gtk_container_add (GTK_CONTAINER (priv->header_bin), entry);
+
+	g_signal_connect (G_OBJECT (entry), "activate", G_CALLBACK (rename_entry_activate_cb), tile);
+
+	g_signal_connect (G_OBJECT (entry), "key_release_event",
+		G_CALLBACK (rename_entry_key_release_cb), NULL);
+
+	gtk_widget_show (entry);
+	gtk_widget_grab_focus (entry);
+#endif
 }
 
 static void
@@ -418,4 +475,34 @@ hdr_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 		gtk_label_set_text (GTK_LABEL (this->headers [index]), text);
 		gtk_widget_show (GTK_WIDGET (this->headers [index]));
 	}
+}
+
+static void
+edit_header_entry_activate_cb (GtkEntry *entry, gpointer data)
+{
+	TileButtonView        *this = TILE_BUTTON_VIEW (data);
+	TileButtonViewPrivate *priv = PRIVATE (this);
+
+	const gchar *entry_text;
+
+	gint index;
+
+
+	gtk_container_child_get (
+		GTK_CONTAINER (priv->hdr_box), GTK_WIDGET (entry),
+		"position", & index, NULL);
+
+	entry_text = gtk_entry_get_text (entry);
+
+	this->headers [index] = gtk_label_new (entry_text);
+	gtk_misc_set_alignment (GTK_MISC (this->headers [index]), 0.0, 0.5);
+	tile_attribute_set_string (priv->hdr_attrs [index], entry_text);
+
+	gtk_widget_destroy (GTK_WIDGET (entry));
+
+	gtk_container_add_with_properties (
+		GTK_CONTAINER (priv->hdr_box), this->headers [index],
+		"position", index, NULL);
+
+	gtk_widget_show (this->headers [index]);
 }

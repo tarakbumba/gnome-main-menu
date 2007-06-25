@@ -35,8 +35,14 @@ tile_control_get_type ()
 }
 
 TileControl *
-tile_control_new (TileAttribute *source, TileAttribute *destination,
-                  TileControlMappingFunc func, gpointer data)
+tile_control_new (TileAttribute *source, TileAttribute *destination)
+{
+	return tile_control_new_with_mapping_func (source, destination, NULL, NULL);
+}
+
+TileControl *
+tile_control_new_with_mapping_func (TileAttribute *source, TileAttribute *destination,
+                                    TileControlMappingFunc func, gpointer data)
 {
 	TileControl        *this;
 	TileControlPrivate *priv;

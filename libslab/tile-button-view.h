@@ -38,6 +38,7 @@ TileButtonView *tile_button_view_new                  (gint n_hdrs);
 TileAttribute  *tile_button_view_get_uri_attr         (TileButtonView *this);
 TileAttribute  *tile_button_view_get_icon_id_attr     (TileButtonView *this);
 TileAttribute  *tile_button_view_get_header_text_attr (TileButtonView *this, gint index);
+void            tile_button_view_activate_header_edit (TileButtonView *this, gint index);
 
 G_END_DECLS
 

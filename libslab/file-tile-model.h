@@ -31,6 +31,7 @@ TileAttribute *file_tile_model_get_mtime_attr       (FileTileModel *this);
 TileAttribute *file_tile_model_get_app_attr         (FileTileModel *this);
 void           file_tile_model_open                 (FileTileModel *this);
 void           file_tile_model_open_in_file_browser (FileTileModel *this);
+void           file_tile_model_rename               (FileTileModel *this, const gchar *name);
 
 G_END_DECLS
 
