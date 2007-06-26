@@ -327,7 +327,10 @@ app_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 static void
 send_to_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 {
-	tile_attribute_set_active (dst, g_value_get_boolean (tile_attribute_get_value (src)));
+	if (g_value_get_boolean (tile_attribute_get_value (src)))
+		tile_attribute_set_status (dst, TILE_ATTRIBUTE_ACTIVE);
+	else
+		tile_attribute_set_status (dst, TILE_ATTRIBUTE_INACTIVE);
 }
 
 static void
@@ -344,15 +347,15 @@ store_status_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 {
 	switch (g_value_get_int (tile_attribute_get_value (src))) {
 		case BOOKMARK_STORE_DEFAULT_ONLY:
-			tile_attribute_set_active (dst, FALSE);
+			tile_attribute_set_status (dst, TILE_ATTRIBUTE_INACTIVE);
 			break;
 
 		case BOOKMARK_STORE_ABSENT:
-			tile_attribute_set_string (dst, "Wakka Wakka !!");
+			tile_attribute_set_status (dst, TILE_ATTRIBUTE_HIDDEN);
 			break;
 
 		default:
-			tile_attribute_set_active (dst, TRUE);
+			tile_attribute_set_status (dst, TILE_ATTRIBUTE_ACTIVE);
 			break;
 	}
 }

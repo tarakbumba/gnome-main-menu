@@ -13,7 +13,13 @@ G_BEGIN_DECLS
 #define TILE_ATTRIBUTE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TILE_ATTRIBUTE_TYPE, TileAttributeClass))
 
 #define TILE_ATTRIBUTE_VALUE_PROP  "tile-attribute-value"
-#define TILE_ATTRIBUTE_ACTIVE_PROP "tile-attribute-active"
+#define TILE_ATTRIBUTE_STATUS_PROP "tile-attribute-status"
+
+typedef enum {
+	TILE_ATTRIBUTE_ACTIVE,
+	TILE_ATTRIBUTE_INACTIVE,
+	TILE_ATTRIBUTE_HIDDEN
+} TileAttributeStatus;
 
 typedef struct {
 	GObject g_object;
@@ -32,7 +38,7 @@ void           tile_attribute_set_int     (TileAttribute *this, gint i);
 void           tile_attribute_set_long    (TileAttribute *this, glong l);
 void           tile_attribute_set_string  (TileAttribute *this, const gchar *s);
 void           tile_attribute_set_pointer (TileAttribute *this, gpointer p);
-void           tile_attribute_set_active  (TileAttribute *this, gboolean active);
+void           tile_attribute_set_status  (TileAttribute *this, TileAttributeStatus status);
 
 G_END_DECLS
 

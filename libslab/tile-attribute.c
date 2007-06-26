@@ -3,8 +3,8 @@
 #include "libslab-utils.h"
 
 typedef struct {
-	GValue   *value;
-	gboolean  active;
+	GValue              *value;
+	TileAttributeStatus  status;
 } TileAttributePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_ATTRIBUTE_TYPE, TileAttributePrivate))
@@ -19,7 +19,7 @@ static void finalize     (GObject *);
 enum {
 	PROP_0,
 	PROP_VALUE,
-	PROP_ACTIVE
+	PROP_STATUS
 };
 
 static GObjectClass *this_parent_class = NULL;
@@ -128,13 +128,13 @@ tile_attribute_set_pointer (TileAttribute *this, gpointer p)
 }
 
 void
-tile_attribute_set_active (TileAttribute *this, gboolean active)
+tile_attribute_set_status (TileAttribute *this, TileAttributeStatus status)
 {
 	TileAttributePrivate *priv = PRIVATE (this);
 
-	if (priv->active != active) {
-		priv->active = active;
-		g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_ACTIVE_PROP);
+	if (priv->status != status) {
+		priv->status = status;
+		g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_STATUS_PROP);
 	}
 }
 
@@ -144,7 +144,7 @@ this_class_init (TileAttributeClass *this_class)
 	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
 
 	GParamSpec *value_pspec;
-	GParamSpec *active_pspec;
+	GParamSpec *status_pspec;
 
 
 	g_obj_class->get_property = get_property;
@@ -156,13 +156,14 @@ this_class_init (TileAttributeClass *this_class)
 		"the GValue object this attribute represents",
 		G_PARAM_READABLE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
 
-	active_pspec = g_param_spec_boolean (
-		TILE_ATTRIBUTE_ACTIVE_PROP, TILE_ATTRIBUTE_ACTIVE_PROP,
-		"whether or not this attribute is active", TRUE,
+	status_pspec = g_param_spec_int (
+		TILE_ATTRIBUTE_STATUS_PROP, TILE_ATTRIBUTE_STATUS_PROP,
+		"the TileAttributeStatus of this attribute",
+		TILE_ATTRIBUTE_ACTIVE, TILE_ATTRIBUTE_HIDDEN, TILE_ATTRIBUTE_ACTIVE,
 		G_PARAM_READWRITE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
 
 	g_object_class_install_property (g_obj_class, PROP_VALUE,  value_pspec);
-	g_object_class_install_property (g_obj_class, PROP_ACTIVE, active_pspec);
+	g_object_class_install_property (g_obj_class, PROP_STATUS, status_pspec);
 
 	g_type_class_add_private (this_class, sizeof (TileAttributePrivate));
 
@@ -175,7 +176,7 @@ this_init (TileAttribute *this)
 	TileAttributePrivate *priv = PRIVATE (this);
 
 	priv->value  = NULL;
-	priv->active = TRUE;
+	priv->status = TILE_ATTRIBUTE_ACTIVE;
 }
 
 static void
@@ -188,8 +189,8 @@ get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
 			g_value_set_pointer (value, priv->value);
 			break;
 
-		case PROP_ACTIVE:
-			g_value_set_boolean (value, priv->active);
+		case PROP_STATUS:
+			g_value_set_int (value, priv->status);
 			break;
 
 		default:
@@ -200,8 +201,8 @@ get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
 static void
 set_property (GObject *g_obj, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	if (prop_id == PROP_ACTIVE)
-		PRIVATE (g_obj)->active = g_value_get_boolean (value);
+	if (prop_id == PROP_STATUS)
+		PRIVATE (g_obj)->status = g_value_get_int (value);
 }
 
 static void
