@@ -16,6 +16,7 @@ typedef struct {
 	TileAttribute *icon_id_attr;
 	TileAttribute *mtime_attr;
 	TileAttribute *app_attr;
+	TileAttribute *is_local_attr;
 
 	GnomeVFSAsyncHandle     *handle;
 	GnomeVFSMimeApplication *default_app;
@@ -24,6 +25,7 @@ typedef struct {
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), FILE_TILE_MODEL_TYPE, FileTileModelPrivate))
 
 #define OPEN_IN_FILE_BROWSER_CMD_KEY "/desktop/gnome/applications/main-menu/file-area/file_mgr_open_cmd"
+#define SEND_TO_CMD_KEY              "/desktop/gnome/applications/main-menu/file-area/file_send_to_cmd"
 
 #define DEFAULT_ICON_ID  "gnome-fs-regular"
 #define MAX_DESC_STR_LEN 1024
@@ -33,14 +35,17 @@ static void this_init       (FileTileModel *);
 
 static void finalize (GObject *);
 
-static void update_model      (FileTileModel *);
-static void update_mime_type  (FileTileModel *, const gchar *);
+static void     update_model     (FileTileModel *);
+static void     update_mime_type (FileTileModel *, const gchar *);
+static gboolean file_is_local    (FileTileModel *);
 
 static void thumbnail_factory_destroy_cb (gpointer, GObject *);
+static void volume_monitor_destroy_cb    (gpointer, GObject *);
 static void uri_notify_cb                (GObject *, GParamSpec *, gpointer);
 static void file_info_cb                 (GnomeVFSAsyncHandle *, GList *, gpointer);
 
 static GnomeThumbnailFactory *thumbnail_factory = NULL;
+static GnomeVFSVolumeMonitor *volume_monitor    = NULL;
 
 static GObjectClass *this_parent_class = NULL;
 
@@ -72,6 +77,7 @@ file_tile_model_new (const gchar *uri)
 	priv->icon_id_attr   = tile_attribute_new (G_TYPE_STRING);
 	priv->mtime_attr     = tile_attribute_new (G_TYPE_LONG);
 	priv->app_attr       = tile_attribute_new (G_TYPE_POINTER);
+	priv->is_local_attr  = tile_attribute_new (G_TYPE_BOOLEAN);
 
 	priv->uri = g_strdup (tile_model_get_uri (TILE_MODEL (this)));
 
@@ -105,6 +111,12 @@ TileAttribute *
 file_tile_model_get_app_attr (FileTileModel *this)
 {
 	return PRIVATE (this)->app_attr;
+}
+
+TileAttribute *
+file_tile_model_get_is_local_attr (FileTileModel *this)
+{
+	return PRIVATE (this)->is_local_attr;
 }
 
 void
@@ -141,7 +153,9 @@ file_tile_model_open_in_file_browser (FileTileModel *this)
 	gchar *dirname;
 	gchar *uri;
 
+	gchar *cmd_template;
 	gchar *cmd;
+
 
 	filename = g_filename_from_uri (priv->uri, NULL, NULL);
 	dirname  = g_path_get_dirname (filename);
@@ -150,13 +164,13 @@ file_tile_model_open_in_file_browser (FileTileModel *this)
 	if (! uri)
 		g_warning ("error getting dirname for [%s]\n", priv->uri);
 	else {
-		cmd = libslab_string_replace_once (
-			(gchar *) libslab_get_gconf_value (OPEN_IN_FILE_BROWSER_CMD_KEY),
-			"FILE_URI", uri);
+		cmd_template = (gchar *) libslab_get_gconf_value (OPEN_IN_FILE_BROWSER_CMD_KEY);
+		cmd = libslab_string_replace_once (cmd_template, "FILE_URI", uri);
 
 		libslab_spawn_command (cmd);
 
 		g_free (cmd);
+		g_free (cmd_template);
 	}
 
 	g_free (filename);
@@ -174,7 +188,7 @@ file_tile_model_rename (FileTileModel *this, const gchar *name)
 
 	gchar *dirname;
 	gchar *dst_path;
-	gchar *src_uri_str;
+	gchar *dst_uri_str;
 
 	BookmarkAgent *rct_docs_agent;
 
@@ -196,16 +210,15 @@ file_tile_model_rename (FileTileModel *this, const gchar *name)
 			NULL, NULL);
 
 		if (retval == GNOME_VFS_OK) {
-			src_uri_str = priv->uri;
-			priv->uri   = gnome_vfs_uri_to_string (dst_uri, GNOME_VFS_URI_HIDE_NONE);
-
-			update_model (this);
+			dst_uri_str = gnome_vfs_uri_to_string (dst_uri, GNOME_VFS_URI_HIDE_NONE);
 
 			rct_docs_agent = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_DOCS);
-			bookmark_agent_move_item (rct_docs_agent, src_uri_str, priv->uri);
+			bookmark_agent_move_item (rct_docs_agent, priv->uri, dst_uri_str);
 			g_object_unref (rct_docs_agent);
 
-			g_free (src_uri_str);
+			tile_model_set_uri (TILE_MODEL (this), dst_uri_str);
+
+			g_free (dst_uri_str);
 		}
 	}
 
@@ -214,6 +227,39 @@ file_tile_model_rename (FileTileModel *this, const gchar *name)
 
 	g_free (dirname);
 	g_free (dst_path);
+}
+
+void
+file_tile_model_send_to (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	gchar *cmd_template;
+	gchar *cmd;
+
+	gchar *filename;
+	gchar *dirname;
+	gchar *basename;
+
+
+	filename = g_filename_from_uri (priv->uri, NULL, NULL);
+	dirname  = g_path_get_dirname (filename);
+	basename = g_path_get_basename (filename);
+
+	cmd_template = (gchar *) libslab_get_gconf_value (SEND_TO_CMD_KEY);
+	cmd = libslab_string_replace_once (cmd_template, "DIRNAME", dirname);
+	g_free (cmd_template);
+
+	cmd_template = cmd;
+	cmd = libslab_string_replace_once (cmd_template, "BASENAME", basename);
+	g_free (cmd_template);
+
+	libslab_spawn_command (cmd);
+
+	g_free (cmd);
+	g_free (filename);
+	g_free (dirname);
+	g_free (basename);
 }
 
 static void
@@ -238,6 +284,7 @@ this_init (FileTileModel *this)
 	priv->icon_id_attr   = NULL;
 	priv->mtime_attr     = NULL;
 	priv->app_attr       = NULL;
+	priv->is_local_attr  = NULL;
 
 	priv->handle         = NULL;
 	priv->default_app    = NULL;
@@ -248,6 +295,13 @@ this_init (FileTileModel *this)
 	}
 	else
 		g_object_ref (G_OBJECT (thumbnail_factory));
+
+	if (! volume_monitor) {
+		volume_monitor = gnome_vfs_get_volume_monitor ();
+		g_object_weak_ref (G_OBJECT (volume_monitor), volume_monitor_destroy_cb, NULL);
+	}
+	else
+		gnome_vfs_volume_monitor_ref (volume_monitor);
 }
 
 static void
@@ -260,12 +314,14 @@ finalize (GObject *g_obj)
 	g_free (priv->uri);
 	g_free (priv->mime_type);
 
-	g_object_unref (G_OBJECT (thumbnail_factory));
-
 	g_object_unref (priv->file_name_attr);
 	g_object_unref (priv->icon_id_attr);
 	g_object_unref (priv->mtime_attr);
 	g_object_unref (priv->app_attr);
+	g_object_unref (priv->is_local_attr);
+
+	g_object_unref (G_OBJECT (thumbnail_factory));
+	gnome_vfs_volume_monitor_unref (volume_monitor);
 
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
@@ -293,6 +349,7 @@ update_model (FileTileModel *this)
 	g_free (basename);
 
 	tile_attribute_set_string (priv->icon_id_attr, DEFAULT_ICON_ID);
+	tile_attribute_set_boolean (priv->is_local_attr, file_is_local (this));
 
 	uri      = gnome_vfs_uri_new (priv->uri);
 	uri_list = g_list_append (uri_list, uri);
@@ -322,10 +379,57 @@ update_mime_type (FileTileModel *this, const gchar *mime_type)
 	tile_attribute_set_pointer (priv->app_attr, priv->default_app);
 }
 
+static gboolean
+file_is_local (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	GList          *mounts;
+	GnomeVFSVolume *vol;
+	gchar          *mount_point;
+	GnomeVFSURI    *gvfs_uri;
+	gboolean        is_local = TRUE;
+
+	GList *node;
+
+
+	if (! g_str_has_prefix (priv->uri, "file://"))
+		return FALSE;
+
+	mounts = gnome_vfs_volume_monitor_get_mounted_volumes (volume_monitor);
+
+	for (node = mounts; is_local && node; node = node->next) {
+		vol = (GnomeVFSVolume *) node->data;
+
+		if (gnome_vfs_volume_get_device_type (vol) == GNOME_VFS_DEVICE_TYPE_NFS) {
+			mount_point = gnome_vfs_volume_get_activation_uri (vol);
+			is_local = ! g_str_has_prefix (priv->uri, mount_point);
+			g_free (mount_point);
+		}
+	}
+
+	if (is_local) {
+		gvfs_uri = gnome_vfs_uri_new (priv->uri);
+		is_local = gnome_vfs_uri_is_local (gvfs_uri);
+		gnome_vfs_uri_unref (gvfs_uri);
+	}
+
+	g_list_foreach (mounts, (GFunc) gnome_vfs_volume_unref, NULL);
+	g_list_free (mounts);
+
+	return is_local;
+}
+
 static void
 thumbnail_factory_destroy_cb (gpointer data, GObject *g_obj)
 {
 	thumbnail_factory = NULL;
+}
+
+static void
+volume_monitor_destroy_cb (gpointer data, GObject *g_obj)
+{
+	volume_monitor = NULL;
 }
 
 static void

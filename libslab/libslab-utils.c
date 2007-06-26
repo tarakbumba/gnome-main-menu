@@ -7,6 +7,7 @@
 #include <string.h>
 #include <gconf/gconf-value.h>
 #include <libgnome/gnome-url.h>
+#include <libgnomevfs/gnome-vfs.h>
 
 #define DESKTOP_ITEM_TERMINAL_EMULATOR_FLAG "TerminalEmulator"
 #define ALTERNATE_DOCPATH_KEY               "DocPath"

@@ -18,9 +18,9 @@ typedef struct {
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
 	TileControl *mtime_hdr_control;
-	TileControl *rename_hdr_control;
 
 	TileControl *open_menu_item_control;
+	TileControl *send_to_menu_item_control;
 } DocumentTilePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DOCUMENT_TILE_TYPE, DocumentTilePrivate))
@@ -37,10 +37,12 @@ static gboolean button_release_cb           (GtkWidget *, GdkEventButton *, gpoi
 static void     open_item_activate_cb       (GtkMenuItem *, gpointer);
 static void     open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
 static void     rename_item_activate_cb     (GtkMenuItem *, gpointer);
+static void     send_to_item_activate_cb    (GtkMenuItem *, gpointer);
 static void     view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
-static void map_mtime_to_string  (const GValue *, GValue *, gpointer);
-static void map_app_to_menu_item (const GValue *, GValue *, gpointer);
+static void mtime_trigger   (TileAttribute *, TileAttribute *, gpointer);
+static void app_trigger     (TileAttribute *, TileAttribute *, gpointer);
+static void send_to_trigger (TileAttribute *, TileAttribute *, gpointer);
 
 static TileClass *this_parent_class = NULL;
 
@@ -81,19 +83,19 @@ document_tile_new (const gchar *uri)
 	priv->name_hdr_control = tile_control_new (
 		file_tile_model_get_file_name_attr (priv->model),
 		tile_button_view_get_header_text_attr (priv->view, 0));
-	priv->mtime_hdr_control = tile_control_new_with_mapping_func (
+	priv->mtime_hdr_control = tile_control_new_with_trigger_func (
 		file_tile_model_get_mtime_attr (priv->model),
 		tile_button_view_get_header_text_attr (priv->view, 1),
-		map_mtime_to_string, NULL);
+		mtime_trigger, NULL);
 
 /* make open in default app menu-item/attr */
 
-	menu_attr = context_menu_view_add_menu_item (priv->menu, & menu_item);
+	menu_item = gtk_menu_item_new ();
+	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (open_item_activate_cb), this);
 
-	priv->open_menu_item_control = tile_control_new_with_mapping_func (
-		file_tile_model_get_app_attr (priv->model), menu_attr,
-		map_app_to_menu_item, NULL);
+	priv->open_menu_item_control = tile_control_new_with_trigger_func (
+		file_tile_model_get_app_attr (priv->model), menu_attr, app_trigger, NULL);
 
 /* make open in file browser menu-item */
 
@@ -110,6 +112,16 @@ document_tile_new (const gchar *uri)
 	menu_item = gtk_menu_item_new_with_label (_("Rename..."));
 	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (rename_item_activate_cb), this);
+
+/* make send-to menu-item */
+
+	menu_item = gtk_menu_item_new_with_label (_("Send To..."));
+	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (send_to_item_activate_cb), this);
+
+	priv->send_to_menu_item_control = tile_control_new_with_trigger_func (
+		file_tile_model_get_is_local_attr (priv->model), menu_attr,
+		send_to_trigger, NULL);
 
 	gtk_widget_show_all (GTK_WIDGET (priv->menu));
 
@@ -144,14 +156,14 @@ this_init (DocumentTile *this)
 {
 	DocumentTilePrivate *priv = PRIVATE (this);
 
-	priv->model                  = NULL;
-	priv->view                   = NULL;
-	priv->menu                   = NULL;
-	priv->icon_control           = NULL;
-	priv->name_hdr_control       = NULL;
-	priv->mtime_hdr_control      = NULL;
-	priv->rename_hdr_control     = NULL;
-	priv->open_menu_item_control = NULL;
+	priv->model                     = NULL;
+	priv->view                      = NULL;
+	priv->menu                      = NULL;
+	priv->icon_control              = NULL;
+	priv->name_hdr_control          = NULL;
+	priv->mtime_hdr_control         = NULL;
+	priv->open_menu_item_control    = NULL;
+	priv->send_to_menu_item_control = NULL;
 }
 
 static void
@@ -163,8 +175,8 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
 	g_object_unref (priv->mtime_hdr_control);
-	g_object_unref (priv->rename_hdr_control);
 	g_object_unref (priv->open_menu_item_control);
+	g_object_unref (priv->send_to_menu_item_control);
 
 	if (G_IS_OBJECT (priv->view))
 		g_object_unref (priv->view);
@@ -238,6 +250,12 @@ rename_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 }
 
 static void
+send_to_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	file_tile_model_send_to (PRIVATE (data)->model);
+}
+
+static void
 view_name_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 {
 	GValue *val = tile_attribute_get_value (TILE_ATTRIBUTE (g_obj));
@@ -246,31 +264,43 @@ view_name_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 }
 
 static void
-map_mtime_to_string (const GValue *val_mtime, GValue *val_string, gpointer data)
+mtime_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 {
 	GDate *time;
 	gchar *time_str;
-	
-	
+
+
 	time = g_date_new ();
-	g_date_set_time (time, g_value_get_long (val_mtime));
+	g_date_set_time (time, g_value_get_long (tile_attribute_get_value (src)));
 
 	time_str = g_new0 (gchar, 256);
 
 	g_date_strftime (time_str, 256, _("Edited %m/%d/%Y"), time);
 	g_date_free (time);
 
-	g_value_set_string (val_string, time_str);
+	tile_attribute_set_string (dst, time_str);
+	g_free (time_str);
 }
 
 static void
-map_app_to_menu_item (const GValue *val_app, GValue *val_string, gpointer data)
+app_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 {
-	GnomeVFSMimeApplication *app = (GnomeVFSMimeApplication *) g_value_get_pointer (val_app);
+	GnomeVFSMimeApplication *app;
+	gchar                   *menu_label;
+
+	app = (GnomeVFSMimeApplication *) g_value_get_pointer (tile_attribute_get_value (src));
 
 	if (app)
-		g_value_set_string (
-			val_string, g_strdup_printf (_("<b>Open with %s</b>"), app->name));
+		menu_label = g_strdup_printf (_("<b>Open with %s</b>"), app->name);
 	else
-		g_value_set_string (val_string, _("Open with Default Application"));
+		menu_label = g_strdup (_("Open with Default Application"));
+
+	tile_attribute_set_string (dst, menu_label);
+	g_free (menu_label);
+}
+
+static void
+send_to_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
+{
+	tile_attribute_set_active (dst, g_value_get_boolean (tile_attribute_get_value (src)));
 }

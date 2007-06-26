@@ -3,8 +3,8 @@
 typedef struct {
 	TileAttribute          *attr_src;
 	TileAttribute          *attr_dst;
-	TileControlMappingFunc  mapping_func;
-	gpointer                data;
+	TileControlTriggerFunc  trigger_func;
+	gpointer                trigger_data;
 } TileControlPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_CONTROL_TYPE, TileControlPrivate))
@@ -14,7 +14,7 @@ static void this_init       (TileControl *);
 
 static void finalize (GObject *);
 
-static void map_values (TileControl *this);
+static void default_trigger (TileAttribute *, TileAttribute *, gpointer);
 
 static void source_notify_cb (GObject *, GParamSpec *, gpointer);
 
@@ -37,12 +37,12 @@ tile_control_get_type ()
 TileControl *
 tile_control_new (TileAttribute *source, TileAttribute *destination)
 {
-	return tile_control_new_with_mapping_func (source, destination, NULL, NULL);
+	return tile_control_new_with_trigger_func (source, destination, default_trigger, NULL);
 }
 
 TileControl *
-tile_control_new_with_mapping_func (TileAttribute *source, TileAttribute *destination,
-                                    TileControlMappingFunc func, gpointer data)
+tile_control_new_with_trigger_func (TileAttribute *source, TileAttribute *destination,
+                                    TileControlTriggerFunc trigger_func, gpointer trigger_data)
 {
 	TileControl        *this;
 	TileControlPrivate *priv;
@@ -50,16 +50,17 @@ tile_control_new_with_mapping_func (TileAttribute *source, TileAttribute *destin
 
 	g_return_val_if_fail (source, NULL);
 	g_return_val_if_fail (destination, NULL);
+	g_return_val_if_fail (trigger_func, NULL);
 
 	this = g_object_new (TILE_CONTROL_TYPE, NULL);
 	priv = PRIVATE (this);
 
 	priv->attr_src     = g_object_ref (source);
 	priv->attr_dst     = g_object_ref (destination);
-	priv->mapping_func = func;
-	priv->data         = data;
+	priv->trigger_func = trigger_func;
+	priv->trigger_data = trigger_data;
 
-	map_values (this);
+	priv->trigger_func (priv->attr_src, priv->attr_dst, priv->trigger_data);
 
 	g_signal_connect (
 		G_OBJECT (priv->attr_src), "notify::" TILE_ATTRIBUTE_VALUE_PROP,
@@ -85,8 +86,8 @@ this_init (TileControl *this)
 
 	priv->attr_src     = NULL;
 	priv->attr_dst     = NULL;
-	priv->mapping_func = NULL;
-	priv->data         = NULL;
+	priv->trigger_func = NULL;
+	priv->trigger_data = NULL;
 }
 
 static void
@@ -101,27 +102,17 @@ finalize (GObject *g_obj)
 }
 
 static void
-map_values (TileControl *this)
+default_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 {
-	TileControlPrivate *priv = PRIVATE (this);
+	g_value_copy (tile_attribute_get_value (src), tile_attribute_get_value (dst));
 
-	GValue *val_src;
-	GValue *val_dst;
-
-
-	val_src = tile_attribute_get_value (priv->attr_src);
-	val_dst = tile_attribute_get_value (priv->attr_dst);
-
-	if (priv->mapping_func)
-		priv->mapping_func (val_src, val_dst, priv->data);
-	else
-		g_value_copy (val_src, val_dst);
-
-	g_object_notify (G_OBJECT (priv->attr_dst), TILE_ATTRIBUTE_VALUE_PROP);
+	g_object_notify (G_OBJECT (dst), TILE_ATTRIBUTE_VALUE_PROP);
 }
 
 static void
 source_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 {
-	map_values (TILE_CONTROL (data));
+	TileControlPrivate *priv = PRIVATE (data);
+
+	priv->trigger_func (priv->attr_src, priv->attr_dst, priv->trigger_data);
 }

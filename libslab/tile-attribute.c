@@ -3,7 +3,8 @@
 #include "libslab-utils.h"
 
 typedef struct {
-	GValue *value;
+	GValue   *value;
+	gboolean  active;
 } TileAttributePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_ATTRIBUTE_TYPE, TileAttributePrivate))
@@ -17,7 +18,8 @@ static void finalize     (GObject *);
 
 enum {
 	PROP_0,
-	PROP_VALUE
+	PROP_VALUE,
+	PROP_ACTIVE
 };
 
 static GObjectClass *this_parent_class = NULL;
@@ -55,48 +57,71 @@ tile_attribute_get_value (TileAttribute *this)
 }
 
 void
-tile_attribute_set_long (TileAttribute *this, glong num)
+tile_attribute_set_boolean (TileAttribute *this, gboolean b)
+{
+	TileAttributePrivate *priv = PRIVATE (this);
+
+	g_return_if_fail (G_VALUE_HOLDS (priv->value, G_TYPE_BOOLEAN));
+
+	if (g_value_get_boolean (priv->value) == b)
+		return;
+
+	g_value_set_boolean (priv->value, b);
+	g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_VALUE_PROP);
+}
+
+void
+tile_attribute_set_long (TileAttribute *this, glong l)
 {
 	TileAttributePrivate *priv = PRIVATE (this);
 
 	g_return_if_fail (G_VALUE_HOLDS (priv->value, G_TYPE_LONG));
 
-	if (g_value_get_long (priv->value) == num)
+	if (g_value_get_long (priv->value) == l)
 		return;
 
-	g_value_reset (priv->value);
-	g_value_set_long (priv->value, num);
+	g_value_set_long (priv->value, l);
 	g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_VALUE_PROP);
 }
 
 void
-tile_attribute_set_string (TileAttribute *this, const gchar *str)
+tile_attribute_set_string (TileAttribute *this, const gchar *s)
 {
 	TileAttributePrivate *priv = PRIVATE (this);
 
 	g_return_if_fail (G_VALUE_HOLDS (priv->value, G_TYPE_STRING));
 
-	if (! libslab_strcmp (g_value_get_string (priv->value), str))
+	if (! libslab_strcmp (g_value_get_string (priv->value), s))
 		return;
 
 	g_value_reset (priv->value);
-	g_value_set_string (priv->value, str);
+	g_value_set_string (priv->value, s);
 	g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_VALUE_PROP);
 }
 
 void
-tile_attribute_set_pointer (TileAttribute *this, gpointer ptr)
+tile_attribute_set_pointer (TileAttribute *this, gpointer p)
 {
 	TileAttributePrivate *priv = PRIVATE (this);
 
 	g_return_if_fail (G_VALUE_HOLDS (priv->value, G_TYPE_POINTER));
 
-	if (g_value_get_pointer (priv->value) == ptr)
+	if (g_value_get_pointer (priv->value) == p)
 		return;
 
-	g_value_reset (priv->value);
-	g_value_set_pointer (priv->value, ptr);
+	g_value_set_pointer (priv->value, p);
 	g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_VALUE_PROP);
+}
+
+void
+tile_attribute_set_active (TileAttribute *this, gboolean active)
+{
+	TileAttributePrivate *priv = PRIVATE (this);
+
+	if (priv->active != active) {
+		priv->active = active;
+		g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_ACTIVE_PROP);
+	}
 }
 
 static void
@@ -105,6 +130,7 @@ this_class_init (TileAttributeClass *this_class)
 	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
 
 	GParamSpec *value_pspec;
+	GParamSpec *active_pspec;
 
 
 	g_obj_class->get_property = get_property;
@@ -116,7 +142,13 @@ this_class_init (TileAttributeClass *this_class)
 		"the GValue object this attribute represents",
 		G_PARAM_READABLE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
 
-	g_object_class_install_property (g_obj_class, PROP_VALUE, value_pspec);
+	active_pspec = g_param_spec_boolean (
+		TILE_ATTRIBUTE_ACTIVE_PROP, TILE_ATTRIBUTE_ACTIVE_PROP,
+		"whether or not this attribute is active", TRUE,
+		G_PARAM_READWRITE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
+
+	g_object_class_install_property (g_obj_class, PROP_VALUE,  value_pspec);
+	g_object_class_install_property (g_obj_class, PROP_ACTIVE, active_pspec);
 
 	g_type_class_add_private (this_class, sizeof (TileAttributePrivate));
 
@@ -126,7 +158,10 @@ this_class_init (TileAttributeClass *this_class)
 static void
 this_init (TileAttribute *this)
 {
-	PRIVATE (this)->value = NULL;
+	TileAttributePrivate *priv = PRIVATE (this);
+
+	priv->value  = NULL;
+	priv->active = TRUE;
 }
 
 static void
@@ -139,6 +174,10 @@ get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
 			g_value_set_pointer (value, priv->value);
 			break;
 
+		case PROP_ACTIVE:
+			g_value_set_boolean (value, priv->active);
+			break;
+
 		default:
 			break;
 	}
@@ -147,7 +186,8 @@ get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
 static void
 set_property (GObject *g_obj, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	/* No writeable properties */
+	if (prop_id == PROP_ACTIVE)
+		PRIVATE (g_obj)->active = g_value_get_boolean (value);
 }
 
 static void

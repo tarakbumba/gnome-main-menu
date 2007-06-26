@@ -29,9 +29,11 @@ TileAttribute *file_tile_model_get_file_name_attr   (FileTileModel *this);
 TileAttribute *file_tile_model_get_icon_id_attr     (FileTileModel *this);
 TileAttribute *file_tile_model_get_mtime_attr       (FileTileModel *this);
 TileAttribute *file_tile_model_get_app_attr         (FileTileModel *this);
+TileAttribute *file_tile_model_get_is_local_attr    (FileTileModel *this);
 void           file_tile_model_open                 (FileTileModel *this);
 void           file_tile_model_open_in_file_browser (FileTileModel *this);
 void           file_tile_model_rename               (FileTileModel *this, const gchar *name);
+void           file_tile_model_send_to              (FileTileModel *this);
 
 G_END_DECLS
 
