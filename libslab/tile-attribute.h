@@ -28,6 +28,7 @@ GType tile_attribute_get_type (void);
 TileAttribute *tile_attribute_new         (GType type);
 GValue        *tile_attribute_get_value   (TileAttribute *this);
 void           tile_attribute_set_boolean (TileAttribute *this, gboolean b);
+void           tile_attribute_set_int     (TileAttribute *this, gint i);
 void           tile_attribute_set_long    (TileAttribute *this, glong l);
 void           tile_attribute_set_string  (TileAttribute *this, const gchar *s);
 void           tile_attribute_set_pointer (TileAttribute *this, gpointer p);

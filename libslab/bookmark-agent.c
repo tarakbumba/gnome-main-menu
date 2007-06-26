@@ -177,6 +177,12 @@ bookmark_agent_get_instance (BookmarkStoreType type)
 	return instances [type];
 }
 
+BookmarkStoreStatus
+bookmark_agent_get_status (BookmarkAgent *this)
+{
+	return PRIVATE (this)->status;
+}
+
 gboolean
 bookmark_agent_has_item (BookmarkAgent *this, const gchar *uri)
 {

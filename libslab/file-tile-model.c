@@ -12,11 +12,16 @@ typedef struct {
 	gchar *uri;
 	gchar *mime_type;
 
+	BookmarkAgent *user_agent;
+	BookmarkAgent *recent_agent;
+
 	TileAttribute *file_name_attr;
 	TileAttribute *icon_id_attr;
 	TileAttribute *mtime_attr;
 	TileAttribute *app_attr;
 	TileAttribute *is_local_attr;
+	TileAttribute *store_status_attr;
+	TileAttribute *is_in_store_attr;
 
 	GnomeVFSAsyncHandle     *handle;
 	GnomeVFSMimeApplication *default_app;
@@ -42,6 +47,8 @@ static gboolean file_is_local    (FileTileModel *);
 static void thumbnail_factory_destroy_cb (gpointer, GObject *);
 static void volume_monitor_destroy_cb    (gpointer, GObject *);
 static void uri_notify_cb                (GObject *, GParamSpec *, gpointer);
+static void user_store_items_notify_cb   (GObject *, GParamSpec *, gpointer);
+static void user_store_status_notify_cb  (GObject *, GParamSpec *, gpointer);
 static void file_info_cb                 (GnomeVFSAsyncHandle *, GList *, gpointer);
 
 static GnomeThumbnailFactory *thumbnail_factory = NULL;
@@ -73,18 +80,33 @@ file_tile_model_new (const gchar *uri)
 	this = g_object_new (FILE_TILE_MODEL_TYPE, TILE_MODEL_URI_PROP, uri, NULL);
 	priv = PRIVATE (this);
 
-	priv->file_name_attr = tile_attribute_new (G_TYPE_STRING);
-	priv->icon_id_attr   = tile_attribute_new (G_TYPE_STRING);
-	priv->mtime_attr     = tile_attribute_new (G_TYPE_LONG);
-	priv->app_attr       = tile_attribute_new (G_TYPE_POINTER);
-	priv->is_local_attr  = tile_attribute_new (G_TYPE_BOOLEAN);
+	priv->user_agent   = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
+	priv->recent_agent = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_DOCS);
+
+	priv->file_name_attr    = tile_attribute_new (G_TYPE_STRING);
+	priv->icon_id_attr      = tile_attribute_new (G_TYPE_STRING);
+	priv->mtime_attr        = tile_attribute_new (G_TYPE_LONG);
+	priv->app_attr          = tile_attribute_new (G_TYPE_POINTER);
+	priv->is_local_attr     = tile_attribute_new (G_TYPE_BOOLEAN);
+	priv->store_status_attr = tile_attribute_new (G_TYPE_INT);
+	priv->is_in_store_attr  = tile_attribute_new (G_TYPE_BOOLEAN);
 
 	priv->uri = g_strdup (tile_model_get_uri (TILE_MODEL (this)));
 
 	update_model (this);
+	tile_attribute_set_int (
+		priv->store_status_attr, bookmark_agent_get_status (priv->user_agent));
 
 	g_signal_connect (
 		this, "notify::" TILE_MODEL_URI_PROP, G_CALLBACK (uri_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->user_agent), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
+		G_CALLBACK (user_store_items_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->user_agent), "notify::" BOOKMARK_AGENT_STORE_STATUS_PROP,
+		G_CALLBACK (user_store_status_notify_cb), this);
 
 	return this;
 }
@@ -117,6 +139,18 @@ TileAttribute *
 file_tile_model_get_is_local_attr (FileTileModel *this)
 {
 	return PRIVATE (this)->is_local_attr;
+}
+
+TileAttribute *
+file_tile_model_get_store_status_attr (FileTileModel *this)
+{
+	return PRIVATE (this)->store_status_attr;
+}
+
+TileAttribute *
+file_tile_model_get_is_in_store_attr (FileTileModel *this)
+{
+	return PRIVATE (this)->is_in_store_attr;
 }
 
 void
@@ -190,8 +224,6 @@ file_tile_model_rename (FileTileModel *this, const gchar *name)
 	gchar *dst_path;
 	gchar *dst_uri_str;
 
-	BookmarkAgent *rct_docs_agent;
-
 	GnomeVFSResult retval;
 
 
@@ -212,9 +244,8 @@ file_tile_model_rename (FileTileModel *this, const gchar *name)
 		if (retval == GNOME_VFS_OK) {
 			dst_uri_str = gnome_vfs_uri_to_string (dst_uri, GNOME_VFS_URI_HIDE_NONE);
 
-			rct_docs_agent = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_DOCS);
-			bookmark_agent_move_item (rct_docs_agent, priv->uri, dst_uri_str);
-			g_object_unref (rct_docs_agent);
+			if (bookmark_agent_has_item (priv->recent_agent, priv->uri))
+				bookmark_agent_move_item (priv->recent_agent, priv->uri, dst_uri_str);
 
 			tile_model_set_uri (TILE_MODEL (this), dst_uri_str);
 
@@ -262,6 +293,33 @@ file_tile_model_send_to (FileTileModel *this)
 	g_free (basename);
 }
 
+void
+file_tile_model_user_store_toggle (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	BookmarkItem            *item;
+	GnomeVFSMimeApplication *app;
+
+
+	if (bookmark_agent_has_item (priv->user_agent, priv->uri))
+		bookmark_agent_remove_item (priv->user_agent, priv->uri);
+	else {
+		app = (GnomeVFSMimeApplication *)
+			g_value_get_pointer (tile_attribute_get_value (priv->app_attr));
+
+		item = g_new0 (BookmarkItem, 1);
+		item->uri       = priv->uri;
+		item->mime_type = priv->mime_type;
+		item->mtime     = g_value_get_long (tile_attribute_get_value (priv->mtime_attr));
+		item->app_name  = (gchar *) gnome_vfs_mime_application_get_name (app);
+		item->app_exec  = (gchar *) gnome_vfs_mime_application_get_exec (app);
+
+		bookmark_agent_add_item (priv->user_agent, item);
+		g_free (item);
+	}
+}
+
 static void
 this_class_init (FileTileModelClass *this_class)
 {
@@ -277,17 +335,22 @@ this_init (FileTileModel *this)
 {
 	FileTileModelPrivate *priv = PRIVATE (this);
 
-	priv->uri            = NULL;
-	priv->mime_type      = NULL;
+	priv->uri               = NULL;
+	priv->mime_type         = NULL;
 
-	priv->file_name_attr = NULL;
-	priv->icon_id_attr   = NULL;
-	priv->mtime_attr     = NULL;
-	priv->app_attr       = NULL;
-	priv->is_local_attr  = NULL;
+	priv->user_agent        = NULL;
+	priv->recent_agent      = NULL;
 
-	priv->handle         = NULL;
-	priv->default_app    = NULL;
+	priv->file_name_attr    = NULL;
+	priv->icon_id_attr      = NULL;
+	priv->mtime_attr        = NULL;
+	priv->app_attr          = NULL;
+	priv->is_local_attr     = NULL;
+	priv->store_status_attr = NULL;
+	priv->is_in_store_attr  = NULL;
+
+	priv->handle            = NULL;
+	priv->default_app       = NULL;
 
 	if (! thumbnail_factory) {
 		thumbnail_factory = gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
@@ -314,11 +377,16 @@ finalize (GObject *g_obj)
 	g_free (priv->uri);
 	g_free (priv->mime_type);
 
+	g_object_unref (priv->user_agent);
+	g_object_unref (priv->recent_agent);
+
 	g_object_unref (priv->file_name_attr);
 	g_object_unref (priv->icon_id_attr);
 	g_object_unref (priv->mtime_attr);
 	g_object_unref (priv->app_attr);
 	g_object_unref (priv->is_local_attr);
+	g_object_unref (priv->store_status_attr);
+	g_object_unref (priv->is_in_store_attr);
 
 	g_object_unref (G_OBJECT (thumbnail_factory));
 	gnome_vfs_volume_monitor_unref (volume_monitor);
@@ -357,6 +425,10 @@ update_model (FileTileModel *this)
 	gnome_vfs_async_get_file_info (
 		& priv->handle, uri_list, GNOME_VFS_FILE_INFO_GET_MIME_TYPE,
 		GNOME_VFS_PRIORITY_DEFAULT, file_info_cb, this);
+
+	tile_attribute_set_boolean (
+		priv->is_in_store_attr,
+		bookmark_agent_has_item (priv->user_agent, priv->uri));
 
 	gnome_vfs_uri_unref (uri);
 	g_list_free (uri_list);
@@ -447,6 +519,25 @@ uri_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 		priv->uri = g_strdup (uri);
 		update_model (FILE_TILE_MODEL (data));
 	}
+}
+
+static void
+user_store_items_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
+{
+	FileTileModelPrivate *priv = PRIVATE (data);
+
+	tile_attribute_set_boolean (
+		priv->is_in_store_attr,
+		bookmark_agent_has_item (priv->user_agent, priv->uri));
+}
+
+static void
+user_store_status_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
+{
+	FileTileModelPrivate *priv = PRIVATE (data);
+
+	tile_attribute_set_int (
+		priv->store_status_attr, bookmark_agent_get_status (priv->user_agent));
 }
 
 static void

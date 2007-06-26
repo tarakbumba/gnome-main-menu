@@ -71,6 +71,20 @@ tile_attribute_set_boolean (TileAttribute *this, gboolean b)
 }
 
 void
+tile_attribute_set_int (TileAttribute *this, gint i)
+{
+	TileAttributePrivate *priv = PRIVATE (this);
+
+	g_return_if_fail (G_VALUE_HOLDS (priv->value, G_TYPE_INT));
+
+	if (g_value_get_int (priv->value) == i)
+		return;
+
+	g_value_set_int (priv->value, i);
+	g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_VALUE_PROP);
+}
+
+void
 tile_attribute_set_long (TileAttribute *this, glong l)
 {
 	TileAttributePrivate *priv = PRIVATE (this);

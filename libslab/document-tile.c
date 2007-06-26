@@ -9,6 +9,7 @@
 #include "tile-attribute.h"
 #include "tile-control.h"
 #include "libslab-utils.h"
+#include "bookmark-agent.h"
 
 typedef struct {
 	FileTileModel   *model;
@@ -21,6 +22,8 @@ typedef struct {
 
 	TileControl *open_menu_item_control;
 	TileControl *send_to_menu_item_control;
+	TileControl *is_in_store_control;
+	TileControl *store_status_control;
 } DocumentTilePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DOCUMENT_TILE_TYPE, DocumentTilePrivate))
@@ -38,11 +41,14 @@ static void     open_item_activate_cb       (GtkMenuItem *, gpointer);
 static void     open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
 static void     rename_item_activate_cb     (GtkMenuItem *, gpointer);
 static void     send_to_item_activate_cb    (GtkMenuItem *, gpointer);
+static void     user_store_item_activate_cb (GtkMenuItem *, gpointer);
 static void     view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
-static void mtime_trigger   (TileAttribute *, TileAttribute *, gpointer);
-static void app_trigger     (TileAttribute *, TileAttribute *, gpointer);
-static void send_to_trigger (TileAttribute *, TileAttribute *, gpointer);
+static void mtime_trigger        (TileAttribute *, TileAttribute *, gpointer);
+static void app_trigger          (TileAttribute *, TileAttribute *, gpointer);
+static void send_to_trigger      (TileAttribute *, TileAttribute *, gpointer);
+static void is_in_store_trigger  (TileAttribute *, TileAttribute *, gpointer);
+static void store_status_trigger (TileAttribute *, TileAttribute *, gpointer);
 
 static TileClass *this_parent_class = NULL;
 
@@ -122,6 +128,19 @@ document_tile_new (const gchar *uri)
 	priv->send_to_menu_item_control = tile_control_new_with_trigger_func (
 		file_tile_model_get_is_local_attr (priv->model), menu_attr,
 		send_to_trigger, NULL);
+
+/* make add/remove from favorites menu-item */
+
+	menu_item = gtk_menu_item_new ();
+	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (user_store_item_activate_cb), this);
+
+	priv->is_in_store_control = tile_control_new_with_trigger_func (
+		file_tile_model_get_is_in_store_attr (priv->model), menu_attr,
+		is_in_store_trigger, NULL);
+	priv->store_status_control = tile_control_new_with_trigger_func (
+		file_tile_model_get_store_status_attr (priv->model), menu_attr,
+		store_status_trigger, NULL);
 
 	gtk_widget_show_all (GTK_WIDGET (priv->menu));
 
@@ -256,6 +275,12 @@ send_to_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 }
 
 static void
+user_store_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	file_tile_model_user_store_toggle (PRIVATE (data)->model);
+}
+
+static void
 view_name_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 {
 	GValue *val = tile_attribute_get_value (TILE_ATTRIBUTE (g_obj));
@@ -303,4 +328,31 @@ static void
 send_to_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 {
 	tile_attribute_set_active (dst, g_value_get_boolean (tile_attribute_get_value (src)));
+}
+
+static void
+is_in_store_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
+{
+	if (g_value_get_boolean (tile_attribute_get_value (src)))
+		tile_attribute_set_string (dst, _("Remove from Favorites"));
+	else
+		tile_attribute_set_string (dst, _("Add to Favorites"));
+}
+
+static void
+store_status_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
+{
+	switch (g_value_get_int (tile_attribute_get_value (src))) {
+		case BOOKMARK_STORE_DEFAULT_ONLY:
+			tile_attribute_set_active (dst, FALSE);
+			break;
+
+		case BOOKMARK_STORE_ABSENT:
+			tile_attribute_set_string (dst, "Wakka Wakka !!");
+			break;
+
+		default:
+			tile_attribute_set_active (dst, TRUE);
+			break;
+	}
 }
