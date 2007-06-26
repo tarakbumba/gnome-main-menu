@@ -42,6 +42,7 @@ static void     open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
 static void     rename_item_activate_cb     (GtkMenuItem *, gpointer);
 static void     send_to_item_activate_cb    (GtkMenuItem *, gpointer);
 static void     user_store_item_activate_cb (GtkMenuItem *, gpointer);
+static void     trash_item_activate_cb      (GtkMenuItem *, gpointer);
 static void     view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
 static void mtime_trigger        (TileAttribute *, TileAttribute *, gpointer);
@@ -82,6 +83,14 @@ document_tile_new (const gchar *uri)
 	priv->model = file_tile_model_new (uri);
 	priv->view  = tile_button_view_new (2);
 	priv->menu  = context_menu_view_new ();
+
+	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
+	g_signal_connect (priv->view, "button-release-event", G_CALLBACK (button_release_cb), this);
+
+	g_signal_connect (
+		tile_button_view_get_header_text_attr (priv->view, 0), 
+		"notify::" TILE_ATTRIBUTE_VALUE_PROP,
+		G_CALLBACK (view_name_attr_notify_cb), this);
 
 	priv->icon_control = tile_control_new (
 		file_tile_model_get_icon_id_attr (priv->model),
@@ -142,15 +151,17 @@ document_tile_new (const gchar *uri)
 		file_tile_model_get_store_status_attr (priv->model), menu_attr,
 		store_status_trigger, NULL);
 
+/* insert separator */
+
+	gtk_menu_append (GTK_MENU (priv->menu), gtk_separator_menu_item_new ());
+
+/* make trash menu-item */
+
+	menu_item = gtk_menu_item_new_with_label (_("Move to Trash"));
+	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (trash_item_activate_cb), this);
+
 	gtk_widget_show_all (GTK_WIDGET (priv->menu));
-
-	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
-	g_signal_connect (priv->view, "button-release-event", G_CALLBACK (button_release_cb), this);
-
-	g_signal_connect (
-		tile_button_view_get_header_text_attr (priv->view, 0), 
-		"notify::" TILE_ATTRIBUTE_VALUE_PROP,
-		G_CALLBACK (view_name_attr_notify_cb), this);
 
 	return this;
 }
@@ -278,6 +289,12 @@ static void
 user_store_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 {
 	file_tile_model_user_store_toggle (PRIVATE (data)->model);
+}
+
+static void
+trash_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	file_tile_model_trash (PRIVATE (data)->model);
 }
 
 static void

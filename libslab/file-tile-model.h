@@ -37,6 +37,7 @@ void           file_tile_model_open_in_file_browser  (FileTileModel *this);
 void           file_tile_model_rename                (FileTileModel *this, const gchar *name);
 void           file_tile_model_send_to               (FileTileModel *this);
 void           file_tile_model_user_store_toggle     (FileTileModel *this);
+void           file_tile_model_trash                 (FileTileModel *this);
 
 G_END_DECLS
 

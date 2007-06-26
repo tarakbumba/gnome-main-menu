@@ -320,6 +320,64 @@ file_tile_model_user_store_toggle (FileTileModel *this)
 	}
 }
 
+void
+file_tile_model_trash (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	GnomeVFSURI *src_uri;
+	GnomeVFSURI *trash_uri;
+
+	gchar *file_name;
+	gchar *trash_uri_str;
+
+	GnomeVFSResult retval;
+
+
+	src_uri = gnome_vfs_uri_new (priv->uri);
+
+	gnome_vfs_find_directory (
+		src_uri, GNOME_VFS_DIRECTORY_KIND_TRASH, & trash_uri, FALSE, FALSE, 0777);
+
+	if (! trash_uri) {
+		g_warning ("unable to find trash location\n");
+
+		return;
+	}
+
+	file_name = gnome_vfs_uri_extract_short_name (src_uri);
+
+	if (! file_name) {
+		g_warning ("unable to extract short name from [%s]\n", priv->uri);
+
+		return;
+	}
+
+	trash_uri = gnome_vfs_uri_append_file_name (trash_uri, file_name);
+
+	retval = gnome_vfs_xfer_uri (
+		src_uri, trash_uri,
+		GNOME_VFS_XFER_REMOVESOURCE, GNOME_VFS_XFER_ERROR_MODE_ABORT,
+		GNOME_VFS_XFER_OVERWRITE_MODE_REPLACE, NULL, NULL);
+
+	if (retval == GNOME_VFS_OK) {
+		bookmark_agent_remove_item (priv->user_agent, priv->uri);
+		bookmark_agent_remove_item (priv->recent_agent, priv->uri);
+	}
+	else {
+		trash_uri_str = gnome_vfs_uri_to_string (trash_uri, GNOME_VFS_URI_HIDE_NONE);
+
+		g_warning ("unable to move [%s] to the trash [%s]\n", priv->uri, trash_uri_str);
+
+		g_free (trash_uri_str);
+	}
+
+	gnome_vfs_uri_unref (src_uri);
+	gnome_vfs_uri_unref (trash_uri);
+
+	g_free (file_name);
+}
+
 static void
 this_class_init (FileTileModelClass *this_class)
 {
