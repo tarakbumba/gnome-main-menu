@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <libgnomeui/libgnomeui.h>
+#include <libgnomevfs/gnome-vfs.h>
 #include <libgnome/gnome-desktop-item.h>
 
 #include "document-tile.h"
@@ -61,6 +62,8 @@ main (int argc, char **argv)
 	gtk_widget_show_all (window);
     
 	gtk_main ();
+
+	gnome_vfs_shutdown ();
 
 /*	g_object_unref (G_OBJECT (odp_tile));
 	g_object_unref (G_OBJECT (png_tile)); */
