@@ -24,6 +24,7 @@ typedef struct {
 	TileControl *send_to_menu_item_control;
 	TileControl *is_in_store_control;
 	TileControl *store_status_control;
+	TileControl *can_delete_control;
 } DocumentTilePrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DOCUMENT_TILE_TYPE, DocumentTilePrivate))
@@ -43,6 +44,7 @@ static void     rename_item_activate_cb     (GtkMenuItem *, gpointer);
 static void     send_to_item_activate_cb    (GtkMenuItem *, gpointer);
 static void     user_store_item_activate_cb (GtkMenuItem *, gpointer);
 static void     trash_item_activate_cb      (GtkMenuItem *, gpointer);
+static void     delete_item_activate_cb     (GtkMenuItem *, gpointer);
 static void     view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
 static void mtime_trigger        (TileAttribute *, TileAttribute *, gpointer);
@@ -50,6 +52,7 @@ static void app_trigger          (TileAttribute *, TileAttribute *, gpointer);
 static void send_to_trigger      (TileAttribute *, TileAttribute *, gpointer);
 static void is_in_store_trigger  (TileAttribute *, TileAttribute *, gpointer);
 static void store_status_trigger (TileAttribute *, TileAttribute *, gpointer);
+static void can_delete_trigger   (TileAttribute *, TileAttribute *, gpointer);
 
 static TileClass *this_parent_class = NULL;
 
@@ -161,6 +164,16 @@ document_tile_new (const gchar *uri)
 	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (trash_item_activate_cb), this);
 
+/* make delete menu-item */
+
+	menu_item = gtk_menu_item_new_with_label (_("Delete"));
+	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	g_signal_connect (menu_item, "activate", G_CALLBACK (delete_item_activate_cb), this);
+
+	priv->can_delete_control = tile_control_new_with_trigger_func (
+		file_tile_model_get_can_delete_attr (priv->model), menu_attr,
+		can_delete_trigger, NULL);
+
 	gtk_widget_show_all (GTK_WIDGET (priv->menu));
 
 	return this;
@@ -189,11 +202,16 @@ this_init (DocumentTile *this)
 	priv->model                     = NULL;
 	priv->view                      = NULL;
 	priv->menu                      = NULL;
+
 	priv->icon_control              = NULL;
 	priv->name_hdr_control          = NULL;
 	priv->mtime_hdr_control         = NULL;
+
 	priv->open_menu_item_control    = NULL;
 	priv->send_to_menu_item_control = NULL;
+	priv->is_in_store_control       = NULL;
+	priv->store_status_control      = NULL;
+	priv->can_delete_control        = NULL;
 }
 
 static void
@@ -202,17 +220,21 @@ finalize (GObject *g_obj)
 	DocumentTilePrivate *priv = PRIVATE (g_obj);
 
 	g_object_unref (priv->model);
-	g_object_unref (priv->icon_control);
-	g_object_unref (priv->name_hdr_control);
-	g_object_unref (priv->mtime_hdr_control);
-	g_object_unref (priv->open_menu_item_control);
-	g_object_unref (priv->send_to_menu_item_control);
 
 	if (G_IS_OBJECT (priv->view))
 		g_object_unref (priv->view);
 
 	if (priv->menu)
 		gtk_object_sink (GTK_OBJECT (priv->menu));
+
+	g_object_unref (priv->icon_control);
+	g_object_unref (priv->name_hdr_control);
+	g_object_unref (priv->mtime_hdr_control);
+	g_object_unref (priv->open_menu_item_control);
+	g_object_unref (priv->send_to_menu_item_control);
+	g_object_unref (priv->is_in_store_control);
+	g_object_unref (priv->store_status_control);
+	g_object_unref (priv->can_delete_control);
 
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
@@ -298,6 +320,12 @@ trash_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 }
 
 static void
+delete_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
+{
+	file_tile_model_delete (PRIVATE (data)->model);
+}
+
+static void
 view_name_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 {
 	GValue *val = tile_attribute_get_value (TILE_ATTRIBUTE (g_obj));
@@ -375,4 +403,13 @@ store_status_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 			tile_attribute_set_status (dst, TILE_ATTRIBUTE_ACTIVE);
 			break;
 	}
+}
+
+static void
+can_delete_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
+{
+	if (g_value_get_boolean (tile_attribute_get_value (src)))
+		tile_attribute_set_status (dst, TILE_ATTRIBUTE_ACTIVE);
+	else
+		tile_attribute_set_status (dst, TILE_ATTRIBUTE_HIDDEN);
 }

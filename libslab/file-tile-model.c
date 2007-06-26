@@ -9,28 +9,33 @@
 #include "bookmark-agent.h"
 
 typedef struct {
-	gchar *uri;
-	gchar *mime_type;
+	gchar                   *uri;
+	gchar                   *mime_type;
 
-	BookmarkAgent *user_agent;
-	BookmarkAgent *recent_agent;
+	BookmarkAgent           *user_agent;
+	BookmarkAgent           *recent_agent;
 
-	TileAttribute *file_name_attr;
-	TileAttribute *icon_id_attr;
-	TileAttribute *mtime_attr;
-	TileAttribute *app_attr;
-	TileAttribute *is_local_attr;
-	TileAttribute *store_status_attr;
-	TileAttribute *is_in_store_attr;
+	TileAttribute           *file_name_attr;
+	TileAttribute           *icon_id_attr;
+	TileAttribute           *mtime_attr;
+	TileAttribute           *app_attr;
+	TileAttribute           *is_local_attr;
+	TileAttribute           *is_in_store_attr;
+	TileAttribute           *store_status_attr;
+	TileAttribute           *can_delete_attr;
 
 	GnomeVFSAsyncHandle     *handle;
 	GnomeVFSMimeApplication *default_app;
+
+	guint                    enable_delete_monitor_id;
 } FileTileModelPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), FILE_TILE_MODEL_TYPE, FileTileModelPrivate))
 
 #define OPEN_IN_FILE_BROWSER_CMD_KEY "/desktop/gnome/applications/main-menu/file-area/file_mgr_open_cmd"
 #define SEND_TO_CMD_KEY              "/desktop/gnome/applications/main-menu/file-area/file_send_to_cmd"
+#define ENABLE_DELETE_KEY_DIR        "/apps/nautilus/preferences"
+#define ENABLE_DELETE_KEY            ENABLE_DELETE_KEY_DIR "/enable_delete"
 
 #define DEFAULT_ICON_ID  "gnome-fs-regular"
 #define MAX_DESC_STR_LEN 1024
@@ -49,6 +54,7 @@ static void volume_monitor_destroy_cb    (gpointer, GObject *);
 static void uri_notify_cb                (GObject *, GParamSpec *, gpointer);
 static void user_store_items_notify_cb   (GObject *, GParamSpec *, gpointer);
 static void user_store_status_notify_cb  (GObject *, GParamSpec *, gpointer);
+static void enable_delete_notify_cb      (GConfClient *, guint, GConfEntry *, gpointer);
 static void file_info_cb                 (GnomeVFSAsyncHandle *, GList *, gpointer);
 
 static GnomeThumbnailFactory *thumbnail_factory = NULL;
@@ -88,14 +94,22 @@ file_tile_model_new (const gchar *uri)
 	priv->mtime_attr        = tile_attribute_new (G_TYPE_LONG);
 	priv->app_attr          = tile_attribute_new (G_TYPE_POINTER);
 	priv->is_local_attr     = tile_attribute_new (G_TYPE_BOOLEAN);
-	priv->store_status_attr = tile_attribute_new (G_TYPE_INT);
 	priv->is_in_store_attr  = tile_attribute_new (G_TYPE_BOOLEAN);
+	priv->store_status_attr = tile_attribute_new (G_TYPE_INT);
+	priv->can_delete_attr   = tile_attribute_new (G_TYPE_BOOLEAN);
 
 	priv->uri = g_strdup (tile_model_get_uri (TILE_MODEL (this)));
 
 	update_model (this);
+
 	tile_attribute_set_int (
 		priv->store_status_attr, bookmark_agent_get_status (priv->user_agent));
+	tile_attribute_set_boolean (
+		priv->can_delete_attr,
+		GPOINTER_TO_INT (libslab_get_gconf_value (ENABLE_DELETE_KEY)));
+
+	priv->enable_delete_monitor_id = libslab_gconf_notify_add (
+		ENABLE_DELETE_KEY, enable_delete_notify_cb, this);
 
 	g_signal_connect (
 		this, "notify::" TILE_MODEL_URI_PROP, G_CALLBACK (uri_notify_cb), this);
@@ -142,15 +156,21 @@ file_tile_model_get_is_local_attr (FileTileModel *this)
 }
 
 TileAttribute *
+file_tile_model_get_is_in_store_attr (FileTileModel *this)
+{
+	return PRIVATE (this)->is_in_store_attr;
+}
+
+TileAttribute *
 file_tile_model_get_store_status_attr (FileTileModel *this)
 {
 	return PRIVATE (this)->store_status_attr;
 }
 
 TileAttribute *
-file_tile_model_get_is_in_store_attr (FileTileModel *this)
+file_tile_model_get_can_delete_attr (FileTileModel *this)
 {
-	return PRIVATE (this)->is_in_store_attr;
+	return PRIVATE (this)->can_delete_attr;
 }
 
 void
@@ -378,6 +398,35 @@ file_tile_model_trash (FileTileModel *this)
 	g_free (file_name);
 }
 
+void
+file_tile_model_delete (FileTileModel *this)
+{
+	FileTileModelPrivate *priv = PRIVATE (this);
+
+	GnomeVFSURI *src_uri;
+	GList *list = NULL;
+
+	GnomeVFSResult retval;
+
+
+	src_uri = gnome_vfs_uri_new (priv->uri);
+
+	list = g_list_append (list, src_uri);
+
+	retval = gnome_vfs_xfer_delete_list (
+		list, GNOME_VFS_XFER_ERROR_MODE_ABORT, GNOME_VFS_XFER_REMOVESOURCE, NULL, NULL);
+
+	if (retval == GNOME_VFS_OK) {
+		bookmark_agent_remove_item (priv->user_agent, priv->uri);
+		bookmark_agent_remove_item (priv->recent_agent, priv->uri);
+	}
+	else
+		g_warning ("unable to delete [%s]\n", priv->uri);
+
+	gnome_vfs_uri_unref (src_uri);
+	g_list_free (list);
+}
+
 static void
 this_class_init (FileTileModelClass *this_class)
 {
@@ -393,22 +442,32 @@ this_init (FileTileModel *this)
 {
 	FileTileModelPrivate *priv = PRIVATE (this);
 
-	priv->uri               = NULL;
-	priv->mime_type         = NULL;
+	GConfClient *client;
 
-	priv->user_agent        = NULL;
-	priv->recent_agent      = NULL;
 
-	priv->file_name_attr    = NULL;
-	priv->icon_id_attr      = NULL;
-	priv->mtime_attr        = NULL;
-	priv->app_attr          = NULL;
-	priv->is_local_attr     = NULL;
-	priv->store_status_attr = NULL;
-	priv->is_in_store_attr  = NULL;
+	priv->uri                      = NULL;
+	priv->mime_type                = NULL;
 
-	priv->handle            = NULL;
-	priv->default_app       = NULL;
+	priv->user_agent               = NULL;
+	priv->recent_agent             = NULL;
+
+	priv->file_name_attr           = NULL;
+	priv->icon_id_attr             = NULL;
+	priv->mtime_attr               = NULL;
+	priv->app_attr                 = NULL;
+	priv->is_local_attr            = NULL;
+	priv->is_in_store_attr         = NULL;
+	priv->store_status_attr        = NULL;
+	priv->can_delete_attr          = NULL;
+
+	priv->handle                   = NULL;
+	priv->default_app              = NULL;
+
+	priv->enable_delete_monitor_id = 0;
+
+	client = gconf_client_get_default ();
+	gconf_client_add_dir (client, ENABLE_DELETE_KEY_DIR, GCONF_CLIENT_PRELOAD_NONE, NULL);
+	g_object_unref (client);
 
 	if (! thumbnail_factory) {
 		thumbnail_factory = gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
@@ -430,6 +489,9 @@ finalize (GObject *g_obj)
 {
 	FileTileModelPrivate *priv = PRIVATE (g_obj);
 
+	GConfClient *client;
+
+
 	gnome_vfs_async_cancel (priv->handle);
 
 	g_free (priv->uri);
@@ -443,11 +505,18 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->mtime_attr);
 	g_object_unref (priv->app_attr);
 	g_object_unref (priv->is_local_attr);
-	g_object_unref (priv->store_status_attr);
 	g_object_unref (priv->is_in_store_attr);
+	g_object_unref (priv->store_status_attr);
+	g_object_unref (priv->can_delete_attr);
 
 	g_object_unref (G_OBJECT (thumbnail_factory));
 	gnome_vfs_volume_monitor_unref (volume_monitor);
+
+	libslab_gconf_notify_remove (priv->enable_delete_monitor_id);
+
+	client = gconf_client_get_default ();
+	gconf_client_remove_dir (client, ENABLE_DELETE_KEY_DIR, NULL);
+	g_object_unref (client);
 
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
@@ -596,6 +665,15 @@ user_store_status_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 
 	tile_attribute_set_int (
 		priv->store_status_attr, bookmark_agent_get_status (priv->user_agent));
+}
+
+static void
+enable_delete_notify_cb (GConfClient *client, guint conn_id,
+                         GConfEntry *entry, gpointer data)
+{
+	tile_attribute_set_boolean (
+		PRIVATE (data)->can_delete_attr,
+		GPOINTER_TO_INT (libslab_get_gconf_value (ENABLE_DELETE_KEY)));
 }
 
 static void

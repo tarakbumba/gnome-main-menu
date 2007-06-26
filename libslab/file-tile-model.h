@@ -32,12 +32,14 @@ TileAttribute *file_tile_model_get_app_attr          (FileTileModel *this);
 TileAttribute *file_tile_model_get_is_local_attr     (FileTileModel *this);
 TileAttribute *file_tile_model_get_is_in_store_attr  (FileTileModel *this);
 TileAttribute *file_tile_model_get_store_status_attr (FileTileModel *this);
+TileAttribute *file_tile_model_get_can_delete_attr   (FileTileModel *this);
 void           file_tile_model_open                  (FileTileModel *this);
 void           file_tile_model_open_in_file_browser  (FileTileModel *this);
 void           file_tile_model_rename                (FileTileModel *this, const gchar *name);
 void           file_tile_model_send_to               (FileTileModel *this);
 void           file_tile_model_user_store_toggle     (FileTileModel *this);
 void           file_tile_model_trash                 (FileTileModel *this);
+void           file_tile_model_delete                (FileTileModel *this);
 
 G_END_DECLS
 
