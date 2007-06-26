@@ -35,6 +35,7 @@ typedef struct {
 GType tile_button_view_get_type (void);
 
 TileButtonView *tile_button_view_new                  (gint n_hdrs);
+void            tile_button_view_add_context_menu     (TileButtonView *this, GtkMenu *menu);
 TileAttribute  *tile_button_view_get_uri_attr         (TileButtonView *this);
 TileAttribute  *tile_button_view_get_icon_id_attr     (TileButtonView *this);
 TileAttribute  *tile_button_view_get_header_text_attr (TileButtonView *this, gint index);

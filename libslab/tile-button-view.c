@@ -15,6 +15,7 @@ typedef struct {
 	gchar               *uri;
 	gchar               *icon_id;
 
+	GtkMenu             *context_menu;
 	GtkVBox             *hdr_box;
 
 	gboolean             debounce;
@@ -31,13 +32,13 @@ static void this_init       (TileButtonView *);
 
 static void tile_view_interface_init (TileViewInterface *, gpointer);
 
-static void finalize      (GObject *);
-static void get_property  (GObject *, guint, GValue *, GParamSpec *);
-static void set_property  (GObject *, guint, const GValue *, GParamSpec *);
-static void drag_begin    (GtkWidget *, GdkDragContext *);
-static void drag_data_get (GtkWidget *, GdkDragContext *,
-                           GtkSelectionData *, guint, guint);
-static void clicked       (GtkButton *);
+static void     finalize       (GObject *);
+static void     get_property   (GObject *, guint, GValue *, GParamSpec *);
+static void     set_property   (GObject *, guint, const GValue *, GParamSpec *);
+static void     drag_begin     (GtkWidget *, GdkDragContext *);
+static void     drag_data_get  (GtkWidget *, GdkDragContext *, GtkSelectionData *, guint, guint);
+static gboolean button_release (GtkWidget *, GdkEventButton *);
+static void     clicked        (GtkButton *);
 
 static TileAttribute *get_attribute_by_id (TileView *, const gchar *);
 
@@ -142,6 +143,12 @@ tile_button_view_new (gint n_hdrs)
 	return this;
 }
 
+void
+tile_button_view_add_context_menu (TileButtonView *this, GtkMenu *menu)
+{
+	PRIVATE (this)->context_menu = menu;
+}
+
 TileAttribute *
 tile_button_view_get_icon_id_attr (TileButtonView *this)
 {
@@ -184,30 +191,6 @@ tile_button_view_activate_header_edit (TileButtonView *this, gint index)
 
 	gtk_widget_show (entry);
 	gtk_widget_grab_focus (entry);
-
-#if 0
-	entry = gtk_entry_new ();
-	gtk_entry_set_text (GTK_ENTRY (entry), this->headers [index]);
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-
-	g_object_ref (G_OBJECT (this->headers [index]));
-	gtk_container_remove
-
-	child = gtk_bin_get_child (priv->header_bin);
-
-	if (child)
-		gtk_widget_destroy (child);
-
-	gtk_container_add (GTK_CONTAINER (priv->header_bin), entry);
-
-	g_signal_connect (G_OBJECT (entry), "activate", G_CALLBACK (rename_entry_activate_cb), tile);
-
-	g_signal_connect (G_OBJECT (entry), "key_release_event",
-		G_CALLBACK (rename_entry_key_release_cb), NULL);
-
-	gtk_widget_show (entry);
-	gtk_widget_grab_focus (entry);
-#endif
 }
 
 static void
@@ -220,12 +203,13 @@ this_class_init (TileButtonViewClass *this_class)
 	GParamSpec *debounce_pspec;
 
 
-	g_obj_class->finalize       = finalize;
-	g_obj_class->get_property   = get_property;
-	g_obj_class->set_property   = set_property;
-	widget_class->drag_begin    = drag_begin;
-	widget_class->drag_data_get = drag_data_get;
-	button_class->clicked       = clicked;
+	g_obj_class->finalize              = finalize;
+	g_obj_class->get_property          = get_property;
+	g_obj_class->set_property          = set_property;
+	widget_class->drag_begin           = drag_begin;
+	widget_class->drag_data_get        = drag_data_get;
+	widget_class->button_release_event = button_release;
+/*	button_class->clicked              = clicked; */
 
 	debounce_pspec = g_param_spec_boolean (
 		TILE_BUTTON_VIEW_DEBOUNCE_PROP, TILE_BUTTON_VIEW_DEBOUNCE_PROP,
@@ -251,15 +235,18 @@ this_init (TileButtonView *this)
 {
 	TileButtonViewPrivate *priv = PRIVATE (this);
 
-	priv->uri_attr   = NULL;
-	priv->icon_attr  = NULL;
-	priv->hdr_attrs  = NULL;
+	priv->uri_attr     = NULL;
+	priv->icon_attr    = NULL;
+	priv->hdr_attrs    = NULL;
 
-	priv->uri        = NULL;
-	priv->icon_id    = NULL;
+	priv->uri          = NULL;
+	priv->icon_id      = NULL;
 
-	priv->debounce   = TRUE;
-	priv->dcd        = double_click_detector_new ();
+	priv->context_menu = NULL;
+	priv->hdr_box      = NULL;
+
+	priv->debounce     = TRUE;
+	priv->dcd          = double_click_detector_new ();
 }
 
 static void
@@ -284,6 +271,8 @@ finalize (GObject *g_obj)
 	g_free (priv->hdr_attrs);
 	g_free (priv->uri);
 	g_free (priv->icon_id);
+
+	gtk_widget_destroy (GTK_WIDGET (priv->context_menu));
 
 	if (G_IS_OBJECT (priv->dcd))
 		g_object_unref (priv->dcd);
@@ -352,24 +341,43 @@ drag_data_get (GtkWidget *widget, GdkDragContext *context,
 	}
 }
 
-/* FIXME: attach debouncing code to button-press, not clicked */
-
-static void
-clicked (GtkButton *widget)
+static gboolean
+button_release (GtkWidget *widget, GdkEventButton *event)
 {
-	TileButtonView        *this = TILE_BUTTON_VIEW (widget);
-	TileButtonViewPrivate *priv = PRIVATE (this);
+	TileButtonViewPrivate *priv = PRIVATE (widget);
 
 	guint32  time;
 	gboolean debounce;
 
+	
+	switch (event->button) {
+		case 1:
+			time = libslab_get_current_time_millis ();
+			debounce =
+				priv->debounce &&
+				double_click_detector_is_double_click (priv->dcd, time, TRUE);
 
-	time     = libslab_get_current_time_millis ();
-	debounce = priv->debounce &&
-		double_click_detector_is_double_click (priv->dcd, time, TRUE);
+			if (debounce)
+				return TRUE;
 
-	if (debounce)
-		g_signal_stop_emission_by_name (widget, "clicked");
+			break;
+
+		case 3:
+			if (GTK_IS_MENU (priv->context_menu)) {
+				gtk_menu_popup (
+					priv->context_menu, NULL, NULL, NULL, NULL,
+					event->button, event->time);
+
+				return TRUE;
+			}
+
+			break;
+
+		default:
+			break;
+	}
+
+	return GTK_WIDGET_CLASS (this_parent_class)->button_release_event (widget, event);
 }
 
 static TileAttribute *

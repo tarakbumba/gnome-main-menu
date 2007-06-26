@@ -14,7 +14,6 @@
 typedef struct {
 	FileTileModel   *model;
 	TileButtonView  *view;
-	ContextMenuView *menu;
 
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
@@ -36,16 +35,15 @@ static void       finalize   (GObject *);
 static GtkWidget *get_widget (Tile *);
 static gboolean   equals     (Tile *, gconstpointer);
 
-static void     clicked_cb                  (GtkButton *, gpointer);
-static gboolean button_release_cb           (GtkWidget *, GdkEventButton *, gpointer);
-static void     open_item_activate_cb       (GtkMenuItem *, gpointer);
-static void     open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
-static void     rename_item_activate_cb     (GtkMenuItem *, gpointer);
-static void     send_to_item_activate_cb    (GtkMenuItem *, gpointer);
-static void     user_store_item_activate_cb (GtkMenuItem *, gpointer);
-static void     trash_item_activate_cb      (GtkMenuItem *, gpointer);
-static void     delete_item_activate_cb     (GtkMenuItem *, gpointer);
-static void     view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
+static void clicked_cb                  (GtkButton *, gpointer);
+static void open_item_activate_cb       (GtkMenuItem *, gpointer);
+static void open_in_fb_item_activate_cb (GtkMenuItem *, gpointer);
+static void rename_item_activate_cb     (GtkMenuItem *, gpointer);
+static void send_to_item_activate_cb    (GtkMenuItem *, gpointer);
+static void user_store_item_activate_cb (GtkMenuItem *, gpointer);
+static void trash_item_activate_cb      (GtkMenuItem *, gpointer);
+static void delete_item_activate_cb     (GtkMenuItem *, gpointer);
+static void view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
 static void mtime_trigger        (TileAttribute *, TileAttribute *, gpointer);
 static void app_trigger          (TileAttribute *, TileAttribute *, gpointer);
@@ -76,6 +74,8 @@ document_tile_new (const gchar *uri)
 	DocumentTile        *this;
 	DocumentTilePrivate *priv;
 
+	ContextMenuView *menu;
+
 	GtkWidget     *menu_item;
 	TileAttribute *menu_attr;
 
@@ -85,10 +85,12 @@ document_tile_new (const gchar *uri)
 
 	priv->model = file_tile_model_new (uri);
 	priv->view  = tile_button_view_new (2);
-	priv->menu  = context_menu_view_new ();
+
+	menu  = context_menu_view_new ();
+
+	tile_button_view_add_context_menu (priv->view, GTK_MENU (menu));
 
 	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
-	g_signal_connect (priv->view, "button-release-event", G_CALLBACK (button_release_cb), this);
 
 	g_signal_connect (
 		tile_button_view_get_header_text_attr (priv->view, 0), 
@@ -109,7 +111,7 @@ document_tile_new (const gchar *uri)
 /* make open in default app menu-item/attr */
 
 	menu_item = gtk_menu_item_new ();
-	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	menu_attr = context_menu_view_add_menu_item (menu, menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (open_item_activate_cb), this);
 
 	priv->open_menu_item_control = tile_control_new_with_trigger_func (
@@ -118,23 +120,23 @@ document_tile_new (const gchar *uri)
 /* make open in file browser menu-item */
 
 	menu_item = gtk_menu_item_new_with_label (_("Open in File Manager"));
-	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	gtk_menu_append (GTK_MENU (menu), menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (open_in_fb_item_activate_cb), this);
 
 /* insert separator */
 
-	gtk_menu_append (GTK_MENU (priv->menu), gtk_separator_menu_item_new ());
+	gtk_menu_append (GTK_MENU (menu), gtk_separator_menu_item_new ());
 
 /* make rename menu-item */
 
 	menu_item = gtk_menu_item_new_with_label (_("Rename..."));
-	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	gtk_menu_append (GTK_MENU (menu), menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (rename_item_activate_cb), this);
 
 /* make send-to menu-item */
 
 	menu_item = gtk_menu_item_new_with_label (_("Send To..."));
-	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	menu_attr = context_menu_view_add_menu_item (menu, menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (send_to_item_activate_cb), this);
 
 	priv->send_to_menu_item_control = tile_control_new_with_trigger_func (
@@ -144,7 +146,7 @@ document_tile_new (const gchar *uri)
 /* make add/remove from favorites menu-item */
 
 	menu_item = gtk_menu_item_new ();
-	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	menu_attr = context_menu_view_add_menu_item (menu, menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (user_store_item_activate_cb), this);
 
 	priv->is_in_store_control = tile_control_new_with_trigger_func (
@@ -156,25 +158,25 @@ document_tile_new (const gchar *uri)
 
 /* insert separator */
 
-	gtk_menu_append (GTK_MENU (priv->menu), gtk_separator_menu_item_new ());
+	gtk_menu_append (GTK_MENU (menu), gtk_separator_menu_item_new ());
 
 /* make trash menu-item */
 
 	menu_item = gtk_menu_item_new_with_label (_("Move to Trash"));
-	gtk_menu_append (GTK_MENU (priv->menu), menu_item);
+	gtk_menu_append (GTK_MENU (menu), menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (trash_item_activate_cb), this);
 
 /* make delete menu-item */
 
 	menu_item = gtk_menu_item_new_with_label (_("Delete"));
-	menu_attr = context_menu_view_add_menu_item (priv->menu, menu_item);
+	menu_attr = context_menu_view_add_menu_item (menu, menu_item);
 	g_signal_connect (menu_item, "activate", G_CALLBACK (delete_item_activate_cb), this);
 
 	priv->can_delete_control = tile_control_new_with_trigger_func (
 		file_tile_model_get_can_delete_attr (priv->model), menu_attr,
 		can_delete_trigger, NULL);
 
-	gtk_widget_show_all (GTK_WIDGET (priv->menu));
+	gtk_widget_show_all (GTK_WIDGET (menu));
 
 	return this;
 }
@@ -201,7 +203,6 @@ this_init (DocumentTile *this)
 
 	priv->model                     = NULL;
 	priv->view                      = NULL;
-	priv->menu                      = NULL;
 
 	priv->icon_control              = NULL;
 	priv->name_hdr_control          = NULL;
@@ -223,9 +224,6 @@ finalize (GObject *g_obj)
 
 	if (G_IS_OBJECT (priv->view))
 		g_object_unref (priv->view);
-
-	if (priv->menu)
-		gtk_object_sink (GTK_OBJECT (priv->menu));
 
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
@@ -267,20 +265,6 @@ clicked_cb (GtkButton *button, gpointer data)
 	file_tile_model_open (PRIVATE (data)->model);
 
 	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
-}
-
-static gboolean
-button_release_cb (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
-{
-	DocumentTilePrivate *priv = PRIVATE (user_data);
-	
-	if (event->button == 3 && GTK_IS_MENU (priv->menu)) {
-		gtk_menu_popup (GTK_MENU (priv->menu), NULL, NULL, NULL, NULL, event->button, event->time);
-
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 static void
