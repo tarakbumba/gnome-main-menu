@@ -38,7 +38,6 @@ static void     set_property   (GObject *, guint, const GValue *, GParamSpec *);
 static void     drag_begin     (GtkWidget *, GdkDragContext *);
 static void     drag_data_get  (GtkWidget *, GdkDragContext *, GtkSelectionData *, guint, guint);
 static gboolean button_release (GtkWidget *, GdkEventButton *);
-static void     clicked        (GtkButton *);
 
 static TileAttribute *get_attribute_by_id (TileView *, const gchar *);
 
@@ -150,6 +149,12 @@ tile_button_view_add_context_menu (TileButtonView *this, GtkMenu *menu)
 }
 
 TileAttribute *
+tile_button_view_get_uri_attr (TileButtonView *this)
+{
+	return PRIVATE (this)->uri_attr;
+}
+
+TileAttribute *
 tile_button_view_get_icon_id_attr (TileButtonView *this)
 {
 	return PRIVATE (this)->icon_attr;
@@ -198,7 +203,6 @@ this_class_init (TileButtonViewClass *this_class)
 {
 	GObjectClass   *g_obj_class  = G_OBJECT_CLASS   (this_class);
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (this_class);
-	GtkButtonClass *button_class = GTK_BUTTON_CLASS (this_class);
 
 	GParamSpec *debounce_pspec;
 
@@ -209,7 +213,6 @@ this_class_init (TileButtonViewClass *this_class)
 	widget_class->drag_begin           = drag_begin;
 	widget_class->drag_data_get        = drag_data_get;
 	widget_class->button_release_event = button_release;
-/*	button_class->clicked              = clicked; */
 
 	debounce_pspec = g_param_spec_boolean (
 		TILE_BUTTON_VIEW_DEBOUNCE_PROP, TILE_BUTTON_VIEW_DEBOUNCE_PROP,
@@ -300,8 +303,6 @@ static void
 drag_begin (GtkWidget *widget, GdkDragContext *context)
 {
 	TileButtonView *this = TILE_BUTTON_VIEW (widget);
-
-	GTK_WIDGET_CLASS (this_parent_class)->drag_begin (widget, context);
 
 	if (! (this->icon && GTK_IS_IMAGE (this->icon)))
 		return;

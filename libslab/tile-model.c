@@ -1,7 +1,7 @@
 #include "tile-model.h"
 
 typedef struct {
-	gchar *uri;
+	TileAttribute *uri_attr;
 } TileModelPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_MODEL_TYPE, TileModelPrivate))
@@ -9,14 +9,7 @@ typedef struct {
 static void this_class_init (TileModelClass *);
 static void this_init       (TileModel *);
 
-static void get_property (GObject *, guint, GValue *, GParamSpec *);
-static void set_property (GObject *, guint, const GValue *, GParamSpec *);
-static void finalize     (GObject *);
-
-enum {
-	PROP_0,
-	PROP_URI
-};
+static void finalize (GObject *);
 
 static GObjectClass *this_parent_class = NULL;
 
@@ -34,36 +27,22 @@ tile_model_get_type ()
 	return type_id;
 }
 
+TileAttribute *
+tile_model_get_uri_attr (TileModel *this)
+{
+	return PRIVATE (this)->uri_attr;
+}
+
 const gchar *
 tile_model_get_uri (TileModel *this)
 {
-	return PRIVATE (this)->uri;
-}
-
-void
-tile_model_set_uri (TileModel *this, const gchar *uri)
-{
-	g_object_set (G_OBJECT (this), TILE_MODEL_URI_PROP, uri, NULL);
+	return g_value_get_string (tile_attribute_get_value (PRIVATE (this)->uri_attr));
 }
 
 static void
 this_class_init (TileModelClass *this_class)
 {
-	GObjectClass *g_obj_class = (GObjectClass *) this_class;
-
-	GParamSpec *uri_pspec;
-
-
-	g_obj_class->get_property = get_property;
-	g_obj_class->set_property = set_property;
-	g_obj_class->finalize     = finalize;
-
-	uri_pspec = g_param_spec_string (
-		TILE_MODEL_URI_PROP, TILE_MODEL_URI_PROP, "the URI associated with the resourse",
-		NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_NAME |
-		G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
-
-	g_object_class_install_property (g_obj_class, PROP_URI, uri_pspec);
+	G_OBJECT_CLASS (this_class)->finalize = finalize;
 
 	g_type_class_add_private (this_class, sizeof (TileModelPrivate));
 
@@ -73,31 +52,13 @@ this_class_init (TileModelClass *this_class)
 static void
 this_init (TileModel *this)
 {
-	PRIVATE (this)->uri = NULL;
-}
-
-static void
-get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
-{
-	if (prop_id == PROP_URI)
-		g_value_set_string (value, PRIVATE (g_obj)->uri);
-}
-
-static void
-set_property (GObject *g_obj, guint prop_id, const GValue *value, GParamSpec *pspec)
-{
-	TileModelPrivate *priv = PRIVATE (g_obj);
-
-	if (prop_id == PROP_URI) {
-		g_free (priv->uri);
-		priv->uri = g_value_dup_string (value);
-	}
+	PRIVATE (this)->uri_attr = tile_attribute_new (G_TYPE_STRING);
 }
 
 static void
 finalize (GObject *g_obj)
 {
-	g_free (PRIVATE (g_obj)->uri);
+	g_object_unref (PRIVATE (g_obj)->uri_attr);
 
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }

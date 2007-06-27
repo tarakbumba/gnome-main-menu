@@ -51,7 +51,7 @@ static gboolean file_is_local    (FileTileModel *);
 
 static void thumbnail_factory_destroy_cb (gpointer, GObject *);
 static void volume_monitor_destroy_cb    (gpointer, GObject *);
-static void uri_notify_cb                (GObject *, GParamSpec *, gpointer);
+static void uri_attr_notify_cb           (GObject *, GParamSpec *, gpointer);
 static void user_store_items_notify_cb   (GObject *, GParamSpec *, gpointer);
 static void user_store_status_notify_cb  (GObject *, GParamSpec *, gpointer);
 static void enable_delete_notify_cb      (GConfClient *, guint, GConfEntry *, gpointer);
@@ -83,8 +83,12 @@ file_tile_model_new (const gchar *uri)
 	FileTileModelPrivate *priv;
 	
 	
-	this = g_object_new (FILE_TILE_MODEL_TYPE, TILE_MODEL_URI_PROP, uri, NULL);
+	this = g_object_new (FILE_TILE_MODEL_TYPE, NULL);
+	tile_attribute_set_string (tile_model_get_uri_attr (TILE_MODEL (this)), uri);
+
 	priv = PRIVATE (this);
+
+	priv->uri = g_strdup (uri);
 
 	priv->user_agent   = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
 	priv->recent_agent = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_DOCS);
@@ -98,8 +102,6 @@ file_tile_model_new (const gchar *uri)
 	priv->store_status_attr = tile_attribute_new (G_TYPE_INT);
 	priv->can_delete_attr   = tile_attribute_new (G_TYPE_BOOLEAN);
 
-	priv->uri = g_strdup (tile_model_get_uri (TILE_MODEL (this)));
-
 	update_model (this);
 
 	tile_attribute_set_int (
@@ -112,7 +114,8 @@ file_tile_model_new (const gchar *uri)
 		ENABLE_DELETE_KEY, enable_delete_notify_cb, this);
 
 	g_signal_connect (
-		this, "notify::" TILE_MODEL_URI_PROP, G_CALLBACK (uri_notify_cb), this);
+		tile_model_get_uri_attr (TILE_MODEL (this)), "notify::" TILE_ATTRIBUTE_VALUE_PROP,
+		G_CALLBACK (uri_attr_notify_cb), this);
 
 	g_signal_connect (
 		G_OBJECT (priv->user_agent), "notify::" BOOKMARK_AGENT_ITEMS_PROP,
@@ -267,7 +270,8 @@ file_tile_model_rename (FileTileModel *this, const gchar *name)
 			if (bookmark_agent_has_item (priv->recent_agent, priv->uri))
 				bookmark_agent_move_item (priv->recent_agent, priv->uri, dst_uri_str);
 
-			tile_model_set_uri (TILE_MODEL (this), dst_uri_str);
+			tile_attribute_set_string (
+				tile_model_get_uri_attr (TILE_MODEL (this)), dst_uri_str);
 
 			g_free (dst_uri_str);
 		}
@@ -632,19 +636,20 @@ volume_monitor_destroy_cb (gpointer data, GObject *g_obj)
 }
 
 static void
-uri_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
+uri_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 {
-	FileTileModelPrivate *priv = PRIVATE (data);
+	FileTileModel        *this = FILE_TILE_MODEL (data);
+	FileTileModelPrivate *priv = PRIVATE (this);
 
 	const gchar *uri;
 
 
-	uri = tile_model_get_uri (TILE_MODEL (data));
+	uri = tile_model_get_uri (TILE_MODEL (this));
 
 	if (libslab_strcmp (uri, priv->uri)) {
 		g_free (priv->uri);
 		priv->uri = g_strdup (uri);
-		update_model (FILE_TILE_MODEL (data));
+		update_model (this);
 	}
 }
 

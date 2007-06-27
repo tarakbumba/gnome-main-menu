@@ -15,6 +15,7 @@ typedef struct {
 	FileTileModel   *model;
 	TileButtonView  *view;
 
+	TileControl *uri_control;
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
 	TileControl *mtime_hdr_control;
@@ -97,6 +98,9 @@ document_tile_new (const gchar *uri)
 		"notify::" TILE_ATTRIBUTE_VALUE_PROP,
 		G_CALLBACK (view_name_attr_notify_cb), this);
 
+	priv->uri_control = tile_control_new (
+		tile_model_get_uri_attr (TILE_MODEL (priv->model)),
+		tile_button_view_get_uri_attr (priv->view));
 	priv->icon_control = tile_control_new (
 		file_tile_model_get_icon_id_attr (priv->model),
 		tile_button_view_get_icon_id_attr (priv->view));
