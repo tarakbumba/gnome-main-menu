@@ -87,7 +87,7 @@ document_tile_new (const gchar *uri)
 	priv->model = file_tile_model_new (uri);
 	priv->view  = tile_button_view_new (2);
 
-	menu  = context_menu_view_new ();
+	menu = context_menu_view_new ();
 
 	tile_button_view_add_context_menu (priv->view, GTK_MENU (menu));
 
@@ -112,7 +112,7 @@ document_tile_new (const gchar *uri)
 		tile_button_view_get_header_text_attr (priv->view, 1),
 		mtime_trigger, NULL);
 
-/* make open in default app menu-item/attr */
+/* make open in default app menu-item */
 
 	menu_item = gtk_menu_item_new ();
 	menu_attr = context_menu_view_add_menu_item (menu, menu_item);
@@ -208,6 +208,7 @@ this_init (DocumentTile *this)
 	priv->model                     = NULL;
 	priv->view                      = NULL;
 
+	priv->uri_control               = NULL;
 	priv->icon_control              = NULL;
 	priv->name_hdr_control          = NULL;
 	priv->mtime_hdr_control         = NULL;
@@ -229,6 +230,7 @@ finalize (GObject *g_obj)
 	if (G_IS_OBJECT (priv->view))
 		g_object_unref (priv->view);
 
+	g_object_unref (priv->uri_control);
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
 	g_object_unref (priv->mtime_hdr_control);
@@ -267,7 +269,6 @@ static void
 clicked_cb (GtkButton *button, gpointer data)
 {
 	file_tile_model_open (PRIVATE (data)->model);
-
 	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
 }
 
@@ -275,12 +276,14 @@ static void
 open_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 {
 	file_tile_model_open (PRIVATE (data)->model);
+	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
 }
 
 static void
 open_in_fb_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 {
 	file_tile_model_open_in_file_browser (PRIVATE (data)->model);
+	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
 }
 
 static void
@@ -293,6 +296,7 @@ static void
 send_to_item_activate_cb (GtkMenuItem *menu_item, gpointer data)
 {
 	file_tile_model_send_to (PRIVATE (data)->model);
+	tile_action_triggered (TILE (data), TILE_ACTION_LAUNCHES_APP);
 }
 
 static void

@@ -8,7 +8,6 @@ lib_LTLIBRARIES = libslab.la
 #	app-resizer.c
 #	app-shell.c
 #	app-shell-startup.c
-#	application-tile.c
 #	directory-tile.c
 #	search-bar.c
 #	search-context-picker.c
@@ -18,10 +17,12 @@ lib_LTLIBRARIES = libslab.la
 #	system-tile.c
 
 libslab_la_SOURCES =				\
+	application-tile.c			\
 	bookmark-agent.h			\
 	bookmark-agent-libslab.h		\
 	bookmark-agent.c			\
 	context-menu-view.c			\
+	desktop-item-tile-model.c		\
 	document-tile.c				\
 	double-click-detector.c			\
 	double-click-detector.h			\
@@ -50,7 +51,6 @@ libslab_la_SOURCES =				\
 #	app-resizer.h
 #	app-shell.h
 #	app-shell-startup.h
-#	application-tile.h
 #	directory-tile.
 #	search-bar.h
 #	search-context-picker.h
@@ -60,7 +60,9 @@ libslab_la_SOURCES =				\
 
 libslab_includedir = $(includedir)/slab
 libslab_include_HEADERS =			\
+	application-tile.h			\
 	context-menu-view.h			\
+	desktop-item-tile-model.h		\
 	document-tile.h				\
 	gnome-utils.h				\
 	slab-gnome-util.h			\

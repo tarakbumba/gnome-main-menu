@@ -37,8 +37,7 @@ typedef struct {
 #define ENABLE_DELETE_KEY_DIR        "/apps/nautilus/preferences"
 #define ENABLE_DELETE_KEY            ENABLE_DELETE_KEY_DIR "/enable_delete"
 
-#define DEFAULT_ICON_ID  "gnome-fs-regular"
-#define MAX_DESC_STR_LEN 1024
+#define DEFAULT_ICON_ID "gnome-fs-regular"
 
 static void this_class_init (FileTileModelClass *);
 static void this_init       (FileTileModel *);
