@@ -24,8 +24,8 @@ typedef struct {
 	DoubleClickDetector *dcd;
 } TileButtonViewPrivate;
 
-#define DEFAULT_ICON_SIZE  GTK_ICON_SIZE_DND
-#define DEFAULT_ICON_ID    "stock_unknown"
+#define DEFAULT_ICON_SIZE GTK_ICON_SIZE_DND
+#define DEFAULT_ICON_ID   "stock_unknown"
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TILE_BUTTON_VIEW_TYPE, TileButtonViewPrivate))
 
@@ -52,7 +52,8 @@ static void edit_header_entry_activate_cb (GtkEntry *, gpointer);
 
 enum {
 	PROP_0,
-	PROP_DEBOUNCE
+	PROP_DEBOUNCE,
+	PROP_ICON_SIZE
 };
 
 static GtkButtonClass *this_parent_class;

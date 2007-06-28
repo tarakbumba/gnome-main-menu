@@ -14,7 +14,8 @@ G_BEGIN_DECLS
 #define IS_TILE_BUTTON_VIEW_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), TILE_BUTTON_VIEW_TYPE))
 #define TILE_BUTTON_VIEW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TILE_BUTTON_VIEW_TYPE, TileButtonViewClass))
 
-#define TILE_BUTTON_VIEW_DEBOUNCE_PROP "tile-button-view-debounce"
+#define TILE_BUTTON_VIEW_DEBOUNCE_PROP  "tile-button-view-debounce"
+#define TILE_BUTTON_VIEW_ICON_SIZE_PROP "tile-button-view-icon-size"
 
 #define TILE_BUTTON_VIEW_URI_ATTR            "tile-button-uri"
 #define TILE_BUTTON_VIEW_ICON_ID_ATTR        "tile-button-icon-id"
