@@ -18,6 +18,7 @@ typedef struct {
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
 	TileControl *desc_hdr_control;
+	TileControl *tooltip_control;
 
 	TileControl *start_menu_item_control;
 	TileControl *help_menu_item_control;
@@ -103,6 +104,9 @@ application_tile_new (const gchar *desktop_item_id)
 	priv->desc_hdr_control = tile_control_new (
 		desktop_item_tile_model_get_description_attr (priv->model),
 		tile_button_view_get_header_text_attr (priv->view, 1));
+	priv->tooltip_control = tile_control_new (
+		desktop_item_tile_model_get_comment_attr (priv->model),
+		tile_button_view_get_tooltip_attr (priv->view));
 
 /* make start app menu-item */
 
@@ -207,6 +211,7 @@ this_init (ApplicationTile *this)
 	priv->icon_control               = NULL;
 	priv->name_hdr_control           = NULL;
 	priv->desc_hdr_control           = NULL;
+	priv->tooltip_control            = NULL;
 
 	priv->start_menu_item_control    = NULL;
 	priv->help_menu_item_control     = NULL;
@@ -230,6 +235,7 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
 	g_object_unref (priv->desc_hdr_control);
+	g_object_unref (priv->tooltip_control);
 
 	g_object_unref (priv->start_menu_item_control);
 	g_object_unref (priv->help_menu_item_control);

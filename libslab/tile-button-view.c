@@ -497,9 +497,20 @@ hdr_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 
 	text = g_value_get_string (value);
 
-	if (! text)
-		gtk_widget_hide (this->headers [index]);
+	if (! text) {
+		gtk_widget_destroy (this->headers [index]);
+		this->headers [index] = NULL;
+	}
 	else {
+		if (! this->headers [index]) {
+			this->headers [index] = gtk_label_new (NULL);
+			gtk_misc_set_alignment (GTK_MISC (this->headers [index]), 0.0, 0.5);
+
+			gtk_container_add_with_properties (
+				GTK_CONTAINER (priv->hdr_box), this->headers [index],
+				"position", index, NULL);
+		}
+
 		gtk_label_set_text (GTK_LABEL (this->headers [index]), text);
 		gtk_widget_show (GTK_WIDGET (this->headers [index]));
 	}
