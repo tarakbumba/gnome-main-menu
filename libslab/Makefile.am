@@ -14,7 +14,6 @@ lib_LTLIBRARIES = libslab.la
 #	search-entry-watermark.h
 #	search-entry.c
 #	shell-window.c
-#	system-tile.c
 
 libslab_la_SOURCES =				\
 	application-tile.c			\
@@ -37,6 +36,7 @@ libslab_la_SOURCES =				\
 	libslab-utils.h				\
 	slab-gnome-util.c			\
 	slab-section.c				\
+	system-tile.c				\
 	themed-icon.c				\
 	themed-icon.h				\
 	tile.c					\
@@ -56,7 +56,6 @@ libslab_la_SOURCES =				\
 #	search-context-picker.h
 #	search-entry.h
 #	shell-window.h
-#	system-tile.h
 
 libslab_includedir = $(includedir)/slab
 libslab_include_HEADERS =			\
@@ -67,6 +66,7 @@ libslab_include_HEADERS =			\
 	gnome-utils.h				\
 	slab-gnome-util.h			\
 	slab-section.h				\
+	system-tile.h				\
 	tile.h					\
 	tile-attribute.h			\
 	tile-control.h				\

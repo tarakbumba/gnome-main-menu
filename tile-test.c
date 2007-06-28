@@ -5,6 +5,7 @@
 
 #include "application-tile.h"
 #include "document-tile.h"
+#include "system-tile.h"
 
 static gboolean
 delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
@@ -34,6 +35,8 @@ main (int argc, char **argv)
 	DocumentTile    *txt_tile;
 	ApplicationTile *gvim_tile;
 	ApplicationTile *gcnf_tile;
+	SystemTile      *cc_tile;
+	SystemTile      *help_tile;
 
     
 	prog = gnome_program_init ("tile-test", "1.0", LIBGNOMEUI_MODULE, argc, argv, NULL, NULL);
@@ -53,6 +56,8 @@ main (int argc, char **argv)
 	txt_tile  = document_tile_new ("file:///home/jimmyk/slab/svn/gnome-main-menu/branches/tiles-2/hehe.txt");
 	gvim_tile = application_tile_new ("gvim.desktop");
 	gcnf_tile = application_tile_new ("gconf-editor.desktop");
+	cc_tile   = system_tile_new ("control-center.desktop", NULL);
+	help_tile = system_tile_new ("yelp.desktop", "Help");
 
 	vbox = gtk_vbox_new (FALSE, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
@@ -62,6 +67,8 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (txt_tile)),  FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (gvim_tile)), FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (gcnf_tile)), FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (cc_tile)),   FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (help_tile)), FALSE, FALSE, 0);
     
 	gtk_container_add (GTK_CONTAINER (window), vbox);
 	gtk_container_set_border_width (GTK_CONTAINER (window), 6);
@@ -78,6 +85,8 @@ main (int argc, char **argv)
 	g_object_unref (G_OBJECT (txt_tile));
 	g_object_unref (G_OBJECT (gvim_tile));
 	g_object_unref (G_OBJECT (gcnf_tile));
+	g_object_unref (G_OBJECT (cc_tile));
+	g_object_unref (G_OBJECT (help_tile));
     
 	return 0;
 }
