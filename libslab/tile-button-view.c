@@ -11,12 +11,14 @@ typedef struct {
 	TileAttribute       *uri_attr;
 	TileAttribute       *icon_attr;
 	TileAttribute      **hdr_attrs;
+	TileAttribute       *tooltip_attr;
 
 	gchar               *uri;
 	gchar               *icon_id;
 
 	GtkMenu             *context_menu;
 	GtkVBox             *hdr_box;
+	GtkTooltips         *tooltip;
 
 	gboolean             debounce;
 	DoubleClickDetector *dcd;
@@ -41,9 +43,10 @@ static gboolean button_release (GtkWidget *, GdkEventButton *);
 
 static TileAttribute *get_attribute_by_id (TileView *, const gchar *);
 
-static void uri_attr_notify_cb  (GObject *, GParamSpec *, gpointer);
-static void icon_attr_notify_cb (GObject *, GParamSpec *, gpointer);
-static void hdr_attr_notify_cb  (GObject *, GParamSpec *, gpointer);
+static void uri_attr_notify_cb     (GObject *, GParamSpec *, gpointer);
+static void icon_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
+static void hdr_attr_notify_cb     (GObject *, GParamSpec *, gpointer);
+static void tooltip_attr_notify_cb (GObject *, GParamSpec *, gpointer);
 
 static void edit_header_entry_activate_cb (GtkEntry *, gpointer);
 
@@ -128,8 +131,9 @@ tile_button_view_new (gint n_hdrs)
 			G_CALLBACK (hdr_attr_notify_cb), this);
 	}
 
-	priv->uri_attr  = tile_attribute_new (G_TYPE_STRING);
-	priv->icon_attr = tile_attribute_new (G_TYPE_STRING);
+	priv->uri_attr     = tile_attribute_new (G_TYPE_STRING);
+	priv->icon_attr    = tile_attribute_new (G_TYPE_STRING);
+	priv->tooltip_attr = tile_attribute_new (G_TYPE_STRING);
 
 	g_signal_connect (
 		G_OBJECT (priv->uri_attr), "notify::" TILE_ATTRIBUTE_VALUE_PROP,
@@ -138,6 +142,10 @@ tile_button_view_new (gint n_hdrs)
 	g_signal_connect (
 		G_OBJECT (priv->icon_attr), "notify::" TILE_ATTRIBUTE_VALUE_PROP,
 		G_CALLBACK (icon_attr_notify_cb), this);
+
+	g_signal_connect (
+		G_OBJECT (priv->tooltip_attr), "notify::" TILE_ATTRIBUTE_VALUE_PROP,
+		G_CALLBACK (tooltip_attr_notify_cb), this);
 
 	return this;
 }
@@ -166,6 +174,12 @@ tile_button_view_get_header_text_attr (TileButtonView *this, gint index)
 	g_return_val_if_fail (0 <= index && index < this->n_hdrs, NULL);
 
 	return PRIVATE (this)->hdr_attrs [index];
+}
+
+TileAttribute *
+tile_button_view_get_tooltip_attr (TileButtonView *this)
+{
+	return PRIVATE (this)->tooltip_attr;
 }
 
 void
@@ -241,12 +255,14 @@ this_init (TileButtonView *this)
 	priv->uri_attr     = NULL;
 	priv->icon_attr    = NULL;
 	priv->hdr_attrs    = NULL;
+	priv->tooltip_attr = NULL;
 
 	priv->uri          = NULL;
 	priv->icon_id      = NULL;
 
 	priv->context_menu = NULL;
 	priv->hdr_box      = NULL;
+	priv->tooltip      = NULL;
 
 	priv->debounce     = TRUE;
 	priv->dcd          = double_click_detector_new ();
@@ -270,6 +286,9 @@ finalize (GObject *g_obj)
 	for (i = 0; i < this->n_hdrs; ++i)
 		if (G_IS_OBJECT (priv->hdr_attrs [i]))
 			g_object_unref (G_OBJECT (priv->hdr_attrs [i]));
+
+	if (G_IS_OBJECT (priv->tooltip_attr))
+		g_object_unref (G_OBJECT (priv->tooltip_attr));
 
 	g_free (priv->hdr_attrs);
 	g_free (priv->uri);
@@ -484,6 +503,30 @@ hdr_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
 		gtk_label_set_text (GTK_LABEL (this->headers [index]), text);
 		gtk_widget_show (GTK_WIDGET (this->headers [index]));
 	}
+}
+
+static void
+tooltip_attr_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer data)
+{
+	TileButtonView        *this = TILE_BUTTON_VIEW (data);
+	TileButtonViewPrivate *priv = PRIVATE (this);
+
+	const gchar *tooltip_text;
+
+
+	tooltip_text = g_value_get_string (tile_attribute_get_value (priv->tooltip_attr));
+
+	if (tooltip_text) {
+		if (! priv->tooltip)
+			priv->tooltip = gtk_tooltips_new ();
+
+		gtk_tooltips_set_tip (
+			priv->tooltip, GTK_WIDGET (this), tooltip_text, tooltip_text);
+		gtk_tooltips_enable (priv->tooltip);
+	}
+	else
+		if (GTK_IS_TOOLTIPS (priv->tooltip))
+			gtk_tooltips_disable (priv->tooltip);
 }
 
 static void

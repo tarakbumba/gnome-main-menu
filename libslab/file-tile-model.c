@@ -15,7 +15,6 @@ typedef struct {
 	BookmarkAgent           *user_agent;
 	BookmarkAgent           *recent_agent;
 
-	TileAttribute           *file_name_attr;
 	TileAttribute           *icon_id_attr;
 	TileAttribute           *mtime_attr;
 	TileAttribute           *app_attr;
@@ -92,7 +91,6 @@ file_tile_model_new (const gchar *uri)
 	priv->user_agent   = bookmark_agent_get_instance (BOOKMARK_STORE_USER_DOCS);
 	priv->recent_agent = bookmark_agent_get_instance (BOOKMARK_STORE_RECENT_DOCS);
 
-	priv->file_name_attr    = tile_attribute_new (G_TYPE_STRING);
 	priv->icon_id_attr      = tile_attribute_new (G_TYPE_STRING);
 	priv->mtime_attr        = tile_attribute_new (G_TYPE_LONG);
 	priv->app_attr          = tile_attribute_new (G_TYPE_POINTER);
@@ -125,12 +123,6 @@ file_tile_model_new (const gchar *uri)
 		G_CALLBACK (user_store_status_notify_cb), this);
 
 	return this;
-}
-
-TileAttribute *
-file_tile_model_get_file_name_attr (FileTileModel *this)
-{
-	return PRIVATE (this)->file_name_attr;
 }
 
 TileAttribute *
@@ -454,7 +446,6 @@ this_init (FileTileModel *this)
 	priv->user_agent               = NULL;
 	priv->recent_agent             = NULL;
 
-	priv->file_name_attr           = NULL;
 	priv->icon_id_attr             = NULL;
 	priv->mtime_attr               = NULL;
 	priv->app_attr                 = NULL;
@@ -503,7 +494,6 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->user_agent);
 	g_object_unref (priv->recent_agent);
 
-	g_object_unref (priv->file_name_attr);
 	g_object_unref (priv->icon_id_attr);
 	g_object_unref (priv->mtime_attr);
 	g_object_unref (priv->app_attr);
@@ -530,20 +520,13 @@ update_model (FileTileModel *this)
 	FileTileModelPrivate *priv = PRIVATE (this);
 
 	gchar *basename;
-	gchar *file_name;
 
 	GnomeVFSURI *uri;
 	GList       *uri_list = NULL;
 
 
 	basename = g_path_get_basename (priv->uri);
-
-	file_name = gnome_vfs_unescape_string (basename, NULL);
-	tile_attribute_set_string (priv->file_name_attr, file_name);
-	g_free (file_name);
-
 	update_mime_type (this, gnome_vfs_get_mime_type_for_name (basename));
-
 	g_free (basename);
 
 	tile_attribute_set_string (priv->icon_id_attr, DEFAULT_ICON_ID);
@@ -698,8 +681,6 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 
 	if (! (result && result->result == GNOME_VFS_OK))
 		return;
-
-	tile_attribute_set_string (priv->file_name_attr, result->file_info->name);
 
 	if (result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MIME_TYPE)
 		update_mime_type (FILE_TILE_MODEL (this), result->file_info->mime_type);

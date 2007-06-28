@@ -1,6 +1,7 @@
 #include "document-tile.h"
 
 #include <glib/gi18n.h>
+#include <libgnomevfs/gnome-vfs.h>
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "file-tile-model.h"
@@ -12,13 +13,14 @@
 #include "bookmark-agent.h"
 
 typedef struct {
-	FileTileModel   *model;
-	TileButtonView  *view;
+	FileTileModel  *model;
+	TileButtonView *view;
 
 	TileControl *uri_control;
 	TileControl *icon_control;
 	TileControl *name_hdr_control;
 	TileControl *mtime_hdr_control;
+	TileControl *tooltip_control;
 
 	TileControl *open_menu_item_control;
 	TileControl *send_to_menu_item_control;
@@ -47,6 +49,8 @@ static void delete_item_activate_cb     (GtkMenuItem *, gpointer);
 static void view_name_attr_notify_cb    (GObject *, GParamSpec *, gpointer);
 
 static void mtime_trigger        (TileAttribute *, TileAttribute *, gpointer);
+static void filename_trigger     (TileAttribute *, TileAttribute *, gpointer);
+static void tooltip_trigger      (TileAttribute *, TileAttribute *, gpointer);
 static void app_trigger          (TileAttribute *, TileAttribute *, gpointer);
 static void send_to_trigger      (TileAttribute *, TileAttribute *, gpointer);
 static void is_in_store_trigger  (TileAttribute *, TileAttribute *, gpointer);
@@ -104,13 +108,18 @@ document_tile_new (const gchar *uri)
 	priv->icon_control = tile_control_new (
 		file_tile_model_get_icon_id_attr (priv->model),
 		tile_button_view_get_icon_id_attr (priv->view));
-	priv->name_hdr_control = tile_control_new (
-		file_tile_model_get_file_name_attr (priv->model),
-		tile_button_view_get_header_text_attr (priv->view, 0));
+	priv->name_hdr_control = tile_control_new_with_trigger_func (
+		tile_model_get_uri_attr (TILE_MODEL (priv->model)),
+		tile_button_view_get_header_text_attr (priv->view, 0),
+		filename_trigger, NULL);
 	priv->mtime_hdr_control = tile_control_new_with_trigger_func (
 		file_tile_model_get_mtime_attr (priv->model),
 		tile_button_view_get_header_text_attr (priv->view, 1),
 		mtime_trigger, NULL);
+	priv->tooltip_control = tile_control_new_with_trigger_func (
+		tile_model_get_uri_attr (TILE_MODEL (priv->model)),
+		tile_button_view_get_tooltip_attr (priv->view),
+		tooltip_trigger, NULL);
 
 /* make open in default app menu-item */
 
@@ -212,6 +221,7 @@ this_init (DocumentTile *this)
 	priv->icon_control              = NULL;
 	priv->name_hdr_control          = NULL;
 	priv->mtime_hdr_control         = NULL;
+	priv->tooltip_control           = NULL;
 
 	priv->open_menu_item_control    = NULL;
 	priv->send_to_menu_item_control = NULL;
@@ -234,6 +244,7 @@ finalize (GObject *g_obj)
 	g_object_unref (priv->icon_control);
 	g_object_unref (priv->name_hdr_control);
 	g_object_unref (priv->mtime_hdr_control);
+	g_object_unref (priv->tooltip_control);
 	g_object_unref (priv->open_menu_item_control);
 	g_object_unref (priv->send_to_menu_item_control);
 	g_object_unref (priv->is_in_store_control);
@@ -342,6 +353,34 @@ mtime_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
 
 	tile_attribute_set_string (dst, time_str);
 	g_free (time_str);
+}
+
+static void
+filename_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
+{
+	gchar *basename;
+	gchar *filename;
+
+
+	basename = g_path_get_basename (g_value_get_string (tile_attribute_get_value (src)));
+	filename = gnome_vfs_unescape_string (basename, NULL);
+
+	tile_attribute_set_string (dst, filename);
+
+	g_free (basename);
+	g_free (filename);
+}
+
+static void
+tooltip_trigger (TileAttribute *src, TileAttribute *dst, gpointer data)
+{
+	gchar *path;
+
+	path = g_filename_from_uri (g_value_get_string (tile_attribute_get_value (src)), NULL, NULL);
+
+	tile_attribute_set_string (dst, path);
+
+	g_free (path);
 }
 
 static void

@@ -25,7 +25,6 @@ GType file_tile_model_get_type (void);
 
 FileTileModel *file_tile_model_new (const gchar *uri);
 
-TileAttribute *file_tile_model_get_file_name_attr    (FileTileModel *this);
 TileAttribute *file_tile_model_get_icon_id_attr      (FileTileModel *this);
 TileAttribute *file_tile_model_get_mtime_attr        (FileTileModel *this);
 TileAttribute *file_tile_model_get_app_attr          (FileTileModel *this);
