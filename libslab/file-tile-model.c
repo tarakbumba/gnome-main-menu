@@ -11,6 +11,7 @@
 typedef struct {
 	gchar                   *uri;
 	gchar                   *mime_type;
+	time_t                   mtime;
 
 	BookmarkAgent           *user_agent;
 	BookmarkAgent           *recent_agent;
@@ -54,6 +55,8 @@ static void user_store_items_notify_cb   (GObject *, GParamSpec *, gpointer);
 static void user_store_status_notify_cb  (GObject *, GParamSpec *, gpointer);
 static void enable_delete_notify_cb      (GConfClient *, guint, GConfEntry *, gpointer);
 static void file_info_cb                 (GnomeVFSAsyncHandle *, GList *, gpointer);
+
+static gpointer thumbnail_thread_func (gpointer);
 
 static GnomeThumbnailFactory *thumbnail_factory = NULL;
 static GnomeVFSVolumeMonitor *volume_monitor    = NULL;
@@ -326,7 +329,7 @@ file_tile_model_user_store_toggle (FileTileModel *this)
 		item = g_new0 (BookmarkItem, 1);
 		item->uri       = priv->uri;
 		item->mime_type = priv->mime_type;
-		item->mtime     = g_value_get_long (tile_attribute_get_value (priv->mtime_attr));
+		item->mtime     = priv->mtime;
 		item->app_name  = (gchar *) gnome_vfs_mime_application_get_name (app);
 		item->app_exec  = (gchar *) gnome_vfs_mime_application_get_exec (app);
 
@@ -442,6 +445,7 @@ this_init (FileTileModel *this)
 
 	priv->uri                      = NULL;
 	priv->mime_type                = NULL;
+	priv->mtime                    = 0;
 
 	priv->user_agent               = NULL;
 	priv->recent_agent             = NULL;
@@ -669,7 +673,11 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 	GObject              *this = G_OBJECT (data);
 	FileTileModelPrivate *priv = PRIVATE  (this);
 
-	GnomeVFSGetFileInfoResult *result;
+	GnomeVFSGetFileInfoResult  *info_result;
+	GnomeIconLookupResultFlags  icon_result;
+
+	GThread  *thread;
+	gboolean  generate_thumb;
 
 	gchar *icon_id;
 
@@ -677,20 +685,77 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 	if (! results)
 		return;
 
-	result = (GnomeVFSGetFileInfoResult *) results->data;
+	info_result = (GnomeVFSGetFileInfoResult *) results->data;
 
-	if (! (result && result->result == GNOME_VFS_OK))
+	if (! (info_result && info_result->result == GNOME_VFS_OK))
 		return;
 
-	if (result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MIME_TYPE)
-		update_mime_type (FILE_TILE_MODEL (this), result->file_info->mime_type);
+	if (info_result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MIME_TYPE)
+		update_mime_type (FILE_TILE_MODEL (this), info_result->file_info->mime_type);
 
-	if (result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MTIME)
-		tile_attribute_set_long (priv->mtime_attr, result->file_info->mtime);
+	if (info_result->file_info->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_MTIME) {
+		priv->mtime = info_result->file_info->mtime;
+		tile_attribute_set_long (priv->mtime_attr, priv->mtime);
+	}
 
 	icon_id = gnome_icon_lookup (
 		gtk_icon_theme_get_default (), thumbnail_factory, priv->uri, NULL,
-		result->file_info, priv->mime_type, 0, NULL);
+		info_result->file_info, priv->mime_type, 0, & icon_result);
+
+	g_printf ("%s: uri     = %s\n", G_STRFUNC, priv->uri);
+	g_printf ("%s: icon_id = %s (%d)\n\n", G_STRFUNC, icon_id, icon_result);
+
 	tile_attribute_set_string (priv->icon_id_attr, icon_id);
 	g_free (icon_id);
+
+	generate_thumb = 
+		! (icon_result & GNOME_ICON_LOOKUP_RESULT_FLAGS_THUMBNAIL) &&
+		gnome_thumbnail_factory_can_thumbnail (
+			thumbnail_factory, priv->uri, priv->mime_type, priv->mtime);
+
+	if (generate_thumb) {
+		g_printf ("spawning thumbnailing thread\n");
+
+		if (! g_thread_supported ())
+			g_thread_init (NULL);
+
+		thread = g_thread_create (thumbnail_thread_func, this, FALSE, NULL);
+	}
+}
+
+static gpointer
+thumbnail_thread_func (gpointer data)
+{
+	FileTileModelPrivate *priv = PRIVATE (data);
+
+	GdkPixbuf *thumb;
+	gchar     *thumb_path;
+
+
+
+	g_printf ("%s !!\n", G_STRFUNC);
+
+	thumb = gnome_thumbnail_factory_generate_thumbnail (
+		thumbnail_factory, priv->uri, priv->mime_type);
+
+	if (thumb) {
+		gnome_thumbnail_factory_save_thumbnail (
+			thumbnail_factory, thumb, priv->uri, priv->mtime);
+
+		thumb_path = gnome_thumbnail_factory_lookup (
+			thumbnail_factory, priv->uri, priv->mtime);
+
+		g_printf ("thumb_path = %s\n", thumb_path);
+
+		gdk_threads_enter ();
+		tile_attribute_set_string (priv->icon_id_attr, thumb_path);
+		gdk_threads_leave ();
+
+		g_free (thumb_path);
+	}
+	else
+		gnome_thumbnail_factory_create_failed_thumbnail (
+			thumbnail_factory, priv->uri, priv->mtime);
+
+	return NULL;
 }
