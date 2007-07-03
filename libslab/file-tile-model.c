@@ -676,10 +676,8 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 	GnomeVFSGetFileInfoResult  *info_result;
 	GnomeIconLookupResultFlags  icon_result;
 
-	GThread  *thread;
 	gboolean  generate_thumb;
-
-	gchar *icon_id;
+	gchar    *icon_id;
 
 
 	if (! results)
@@ -702,9 +700,6 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 		gtk_icon_theme_get_default (), thumbnail_factory, priv->uri, NULL,
 		info_result->file_info, priv->mime_type, 0, & icon_result);
 
-	g_printf ("%s: uri     = %s\n", G_STRFUNC, priv->uri);
-	g_printf ("%s: icon_id = %s (%d)\n\n", G_STRFUNC, icon_id, icon_result);
-
 	tile_attribute_set_string (priv->icon_id_attr, icon_id);
 	g_free (icon_id);
 
@@ -714,12 +709,10 @@ file_info_cb (GnomeVFSAsyncHandle *handle, GList *results, gpointer data)
 			thumbnail_factory, priv->uri, priv->mime_type, priv->mtime);
 
 	if (generate_thumb) {
-		g_printf ("spawning thumbnailing thread\n");
-
 		if (! g_thread_supported ())
 			g_thread_init (NULL);
 
-		thread = g_thread_create (thumbnail_thread_func, this, FALSE, NULL);
+		g_thread_create (thumbnail_thread_func, this, FALSE, NULL);
 	}
 }
 
@@ -733,8 +726,6 @@ thumbnail_thread_func (gpointer data)
 
 
 
-	g_printf ("%s !!\n", G_STRFUNC);
-
 	thumb = gnome_thumbnail_factory_generate_thumbnail (
 		thumbnail_factory, priv->uri, priv->mime_type);
 
@@ -744,8 +735,6 @@ thumbnail_thread_func (gpointer data)
 
 		thumb_path = gnome_thumbnail_factory_lookup (
 			thumbnail_factory, priv->uri, priv->mtime);
-
-		g_printf ("thumb_path = %s\n", thumb_path);
 
 		gdk_threads_enter ();
 		tile_attribute_set_string (priv->icon_id_attr, thumb_path);

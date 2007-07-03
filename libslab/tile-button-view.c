@@ -295,7 +295,8 @@ finalize (GObject *g_obj)
 	g_free (priv->uri);
 	g_free (priv->icon_id);
 
-	gtk_widget_destroy (GTK_WIDGET (priv->context_menu));
+	if (GTK_IS_WIDGET (priv->context_menu))
+		gtk_widget_destroy (GTK_WIDGET (priv->context_menu));
 
 	if (G_IS_OBJECT (priv->dcd))
 		g_object_unref (priv->dcd);

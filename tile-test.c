@@ -6,6 +6,7 @@
 #include "application-tile.h"
 #include "document-tile.h"
 #include "system-tile.h"
+#include "network-tile.h"
 
 static gboolean
 delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
@@ -36,11 +37,13 @@ main (int argc, char **argv)
 	ApplicationTile *gcnf_tile;
 	SystemTile      *cc_tile;
 	SystemTile      *help_tile;
+	NetworkTile     *net_tile;
 
     
 	prog = gnome_program_init ("tile-test", "1.0", LIBGNOMEUI_MODULE, argc, argv, NULL, NULL);
 
 	gtk_init (& argc, & argv);
+    	gdk_threads_init ();
     
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     
@@ -56,6 +59,7 @@ main (int argc, char **argv)
 	gcnf_tile = application_tile_new ("gconf-editor.desktop");
 	cc_tile   = system_tile_new ("control-center.desktop", NULL);
 	help_tile = system_tile_new ("yelp.desktop", "Help");
+	net_tile  = network_tile_new ();
 
 	vbox = gtk_vbox_new (FALSE, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
@@ -66,13 +70,13 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (gcnf_tile)), FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (cc_tile)),   FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (help_tile)), FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), tile_get_widget (TILE (net_tile)),  FALSE, FALSE, 0);
     
 	gtk_container_add (GTK_CONTAINER (window), vbox);
 	gtk_container_set_border_width (GTK_CONTAINER (window), 6);
     
 	gtk_widget_show_all (window);
-    
-    	gdk_threads_init ();
+
 	gtk_main ();
 
 	gnome_vfs_shutdown ();
@@ -84,6 +88,7 @@ main (int argc, char **argv)
 	g_object_unref (G_OBJECT (gcnf_tile));
 	g_object_unref (G_OBJECT (cc_tile));
 	g_object_unref (G_OBJECT (help_tile));
+	g_object_unref (G_OBJECT (net_tile));
     
 	return 0;
 }

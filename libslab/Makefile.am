@@ -45,6 +45,8 @@ libslab_la_SOURCES =				\
 	tile-view.c				\
 	tile-model.c				\
 	file-tile-model.c			\
+	network-tile.c				\
+	network-tile-model.c			\
 	tile-button-view.c
 
 #	$(BUILT_SOURCES)
@@ -73,6 +75,8 @@ libslab_include_HEADERS =			\
 	tile-view.h				\
 	tile-model.h				\
 	file-tile-model.h			\
+	network-tile.h				\
+	network-tile-model.h			\
 	tile-button-view.h
 
 
