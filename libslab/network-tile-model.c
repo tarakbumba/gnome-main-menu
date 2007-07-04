@@ -43,10 +43,12 @@ static void this_init       (NetworkTileModel *);
 
 static void finalize (GObject *);
 
-static gpointer agent_thread_func            (gpointer);
-static void     init_nm_connection           (NetworkTileModel *);
-static void     load_active_device_info_nm   (NetworkTileModel *);
-static void     load_active_device_info_gtop (NetworkTileModel *);
+static void update_model                 (NetworkTileModel *);
+static void init_nm_connection           (NetworkTileModel *);
+static void load_active_device_info_nm   (NetworkTileModel *);
+static void load_active_device_info_gtop (NetworkTileModel *);
+
+static gpointer agent_thread_func (gpointer);
 
 static void nm_state_change_cb (DBusGProxy *, guint, gpointer);
 static DBusHandlerResult nm_message_filter (DBusConnection *, DBusMessage *, gpointer);
@@ -83,7 +85,8 @@ network_tile_model_new ()
 	priv->info      = g_new0 (NetworkTileModelNetworkInfo, 1);
 
 	g_thread_create (agent_thread_func, this, FALSE, NULL);
-/*	agent_thread_func (this); */
+
+/*	update_model (this); */
 
 	return this;
 }
@@ -158,12 +161,10 @@ finalize (GObject *g_obj)
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
 
-static gpointer
-agent_thread_func (gpointer data)
+static void
+update_model (NetworkTileModel *this)
 {
-	NetworkTileModel        *this = NETWORK_TILE_MODEL (data);
 	NetworkTileModelPrivate *priv = PRIVATE (this);
-
 
 	init_nm_connection (this);
 
@@ -195,8 +196,6 @@ agent_thread_func (gpointer data)
 	gdk_threads_enter ();
 	tile_attribute_set_pointer (priv->info_attr, priv->info);
 	gdk_threads_leave ();
-
-	return NULL;
 }
 
 static void
@@ -389,9 +388,20 @@ load_active_device_info_gtop (NetworkTileModel *this)
 {
 }
 
+static gpointer
+agent_thread_func (gpointer data)
+{
+	update_model (NETWORK_TILE_MODEL (data));
+
+	return NULL;
+}
+
 static void
 nm_state_change_cb (DBusGProxy *proxy, guint state, gpointer data)
 {
+	g_printf ("%s: %s [%d]\n", G_STRFUNC, dbus_g_proxy_get_path (proxy), state);
+
+	update_model (NETWORK_TILE_MODEL (data));
 }
 
 static DBusHandlerResult
@@ -404,7 +414,7 @@ nm_message_filter (DBusConnection *nm_conn, DBusMessage *msg, gpointer data)
 		) ||
 		dbus_message_is_signal (msg, DBUS_INTERFACE_DBUS, "NameOwnerChanged")
 	) {
-		init_nm_connection (NETWORK_TILE_MODEL (data));
+		update_model (NETWORK_TILE_MODEL (data));
 
 		return DBUS_HANDLER_RESULT_HANDLED;
 	}

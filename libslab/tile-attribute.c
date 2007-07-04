@@ -120,9 +120,6 @@ tile_attribute_set_pointer (TileAttribute *this, gpointer p)
 
 	g_return_if_fail (G_VALUE_HOLDS (priv->value, G_TYPE_POINTER));
 
-	if (g_value_get_pointer (priv->value) == p)
-		return;
-
 	g_value_set_pointer (priv->value, p);
 	g_object_notify (G_OBJECT (this), TILE_ATTRIBUTE_VALUE_PROP);
 }
