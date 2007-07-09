@@ -11,13 +11,20 @@ AM_CPPFLAGS =								\
 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
 main_menu_SOURCES =							\
-	main-menu.c							\
-	main-menu-ui.c			main-menu-ui.h			\
-	main-menu-migration.c		main-menu-migration.h		\
-	tile-table.c			tile-table.h			\
-	tomboykeybinder.c		tomboykeybinder.h		\
+	directory-tile.c		directory-tile.h		\
+	directory-tile-model.c		directory-tile-model.h		\
+	document-tile.c			document-tile.h			\
 	eggaccelerators.c		eggaccelerators.h		\
-	hard-drive-status-tile.c	hard-drive-status-tile.h
+	file-tile-model.c		file-tile-model.h		\
+	hard-drive-status-tile.c	hard-drive-status-tile.h	\
+	main-menu.c							\
+	main-menu-migration.c		main-menu-migration.h		\
+	main-menu-ui.c			main-menu-ui.h			\
+	network-tile.c			network-tile.h			\
+	network-tile-model.c		network-tile-model.h		\
+	system-tile.c			system-tile.h			\
+	tile-table.c			tile-table.h			\
+	tomboykeybinder.c		tomboykeybinder.h
 
 main_menu_LDADD =							\
 	$(MAIN_MENU_LIBS)						\

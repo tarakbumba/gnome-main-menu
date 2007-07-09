@@ -1,29 +1,7 @@
-/*
- * This file is part of libtile.
- *
- * Copyright (c) 2006 Novell, Inc.
- *
- * Libtile is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * Libtile is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with libslab; if not, write to the Free Software Foundation, Inc., 51
- * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
 #ifndef __DIRECTORY_TILE_H__
 #define __DIRECTORY_TILE_H__
 
-#include <time.h>
-
-#include "nameplate-tile.h"
+#include "tile.h"
 
 G_BEGIN_DECLS
 
@@ -35,22 +13,16 @@ G_BEGIN_DECLS
 #define DIRECTORY_TILE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DIRECTORY_TILE_TYPE, DirectoryTileClass))
 
 typedef struct {
-	NameplateTile nameplate_tile;
+	Tile tile;
 } DirectoryTile;
 
 typedef struct {
-	NameplateTileClass nameplate_tile_class;
+	TileClass tile_class;
 } DirectoryTileClass;
-
-#define DIRECTORY_TILE_ACTION_OPEN          0
-#define DIRECTORY_TILE_ACTION_RENAME        1
-#define DIRECTORY_TILE_ACTION_MOVE_TO_TRASH 2
-#define DIRECTORY_TILE_ACTION_DELETE        3
-#define DIRECTORY_TILE_ACTION_SEND_TO       4
 
 GType directory_tile_get_type (void);
 
-GtkWidget *directory_tile_new (const gchar *uri, const gchar *title, const gchar *icon_name);
+DirectoryTile *directory_tile_new (const gchar *uri);
 
 G_END_DECLS
 
