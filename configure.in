@@ -32,18 +32,14 @@ dnl Check that we meet the dependencies
 dnl ==============================================
 AM_PATH_GLIB_2_0(2.8.0,,,gobject)
 
-COMMON_MODULES="glib-2.0 gobject-2.0 gtk+-2.0 gdk-2.0"
+COMMON_MODULES="glib-2.0 gobject-2.0 gtk+-2.0 gdk-2.0 gnome-desktop-2.0"
 
-PKG_CHECK_MODULES(GLADE, libglade-2.0)
-AC_SUBST(GLADE_CFLAGS)
-AC_SUBST(GLADE_LIBS)
-
-PKG_CHECK_MODULES(LIBSLAB, [ $COMMON_MODULES gnome-desktop-2.0 librsvg-2.0 libgnome-menu pango dbus-glib-1 NetworkManager ])
+PKG_CHECK_MODULES(LIBSLAB, [ $COMMON_MODULES librsvg-2.0 libgnome-menu pango ])
 
 AC_SUBST(LIBSLAB_CFLAGS)
 AC_SUBST(LIBSLAB_LIBS)
 
-PKG_CHECK_MODULES(MAIN_MENU, [ $COMMON_MODULES libpanelapplet-2.0 gnome-desktop-2.0 gconf-2.0 libgtop-2.0 libgnome-2.0 libgnomeui-2.0 dbus-glib-1 NetworkManager hal-storage cairo ])
+PKG_CHECK_MODULES(MAIN_MENU, [ $COMMON_MODULES libpanelapplet-2.0 gconf-2.0 libgtop-2.0 libgnome-2.0 libgnomeui-2.0 dbus-glib-1 NetworkManager hal-storage cairo libglade-2.0 ])
 
 AC_CHECK_HEADERS(iwlib.h, [ AC_CHECK_LIB(iw, iw_sockets_open, have_iwlib=yes, have_iwlib=no)], have_iwlib=no)
 
@@ -57,7 +53,7 @@ fi
 AC_SUBST(MAIN_MENU_CFLAGS)
 AC_SUBST(MAIN_MENU_LIBS)
 
-PKG_CHECK_MODULES(APPLICATION_BROWSER, [ $COMMON_MODULES libpanelapplet-2.0 gnome-desktop-2.0 libgnomeui-2.0 libgnome-menu ])
+PKG_CHECK_MODULES(APPLICATION_BROWSER, [ $COMMON_MODULES libgnomeui-2.0 libgnome-menu ])
 
 AC_SUBST(APPLICATION_BROWSER_CFLAGS)
 AC_SUBST(APPLICATION_BROWSER_LIBS)
@@ -84,7 +80,7 @@ dnl ==============================================
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
 
 if test x"$GCONFTOOL" = xno; then
-  AC_MSG_ERROR([gconftool-2 executable was not found in your path - should be install with gconf])
+  AC_MSG_ERROR([gconftool-2 executable was not found in your path - should be installed with gconf])
 fi
 
 AM_GCONF_SOURCE_2
@@ -121,19 +117,12 @@ dnl ==============================================
 
 GTK_DOC_CHECK(1.0)
 
-dnl application-browser/etc/Makefile
-dnl application-browser/src/Makefile
-dnl control-center/etc/Makefile
-dnl control-center/src/Makefile
-
 AC_OUTPUT([
 Makefile
-application-browser/etc/Makefile
-application-browser/src/Makefile
+applet/Makefile
+application-browser/Makefile
+data/libslab.pc
 libslab/Makefile
-libslab/libslab.pc
-main-menu/etc/Makefile
-main-menu/src/Makefile
 nautilus-main-menu/Makefile
 patch/Makefile
 po/Makefile.in

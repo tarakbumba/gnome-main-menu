@@ -5,11 +5,9 @@ NAUTILUS_DIR=
 endif
 
 SUBDIRS =				\
+	applet				\
+	application-browser		\
 	libslab				\
-	application-browser/etc		\
-	application-browser/src		\
-	main-menu/etc			\
-	main-menu/src			\
 	$(NAUTILUS_DIR)			\
 	patch				\
 	po
