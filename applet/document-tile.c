@@ -95,13 +95,6 @@ document_tile_new (const gchar *uri)
 
 	tile_button_view_add_context_menu (priv->view, GTK_MENU (menu));
 
-	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
-
-	g_signal_connect (
-		tile_button_view_get_header_text_attr (priv->view, 0), 
-		"notify::" TILE_ATTRIBUTE_VALUE_PROP,
-		G_CALLBACK (view_name_attr_notify_cb), this);
-
 	priv->uri_control = tile_control_new (
 		tile_model_get_uri_attr (TILE_MODEL (priv->model)),
 		tile_button_view_get_uri_attr (priv->view));
@@ -190,6 +183,13 @@ document_tile_new (const gchar *uri)
 		can_delete_trigger, NULL);
 
 	gtk_widget_show_all (GTK_WIDGET (menu));
+
+	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);
+
+	g_signal_connect (
+		tile_button_view_get_header_text_attr (priv->view, 0), 
+		"notify::" TILE_ATTRIBUTE_VALUE_PROP,
+		G_CALLBACK (view_name_attr_notify_cb), this);
 
 	return this;
 }

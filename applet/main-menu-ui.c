@@ -675,7 +675,7 @@ create_status_section (MainMenuUI *this)
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkContainer *ctnr;
-	Tile         *tile
+	Tile         *tile;
 
 	gint icon_width;
 
@@ -956,7 +956,7 @@ item_to_recent_app_tile (BookmarkItem *item, gpointer data)
 static Tile *
 item_to_user_doc_tile (BookmarkItem *item, gpointer data)
 {
-	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
+	return TILE (document_tile_new (item->uri));
 }
 
 static Tile *
@@ -996,13 +996,13 @@ item_to_recent_doc_tile (BookmarkItem *item, gpointer data)
 	if (bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_USER_DOCS], item->uri))
 		return NULL;
 
-	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
+	return TILE (document_tile_new (item->uri));
 }
 
 static Tile *
 item_to_dir_tile (BookmarkItem *item, gpointer data)
 {
-	return TILE (directory_tile_new (item->uri, item->title, item->icon));
+	return TILE (directory_tile_new (item->uri));
 }
 
 static Tile *
@@ -2032,12 +2032,12 @@ gtk_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 }
 
 static void
-tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpointer user_data)
+tile_action_triggered_cb (Tile *tile, guint flags, gpointer data)
 {
-	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
+	if (! (flags & TILE_ACTION_LAUNCHES_APP))
 		return;
 
-	hide_slab_if_urgent_close (MAIN_MENU_UI (user_data));
+	hide_slab_if_urgent_close (MAIN_MENU_UI (data));
 }
 
 static void
