@@ -41,8 +41,8 @@
 #include "document-tile.h"
 #include "directory-tile.h"
 #include "system-tile.h"
-#include "hard-drive-status-tile.h"
-#include "network-status-tile.h"
+#include "storage-tile.h"
+#include "network-tile.h"
 
 #include "tile-table.h"
 
@@ -196,7 +196,7 @@ static void     search_entry_activate_cb          (GtkEntry *, gpointer);
 static void     page_button_clicked_cb            (GtkButton *, gpointer);
 static void     tile_table_notify_cb              (GObject *, GParamSpec *, gpointer);
 static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpointer);
-static void     tile_action_triggered_cb          (Tile *, TileEvent *, TileAction *, gpointer);
+static void     tile_action_triggered_cb          (Tile *, guint, gpointer);
 static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
 static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
@@ -675,36 +675,36 @@ create_status_section (MainMenuUI *this)
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
 	GtkContainer *ctnr;
-	GtkWidget    *tile;
+	Tile         *tile
 
 	gint icon_width;
 
 
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "hard-drive-status-container"));
-	tile = hard_drive_status_tile_new ();
+	tile = TILE (storage_tile_new ());  /* FIXME */
 
 	gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
-	gtk_widget_set_size_request (tile, 6 * icon_width, -1);
+	gtk_widget_set_size_request (tile_get_widget (tile), 6 * icon_width, -1);
 
 	g_signal_connect (
-		G_OBJECT (tile), "tile-action-triggered",
+		G_OBJECT (tile), TILE_ACTION_TRIGGERED_SIGNAL,
 		G_CALLBACK (tile_action_triggered_cb), this);
 
-	gtk_container_add   (ctnr, tile);
+	gtk_container_add   (ctnr, tile_get_widget (tile));
 	gtk_widget_show_all (GTK_WIDGET (ctnr));
 
 	ctnr = GTK_CONTAINER (glade_xml_get_widget (
 		priv->main_menu_xml, "network-status-container"));
-	tile = network_status_tile_new ();
+	tile = TILE (network_tile_new ());  /* FIXME */
 
-	gtk_widget_set_size_request (tile, 6 * icon_width, -1);
+	gtk_widget_set_size_request (tile_get_widget (tile), 6 * icon_width, -1);
 
 	g_signal_connect (
-		G_OBJECT (tile), "tile-action-triggered",
+		G_OBJECT (tile), TILE_ACTION_TRIGGERED_SIGNAL,
 		G_CALLBACK (tile_action_triggered_cb), this);
 
-	gtk_container_add   (ctnr, tile);
+	gtk_container_add   (ctnr, tile_get_widget (tile));
 	gtk_widget_show_all (GTK_WIDGET (ctnr));
 
 	priv->status_section = glade_xml_get_widget (
