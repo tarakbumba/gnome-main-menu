@@ -7,7 +7,6 @@
 #include <string.h>
 #include <gconf/gconf-value.h>
 #include <libgnome/gnome-url.h>
-#include <libgnomevfs/gnome-vfs.h>
 
 #define DESKTOP_ITEM_TERMINAL_EMULATOR_FLAG "TerminalEmulator"
 #define ALTERNATE_DOCPATH_KEY               "DocPath"
@@ -293,7 +292,9 @@ libslab_get_gconf_value (const gchar *key)
 	}
 
 	g_object_unref (client);
-	gconf_value_free (value);
+
+	if (value)
+		gconf_value_free (value);
 
 	return retval;
 }
@@ -469,6 +470,44 @@ libslab_desktop_item_is_a_terminal (const gchar *uri)
 	gnome_desktop_item_unref (d_item);
 
 	return is_terminal;
+}
+
+gboolean
+libslab_desktop_item_is_logout (const gchar *uri)
+{
+	GnomeDesktopItem *d_item;
+	gboolean is_logout = FALSE;
+
+
+	d_item = libslab_gnome_desktop_item_new_from_unknown_id (uri);
+
+	if (! d_item)
+		return FALSE;
+
+	is_logout = strstr ("Logout", gnome_desktop_item_get_string (d_item, GNOME_DESKTOP_ITEM_NAME)) != NULL;
+
+	gnome_desktop_item_unref (d_item);
+
+	return is_logout;
+}
+
+gboolean
+libslab_desktop_item_is_lockscreen (const gchar *uri)
+{
+	GnomeDesktopItem *d_item;
+	gboolean is_logout = FALSE;
+
+
+	d_item = libslab_gnome_desktop_item_new_from_unknown_id (uri);
+
+	if (! d_item)
+		return FALSE;
+
+	is_logout = strstr ("Lock Screen", gnome_desktop_item_get_string (d_item, GNOME_DESKTOP_ITEM_NAME)) != NULL;
+
+	gnome_desktop_item_unref (d_item);
+
+	return is_logout;
 }
 
 gchar *

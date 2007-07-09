@@ -4,25 +4,10 @@ else
 NAUTILUS_DIR=
 endif
 
-INCLUDES =						\
-	$(MAIN_MENU_CFLAGS)				\
-	-I$(top_srcdir)/libslab				\
-	$(WARN_CFLAGS)
-
-bin_PROGRAMS = tile-test
-
-tile_test_SOURCES =					\
-	tile-test.c
-
-tile_test_LDADD =					\
-	$(MAIN_MENU_LIBS)				\
-	$(top_builddir)/libslab/libslab.la
-
-AM_CPPFLAGS =							\
-	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
-
 SUBDIRS =				\
 	libslab				\
+	application-browser/etc		\
+	application-browser/src		\
 	main-menu/etc			\
 	main-menu/src			\
 	$(NAUTILUS_DIR)			\

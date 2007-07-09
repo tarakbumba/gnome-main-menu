@@ -73,15 +73,14 @@ typedef struct {
 
 GType bookmark_agent_get_type (void);
 
-BookmarkAgent       *bookmark_agent_get_instance  (BookmarkStoreType type);
-BookmarkStoreStatus  bookmark_agent_get_status    (BookmarkAgent *this);
-gboolean             bookmark_agent_has_item      (BookmarkAgent *this, const gchar *uri);
-void                 bookmark_agent_add_item      (BookmarkAgent *this, const BookmarkItem *item);
-void                 bookmark_agent_move_item     (BookmarkAgent *this, const gchar *uri, const gchar *uri_new);
-void                 bookmark_agent_remove_item   (BookmarkAgent *this, const gchar *uri);
-void                 bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris);
+BookmarkAgent *bookmark_agent_get_instance  (BookmarkStoreType type);
+gboolean       bookmark_agent_has_item      (BookmarkAgent *this, const gchar *uri);
+void           bookmark_agent_add_item      (BookmarkAgent *this, const BookmarkItem *item);
+void           bookmark_agent_move_item     (BookmarkAgent *this, const gchar *uri, const gchar *uri_new);
+void           bookmark_agent_remove_item   (BookmarkAgent *this, const gchar *uri);
+void           bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris);
 
-void                 bookmark_item_free           (BookmarkItem *item);
+void           bookmark_item_free           (BookmarkItem *item);
 
 G_END_DECLS
 

@@ -56,6 +56,7 @@
 #define USER_DOCS_STORE_FILE_NAME "documents.xbel"
 #define USER_DIRS_STORE_FILE_NAME "places.xbel"
 #define SYSTEM_STORE_FILE_NAME    "system-items.xbel"
+#define CALC_TEMPLATE_FILE_NAME   "empty.ods"
 
 #define GTK_BOOKMARKS_FILE ".gtk-bookmarks"
 
@@ -137,6 +138,9 @@ static void weak_destroy_cb  (gpointer, GObject *);
 static gint recent_item_mru_comp_func (gconstpointer a, gconstpointer b);
 #endif
 
+static gchar *find_package_data_file (const gchar *filename);
+
+
 GType
 bookmark_agent_get_type ()
 {
@@ -175,12 +179,6 @@ bookmark_agent_get_instance (BookmarkStoreType type)
 		g_object_ref (G_OBJECT (instances [type]));
 
 	return instances [type];
-}
-
-BookmarkStoreStatus
-bookmark_agent_get_status (BookmarkAgent *this)
-{
-	return PRIVATE (this)->status;
 }
 
 gboolean
@@ -585,11 +583,13 @@ update_items (BookmarkAgent *this)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
-	gchar    **uris         = NULL;
-	gchar    **uris_ordered = NULL;
-	gsize      n_uris       = 0;
-	gint       rank         = -1;
-	gboolean   needs_update = FALSE;
+	gchar    **uris            = NULL;
+	gchar    **uris_ordered    = NULL;
+	gsize      n_uris          = 0;
+	gint       rank            = -1;
+	gint       rank_corr       = -1;
+	gboolean   needs_update    = FALSE;
+	gboolean   store_corrupted = FALSE;
 
 	gint i;
 
@@ -604,10 +604,20 @@ update_items (BookmarkAgent *this)
 		if (rank < 0 || rank >= n_uris)
 			rank = i;
 
-		if (uris_ordered [rank])
+		if (uris_ordered [rank]) {
+			store_corrupted = TRUE;
+			rank_corr = rank;
+
+			for (rank = 0; rank < n_uris; ++rank)
+				if (! uris_ordered [rank])
+					break;
+
 			g_warning (
-				"store corruption - multiple uris with same rank: [%s] rank = %d, [%s] [%s]",
-				priv->store_path, rank, uris_ordered [rank], uris [i]);
+				"store corruption [%s] - multiple uris with same rank (%d): [%s] [%s], moving latter to %d",
+				priv->store_path, rank_corr, uris_ordered [rank_corr], uris [i], rank);
+		}
+
+		set_rank (this, uris [i], rank);
 
 		uris_ordered [rank] = uris [i];
 	}
@@ -642,6 +652,9 @@ update_items (BookmarkAgent *this)
 
 		g_object_notify (G_OBJECT (this), BOOKMARK_AGENT_ITEMS_PROP);
 	}
+
+	if (store_corrupted)
+		save_store (this);
 
 	g_strfreev (uris);
 	g_free (uris_ordered);
@@ -746,7 +759,7 @@ load_xbel_store (BookmarkAgent *this)
 
 		libslab_handle_g_error (
 			& error, "%s: couldn't load bookmark file [%s]\n",
-			G_STRFUNC, priv->store_path);
+			G_STRFUNC, priv->store_path ? priv->store_path : "NULL");
 
 		return;
 	}
@@ -896,6 +909,28 @@ load_recent_store (BookmarkAgent *this)
 	}
 }
 
+static gchar *
+find_package_data_file (const gchar *filename)
+{
+	const gchar * const *dirs = NULL;
+	gchar               *path = NULL;
+	gint                 i;
+
+
+	dirs = g_get_system_data_dirs ();
+	
+	for (i = 0; ! path && dirs && dirs [i]; ++i) {
+		path = g_build_filename (dirs [i], PACKAGE, filename, NULL);
+		
+		if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
+			g_free (path);
+			path = NULL;
+		}
+	}
+
+	return path;
+}
+
 static void
 update_user_spec_path (BookmarkAgent *this)
 {
@@ -906,26 +941,13 @@ update_user_spec_path (BookmarkAgent *this)
 
 	BookmarkStoreStatus status;
 
-	const gchar * const *dirs = NULL;
-	gint                 i;
-
-
 	use_user_path = priv->user_modifiable &&
 		(priv->needs_sync || g_file_test (priv->user_store_path, G_FILE_TEST_EXISTS));
 
 	if (use_user_path)
 		path = g_strdup (priv->user_store_path);
 	else {
-		dirs = g_get_system_data_dirs ();
-
-		for (i = 0; ! path && dirs && dirs [i]; ++i) {
-			path = g_build_filename (dirs [i], PACKAGE, priv->store_filename, NULL);
-
-			if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
-				g_free (path);
-				path = NULL;
-			}
-		}
+		path = find_package_data_file (priv->store_filename);
 	}
 
 	if (use_user_path)
@@ -1033,13 +1055,18 @@ create_doc_item (BookmarkAgent *this, const gchar *uri)
 	gchar *path;
 	gchar *dir;
 	gchar *file;
+	gchar *template = NULL;
+	gsize  length;
+	gchar *contents;
 
 
 	if (! (strcmp (uri, "BLANK_SPREADSHEET") && strcmp (uri, "BLANK_DOCUMENT"))) {
 		dir = g_build_filename (g_get_home_dir (), "Documents", NULL);
 
-		if (! strcmp (uri, "BLANK_SPREADSHEET"))
+		if (! strcmp (uri, "BLANK_SPREADSHEET")) {
 			file = g_strconcat (_("New Spreadsheet"), ".ods", NULL);
+			template = find_package_data_file (CALC_TEMPLATE_FILE_NAME);
+		}
 		else
 			file = g_strconcat (_("New Document"), ".odt", NULL);
 
@@ -1047,7 +1074,16 @@ create_doc_item (BookmarkAgent *this, const gchar *uri)
 
 		if (! g_file_test (path, G_FILE_TEST_EXISTS)) {
 			g_mkdir_with_parents (dir, 0700);
-			fclose (g_fopen (path, "w"));
+
+			if (template != NULL) {
+				if (g_file_get_contents (template, & contents, & length, NULL))
+					g_file_set_contents (path, contents, length, NULL);
+
+				g_free (contents);
+				g_free (template);
+			}
+			else
+				fclose (g_fopen (path, "w"));
 		}
 
 		uri_new = g_filename_to_uri (path, NULL, NULL);

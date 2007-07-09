@@ -1,3 +1,61 @@
+2005-06-04  Jim Krehl  <jimmyk@novell.com>
+	* libslab/libslab-utils.c
+	* libslab/bookmark-agent.c:
+	Applied modified patch from Darren Kenny to fix BGO #439398.  Checks
+	for NULL values before freeing or printing.
+
+2007-05-08  Scott Reeves  <sreeves@novell.com>
+	* control-center/
+	* main-menu/etc/gnome-*.desktop:
+	Actually remove control-center dir.
+	Add proper categories to .desktop files
+
+2007-04-09  Scott Reeves  <sreeves@novell.com>
+	* configure.in
+	* main-menu/etc/system-items.xbel
+	* libslab/Makefile.am
+	* Makefile.am:
+	Fix for BNC#255943
+	   Remove CC from g-m-m since it's now shipped by g-c-c 
+
+2007-03-29  Jim Krehl  <jimmyk@novell.com>
+	* main-menu/src/main-menu-ui.c:
+	Only make tiles for local files until remote files can be handled
+	without blocking.
+
+	* main-menu/src/main-menu-migration.c:
+	Ensure local data exists before creating files.
+
+	* main-menu/etc/applications.xbel
+	* main-menu/etc/places.xbel
+	* main-menu/etc/system-items.xbel:
+	Include ranking info in the .xbel file.
+
+	* libslab/bookmark-agent.c:
+	Fix (instead of ignore) corrupted .xbel files.
+
+2007-03-23  Jim Krehl  <jimmyk@novell.com>
+	* libslab/app-resizer.c
+	* libslab/search-context-picker.c
+	* libslab/app-shell.c:
+	Applied patch from Larry Ewing to fix some memory leaks, BNC #244456.
+
+	* main-menu/etc/empty.ods
+	* main-menu/etc/Makefile.am
+	* libslab/bookmark-agent.c:
+	Applied patch from Larry Ewing to create valid, empty .ods file, BNC
+	#249188.
+
+2007-03-18  Jim Krehl  <jimmyk@novell.com>
+	* main-menu/src/main-menu-ui.c
+	* libslab/libslab-utils.c
+	* libslab/libslab-utils.h:
+	Make the menu abide by /apps/panel/global/disable_{log_out,lock_screen}
+	in gconf.
+
+	* libslab/application-tile.c:
+	Set the Upgrade/Uninstall action flags appropriately.
+
 2007-03-16  Jim Krehl  <jimmyk@novell.com>
 	* main-menu/src/main-menu-ui.c
 	* main-menu/src/user-apps-tile-table.c

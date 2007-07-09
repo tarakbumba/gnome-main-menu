@@ -37,14 +37,12 @@
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 
 #include "tile.h"
-#include "document-tile.h"
-#if 0
 #include "application-tile.h"
+#include "document-tile.h"
 #include "directory-tile.h"
 #include "system-tile.h"
 #include "hard-drive-status-tile.h"
 #include "network-status-tile.h"
-#endif
 
 #include "tile-table.h"
 
@@ -63,17 +61,20 @@
 #define FILE_MGR_OPEN_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_mgr_open_cmd"
 #define APP_BLACKLIST_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_blacklist"
 
-#define LOCKDOWN_GCONF_DIR          ROOT_GCONF_DIR "/lock-down"
-#define MORE_LINK_VIS_GCONF_KEY     LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
-#define SEARCH_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/search_area_visible"
-#define STATUS_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/status_area_visible"
-#define SYSTEM_VIS_GCONF_KEY        LOCKDOWN_GCONF_DIR "/system_area_visible"
-#define SHOWABLE_TYPES_GCONF_KEY    LOCKDOWN_GCONF_DIR "/showable_file_types"
-#define MODIFIABLE_SYSTEM_GCONF_KEY LOCKDOWN_GCONF_DIR "/user_modifiable_system_area"
-#define MODIFIABLE_APPS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_apps"
-#define MODIFIABLE_DOCS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_docs"
-#define MODIFIABLE_DIRS_GCONF_KEY   LOCKDOWN_GCONF_DIR "/user_modifiable_dirs"
-#define DISABLE_TERMINAL_GCONF_KEY  "/desktop/gnome/lockdown/disable_command_line"
+#define LOCKDOWN_GCONF_DIR           ROOT_GCONF_DIR "/lock-down"
+#define MORE_LINK_VIS_GCONF_KEY      LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
+#define SEARCH_VIS_GCONF_KEY         LOCKDOWN_GCONF_DIR "/search_area_visible"
+#define STATUS_VIS_GCONF_KEY         LOCKDOWN_GCONF_DIR "/status_area_visible"
+#define SYSTEM_VIS_GCONF_KEY         LOCKDOWN_GCONF_DIR "/system_area_visible"
+#define SHOWABLE_TYPES_GCONF_KEY     LOCKDOWN_GCONF_DIR "/showable_file_types"
+#define MODIFIABLE_SYSTEM_GCONF_KEY  LOCKDOWN_GCONF_DIR "/user_modifiable_system_area"
+#define MODIFIABLE_APPS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/user_modifiable_apps"
+#define MODIFIABLE_DOCS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/user_modifiable_docs"
+#define MODIFIABLE_DIRS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/user_modifiable_dirs"
+#define DISABLE_TERMINAL_GCONF_KEY   "/desktop/gnome/lockdown/disable_command_line"
+#define PANEL_LOCKDOWN_GCONF_DIR     "/apps/panel/global"
+#define DISABLE_LOGOUT_GCONF_KEY     PANEL_LOCKDOWN_GCONF_DIR "/disable_log_out"
+#define DISABLE_LOCKSCREEN_GCONF_KEY PANEL_LOCKDOWN_GCONF_DIR "/disable_lock_screen"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -115,6 +116,9 @@ typedef struct {
 
 	BookmarkAgent *bm_agents [BOOKMARK_STORE_N_TYPES];
 
+	GnomeVFSVolumeMonitor *volume_mon;
+	GList                 *mounts;
+
 	guint search_cmd_gconf_mntr_id;
 	guint current_page_gconf_mntr_id;
 	guint more_link_vis_gconf_mntr_id;
@@ -127,6 +131,8 @@ typedef struct {
 	guint modifiable_docs_gconf_mntr_id;
 	guint modifiable_dirs_gconf_mntr_id;
 	guint disable_term_gconf_mntr_id;
+	guint disable_logout_gconf_mntr_id;
+	guint disable_lockscreen_gconf_mntr_id;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -154,7 +160,7 @@ static void setup_lock_down          (MainMenuUI *);
 
 static void       select_page                (MainMenuUI *);
 static void       update_limits              (MainMenuUI *);
-static void       setup_tile_table           (MainMenuUI *, TileTable *);
+static void       connect_to_tile_triggers   (MainMenuUI *, TileTable *);
 static void       hide_slab_if_urgent_close  (MainMenuUI *);
 static void       set_search_section_visible (MainMenuUI *);
 static void       set_table_section_visible  (MainMenuUI *, TileTable *);
@@ -190,8 +196,8 @@ static void     search_entry_activate_cb          (GtkEntry *, gpointer);
 static void     page_button_clicked_cb            (GtkButton *, gpointer);
 static void     tile_table_notify_cb              (GObject *, GParamSpec *, gpointer);
 static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpointer);
-static void     tile_action_triggered_cb          (Tile *, guint, gpointer);
-static void     more_buttons_clicked_cb           (GtkButton *, gpointer);
+static void     tile_action_triggered_cb          (Tile *, TileEvent *, TileAction *, gpointer);
+static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
 static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
 static void     lockdown_notify_cb                (GConfClient *, guint, GConfEntry *, gpointer);
@@ -205,6 +211,7 @@ static void     search_tomboy_bindkey_cb          (gchar *, gpointer);
 static gboolean grabbing_window_event_cb          (GtkWidget *, GdkEvent *, gpointer);
 static void     user_app_agent_notify_cb          (GObject *, GParamSpec *, gpointer);
 static void     user_doc_agent_notify_cb          (GObject *, GParamSpec *, gpointer);
+static void     volume_monitor_mount_cb           (GnomeVFSVolumeMonitor *, GnomeVFSVolume *, gpointer);
 
 static GdkFilterReturn slab_gdk_message_filter (GdkXEvent *, GdkEvent *, gpointer);
 
@@ -367,6 +374,8 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->status_section                             = NULL;
 	priv->system_section                             = NULL;
 
+	priv->volume_mon                                 = NULL;
+
 	priv->search_cmd_gconf_mntr_id                   = 0;
 	priv->current_page_gconf_mntr_id                 = 0;
 	priv->more_link_vis_gconf_mntr_id                = 0;
@@ -379,6 +388,8 @@ main_menu_ui_init (MainMenuUI *this)
 	priv->modifiable_docs_gconf_mntr_id              = 0;
 	priv->modifiable_dirs_gconf_mntr_id              = 0;
 	priv->disable_term_gconf_mntr_id                 = 0;
+	priv->disable_logout_gconf_mntr_id               = 0;
+	priv->disable_lockscreen_gconf_mntr_id           = 0;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -388,6 +399,8 @@ static void
 main_menu_ui_finalize (GObject *g_obj)
 {
 	MainMenuUIPrivate *priv = PRIVATE (g_obj);
+
+	GConfClient *client;
 
 	gint i;
 
@@ -414,9 +427,19 @@ main_menu_ui_finalize (GObject *g_obj)
 	libslab_gconf_notify_remove (priv->modifiable_docs_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->modifiable_dirs_gconf_mntr_id);
 	libslab_gconf_notify_remove (priv->disable_term_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->disable_logout_gconf_mntr_id);
+	libslab_gconf_notify_remove (priv->disable_lockscreen_gconf_mntr_id);
+
+	client  = gconf_client_get_default ();
+	gconf_client_remove_dir (client, PANEL_LOCKDOWN_GCONF_DIR, NULL);
+	g_object_unref (client);
 
 	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
 		g_object_unref (priv->bm_agents [i]);
+
+	g_list_foreach (priv->mounts, (GFunc) gnome_vfs_volume_unref, NULL);
+	g_list_free (priv->mounts);
+	gnome_vfs_volume_monitor_unref (priv->volume_mon);
 
 	G_OBJECT_CLASS (main_menu_ui_parent_class)->finalize (g_obj);
 }
@@ -634,7 +657,7 @@ create_system_section (MainMenuUI *this)
 		priv->bm_agents [BOOKMARK_STORE_SYSTEM], -1, 1, TRUE, TRUE,
 		item_to_system_tile, this, app_uri_to_item, NULL));
 
-	setup_tile_table (this, priv->sys_table);
+	connect_to_tile_triggers (this, priv->sys_table);
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->sys_table));
 
@@ -651,7 +674,6 @@ create_status_section (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-#if 0
 	GtkContainer *ctnr;
 	GtkWidget    *tile;
 
@@ -684,7 +706,6 @@ create_status_section (MainMenuUI *this)
 
 	gtk_container_add   (ctnr, tile);
 	gtk_widget_show_all (GTK_WIDGET (ctnr));
-#endif
 
 	priv->status_section = glade_xml_get_widget (
 		priv->main_menu_xml, "slab-status-section");
@@ -760,6 +781,12 @@ create_rct_docs_section (MainMenuUI *this)
 		item_to_recent_doc_tile, this, NULL, NULL));
 
 	gtk_container_add (ctnr, GTK_WIDGET (priv->file_tables [RCNT_DOCS_TABLE]));
+
+	priv->volume_mon = gnome_vfs_get_volume_monitor ();
+	priv->mounts = gnome_vfs_volume_monitor_get_mounted_volumes (priv->volume_mon);
+
+	g_signal_connect (priv->volume_mon, "volume_mounted", G_CALLBACK (volume_monitor_mount_cb), this);
+	g_signal_connect (priv->volume_mon, "volume_unmounted", G_CALLBACK (volume_monitor_mount_cb), this);
 }
 
 static void
@@ -822,7 +849,7 @@ setup_file_tables (MainMenuUI *this)
 		gtk_table_set_row_spacings (GTK_TABLE (priv->file_tables [i]), 6);
 		gtk_table_set_col_spacings (GTK_TABLE (priv->file_tables [i]), 6);
 
-		setup_tile_table (this, priv->file_tables [i]);
+		connect_to_tile_triggers (this, priv->file_tables [i]);
 
 		g_object_get (G_OBJECT (priv->file_tables [i]), TILE_TABLE_TILES_PROP, & tiles, NULL);
 
@@ -864,6 +891,12 @@ setup_lock_down (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
+	GConfClient *client;
+
+	client = gconf_client_get_default ();
+	gconf_client_add_dir (client, PANEL_LOCKDOWN_GCONF_DIR, GCONF_CLIENT_PRELOAD_NONE, NULL);
+	g_object_unref (client);
+
 	priv->more_link_vis_gconf_mntr_id = libslab_gconf_notify_add (
 		MORE_LINK_VIS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->search_vis_gconf_mntr_id = libslab_gconf_notify_add (
@@ -884,25 +917,24 @@ setup_lock_down (MainMenuUI *this)
 		MODIFIABLE_DIRS_GCONF_KEY, lockdown_notify_cb, this);
 	priv->disable_term_gconf_mntr_id = libslab_gconf_notify_add (
 		DISABLE_TERMINAL_GCONF_KEY, lockdown_notify_cb, this);
+	priv->disable_logout_gconf_mntr_id = libslab_gconf_notify_add (
+		DISABLE_LOGOUT_GCONF_KEY, lockdown_notify_cb, this);
+	priv->disable_lockscreen_gconf_mntr_id = libslab_gconf_notify_add (
+		DISABLE_LOCKSCREEN_GCONF_KEY, lockdown_notify_cb, this);
 }
 
 static Tile *
 item_to_user_app_tile (BookmarkItem *item, gpointer data)
 {
-#if 0
 	if (app_is_in_blacklist (item->uri))
 		return NULL;
 
 	return TILE (application_tile_new (item->uri));
-#else
-	return NULL;
-#endif
 }
 
 static Tile *
 item_to_recent_app_tile (BookmarkItem *item, gpointer data)
 {
-#if 0
 	MainMenuUIPrivate *priv = PRIVATE (data);
 
 	Tile *tile = NULL;
@@ -919,15 +951,12 @@ item_to_recent_app_tile (BookmarkItem *item, gpointer data)
 		tile = TILE (application_tile_new (item->uri));
 
 	return tile;
-#else
-	return NULL;
-#endif
 }
 
 static Tile *
 item_to_user_doc_tile (BookmarkItem *item, gpointer data)
 {
-	return TILE (document_tile_new (item->uri));
+	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
 }
 
 static Tile *
@@ -935,33 +964,54 @@ item_to_recent_doc_tile (BookmarkItem *item, gpointer data)
 {
 	MainMenuUIPrivate *priv = PRIVATE (data);
 
+	GnomeVFSVolume *vol;
+	gboolean        is_nfs = FALSE;
+	GnomeVFSURI    *gvfs_uri;
+	gboolean        is_local = TRUE;
+
+	GList *node;
+
+
+	if (! g_str_has_prefix (item->uri, "file://"))
+		return NULL;
+
+	for (node = priv->mounts; ! is_nfs && node; node = node->next) {
+		vol = (GnomeVFSVolume *) node->data;
+
+		is_nfs =
+			((gnome_vfs_volume_get_device_type (vol) == GNOME_VFS_DEVICE_TYPE_NFS) &&
+			g_str_has_prefix (item->uri, gnome_vfs_volume_get_activation_uri (vol)));
+	}
+
+	if (is_nfs)
+		return NULL;
+
+	gvfs_uri = gnome_vfs_uri_new (item->uri);
+	is_local = gnome_vfs_uri_is_local (gvfs_uri);
+	gnome_vfs_uri_unref (gvfs_uri);
+
+	if (! is_local)
+		return NULL;
+
 	if (bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_USER_DOCS], item->uri))
 		return NULL;
 
-	return TILE (document_tile_new (item->uri));
+	return TILE (document_tile_new (item->uri, item->mime_type, item->mtime));
 }
 
 static Tile *
 item_to_dir_tile (BookmarkItem *item, gpointer data)
 {
-#if 0
 	return TILE (directory_tile_new (item->uri, item->title, item->icon));
-#else
-	return NULL;
-#endif
 }
 
 static Tile *
 item_to_system_tile (BookmarkItem *item, gpointer data)
 {
-#if 0
 	if (app_is_in_blacklist (item->uri))
 		return NULL;
 
 	return TILE (system_tile_new (item->uri, item->title));
-#else
-	return NULL;
-#endif
 }
 
 static BookmarkItem *
@@ -1022,6 +1072,9 @@ app_is_in_blacklist (const gchar *uri)
 	GList *blacklist;
 
 	gboolean disable_term;
+	gboolean disable_logout;
+	gboolean disable_lockscreen;
+
 	gboolean blacklisted;
 
 	GList *node;
@@ -1029,6 +1082,18 @@ app_is_in_blacklist (const gchar *uri)
 
 	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
 	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
+
+	if (blacklisted)
+		return TRUE;
+
+	disable_logout = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOGOUT_GCONF_KEY));
+	blacklisted    = disable_logout && libslab_desktop_item_is_logout (uri);
+
+	if (blacklisted)
+		return TRUE;
+
+	disable_lockscreen = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOCKSCREEN_GCONF_KEY));
+	blacklisted        = disable_lockscreen && libslab_desktop_item_is_lockscreen (uri);
 
 	if (blacklisted)
 		return TRUE;
@@ -1131,7 +1196,7 @@ update_limits (MainMenuUI *this)
 }
 
 static void
-setup_tile_table (MainMenuUI *this, TileTable *table)
+connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 {
 	GList *tiles;
 	GList *node;
@@ -1155,7 +1220,7 @@ setup_tile_table (MainMenuUI *this, TileTable *table)
 
 
 		gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
-		gtk_widget_set_size_request (tile_get_widget (TILE (node->data)), 6 * icon_width, -1);
+		gtk_widget_set_size_request (GTK_WIDGET (node->data), 6 * icon_width, -1);
 	}
 }
 
@@ -1935,7 +2000,7 @@ tile_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 	gint table_id;
 
 
-	setup_tile_table (this, TILE_TABLE (g_obj));
+	connect_to_tile_triggers (this, TILE_TABLE (g_obj));
 
 	table_id = GPOINTER_TO_INT (g_object_get_data (g_obj, "table-id"));
 
@@ -1967,9 +2032,9 @@ gtk_table_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 }
 
 static void
-tile_action_triggered_cb (Tile *tile, guint flags, gpointer user_data)
+tile_action_triggered_cb (Tile *tile, TileEvent *event, TileAction *action, gpointer user_data)
 {
-	if (flags & TILE_ACTION_LAUNCHES_APP)
+	if (! TILE_ACTION_CHECK_FLAG (action, TILE_ACTION_OPENS_NEW_WINDOW))
 		return;
 
 	hide_slab_if_urgent_close (MAIN_MENU_UI (user_data));
@@ -2199,4 +2264,14 @@ static void
 user_doc_agent_notify_cb (GObject *g_obj, GParamSpec *pspec, gpointer user_data)
 {
 	tile_table_reload (PRIVATE (user_data)->file_tables [RCNT_DOCS_TABLE]);
+}
+
+static void
+volume_monitor_mount_cb (GnomeVFSVolumeMonitor *mon, GnomeVFSVolume *vol, gpointer data)
+{
+	MainMenuUIPrivate *priv = PRIVATE (data);
+
+	g_list_foreach (priv->mounts, (GFunc) gnome_vfs_volume_unref, NULL);
+	g_list_free (priv->mounts);
+	priv->mounts = gnome_vfs_volume_monitor_get_mounted_volumes (mon);
 }

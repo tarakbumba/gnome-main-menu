@@ -4,18 +4,17 @@ INCLUDES =					\
 
 lib_LTLIBRARIES = libslab.la
 
-#	$(MARSHAL_GENERATED)
-#	app-resizer.c
-#	app-shell.c
-#	app-shell-startup.c
-#	directory-tile.c
-#	search-bar.c
-#	search-context-picker.c
-#	search-entry-watermark.h
-#	search-entry.c
-#	shell-window.c
-
 libslab_la_SOURCES =				\
+	$(MARSHAL_GENERATED)			\
+	app-resizer.c				\
+	app-shell.c				\
+	app-shell-startup.c			\
+	directory-tile.c			\
+	search-bar.c				\
+	search-context-picker.c			\
+	search-entry-watermark.h		\
+	search-entry.c				\
+	shell-window.c				\
 	application-tile.c			\
 	bookmark-agent.h			\
 	bookmark-agent-libslab.h		\
@@ -49,18 +48,17 @@ libslab_la_SOURCES =				\
 	network-tile-model.c			\
 	tile-button-view.c
 
-#	$(BUILT_SOURCES)
-#	app-resizer.h
-#	app-shell.h
-#	app-shell-startup.h
-#	directory-tile.
-#	search-bar.h
-#	search-context-picker.h
-#	search-entry.h
-#	shell-window.h
-
 libslab_includedir = $(includedir)/slab
 libslab_include_HEADERS =			\
+	$(BUILT_SOURCES)			\
+	app-resizer.h				\
+	app-shell.h				\
+	app-shell-startup.h			\
+	directory-tile.				\
+	search-bar.h				\
+	search-context-picker.h			\
+	search-entry.h				\
+	shell-window.h				\
 	application-tile.h			\
 	context-menu-view.h			\
 	desktop-item-tile-model.h		\
@@ -81,10 +79,6 @@ libslab_include_HEADERS =			\
 
 
 libslab_la_LIBADD = $(LIBSLAB_LIBS)
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libslab.pc
-
 
 search-entry-watermark.h: search-entry-watermark.svg
 	echo '#define SEARCH_ENTRY_WATERMARK_SVG "\' > $@; \
