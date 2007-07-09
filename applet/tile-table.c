@@ -21,7 +21,7 @@
 #include "tile-table.h"
 
 #include "tile.h"
-#include "nameplate-tile.h"
+#include "tile-button-view.h"
 
 G_DEFINE_TYPE (TileTable, tile_table, GTK_TYPE_TABLE)
 
@@ -73,7 +73,6 @@ static GList *reorder_tiles                (TileTable *, gint, gint);
 static void   save_reorder                 (TileTable *, GList *);
 static void   connect_signal_if_not_exists (Tile *, const gchar *, GCallback, gpointer);
 
-static void tile_activated_cb  (Tile *, TileEvent *, gpointer);
 static void tile_drag_begin_cb (GtkWidget *, GdkDragContext *, gpointer);
 static void tile_drag_end_cb   (GtkWidget *, GdkDragContext *, gpointer);
 static void agent_notify_cb    (GObject *, GParamSpec *, gpointer);
@@ -117,7 +116,7 @@ tile_table_reload (TileTable *this)
 
 	BookmarkItem **items = NULL;
 	GList         *tiles = NULL;
-	GtkWidget     *tile;
+	Tile          *tile;
 	gint           n_tiles;
 
 	GtkSizeGroup *icon_size_group;
@@ -129,16 +128,17 @@ tile_table_reload (TileTable *this)
 	g_object_get (G_OBJECT (priv->agent), BOOKMARK_AGENT_ITEMS_PROP, & items, NULL);
 
 	for (i = 0, n_tiles = 0; (priv->limit < 0 || n_tiles < priv->limit) && items && items [i]; ++i) {
-		tile = GTK_WIDGET (priv->create_tile_func (items [i], priv->tile_func_data));
+		tile = priv->create_tile_func (items [i], priv->tile_func_data);
 
 		if (tile) {
+			g_object_set_data (G_OBJECT (tile), "tile-table-uri", items [i]->uri);
 			tiles = g_list_append (tiles, tile);
 			++n_tiles;
 		}
 	}
 
 	for (node = priv->tiles; node; node = node->next)
-		gtk_widget_destroy (GTK_WIDGET (node->data));
+		g_object_unref (G_OBJECT (node->data));
 
 	g_list_free (priv->tiles);
 
@@ -147,12 +147,10 @@ tile_table_reload (TileTable *this)
 	icon_size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (node = tiles; node; node = node->next) {
-		tile = GTK_WIDGET (node->data);
+		tile = TILE (node->data);
 
 		g_object_set_data (G_OBJECT (node->data), "tile-table", this);
 
-		connect_signal_if_not_exists (
-			TILE (tile), "tile-activated", G_CALLBACK (tile_activated_cb), NULL);
 		connect_signal_if_not_exists (
 			TILE (tile), "drag-begin", G_CALLBACK (tile_drag_begin_cb), this);
 		connect_signal_if_not_exists (
@@ -160,8 +158,10 @@ tile_table_reload (TileTable *this)
 
 		priv->tiles = g_list_append (priv->tiles, tile);
 
-		if (IS_NAMEPLATE_TILE (tile))
-			gtk_size_group_add_widget (icon_size_group, NAMEPLATE_TILE (tile)->image);
+		if (IS_TILE_BUTTON_VIEW (tile_get_widget (tile)))
+			gtk_size_group_add_widget (
+				icon_size_group,
+				TILE_BUTTON_VIEW (tile_get_widget (tile))->icon);
 	}
 
 	g_list_free (tiles);
@@ -564,7 +564,7 @@ insert_into_bin (TileTable *this, Tile *tile, gint index)
 	else {
 		child = gtk_bin_get_child (priv->bins [index]);
 
-		if (! tile_compare (child, tile))
+		if (tile_equals (tile, child))
 			return;
 
 		if (child) {
@@ -673,7 +673,7 @@ save_reorder (TileTable *this, GList *tiles_new)
 		equal  = TRUE;
 
 		while (equal && node_u && node_v) {
-			if (tile_compare (node_u->data, node_v->data))
+			if (! tile_equals (TILE (node_u->data), node_v->data))
                 		equal = FALSE;
 
 			node_u = node_u->next;
@@ -689,22 +689,14 @@ save_reorder (TileTable *this, GList *tiles_new)
 		uris = g_new0 (gchar *, n_items + 1);
 
 		for (node_u = priv->tiles, i = 0; node_u && i < n_items; node_u = node_u->next, ++i)
-			uris [i] = g_strdup (TILE (node_u->data)->uri);
+			uris [i] = g_strdup (g_object_get_data (
+				G_OBJECT (node_u->data), "tile-table-uri"));
 
 		bookmark_agent_reorder_items (priv->agent, (const gchar **) uris);
 		g_object_notify (G_OBJECT (this), TILE_TABLE_TILES_PROP);
 
 		g_strfreev (uris);
 	}
-}
-
-static void
-tile_activated_cb (Tile *tile, TileEvent *event, gpointer user_data)
-{
-	if (event->type == TILE_EVENT_ACTIVATED_DOUBLE_CLICK)
-		return;
-
-	tile_trigger_action_with_time (tile, tile->default_action, event->time);
 }
 
 static void

@@ -5,9 +5,9 @@ NAUTILUS_DIR=
 endif
 
 SUBDIRS =				\
+	libslab				\
 	applet				\
 	application-browser		\
-	libslab				\
 	$(NAUTILUS_DIR)			\
 	patch				\
 	po
