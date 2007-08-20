@@ -18,37 +18,29 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#	include <config.h>
+#endif
 
-#include <string.h>
-
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtklabel.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtktable.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtktogglebutton.h>
-#include <gtk/gtkentry.h>
-#include <panel-applet.h>
-#include <libgnome/gnome-desktop-item.h>
 #include <libgnomeui/libgnomeui.h>
-#include <dirent.h>
 
-#include "app-shell.h"
-#include "app-shell-startup.h"
-#include "slab-gnome-util.h"
+#define GMENU_I_KNOW_THIS_IS_UNSTABLE
+#include <gmenu-tree.h>
 
-#define APPLICATION_BROWSER_PREFIX  "/desktop/gnome/applications/main-menu/ab_"
-#define NEW_APPS_MAX_ITEMS  (APPLICATION_BROWSER_PREFIX "new_apps_max_items")
+#include "menu-browser.h"
+
+static gboolean delete_event_cb (GtkWidget *, GdkEvent *, gpointer);
+static gboolean destroy_cb      (GtkObject *, gpointer);
 
 int
-main (int argc, char *argv[])
+main (int argc, char **argv)
 {
-	BonoboApplication *bonobo_app = NULL;
-	gboolean hidden = FALSE;
-	gchar * startup_id;
+	GtkWindow *ab_window;
+	GtkWidget *menu_browser;
+	GMenuTree *tree;
+
 
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
@@ -56,46 +48,44 @@ main (int argc, char *argv[])
 	textdomain (GETTEXT_PACKAGE);
 #endif
 
-	if (argc > 1)
-	{
-		if (argc != 2 || strcmp ("-h", argv[1]))
-		{
-			printf ("Usage - application-browser [-h]\n");
-			printf ("Options: -h : hide on start\n");
-			printf ("\tUseful if you want to autostart the application-browser singleton so it can get all it's slow loading done\n");
-			exit (1);
-		}
-		hidden = TRUE;
-	}
+	gnome_program_init (
+		"GNOME Application Browser", VERSION, LIBGNOMEUI_MODULE, argc, argv, NULL, NULL);
 
-	startup_id = g_strdup (g_getenv (DESKTOP_STARTUP_ID));
-	gnome_program_init ("Gnome Application Browser", "0.1", LIBGNOMEUI_MODULE,
-		argc, argv, NULL, NULL);
+	tree = gmenu_tree_lookup ("applications.menu", GMENU_TREE_FLAGS_NONE);
+	menu_browser = GTK_WIDGET (g_object_new (
+		MENU_BROWSER_TYPE,
+		MENU_BROWSER_MENU_TREE_PROP, tree,
+		NULL));
 
-	if (apss_already_running (argc, argv, &bonobo_app, "GNOME-NLD-AppBrowser", startup_id))
-	{
-		gdk_notify_startup_complete ();
-		bonobo_debug_shutdown ();
-		g_free (startup_id);
-		exit (1);
-	}
+	gtk_widget_show (menu_browser);
 
-	NewAppConfig *config = g_new0 (NewAppConfig, 1);
-	config->max_items = get_slab_gconf_int (NEW_APPS_MAX_ITEMS);
-	config->name = _("New Applications");
-	AppShellData *app_data = appshelldata_new ("applications.menu", config,
-		APPLICATION_BROWSER_PREFIX, GTK_ICON_SIZE_DND, TRUE, FALSE);
-	generate_categories (app_data);
+	ab_window = GTK_WINDOW (gtk_window_new (GTK_WINDOW_TOPLEVEL));
+	gtk_window_set_title (ab_window, _("Application Browser"));
+	gtk_window_set_icon_name (ab_window, "gnome-fs-client");
+	gtk_container_add (GTK_CONTAINER (ab_window), menu_browser);
 
-	layout_shell (app_data, _("Filter"), _("Groups"), _("Application Actions"), NULL, NULL);
+	g_signal_connect (ab_window, "delete-event", G_CALLBACK (delete_event_cb), NULL);
+	g_signal_connect (ab_window, "destroy",      G_CALLBACK (destroy_cb),      NULL);
 
-	g_signal_connect (bonobo_app, "new-instance", G_CALLBACK (apss_new_instance_cb), app_data);
-	create_main_window (app_data, "MyApplicationBrowser", _("Application Browser"),
-		"gnome-fs-client", 940, 600, hidden);
+	gtk_widget_show_all (GTK_WIDGET (ab_window));
 
-	if (bonobo_app)
-		bonobo_object_unref (bonobo_app);
-	bonobo_debug_shutdown ();
-	g_free (startup_id);
+	gtk_main ();
+
 	return 0;
-};
+}
+
+static gboolean
+delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
+{
+	gtk_widget_destroy (widget);
+
+	return FALSE;
+}
+
+static gboolean
+destroy_cb (GtkObject *object, gpointer data)
+{
+	gtk_main_quit ();
+
+	return FALSE;
+}

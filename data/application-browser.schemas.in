@@ -11,6 +11,7 @@
 				<long>Filename of existing .desktop files</long>
 			</locale>
 		</schema>
+
 		<schema>
 			<key>/schemas/desktop/gnome/applications/main-menu/ab_new_apps_max_items</key>
 			<applyto>/desktop/gnome/applications/main-menu/ab_new_apps_max_items</applyto>

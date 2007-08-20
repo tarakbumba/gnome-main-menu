@@ -1,112 +1,44 @@
 INCLUDES =					\
 	$(LIBSLAB_CFLAGS)			\
-	$(WARN_CFLAGS)
+	$(WARN_CFLAGS)				\
+	-DDATADIR=\""$(datadir)"\"
 
 lib_LTLIBRARIES = libslab.la
 
 libslab_la_SOURCES =				\
-	$(MARSHAL_GENERATED)			\
-	app-resizer.c				\
-	app-shell.c				\
-	app-shell-startup.c			\
-	directory-tile.c			\
-	search-bar.c				\
-	search-context-picker.c			\
-	search-entry-watermark.h		\
-	search-entry.c				\
-	shell-window.c				\
 	application-tile.c			\
-	bookmark-agent.h			\
-	bookmark-agent-libslab.h		\
 	bookmark-agent.c			\
 	context-menu-view.c			\
 	desktop-item-tile-model.c		\
-	document-tile.c				\
 	double-click-detector.c			\
-	double-click-detector.h			\
-	libslab-bookmarkfile.c			\
-	libslab-bookmarkfile.h			\
 	egg-recent-item.c			\
 	egg-recent-item.h			\
 	egg-recent-model.c			\
 	egg-recent-model.h			\
-	gnome-utils.c				\
 	libslab-utils.c				\
-	libslab-utils.h				\
-	slab-gnome-util.c			\
-	slab-section.c				\
-	system-tile.c				\
-	themed-icon.c				\
-	themed-icon.h				\
-	tile.c					\
+	menu-browser.c				\
 	tile-attribute.c			\
+	tile-button-view.c			\
+	tile.c					\
 	tile-control.c				\
-	tile-view.c				\
 	tile-model.c				\
-	file-tile-model.c			\
-	network-tile.c				\
-	network-tile-model.c			\
-	tile-button-view.c
+	tile-view.c
 
 libslab_includedir = $(includedir)/slab
 libslab_include_HEADERS =			\
-	$(BUILT_SOURCES)			\
-	app-resizer.h				\
-	app-shell.h				\
-	app-shell-startup.h			\
-	directory-tile.				\
-	search-bar.h				\
-	search-context-picker.h			\
-	search-entry.h				\
-	shell-window.h				\
 	application-tile.h			\
+	bookmark-agent.h			\
+	bookmark-agent-libslab.h		\
 	context-menu-view.h			\
 	desktop-item-tile-model.h		\
-	document-tile.h				\
-	gnome-utils.h				\
-	slab-gnome-util.h			\
-	slab-section.h				\
-	system-tile.h				\
-	tile.h					\
+	double-click-detector.h			\
+	libslab-utils.h				\
+	menu-browser.h				\
 	tile-attribute.h			\
+	tile-button-view.h			\
 	tile-control.h				\
-	tile-view.h				\
+	tile.h					\
 	tile-model.h				\
-	file-tile-model.h			\
-	network-tile.h				\
-	network-tile-model.h			\
-	tile-button-view.h
-
+	tile-view.h
 
 libslab_la_LIBADD = $(LIBSLAB_LIBS)
-
-search-entry-watermark.h: search-entry-watermark.svg
-	echo '#define SEARCH_ENTRY_WATERMARK_SVG "\' > $@; \
-	sed -e 's/"/\\"/g' -e 's/$$/\\/' -e 's/#000000/#%s/g' $< >> $@; \
-	echo '"' >> $@
-
-
-MARSHAL_GENERATED = nld-marshal.c nld-marshal.h
-
-nld-marshal.h: nld-marshal.list
-	( @GLIB_GENMARSHAL@ --prefix=nld_marshal $(srcdir)/nld-marshal.list --header > nld-marshal.tmp \
-	&& mv nld-marshal.tmp nld-marshal.h ) \
-	|| ( rm -f nld-marshal.tmp && exit 1 )
-
-nld-marshal.c: nld-marshal.h
-	( (echo '#include "nld-marshal.h"'; @GLIB_GENMARSHAL@ --prefix=nld_marshal $(srcdir)/nld-marshal.list --body) > nld-marshal.tmp \
-	&& mv nld-marshal.tmp nld-marshal.c ) \
-	|| ( rm -f nld-marshal.tmp && exit 1 )
-
-
-BUILT_SOURCES =				\
-	search-entry-watermark.h	\
-	$(MARSHAL_GENERATED)
-
-CLEANFILES =				\
-	search-entry-watermark.h	\
-	$(MARSHAL_GENERATED)
-
-EXTRA_DIST=				\
-	search-entry-watermark.svg	\
-	nld-marshal.list

@@ -6,7 +6,7 @@ uidir   = $(datadir)/gnome-2.0/ui
 ui_DATA = GNOME_MainMenu_ContextMenu.xml
 
 gladedir = $(datadir)/$(PACKAGE)
-glade_DATA = slab-window.glade
+glade_DATA = slab-window.glade menu-browser.glade
 
 desktopdir   = $(datadir)/applications
 ab_desktop   = application-browser.desktop
@@ -23,13 +23,13 @@ schemas_DATA = $(ab_schemas) $(mm_schemas)
 bookmarkdir = $(datadir)/$(PACKAGE)
 bookmark_DATA = applications.xbel documents.xbel system-items.xbel places.xbel empty.ods
 
-$(desktop_DATA).in: $(desktop_DATA).in.in
+$(ab_desktop).in: $(ab_desktop).in.in
 	sed -e "s|\@BINDIR\@|$(bindir)|" $< > $@
 
 $(server_DATA).in: $(server_DATA).in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
 
-$(schemas_DATA).in: $(schemas_DATA).in.in
+$(mm_schemas).in: $(mm_schemas).in.in
 	sed -e "s|\@DATADIR\@|$(datadir)|g" $< > $@
 
 install-data-local:

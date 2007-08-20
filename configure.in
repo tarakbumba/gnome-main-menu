@@ -34,7 +34,7 @@ AM_PATH_GLIB_2_0(2.8.0,,,gobject)
 
 COMMON_MODULES="glib-2.0 gobject-2.0 gtk+-2.0 gdk-2.0 gnome-desktop-2.0"
 
-PKG_CHECK_MODULES(LIBSLAB, [ $COMMON_MODULES librsvg-2.0 libgnome-menu pango ])
+PKG_CHECK_MODULES(LIBSLAB, [ $COMMON_MODULES librsvg-2.0 libgnome-menu pango libglade-2.0 ])
 
 AC_SUBST(LIBSLAB_CFLAGS)
 AC_SUBST(LIBSLAB_LIBS)
@@ -122,6 +122,7 @@ Makefile
 applet/Makefile
 application-browser/Makefile
 data/libslab.pc
+data/Makefile
 libslab/Makefile
 nautilus-main-menu/Makefile
 patch/Makefile

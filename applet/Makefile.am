@@ -29,5 +29,4 @@ main_menu_SOURCES =							\
 
 main_menu_LDADD =							\
 	$(MAIN_MENU_LIBS)						\
-	$(GLADE_LIBS)							\
-	$(top_builddir)/libslab/libslab.la
+	$(top_srcdir)/libslab/.libs/libslab.a

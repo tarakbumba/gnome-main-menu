@@ -52,7 +52,7 @@ static void create_application_category_sections (AppShellData * app_data);
 static GtkWidget *create_filter_section (AppShellData * app_data, const gchar * title);
 static GtkWidget *create_groups_section (AppShellData * app_data, const gchar * title);
 static GtkWidget *create_actions_section (AppShellData * app_data, const gchar * title,
-	void (*actions_handler) (Tile *, TileEvent *, gpointer));
+	void (*actions_handler) (GtkButton *, gpointer));
 
 static void generate_category (const char * category, GMenuTreeDirectory * root_dir, AppShellData * app_data, gboolean recursive);
 static void generate_launchers (GMenuTreeDirectory * root_dir, AppShellData * app_data,
@@ -232,7 +232,7 @@ main_delete_callback (GtkWidget * widget, GdkEvent * event, AppShellData * app_d
 void
 layout_shell (AppShellData * app_data, const gchar * filter_title, const gchar * groups_title,
 	const gchar * actions_title, GSList * actions,
-	void (*actions_handler) (Tile *, TileEvent *, gpointer))
+	void (*actions_handler) (GtkButton *, gpointer))
 {
 	GtkWidget *filter_section;
 	GtkWidget *groups_section;
@@ -374,7 +374,7 @@ relayout_shell (AppShellData * app_data)
 
 static GtkWidget *
 create_actions_section (AppShellData * app_data, const gchar * title,
-	void (*actions_handler) (Tile *, TileEvent *, gpointer))
+	void (*actions_handler) (GtkButton *, gpointer))
 {
 	GtkWidget *section, *launcher;
 	GtkWidget *vbox;
@@ -394,15 +394,11 @@ create_actions_section (AppShellData * app_data, const gchar * title,
 	{
 		for (actions = app_data->static_actions; actions; actions = actions->next)
 		{
-			GtkWidget *header;
-
 			action = (AppAction *) actions->data;
-			header = gtk_label_new (action->name);
-			gtk_misc_set_alignment (GTK_MISC (header), 0, 0.5);
-			launcher = nameplate_tile_new (NULL, NULL, header, NULL);
+			launcher = gtk_button_new_with_label (action->name);
 
 			g_object_set_data (G_OBJECT (launcher), APP_ACTION_KEY, action->item);
-			g_signal_connect (launcher, "tile-activated", G_CALLBACK (actions_handler),
+			g_signal_connect (launcher, "clicked", G_CALLBACK (actions_handler),
 				app_data);
 			gtk_box_pack_start (GTK_BOX (vbox), launcher, FALSE, FALSE, 0);
 

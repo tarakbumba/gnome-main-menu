@@ -8,6 +8,7 @@ SUBDIRS =				\
 	libslab				\
 	applet				\
 	application-browser		\
+	data				\
 	$(NAUTILUS_DIR)			\
 	patch				\
 	po

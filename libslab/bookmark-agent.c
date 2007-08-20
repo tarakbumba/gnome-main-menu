@@ -3,8 +3,7 @@
  *
  * Copyright (c) 2007 Novell, Inc.
  *
- * The Main Menu is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
+ * The Main Menu is free software; you can redistribute it and/or modify it * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
@@ -319,6 +318,12 @@ bookmark_agent_reorder_items (BookmarkAgent *this, const gchar **uris)
 		set_rank (this, uris [i], i);
 
 	save_store (this);
+}
+
+BookmarkStoreStatus
+bookmark_agent_get_status (BookmarkAgent *this)
+{
+	return PRIVATE (this)->status;
 }
 
 void
