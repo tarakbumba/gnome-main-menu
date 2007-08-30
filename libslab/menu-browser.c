@@ -10,6 +10,8 @@
 #	include <config.h>
 #endif
 
+#include "application-tile.h"
+#include "grid-view.h"
 #include "libslab-utils.h"
 
 typedef struct {
@@ -164,15 +166,13 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 	GMenuTreeItem      *item;
 
 	GMenuTreeDirectory *dir;
-	GMenuTreeEntry     *entry;
-	GtkListStore       *cat_store;
-	GtkWidget          *cat_view;
+	GtkTreeStore       *store;
 	GtkTreeIter         iter;
+	GtkTreeIter         iter_parent;
 	const char         *cat_name;
 	GtkWidget          *shortcut;
 	GList              *dir_list;
-	GList              *misc_list = NULL;
-	GdkPixbuf          *icon;
+	Tile               *tile;
 
 	GSList *snode;
 	GList  *node;
@@ -188,6 +188,11 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 
 	contents = gmenu_tree_directory_get_contents (root);
 
+	if (! contents)
+		return;
+
+	store = gtk_tree_store_new (2, G_TYPE_STRING, GTK_TYPE_WIDGET);
+
 	for (snode = contents; snode; snode = snode->next) {
 		item = (GMenuTreeItem *) snode->data;
 
@@ -200,35 +205,21 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 				gtk_button_set_relief (GTK_BUTTON (shortcut), GTK_RELIEF_NONE);
 				gtk_container_add (priv->shortcuts_ctnr, shortcut);
 
+				gtk_tree_store_append (store, & iter_parent, NULL);
+				gtk_tree_store_set    (store, & iter_parent, 0, cat_name, 1, NULL, -1);
+
 				dir_list = NULL;
 				get_dir_contents (& dir_list, dir);
 
-				cat_store = gtk_list_store_new (1, GDK_TYPE_PIXBUF);
-
 				for (node = dir_list; node; node = node->next) {
-					icon = gtk_icon_theme_load_icon (
-						gtk_icon_theme_get_default (), (gchar *) node->data,
-						GTK_ICON_SIZE_DND, 0, NULL);
+					tile = TILE (application_tile_new ((gchar *) node->data));
 
-					gtk_list_store_append (cat_store, & iter);
-					gtk_list_store_set    (cat_store, & iter, 0, icon, -1);
+					gtk_tree_store_append (store, & iter, & iter_parent);
+					gtk_tree_store_set    (store, & iter, 0, NULL, 1, tile_get_widget (tile), -1);
 
 					g_free (node->data);
 				}
 				g_list_free (dir_list);
-
-				cat_view = gtk_icon_view_new_with_model (GTK_TREE_MODEL (cat_store));
-				gtk_icon_view_set_pixbuf_column (GTK_ICON_VIEW (cat_view), 0);
-
-				gtk_container_add (priv->browser_ctnr, gtk_label_new (cat_name));
-				gtk_container_add (priv->browser_ctnr, cat_view);
-
-				break;
-
-			case GMENU_TREE_ITEM_ENTRY:
-				entry = (GMenuTreeEntry *) item;
-
-				misc_list = g_list_append (misc_list, g_strdup (gmenu_tree_entry_get_icon (entry)));
 
 				break;
 
@@ -241,25 +232,7 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 
 	g_slist_free (contents);
 
-	if (misc_list) {
-		for (node = misc_list; node; node = node->next) {
-			icon = gtk_icon_theme_load_icon (
-				gtk_icon_theme_get_default (), (gchar *) node->data,
-				GTK_ICON_SIZE_DIALOG, 0, NULL);
-
-			gtk_list_store_append (cat_store, & iter);
-			gtk_list_store_set    (cat_store, & iter, 0, icon, -1);
-
-			g_free (node->data);
-		}
-		g_list_free (misc_list);
-
-		cat_view = gtk_icon_view_new_with_model (GTK_TREE_MODEL (cat_store));
-		gtk_icon_view_set_pixbuf_column (GTK_ICON_VIEW (cat_view), 0);
-
-		gtk_container_add (priv->browser_ctnr, gtk_label_new (_("Other")));
-		gtk_container_add (priv->browser_ctnr, cat_view);
-	}
+	gtk_container_add (priv->browser_ctnr, GTK_WIDGET (grid_view_new_with_model (GTK_TREE_MODEL (store))));
 }
 
 static void
@@ -286,7 +259,7 @@ get_dir_contents (GList **list, GMenuTreeDirectory *dir)
 
 			case GMENU_TREE_ITEM_ENTRY:
 				* list = g_list_append (* list, g_strdup (
-					gmenu_tree_entry_get_icon ((GMenuTreeEntry *) item)));
+					gmenu_tree_entry_get_desktop_file_path ((GMenuTreeEntry *) item)));
 				break;
 
 			default:

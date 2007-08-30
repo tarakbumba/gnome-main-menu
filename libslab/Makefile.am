@@ -15,6 +15,7 @@ libslab_la_SOURCES =				\
 	egg-recent-item.h			\
 	egg-recent-model.c			\
 	egg-recent-model.h			\
+	grid-view.c				\
 	libslab-utils.c				\
 	menu-browser.c				\
 	tile-attribute.c			\
@@ -32,6 +33,7 @@ libslab_include_HEADERS =			\
 	context-menu-view.h			\
 	desktop-item-tile-model.h		\
 	double-click-detector.h			\
+	grid-view.h				\
 	libslab-utils.h				\
 	menu-browser.h				\
 	tile-attribute.h			\
