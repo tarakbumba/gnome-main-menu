@@ -23,6 +23,9 @@
 
 #include <gtk/gtk.h>
 
+#define GMENU_I_KNOW_THIS_IS_UNSTABLE
+#include <gmenu-tree.h>
+
 G_BEGIN_DECLS
 
 #define MENU_BROWSER_TYPE         (menu_browser_get_type ())
@@ -31,8 +34,6 @@ G_BEGIN_DECLS
 #define IS_MENU_BROWSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), MENU_BROWSER_TYPE))
 #define IS_MENU_BROWSER_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),    MENU_BROWSER_TYPE))
 #define MENU_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  MENU_BROWSER_TYPE, MenuBrowserClass))
-
-#define MENU_BROWSER_MENU_TREE_PROP "menu-tree"
 
 typedef struct {
 	GtkAlignment gtk_alignment;
@@ -44,7 +45,7 @@ typedef struct {
 
 GType menu_browser_get_type (void);
 
-GtkWidget *menu_browser_new (const gchar *menu_name);
+GtkWidget *menu_browser_new (GMenuTree *menu_tree);
 
 G_END_DECLS
 

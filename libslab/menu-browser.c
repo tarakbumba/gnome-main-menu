@@ -3,9 +3,6 @@
 #include <glib/gi18n.h>
 #include <glade/glade.h>
 
-#define GMENU_I_KNOW_THIS_IS_UNSTABLE
-#include <gmenu-tree.h>
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -15,8 +12,12 @@
 #include "libslab-utils.h"
 
 typedef struct {
+	GMenuTree    *menu_tree;
+	GtkTreeStore *menu_store;
+
+	GtkWidget    *view;
+
 	GtkContainer *shortcuts_ctnr;
-	GtkContainer *browser_ctnr;
 } MenuBrowserPrivate;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MENU_BROWSER_TYPE, MenuBrowserPrivate))
@@ -24,18 +25,12 @@ typedef struct {
 static void this_class_init (MenuBrowserClass *);
 static void this_init       (MenuBrowser *);
 
-static GObject *constructor  (GType, guint, GObjectConstructParam *);
-static void     get_property (GObject *, guint, GValue *, GParamSpec *);
-static void     set_property (GObject *, guint, const GValue *, GParamSpec *);
-static void     finalize     (GObject *);
+static void finalize (GObject *);
 
-static void load_tree        (MenuBrowser *, GMenuTree *);
-static void get_dir_contents (GList **, GMenuTreeDirectory *);
+static void load_tree        (MenuBrowser *);
+static void get_dir_contents (GMenuTreeDirectory *, GList **);
 
-enum {
-	PROP_0,
-	PROP_MTREE
-};
+static void clicked_cb (GtkButton *, gpointer);
 
 static GtkAlignmentClass *this_parent_class;
 
@@ -53,45 +48,10 @@ menu_browser_get_type ()
 	return type_id;
 }
 
-static void
-this_class_init (MenuBrowserClass *this_class)
+GtkWidget *
+menu_browser_new (GMenuTree *menu_tree)
 {
-	GObjectClass *g_obj_class = G_OBJECT_CLASS (this_class);
-
-	GParamSpec *mtree_pspec;
-
-
-	g_obj_class->constructor  = constructor;
-	g_obj_class->get_property = get_property;
-	g_obj_class->set_property = set_property;
-	g_obj_class->finalize     = finalize;
-
-	mtree_pspec = g_param_spec_pointer (
-		MENU_BROWSER_MENU_TREE_PROP, MENU_BROWSER_MENU_TREE_PROP,
-		"a pointer to a GMenuTree object to browse",
-		G_PARAM_WRITABLE | G_PARAM_CONSTRUCT |
-		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB);
-
-	g_object_class_install_property (g_obj_class, PROP_MTREE, mtree_pspec);
-
-	g_type_class_add_private (this_class, sizeof (MenuBrowserPrivate));
-
-	this_parent_class = g_type_class_peek_parent (this_class);
-}
-
-static void
-this_init (MenuBrowser *this)
-{
-	MenuBrowserPrivate *priv = PRIVATE (this);
-
-	priv->shortcuts_ctnr = NULL;
-	priv->browser_ctnr   = NULL;
-}
-
-static GObject *
-constructor (GType type, guint n_props, GObjectConstructParam *props)
-{
-	GObject            *this;
+	GtkWidget          *this;
 	MenuBrowserPrivate *priv;
 
 	GtkWidget *base_widget;
@@ -100,12 +60,8 @@ constructor (GType type, guint n_props, GObjectConstructParam *props)
 	gchar    *xml_path;
 	GladeXML *xml;
 
-	GMenuTree *tree = NULL;
 
-	gint i;
-
-
-	this = G_OBJECT_CLASS (this_parent_class)->constructor (type, n_props, props);
+	this = GTK_WIDGET (g_object_new (MENU_BROWSER_TYPE, NULL));
 	priv = PRIVATE (this);
 
 	xml_path = g_build_filename (DATADIR, PACKAGE, "menu-browser.glade", NULL);
@@ -119,17 +75,14 @@ constructor (GType type, guint n_props, GObjectConstructParam *props)
 	gtk_widget_destroy (base_parent);
 	gtk_container_add (GTK_CONTAINER (this), base_widget);
 
+	priv->menu_tree      = menu_tree;
+	priv->menu_store     = gtk_tree_store_new (2, G_TYPE_STRING, GTK_TYPE_WIDGET);
 	priv->shortcuts_ctnr = GTK_CONTAINER (glade_xml_get_widget (xml, "shortcuts-container"));
-	priv->browser_ctnr   = GTK_CONTAINER (glade_xml_get_widget (xml, "browser-container"));
+	priv->view           = grid_view_new_with_model (GTK_TREE_MODEL (priv->menu_store));
 
-	for (i = 0; tree == NULL && i < n_props; ++i)
-		if (
-			props [i].pspec->owner_type == MENU_BROWSER_TYPE &&
-			! libslab_strcmp (props [i].pspec->name, MENU_BROWSER_MENU_TREE_PROP)
-		)
-			tree = (GMenuTree *) g_value_get_pointer (props [i].value);
+	gtk_container_add (GTK_CONTAINER (glade_xml_get_widget (xml, "browser-container")), priv->view);
 
-	load_tree (MENU_BROWSER (this), tree);
+	load_tree (MENU_BROWSER (this));
 
 	g_free (xml_path);
 	g_object_unref (xml);
@@ -138,26 +91,41 @@ constructor (GType type, guint n_props, GObjectConstructParam *props)
 }
 
 static void
-get_property (GObject *g_obj, guint prop_id, GValue *value, GParamSpec *pspec)
+this_class_init (MenuBrowserClass *this_class)
 {
-	/* no readable properties */
+	G_OBJECT_CLASS (this_class)->finalize = finalize;
+
+	g_type_class_add_private (this_class, sizeof (MenuBrowserPrivate));
+
+	this_parent_class = g_type_class_peek_parent (this_class);
 }
 
 static void
-set_property (GObject *g_obj, guint prop_id, const GValue *value, GParamSpec *pspec)
+this_init (MenuBrowser *this)
 {
-	if (prop_id == PROP_MTREE)
-		load_tree (MENU_BROWSER (g_obj), (GMenuTree *) g_value_get_pointer (value));
+	MenuBrowserPrivate *priv = PRIVATE (this);
+
+	priv->menu_tree      = NULL;
+	priv->menu_store     = NULL;
+
+	priv->shortcuts_ctnr = NULL;
 }
 
 static void
 finalize (GObject *g_obj)
 {
+	MenuBrowserPrivate *priv = PRIVATE (g_obj);
+
+	gmenu_tree_unref (priv->menu_tree);
+
+	if (G_IS_OBJECT (priv->menu_store))
+		g_object_unref (priv->menu_store);
+
 	G_OBJECT_CLASS (this_parent_class)->finalize (g_obj);
 }
 
 static void
-load_tree (MenuBrowser *this, GMenuTree *tree)
+load_tree (MenuBrowser *this)
 {
 	MenuBrowserPrivate *priv = PRIVATE (this);
 
@@ -166,35 +134,28 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 	GMenuTreeItem      *item;
 
 	GMenuTreeDirectory *dir;
-	GtkTreeStore       *store;
-	GtkTreeIter         iter;
-	GtkTreeIter         iter_parent;
+	GList              *dir_list;
 	const char         *cat_name;
 	GtkWidget          *shortcut;
-	GList              *dir_list;
 	Tile               *tile;
+	GtkTreeIter         iter_p;
+	GtkTreeIter         iter_c;
 
-	GSList *snode;
-	GList  *node;
+	GSList             *node_menu;
+	GList              *node_dir;
 
 
-	if (! tree || ! priv->shortcuts_ctnr)
+	if (! priv->menu_tree || ! priv->shortcuts_ctnr)
 		return;
 
-	root = gmenu_tree_get_root_directory (tree);
-
-	if (! root)
-		return;
+	root = gmenu_tree_get_root_directory (priv->menu_tree);
+	g_return_if_fail (root);
 
 	contents = gmenu_tree_directory_get_contents (root);
+	g_return_if_fail (contents);
 
-	if (! contents)
-		return;
-
-	store = gtk_tree_store_new (2, G_TYPE_STRING, GTK_TYPE_WIDGET);
-
-	for (snode = contents; snode; snode = snode->next) {
-		item = (GMenuTreeItem *) snode->data;
+	for (node_menu = contents; node_menu; node_menu = node_menu->next) {
+		item = (GMenuTreeItem *) node_menu->data;
 
 		switch (gmenu_tree_item_get_type (item)) {
 			case GMENU_TREE_ITEM_DIRECTORY:
@@ -204,20 +165,24 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 				shortcut = gtk_button_new_with_label (cat_name);
 				gtk_button_set_relief (GTK_BUTTON (shortcut), GTK_RELIEF_NONE);
 				gtk_container_add (priv->shortcuts_ctnr, shortcut);
+				g_signal_connect (shortcut, "clicked", G_CALLBACK (clicked_cb), this);
 
-				gtk_tree_store_append (store, & iter_parent, NULL);
-				gtk_tree_store_set    (store, & iter_parent, 0, cat_name, 1, NULL, -1);
+				gtk_tree_store_append (priv->menu_store, & iter_p, NULL);
+				gtk_tree_store_set    (priv->menu_store, & iter_p, 0, cat_name, 1, NULL, -1);
 
 				dir_list = NULL;
-				get_dir_contents (& dir_list, dir);
+				get_dir_contents (dir, & dir_list);
 
-				for (node = dir_list; node; node = node->next) {
-					tile = TILE (application_tile_new ((gchar *) node->data));
+				for (node_dir = dir_list; node_dir; node_dir = node_dir->next) {
+					tile = TILE (application_tile_new ((gchar *) node_dir->data));
 
-					gtk_tree_store_append (store, & iter, & iter_parent);
-					gtk_tree_store_set    (store, & iter, 0, NULL, 1, tile_get_widget (tile), -1);
+					gtk_tree_store_append (priv->menu_store, & iter_c, & iter_p);
+					gtk_tree_store_set    (
+						priv->menu_store, & iter_c,
+						0, NULL, 1, tile_get_widget (tile),
+						-1);
 
-					g_free (node->data);
+					g_free (node_dir->data);
 				}
 				g_list_free (dir_list);
 
@@ -231,12 +196,10 @@ load_tree (MenuBrowser *this, GMenuTree *tree)
 	}
 
 	g_slist_free (contents);
-
-	gtk_container_add (priv->browser_ctnr, GTK_WIDGET (grid_view_new_with_model (GTK_TREE_MODEL (store))));
 }
 
 static void
-get_dir_contents (GList **list, GMenuTreeDirectory *dir)
+get_dir_contents (GMenuTreeDirectory *dir, GList **list)
 {
 	GSList *contents = NULL;
 	GMenuTreeItem *item;
@@ -254,7 +217,7 @@ get_dir_contents (GList **list, GMenuTreeDirectory *dir)
 
 		switch (gmenu_tree_item_get_type (item)) {
 			case GMENU_TREE_ITEM_DIRECTORY:
-				get_dir_contents (list, (GMenuTreeDirectory *) item);
+				get_dir_contents ((GMenuTreeDirectory *) item, list);
 				break;
 
 			case GMENU_TREE_ITEM_ENTRY:
@@ -270,4 +233,10 @@ get_dir_contents (GList **list, GMenuTreeDirectory *dir)
 	}
 
 	g_slist_free (contents);
+}
+
+static void
+clicked_cb (GtkButton *button, gpointer data)
+{
+	grid_view_scroll_to_node (GRID_VIEW (PRIVATE (data)->view), gtk_button_get_label (button));
 }

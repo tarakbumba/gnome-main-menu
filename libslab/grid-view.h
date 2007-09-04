@@ -43,6 +43,7 @@ typedef struct {
 GType grid_view_get_type (void);
 
 GtkWidget *grid_view_new_with_model (GtkTreeModel *model);
+void       grid_view_scroll_to_node (GridView *this, const gchar *name);
 
 G_END_DECLS
 
