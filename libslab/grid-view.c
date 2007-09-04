@@ -20,6 +20,8 @@
 
 #include "grid-view.h"
 
+#include <cairo.h>
+
 typedef struct {
 	GtkTreeModel *model;
 	GHashTable   *nodes;
@@ -41,7 +43,8 @@ static void init              (GridView *);
 
 static void finalize (GObject *);
 
-static void row_changed_cb (GtkTreeModel *, GtkTreePath *, GtkTreeIter *, gpointer);
+static void     row_changed_cb  (GtkTreeModel *, GtkTreePath *, GtkTreeIter *, gpointer);
+static gboolean expose_event_cb (GtkWidget *, GdkEventExpose *, gpointer);
 
 static GtkViewportClass *parent_class;
 
@@ -93,13 +96,38 @@ grid_view_scroll_to_node (GridView *this, const gchar *name)
 {
 	GridViewPrivate *priv = PRIVATE (this);
 
+	GList    *nodes;
 	GridNode *node;
 
+	GtkAdjustment *adj;
+	GtkAllocation  alloc;
+	gdouble        upper_bound;
+	gdouble        page_size;
+	gdouble        pos;
+
+	GList *i;
+
+
+	nodes = g_hash_table_get_values (priv->nodes);
+	for (i = nodes; i; i = i->next)
+		gtk_widget_set_state (((GridNode *) i->data)->box, GTK_STATE_NORMAL);
+	g_list_free (nodes);
 
 	node = (GridNode *) g_hash_table_lookup (priv->nodes, name);
 	g_return_if_fail (node);
 
-	gtk_widget_set_state (node->box, GTK_STATE_ACTIVE);
+	gtk_widget_set_state (node->box, GTK_STATE_SELECTED);
+
+	adj   = gtk_viewport_get_vadjustment (GTK_VIEWPORT (this));
+	alloc = GTK_WIDGET (node->box)->allocation;
+	g_object_get (adj, "upper", & upper_bound, "page-size", & page_size, NULL);
+
+	if ((gdouble) alloc.y + page_size > upper_bound)
+		pos = upper_bound - page_size;
+	else
+		pos = (gdouble) alloc.y;
+
+	gtk_adjustment_set_value (adj, pos);
 }
 
 static void
@@ -169,6 +197,8 @@ row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 		node->label = gtk_widget_new (GTK_TYPE_LABEL, "label", cat_name, "xalign", 0.0, NULL);
 		node->table = gtk_table_new (1, DEFAULT_N_COLS, TRUE);
 
+		g_signal_connect (node->box, "expose-event", G_CALLBACK (expose_event_cb), NULL);
+
 		g_hash_table_insert (priv->nodes, cat_name, node);
 
 		gtk_box_pack_start (GTK_BOX (node->box), node->label, FALSE, FALSE, 0);
@@ -191,4 +221,38 @@ row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 			n_children % n_cols, (n_children % n_cols) + 1,
 			n_children / n_cols, (n_children / n_cols) + 1);
 	}
+}
+
+static gboolean
+expose_event_cb (GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+	cairo_t *cr;
+	
+	if (GTK_WIDGET_STATE (widget) == GTK_STATE_SELECTED) {
+		cr = gdk_cairo_create (widget->window);
+
+		cairo_rectangle (
+			cr,
+			event->area.x, event->area.y,
+			event->area.width, event->area.height);
+
+		cairo_clip (cr);
+
+		cairo_rectangle (
+			cr, 
+			widget->allocation.x + 0.5, widget->allocation.y + 0.5,
+			widget->allocation.width - 1, widget->allocation.height - 1);
+
+		cairo_set_source_rgb (
+			cr,
+			widget->style->bg [GTK_STATE_SELECTED].red   / 65535.0,
+			widget->style->bg [GTK_STATE_SELECTED].green / 65535.0,
+			widget->style->bg [GTK_STATE_SELECTED].blue  / 65535.0);
+
+		cairo_fill_preserve (cr);
+
+		cairo_destroy (cr);
+	}
+
+	return FALSE;
 }
