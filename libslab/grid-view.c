@@ -33,10 +33,12 @@ typedef struct {
 	GtkWidget *box;
 	GtkWidget *label;
 	GtkWidget *table;
+	GList     *children;
 } GridNode;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GRID_VIEW_TYPE, GridViewPrivate))
-#define DEFAULT_N_COLS 3
+#define DEFAULT_N_COLS         3
+#define WIDGET_IS_FILTERED_KEY "filtered"
 
 static void class_intern_init (GridViewClass *);
 static void class_init        (GridViewClass *);
@@ -140,9 +142,14 @@ grid_view_filter_nodes (GridView *this, const gchar *filter_string)
 	GList     *filter_list;
 	gboolean   matches;
 
+	GList    *nodes;
+	GridNode *node;
+	gboolean  empty;
+
 	GtkTreeIter  iter_p;
 	GtkTreeIter  iter_c;
-	GList       *node;
+	GList       *i;
+	GList       *j;
 
 
 	if (! gtk_tree_model_get_iter_first (priv->model, & iter_p))
@@ -158,22 +165,53 @@ grid_view_filter_nodes (GridView *this, const gchar *filter_string)
 
 				matches = FALSE;
 
-				if (! filter_string || ! strlen (filter_string))
+				if (! filter_string || ! strlen (filter_string)) {
 					gtk_widget_show (widget);
+					g_object_set_data (
+						G_OBJECT (widget), WIDGET_IS_FILTERED_KEY,
+						GINT_TO_POINTER (FALSE));
+				}
 				else {
-					for (node = filter_list; ! matches && node; node = node->next)
-						matches = node->data && strstr (node->data, filter_string);
+					for (i = filter_list; ! matches && i; i = i->next)
+						matches = i->data && strstr (i->data, filter_string);
 
-					if (matches)
+					if (matches) {
 						gtk_widget_show (widget);
-					else
+						g_object_set_data (
+							G_OBJECT (widget), WIDGET_IS_FILTERED_KEY,
+							GINT_TO_POINTER (FALSE));
+					}
+					else {
 						gtk_widget_hide (widget);
+						g_object_set_data (
+							G_OBJECT (widget), WIDGET_IS_FILTERED_KEY,
+							GINT_TO_POINTER (TRUE));
+					}
 				}
 
 			} while (gtk_tree_model_iter_next (priv->model, & iter_c));
 		}
 
 	} while (gtk_tree_model_iter_next (priv->model, & iter_p));
+
+	nodes = g_hash_table_get_values (priv->nodes);
+
+	for (i = nodes; i; i = i->next) {
+		node = (GridNode *) i->data;
+
+		empty = TRUE;
+
+		for (j = node->children; empty && j; j = j->next)
+			empty = GPOINTER_TO_INT (g_object_get_data (
+				G_OBJECT (j->data), WIDGET_IS_FILTERED_KEY));
+
+		if (empty)
+			gtk_widget_hide (node->box);
+		else
+			gtk_widget_show (node->box);
+	}
+
+	g_list_free (nodes);
 }
 
 static void
@@ -266,6 +304,8 @@ row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 			GTK_TABLE (node->table), widget,
 			n_children % n_cols, (n_children % n_cols) + 1,
 			n_children / n_cols, (n_children / n_cols) + 1);
+
+		node->children = g_list_append (node->children, widget);
 	}
 }
 
