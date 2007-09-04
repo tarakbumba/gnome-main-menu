@@ -2,6 +2,7 @@
 
 #include <glib/gi18n.h>
 #include <glade/glade.h>
+#include <libgnome/gnome-desktop-item.h>
 
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
@@ -31,6 +32,7 @@ static void load_tree        (MenuBrowser *);
 static void get_dir_contents (GMenuTreeDirectory *, GList **);
 
 static void clicked_cb (GtkButton *, gpointer);
+static void changed_cb (GtkEditable *, gpointer);
 
 static GtkAlignmentClass *this_parent_class;
 
@@ -76,11 +78,15 @@ menu_browser_new (GMenuTree *menu_tree)
 	gtk_container_add (GTK_CONTAINER (this), base_widget);
 
 	priv->menu_tree      = menu_tree;
-	priv->menu_store     = gtk_tree_store_new (2, G_TYPE_STRING, GTK_TYPE_WIDGET);
+	priv->menu_store     = gtk_tree_store_new (3, G_TYPE_STRING, GTK_TYPE_WIDGET, G_TYPE_POINTER);
 	priv->shortcuts_ctnr = GTK_CONTAINER (glade_xml_get_widget (xml, "shortcuts-container"));
 	priv->view           = grid_view_new_with_model (GTK_TREE_MODEL (priv->menu_store));
 
 	gtk_container_add (GTK_CONTAINER (glade_xml_get_widget (xml, "browser-container")), priv->view);
+
+	g_signal_connect (
+		glade_xml_get_widget (xml, "filter-entry"),
+		"changed", G_CALLBACK (changed_cb), this);
 
 	load_tree (MENU_BROWSER (this));
 
@@ -138,6 +144,9 @@ load_tree (MenuBrowser *this)
 	const char         *cat_name;
 	GtkWidget          *shortcut;
 	Tile               *tile;
+	gchar              *ditem_path;
+	GnomeDesktopItem   *ditem;
+	GList              *filter_strs;
 	GtkTreeIter         iter_p;
 	GtkTreeIter         iter_c;
 
@@ -164,25 +173,45 @@ load_tree (MenuBrowser *this)
 				cat_name = gmenu_tree_directory_get_name (dir);
 				shortcut = gtk_button_new_with_label (cat_name);
 				gtk_button_set_relief (GTK_BUTTON (shortcut), GTK_RELIEF_NONE);
+				gtk_button_set_alignment (GTK_BUTTON (shortcut), 0.0, 0.5);
 				gtk_container_add (priv->shortcuts_ctnr, shortcut);
 				g_signal_connect (shortcut, "clicked", G_CALLBACK (clicked_cb), this);
 
 				gtk_tree_store_append (priv->menu_store, & iter_p, NULL);
-				gtk_tree_store_set    (priv->menu_store, & iter_p, 0, cat_name, 1, NULL, -1);
+				gtk_tree_store_set (
+					priv->menu_store, & iter_p, 0, cat_name, 1, NULL, 2, NULL, -1);
 
 				dir_list = NULL;
 				get_dir_contents (dir, & dir_list);
 
 				for (node_dir = dir_list; node_dir; node_dir = node_dir->next) {
-					tile = TILE (application_tile_new ((gchar *) node_dir->data));
+					ditem_path = (gchar *) node_dir->data;
+					ditem      = libslab_gnome_desktop_item_new_from_unknown_id (ditem_path);
+
+					tile = TILE (application_tile_new (ditem_path));
+
+					filter_strs = NULL;
+					filter_strs = g_list_append (
+						filter_strs, g_strdup (gnome_desktop_item_get_string (
+							ditem, GNOME_DESKTOP_ITEM_NAME)));
+					filter_strs = g_list_append (
+						filter_strs, g_strdup (gnome_desktop_item_get_string (
+							ditem, GNOME_DESKTOP_ITEM_GENERIC_NAME)));
+					filter_strs = g_list_append (
+						filter_strs, g_strdup (gnome_desktop_item_get_string (
+							ditem, GNOME_DESKTOP_ITEM_COMMENT)));
+					filter_strs = g_list_append (
+						filter_strs, g_strdup (gnome_desktop_item_get_string (
+							ditem, GNOME_DESKTOP_ITEM_EXEC)));
 
 					gtk_tree_store_append (priv->menu_store, & iter_c, & iter_p);
-					gtk_tree_store_set    (
+					gtk_tree_store_set (
 						priv->menu_store, & iter_c,
-						0, NULL, 1, tile_get_widget (tile),
+						0, NULL, 1, tile_get_widget (tile), 2, filter_strs,
 						-1);
 
-					g_free (node_dir->data);
+					g_free (ditem_path);
+					gnome_desktop_item_unref (ditem);
 				}
 				g_list_free (dir_list);
 
@@ -239,4 +268,14 @@ static void
 clicked_cb (GtkButton *button, gpointer data)
 {
 	grid_view_scroll_to_node (GRID_VIEW (PRIVATE (data)->view), gtk_button_get_label (button));
+}
+
+static void
+changed_cb (GtkEditable *editable, gpointer data)
+{
+	gchar *text = gtk_editable_get_chars (editable, 0, -1);
+	
+	grid_view_filter_nodes (GRID_VIEW (PRIVATE (data)->view), text);
+
+	g_free (text);
 }

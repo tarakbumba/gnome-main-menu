@@ -21,6 +21,7 @@
 #include "grid-view.h"
 
 #include <cairo.h>
+#include <string.h>
 
 typedef struct {
 	GtkTreeModel *model;
@@ -128,6 +129,51 @@ grid_view_scroll_to_node (GridView *this, const gchar *name)
 		pos = (gdouble) alloc.y;
 
 	gtk_adjustment_set_value (adj, pos);
+}
+
+void
+grid_view_filter_nodes (GridView *this, const gchar *filter_string)
+{
+	GridViewPrivate *priv = PRIVATE (this);
+
+	GtkWidget *widget;
+	GList     *filter_list;
+	gboolean   matches;
+
+	GtkTreeIter  iter_p;
+	GtkTreeIter  iter_c;
+	GList       *node;
+
+
+	if (! gtk_tree_model_get_iter_first (priv->model, & iter_p))
+		return;
+
+	do {
+		if (gtk_tree_model_iter_children (priv->model, & iter_c, & iter_p)) {
+			do {
+				gtk_tree_model_get (
+					priv->model, & iter_c,
+					1, & widget, 2, & filter_list,
+					-1);
+
+				matches = FALSE;
+
+				if (! filter_string || ! strlen (filter_string))
+					gtk_widget_show (widget);
+				else {
+					for (node = filter_list; ! matches && node; node = node->next)
+						matches = node->data && strstr (node->data, filter_string);
+
+					if (matches)
+						gtk_widget_show (widget);
+					else
+						gtk_widget_hide (widget);
+				}
+
+			} while (gtk_tree_model_iter_next (priv->model, & iter_c));
+		}
+
+	} while (gtk_tree_model_iter_next (priv->model, & iter_p));
 }
 
 static void

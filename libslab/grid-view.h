@@ -44,6 +44,7 @@ GType grid_view_get_type (void);
 
 GtkWidget *grid_view_new_with_model (GtkTreeModel *model);
 void       grid_view_scroll_to_node (GridView *this, const gchar *name);
+void       grid_view_filter_nodes   (GridView *this, const gchar *filter_string);
 
 G_END_DECLS
 
