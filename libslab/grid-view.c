@@ -31,14 +31,13 @@ typedef struct {
 
 typedef struct {
 	GtkWidget *box;
-	GtkWidget *label;
+	gchar     *label;
 	GtkWidget *table;
 	GList     *children;
 } GridNode;
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GRID_VIEW_TYPE, GridViewPrivate))
-#define DEFAULT_N_COLS         3
-#define WIDGET_IS_FILTERED_KEY "filtered"
+#define DEFAULT_N_COLS 3
 
 static void class_intern_init (GridViewClass *);
 static void class_init        (GridViewClass *);
@@ -48,6 +47,8 @@ static void finalize (GObject *);
 
 static void     row_changed_cb  (GtkTreeModel *, GtkTreePath *, GtkTreeIter *, gpointer);
 static gboolean expose_event_cb (GtkWidget *, GdkEventExpose *, gpointer);
+
+static void remove_from_container (GtkWidget *, gpointer);
 
 static GtkViewportClass *parent_class;
 
@@ -138,18 +139,19 @@ grid_view_filter_nodes (GridView *this, const gchar *filter_string)
 {
 	GridViewPrivate *priv = PRIVATE (this);
 
-	GtkWidget *widget;
-	GList     *filter_list;
-	gboolean   matches;
+	GtkWidget   *widget;
+	GList       *filter_list;
+	gboolean     matches;
 
-	GList    *nodes;
-	GridNode *node;
-	gboolean  empty;
+	GList       *filtered_widgets;
+	gchar       *node_name;
+	GridNode    *node;
+	gint         n;
 
 	GtkTreeIter  iter_p;
 	GtkTreeIter  iter_c;
-	GList       *i;
-	GList       *j;
+	GList       *node_i;
+	gint         i;
 
 
 	if (! gtk_tree_model_get_iter_first (priv->model, & iter_p))
@@ -157,61 +159,56 @@ grid_view_filter_nodes (GridView *this, const gchar *filter_string)
 
 	do {
 		if (gtk_tree_model_iter_children (priv->model, & iter_c, & iter_p)) {
+			filtered_widgets = NULL;
+
+			gtk_tree_model_get (priv->model, & iter_p, 0, & node_name, -1);
+
 			do {
 				gtk_tree_model_get (
 					priv->model, & iter_c,
 					1, & widget, 2, & filter_list,
 					-1);
 
-				matches = FALSE;
+				matches = ! filter_string || ! strlen (filter_string);
 
-				if (! filter_string || ! strlen (filter_string)) {
-					gtk_widget_show (widget);
-					g_object_set_data (
-						G_OBJECT (widget), WIDGET_IS_FILTERED_KEY,
-						GINT_TO_POINTER (FALSE));
-				}
-				else {
-					for (i = filter_list; ! matches && i; i = i->next)
-						matches = i->data && strstr (i->data, filter_string);
+				for (node_i = filter_list; ! matches && node_i; node_i = node_i->next)
+					matches = node_i->data && strstr (node_i->data, filter_string);
 
-					if (matches) {
-						gtk_widget_show (widget);
-						g_object_set_data (
-							G_OBJECT (widget), WIDGET_IS_FILTERED_KEY,
-							GINT_TO_POINTER (FALSE));
-					}
-					else {
-						gtk_widget_hide (widget);
-						g_object_set_data (
-							G_OBJECT (widget), WIDGET_IS_FILTERED_KEY,
-							GINT_TO_POINTER (TRUE));
-					}
-				}
+				if (matches)
+					filtered_widgets = g_list_append (filtered_widgets, widget);
 
 			} while (gtk_tree_model_iter_next (priv->model, & iter_c));
+
+			node = (GridNode *) g_hash_table_lookup (priv->nodes, node_name);
+
+			n = g_list_length (filtered_widgets);
+
+			if (n == 0)
+				gtk_widget_hide (node->box);
+			else {
+				gtk_container_foreach (
+					GTK_CONTAINER (node->table),
+					remove_from_container, node->table);
+				gtk_widget_destroy (node->table);
+
+				node->table = gtk_table_new (
+					(n + DEFAULT_N_COLS - 1) / DEFAULT_N_COLS, DEFAULT_N_COLS, TRUE);
+
+				for (i = 0, node_i = filtered_widgets; node_i; ++i, node_i = node_i->next)
+					gtk_table_attach_defaults (
+						GTK_TABLE (node->table), GTK_WIDGET (node_i->data),
+						i % DEFAULT_N_COLS, (i % DEFAULT_N_COLS) + 1,
+						i / DEFAULT_N_COLS, (i / DEFAULT_N_COLS) + 1);
+
+				gtk_box_pack_start (GTK_BOX (node->box), node->table, FALSE, FALSE, 0);
+				gtk_widget_show (node->box);
+				gtk_widget_show (node->table);
+			}
+
+			g_list_free (filtered_widgets);
 		}
 
 	} while (gtk_tree_model_iter_next (priv->model, & iter_p));
-
-	nodes = g_hash_table_get_values (priv->nodes);
-
-	for (i = nodes; i; i = i->next) {
-		node = (GridNode *) i->data;
-
-		empty = TRUE;
-
-		for (j = node->children; empty && j; j = j->next)
-			empty = GPOINTER_TO_INT (g_object_get_data (
-				G_OBJECT (j->data), WIDGET_IS_FILTERED_KEY));
-
-		if (empty)
-			gtk_widget_hide (node->box);
-		else
-			gtk_widget_show (node->box);
-	}
-
-	g_list_free (nodes);
 }
 
 static void
@@ -278,14 +275,17 @@ row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 		node = g_new0 (GridNode, 1);
 
 		node->box   = gtk_vbox_new (FALSE, 0);
-		node->label = gtk_widget_new (GTK_TYPE_LABEL, "label", cat_name, "xalign", 0.0, NULL);
+		node->label = g_strdup (cat_name);
 		node->table = gtk_table_new (1, DEFAULT_N_COLS, TRUE);
 
 		g_signal_connect (node->box, "expose-event", G_CALLBACK (expose_event_cb), NULL);
 
 		g_hash_table_insert (priv->nodes, cat_name, node);
 
-		gtk_box_pack_start (GTK_BOX (node->box), node->label, FALSE, FALSE, 0);
+		gtk_box_pack_start (
+			GTK_BOX (node->box),
+			gtk_widget_new (GTK_TYPE_LABEL, "label", node->label, "xalign", 0.0, NULL),
+			FALSE, FALSE, 0);
 		gtk_box_pack_start (GTK_BOX (node->box), node->table, FALSE, FALSE, 0);
 		gtk_box_pack_start (priv->node_box, node->box, FALSE, FALSE, 0);
 	}
@@ -341,4 +341,12 @@ expose_event_cb (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 	}
 
 	return FALSE;
+}
+
+static void
+remove_from_container (GtkWidget *widget, gpointer data)
+{
+	g_object_ref (G_OBJECT (widget));
+
+	gtk_container_remove (GTK_CONTAINER (data), widget);
 }
