@@ -23,16 +23,20 @@ typedef struct {
 
 #define PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), MENU_BROWSER_TYPE, MenuBrowserPrivate))
 
-static void this_class_init (MenuBrowserClass *);
-static void this_init       (MenuBrowser *);
+static void     this_class_init       (MenuBrowserClass *);
+static void     this_init             (MenuBrowser *);
 
-static void finalize (GObject *);
+static void     finalize              (GObject *);
 
-static void load_tree        (MenuBrowser *);
-static void get_dir_contents (GMenuTreeDirectory *, GList **);
+static void     load_tree             (MenuBrowser *);
+static void     get_dir_contents      (GMenuTreeDirectory *, GList **);
 
-static void clicked_cb (GtkButton *, gpointer);
-static void changed_cb (GtkEditable *, gpointer);
+static void     clicked_cb            (GtkButton *, gpointer);
+static void     changed_cb            (GtkEditable *, gpointer);
+
+#ifdef USE_THREADS
+static gpointer load_tree_thread_func (gpointer);
+#endif
 
 static GtkAlignmentClass *this_parent_class;
 
@@ -88,7 +92,16 @@ menu_browser_new (GMenuTree *menu_tree)
 		glade_xml_get_widget (xml, "filter-entry"),
 		"changed", G_CALLBACK (changed_cb), this);
 
+#ifdef USE_THREADS
+	if (! g_thread_supported ()) {
+		g_thread_init (NULL);
+		gdk_threads_init ();
+	}
+
+	g_thread_create (load_tree_thread_func, this, FALSE, NULL);
+#else
 	load_tree (MENU_BROWSER (this));
+#endif
 
 	g_free (xml_path);
 	g_object_unref (xml);
@@ -171,6 +184,7 @@ load_tree (MenuBrowser *this)
 				dir = (GMenuTreeDirectory *) item;
 
 				cat_name = gmenu_tree_directory_get_name (dir);
+
 				shortcut = gtk_button_new_with_label (cat_name);
 				gtk_button_set_relief (GTK_BUTTON (shortcut), GTK_RELIEF_NONE);
 				gtk_button_set_alignment (GTK_BUTTON (shortcut), 0.0, 0.5);
@@ -279,3 +293,15 @@ changed_cb (GtkEditable *editable, gpointer data)
 
 	g_free (text);
 }
+
+#ifdef USE_THREADS
+static gpointer
+load_tree_thread_func (gpointer data)
+{
+	gdk_threads_enter ();
+	load_tree (MENU_BROWSER (data));
+	gdk_threads_leave ();
+
+	return NULL;
+}
+#endif
