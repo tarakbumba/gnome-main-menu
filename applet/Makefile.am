@@ -29,4 +29,4 @@ main_menu_SOURCES =							\
 
 main_menu_LDADD =							\
 	$(MAIN_MENU_LIBS)						\
-	$(top_srcdir)/libslab/.libs/libslab.a
+	$(top_builddir)/libslab/.libs/libslab.a
