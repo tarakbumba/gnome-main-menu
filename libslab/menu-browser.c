@@ -300,10 +300,7 @@ changed_cb (GtkEditable *editable, gpointer data)
 static gboolean
 expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	MenuBrowserPrivate *priv = PRIVATE (data);
-
 	cairo_t *cr;
-
 
 	cr = gdk_cairo_create (widget->window);
 
@@ -313,8 +310,6 @@ expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 		event->area.width, event->area.height);
 
 	cairo_clip (cr);
-
-/* draw window background */
 
 	cairo_rectangle (
 		cr, 
@@ -328,94 +323,7 @@ expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 		widget->style->bg [GTK_STATE_ACTIVE].blue  / 65535.0);
 
 	cairo_fill_preserve (cr);
-
-#if 0
-/* draw window outline */
-
-	cairo_set_source_rgb (
-		cr,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
-
-	cairo_set_line_width (cr, 1.0);
-	cairo_stroke (cr);
-
-/* draw left pane background */
-
-	cairo_rectangle (
-		cr,
-		priv->left_pane->allocation.x + 0.5, priv->left_pane->allocation.y + 0.5,
-		priv->left_pane->allocation.width - 1, priv->left_pane->allocation.height - 1);
-
-	cairo_set_source_rgb (
-		cr,
-		widget->style->bg [GTK_STATE_NORMAL].red   / 65535.0,
-		widget->style->bg [GTK_STATE_NORMAL].green / 65535.0,
-		widget->style->bg [GTK_STATE_NORMAL].blue  / 65535.0);
-
-	cairo_fill_preserve (cr);
-
-/* draw left pane outline */
-
-	cairo_set_source_rgb (
-		cr,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
-
-	cairo_stroke (cr);
-
-/* draw top pane separator */
-
-	cairo_move_to (
-		cr,
-		priv->top_pane->allocation.x + 0.5,
-		priv->top_pane->allocation.y + priv->top_pane->allocation.height - 0.5);
-
-	cairo_line_to (
-		cr,
-		priv->top_pane->allocation.x + priv->top_pane->allocation.width - 0.5,
-		priv->top_pane->allocation.y + priv->top_pane->allocation.height - 0.5);
-
-	cairo_set_source_rgb (
-		cr,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
-
-	cairo_stroke (cr);
-
-/* draw top pane gradient */
-
-	cairo_rectangle (
-		cr,
-		priv->top_pane->allocation.x + 0.5, priv->top_pane->allocation.y + 0.5,
-		priv->top_pane->allocation.width - 1, priv->top_pane->allocation.height - 1);
-
-	gradient = cairo_pattern_create_linear (
-		priv->top_pane->allocation.x,
-		priv->top_pane->allocation.y,
-		priv->top_pane->allocation.x,
-		priv->top_pane->allocation.y + priv->top_pane->allocation.height);
-	cairo_pattern_add_color_stop_rgba (
-		gradient, 0,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
-		0.0);
-	cairo_pattern_add_color_stop_rgba (
-		gradient, 1,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
-		0.2);
-
-	cairo_set_source (cr, gradient);
-	cairo_fill_preserve (cr);
-#endif
-
-	cairo_destroy (cr);
+	cairo_destroy       (cr);
 
 	return FALSE;
 }
