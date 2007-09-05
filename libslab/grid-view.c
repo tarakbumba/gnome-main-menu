@@ -87,6 +87,7 @@ grid_view_new_with_model (GtkTreeModel *model)
 	priv->model    = model;
 	priv->nodes    = g_hash_table_new (g_str_hash, g_str_equal);
 	priv->node_box = GTK_BOX (gtk_vbox_new (FALSE, 0));
+	gtk_container_set_border_width (GTK_CONTAINER (priv->node_box), 6);
 
 	gtk_container_add (GTK_CONTAINER (this), GTK_WIDGET (priv->node_box));
 
@@ -126,10 +127,12 @@ grid_view_scroll_to_node (GridView *this, const gchar *name)
 	alloc = GTK_WIDGET (node->box)->allocation;
 	g_object_get (adj, "upper", & upper_bound, "page-size", & page_size, NULL);
 
-	if ((gdouble) alloc.y + page_size > upper_bound)
+	pos = (gdouble) (alloc.y - gtk_container_get_border_width (GTK_CONTAINER (node->box)));
+
+	if (pos < 0.0)
+		pos = 0.0;
+	else if (pos + page_size > upper_bound)
 		pos = upper_bound - page_size;
-	else
-		pos = (gdouble) alloc.y;
 
 	gtk_adjustment_set_value (adj, pos);
 }
@@ -193,6 +196,8 @@ grid_view_filter_nodes (GridView *this, const gchar *filter_string)
 
 				node->table = gtk_table_new (
 					(n + DEFAULT_N_COLS - 1) / DEFAULT_N_COLS, DEFAULT_N_COLS, TRUE);
+				gtk_table_set_row_spacings (GTK_TABLE (node->table), 6);
+				gtk_table_set_col_spacings (GTK_TABLE (node->table), 6);
 
 				for (i = 0, node_i = filtered_widgets; node_i; ++i, node_i = node_i->next)
 					gtk_table_attach_defaults (
@@ -252,7 +257,9 @@ row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 	GridViewPrivate *priv = PRIVATE (data);
 
 	GtkWidget *widget = NULL;
+	GtkWidget *label;
 	gchar     *cat_name;
+	gchar     *markup;
 	GridNode  *node;
 	GList     *children;
 	gint       n_rows;
@@ -274,18 +281,25 @@ row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 	if (! node) {
 		node = g_new0 (GridNode, 1);
 
-		node->box   = gtk_vbox_new (FALSE, 0);
+		node->box   = gtk_vbox_new (FALSE, 9);
 		node->label = g_strdup (cat_name);
 		node->table = gtk_table_new (1, DEFAULT_N_COLS, TRUE);
+
+		gtk_container_set_border_width (GTK_CONTAINER (node->box), 6);
+		gtk_table_set_row_spacings (GTK_TABLE (node->table), 6);
+		gtk_table_set_col_spacings (GTK_TABLE (node->table), 6);
 
 		g_signal_connect (node->box, "expose-event", G_CALLBACK (expose_event_cb), NULL);
 
 		g_hash_table_insert (priv->nodes, cat_name, node);
 
-		gtk_box_pack_start (
-			GTK_BOX (node->box),
-			gtk_widget_new (GTK_TYPE_LABEL, "label", node->label, "xalign", 0.0, NULL),
-			FALSE, FALSE, 0);
+		markup = g_strdup_printf ("<span size=\"large\" weight=\"bold\">%s</span>", node->label);
+		label = gtk_label_new (NULL);
+		gtk_label_set_markup (GTK_LABEL (label), markup);
+		gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+		g_free (markup);
+
+		gtk_box_pack_start (GTK_BOX (node->box), label, FALSE, FALSE, 0);
 		gtk_box_pack_start (GTK_BOX (node->box), node->table, FALSE, FALSE, 0);
 		gtk_box_pack_start (priv->node_box, node->box, FALSE, FALSE, 0);
 	}
