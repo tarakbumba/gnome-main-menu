@@ -23,9 +23,6 @@ schemas_DATA = $(ab_schemas) $(mm_schemas)
 bookmarkdir = $(datadir)/$(PACKAGE)
 bookmark_DATA = applications.xbel documents.xbel system-items.xbel places.xbel empty.ods
 
-$(ab_desktop).in: $(ab_desktop).in.in
-	sed -e "s|\@BINDIR\@|$(bindir)|" $< > $@
-
 $(server_DATA).in: $(server_DATA).in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
 
@@ -45,7 +42,7 @@ pkgconfig_DATA = libslab.pc
 endif
 
 EXTRA_DIST =			\
-	$(ab_desktop).in.in	\
+	$(ab_desktop).in	\
 	$(mm_desktop)		\
 	$(ab_schemas).in	\
 	$(mm_schemas).in.in	\
@@ -55,8 +52,7 @@ EXTRA_DIST =			\
 	$(glade_DATA)
 
 CLEANFILES =			\
-	$(ab_desktop).in	\
-	$(desktop_DATA)		\
+	$(ab_desktop)		\
 	$(mm_schemas).in	\
 	$(schemas_DATA)		\
 	$(server_DATA).in
