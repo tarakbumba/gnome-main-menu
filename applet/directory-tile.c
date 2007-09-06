@@ -90,10 +90,6 @@ directory_tile_new (const gchar *uri)
 		directory_tile_model_get_name_attr (priv->model),
 		tile_button_view_get_header_text_attr (priv->view, 0));
 
-	priv->can_delete_control = tile_control_new_with_trigger_func (
-		directory_tile_model_get_can_delete_attr (priv->model), menu_attr,
-		can_delete_trigger, NULL);
-
 /* make open app menu-item */
 
 	menu_item = gtk_menu_item_new_with_label (_("<b>Open</b>"));

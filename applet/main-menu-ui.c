@@ -1220,7 +1220,7 @@ connect_to_tile_triggers (MainMenuUI *this, TileTable *table)
 
 
 		gtk_icon_size_lookup (GTK_ICON_SIZE_DND, & icon_width, NULL);
-		gtk_widget_set_size_request (GTK_WIDGET (node->data), 6 * icon_width, -1);
+		gtk_widget_set_size_request (tile_get_widget (TILE (node->data)), 6 * icon_width, -1);
 	}
 }
 

@@ -82,7 +82,8 @@ desktop_item_tile_model_new (const gchar *desktop_item_id)
 
 	ditem = libslab_gnome_desktop_item_new_from_unknown_id (desktop_item_id);
 
-	g_return_val_if_fail (ditem, NULL);
+	if (! ditem)
+		return NULL;
 
 	this = g_object_new (DESKTOP_ITEM_TILE_MODEL_TYPE, NULL);
 	priv = PRIVATE (this);

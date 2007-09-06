@@ -74,16 +74,23 @@ application_tile_new (const gchar *desktop_item_id)
 	ApplicationTile        *this;
 	ApplicationTilePrivate *priv;
 
+	DesktopItemTileModel *model;
+
 	ContextMenuView *menu;
 
 	GtkWidget     *menu_item;
 	TileAttribute *menu_attr;
 
 
+	model = desktop_item_tile_model_new (desktop_item_id);
+
+	if (! model)
+		return NULL;
+
 	this = g_object_new (APPLICATION_TILE_TYPE, NULL);
 	priv = PRIVATE (this);
 
-	priv->model = desktop_item_tile_model_new (desktop_item_id);
+	priv->model = model;
 	priv->view  = tile_button_view_new (2);
 
 	menu = context_menu_view_new ();

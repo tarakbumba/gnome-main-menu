@@ -465,10 +465,11 @@ drag_data_rcv (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
 static void
 connect_signal_if_not_exists (Tile *tile, const gchar *signal, GCallback cb, gpointer user_data)
 {
-	gulong handler_id = g_signal_handler_find (tile, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, cb, NULL);
+	gulong handler_id = g_signal_handler_find (
+		tile_get_widget (tile), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, cb, NULL);
 
 	if (! handler_id)
-		g_signal_connect (G_OBJECT (tile), signal, cb, user_data);
+		g_signal_connect (G_OBJECT (tile_get_widget (tile)), signal, cb, user_data);
 }
 
 static GList *
@@ -573,16 +574,16 @@ insert_into_bin (TileTable *this, Tile *tile, gint index)
 		}
 	}
 
-	if ((parent = gtk_widget_get_parent (GTK_WIDGET (tile)))) {
-		g_object_ref (G_OBJECT (tile));
-		gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (tile));
-		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile));
-		g_object_unref (G_OBJECT (tile));
+	if ((parent = gtk_widget_get_parent (GTK_WIDGET (tile_get_widget (tile))))) {
+		g_object_ref (G_OBJECT (tile_get_widget (tile)));
+		gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (tile_get_widget (tile)));
+		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile_get_widget (tile)));
+		g_object_unref (G_OBJECT (tile_get_widget (tile)));
 	}
 	else
-		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile));
+		gtk_container_add (GTK_CONTAINER (priv->bins [index]), GTK_WIDGET (tile_get_widget (tile)));
 
-	g_object_set_data (G_OBJECT (tile), "tile-table-bin", GINT_TO_POINTER (index));
+	g_object_set_data (G_OBJECT (tile_get_widget (tile)), "tile-table-bin", GINT_TO_POINTER (index));
 }
 
 static void
