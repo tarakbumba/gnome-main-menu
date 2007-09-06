@@ -59,6 +59,7 @@ storage_tile_new ()
 
 	priv->model = storage_tile_model_new ();
 	priv->view  = tile_button_view_new (2);
+	g_object_ref (G_OBJECT (priv->view));
 	g_object_set (
 		G_OBJECT (priv->view->icon), "icon-size", GTK_ICON_SIZE_BUTTON, NULL);
 

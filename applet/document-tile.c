@@ -93,6 +93,9 @@ document_tile_new (const gchar *uri)
 
 	menu = context_menu_view_new ();
 
+	g_object_ref (G_OBJECT (priv->view));
+	g_object_ref (G_OBJECT (menu));
+
 	tile_button_view_add_context_menu (priv->view, GTK_MENU (menu));
 
 	priv->uri_control = tile_control_new (

@@ -78,10 +78,12 @@ system_tile_new (const gchar *desktop_item_id, const gchar *title)
 		NULL);
 
 	priv->view = tile_button_view_new (1);
+	g_object_ref (G_OBJECT (priv->view));
 	g_object_set (
 		G_OBJECT (priv->view->icon), "icon-size", GTK_ICON_SIZE_MENU, NULL);
 
 	menu = context_menu_view_new ();
+	g_object_ref (G_OBJECT (menu));
 
 	tile_button_view_add_context_menu (priv->view, GTK_MENU (menu));
 

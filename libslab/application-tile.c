@@ -95,6 +95,9 @@ application_tile_new (const gchar *desktop_item_id)
 
 	menu = context_menu_view_new ();
 
+	g_object_ref (G_OBJECT (priv->view));
+	g_object_ref (G_OBJECT (menu));
+
 	tile_button_view_add_context_menu (priv->view, GTK_MENU (menu));
 
 	g_signal_connect (priv->view, "clicked", G_CALLBACK (clicked_cb), this);

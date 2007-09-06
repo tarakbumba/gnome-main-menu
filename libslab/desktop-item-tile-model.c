@@ -78,6 +78,7 @@ desktop_item_tile_model_new (const gchar *desktop_item_id)
 	DesktopItemTileModelPrivate *priv;
 
 	GnomeDesktopItem *ditem;
+	const gchar      *loc;
 
 
 	ditem = libslab_gnome_desktop_item_new_from_unknown_id (desktop_item_id);
@@ -88,7 +89,13 @@ desktop_item_tile_model_new (const gchar *desktop_item_id)
 	this = g_object_new (DESKTOP_ITEM_TILE_MODEL_TYPE, NULL);
 	priv = PRIVATE (this);
 
-	priv->uri = g_strdup (gnome_desktop_item_get_location (ditem));
+	loc = gnome_desktop_item_get_location (ditem);
+
+	if (g_path_is_absolute (loc))
+		priv->uri = g_filename_to_uri (loc, NULL, NULL);
+	else
+		priv->uri = g_strdup (loc);
+
 	tile_attribute_set_string (tile_model_get_uri_attr (TILE_MODEL (this)), priv->uri);
 
 	priv->ditem = ditem;

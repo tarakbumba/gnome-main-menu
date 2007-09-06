@@ -261,24 +261,23 @@ init_hal_context (StorageTileModel *this)
 
 		priv->hal_context = NULL;
 		conn              = NULL;
-	}
 
-	dbus_error_free (& error);
+		dbus_error_free (& error);
+	}
 
 	if (priv->hal_context && conn) {
 		dbus_connection_setup_with_g_main (conn, g_main_context_default ());
 		libhal_ctx_set_dbus_connection (priv->hal_context, conn);
 
-		dbus_error_init (& error);
 		libhal_ctx_init (priv->hal_context, & error);
 
 		if (dbus_error_is_set (& error)) {
 			g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error.name, error.message);
 
 			priv->hal_context = NULL;
-		}
 
-		dbus_error_free (& error);
+			dbus_error_free (& error);
+		}
 	}
 
 	tile_attribute_set_pointer (priv->info_attr, priv->info);
