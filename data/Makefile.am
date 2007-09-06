@@ -55,4 +55,5 @@ CLEANFILES =			\
 	$(ab_desktop)		\
 	$(mm_schemas).in	\
 	$(schemas_DATA)		\
-	$(server_DATA).in
+	$(server_DATA).in	\
+	$(server_DATA)
