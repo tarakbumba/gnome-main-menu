@@ -177,7 +177,7 @@ update_model (StorageTileModel *this)
 
 	glibtop_fsusage fs_usage;
 
-	DBusError *error;
+	DBusError error;
 
 	gint i;
 
@@ -188,17 +188,17 @@ update_model (StorageTileModel *this)
 	if (! priv->hal_context)
 		return;
 
-	dbus_error_init (error);
+	dbus_error_init (& error);
 	udis = libhal_find_device_by_capability (
-		priv->hal_context, "volume", & n_udis, error);
+		priv->hal_context, "volume", & n_udis, & error);
 
-	if (dbus_error_is_set (error)) {
-		g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error->name, error->message);
+	if (dbus_error_is_set (& error)) {
+		g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error.name, error.message);
 
 		n_udis = 0;
 	}
 
-	dbus_error_free (error);
+	dbus_error_free (& error);
 
 	for (i = 0; i < n_udis; ++i) {
 		vol = libhal_volume_from_udi (priv->hal_context, udis [i]);
@@ -244,7 +244,7 @@ init_hal_context (StorageTileModel *this)
 	StorageTileModelPrivate *priv = PRIVATE (this);
 
 	DBusConnection *conn;
-	DBusError      *error;
+	DBusError       error;
 
 
 	priv->hal_context = libhal_ctx_new ();
@@ -252,33 +252,33 @@ init_hal_context (StorageTileModel *this)
 	if (! priv->hal_context)
 		return;
 
-	dbus_error_init (error);
-	conn = dbus_bus_get (DBUS_BUS_SYSTEM, error);
+	dbus_error_init (& error);
+	conn = dbus_bus_get (DBUS_BUS_SYSTEM, & error);
 	dbus_connection_set_exit_on_disconnect (conn, FALSE);
 
-	if (dbus_error_is_set (error)) {
-		g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error->name, error->message);
+	if (dbus_error_is_set (& error)) {
+		g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error.name, error.message);
 
 		priv->hal_context = NULL;
 		conn              = NULL;
 	}
 
-	dbus_error_free (error);
+	dbus_error_free (& error);
 
 	if (priv->hal_context && conn) {
 		dbus_connection_setup_with_g_main (conn, g_main_context_default ());
 		libhal_ctx_set_dbus_connection (priv->hal_context, conn);
 
-		dbus_error_init (error);
-		libhal_ctx_init (priv->hal_context, error);
+		dbus_error_init (& error);
+		libhal_ctx_init (priv->hal_context, & error);
 
-		if (dbus_error_is_set (error)) {
-			g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error->name, error->message);
+		if (dbus_error_is_set (& error)) {
+			g_warning ("%s: error (%s): [%s]\n", G_STRFUNC, error.name, error.message);
 
 			priv->hal_context = NULL;
 		}
 
-		dbus_error_free (error);
+		dbus_error_free (& error);
 	}
 
 	tile_attribute_set_pointer (priv->info_attr, priv->info);
