@@ -29,7 +29,7 @@
 			<applyto>/desktop/gnome/applications/main-menu/application_browser</applyto>
 			<owner>gnome-main-menu</owner>
 			<type>string</type>
-			<default>@DATADIR@/applications/application-browser.desktop</default>
+			<default>application-browser.desktop</default>
 			<locale name="C">
 				<short>.desktop path for the application browser</short>
 				<long>.desktop path for the application browser</long>
