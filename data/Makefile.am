@@ -15,9 +15,7 @@ desktop_DATA = $(ab_desktop) $(mm_desktop)
 @INTLTOOL_DESKTOP_RULE@
 
 schemasdir   = @GCONF_SCHEMA_FILE_DIR@
-ab_schemas   = application-browser.schemas
-mm_schemas   = slab.schemas
-schemas_DATA = $(ab_schemas) $(mm_schemas)
+schemas_DATA = application-browser.schemas gnome-main-menu.schemas
 @INTLTOOL_SCHEMAS_RULE@
 
 bookmarkdir = $(datadir)/$(PACKAGE)
@@ -25,9 +23,6 @@ bookmark_DATA = applications.xbel documents.xbel system-items.xbel places.xbel e
 
 $(server_DATA).in: $(server_DATA).in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
-
-$(mm_schemas).in: $(mm_schemas).in.in
-	sed -e "s|\@DATADIR\@|$(datadir)|g" $< > $@
 
 install-data-local:
 	if test -z "$(DESTDIR)" ; then \
@@ -44,8 +39,7 @@ endif
 EXTRA_DIST =			\
 	$(ab_desktop).in	\
 	$(mm_desktop)		\
-	$(ab_schemas).in	\
-	$(mm_schemas).in.in	\
+	$(schemas_DATA).in	\
 	$(bookmark_DATA)	\
 	$(ui_DATA)		\
 	$(server_DATA).in.in	\
@@ -53,7 +47,6 @@ EXTRA_DIST =			\
 
 CLEANFILES =			\
 	$(ab_desktop)		\
-	$(mm_schemas).in	\
 	$(schemas_DATA)		\
 	$(server_DATA).in	\
 	$(server_DATA)
