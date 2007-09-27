@@ -1008,10 +1008,30 @@ item_to_dir_tile (BookmarkItem *item, gpointer data)
 static Tile *
 item_to_system_tile (BookmarkItem *item, gpointer data)
 {
+	Tile  *tile;
+	gchar *basename;
+
+
 	if (app_is_in_blacklist (item->uri))
 		return NULL;
 
-	return TILE (system_tile_new (item->uri, item->title));
+	tile = TILE (system_tile_new (item->uri, item->title));
+
+	if (tile)
+		return tile;
+
+	basename = g_strrstr (item->uri, "/");
+	if (basename)
+		basename++;
+	else
+		basename = item->uri;
+
+	if (! libslab_strcmp (basename, "control-center.desktop"))
+		tile = TILE (system_tile_new ("gnomecc.desktop", item->title));
+	else if (! libslab_strcmp (basename, "zen-installer.desktop"))
+		tile = TILE (system_tile_new ("package-manager.desktop", item->title));
+
+	return tile;
 }
 
 static BookmarkItem *
