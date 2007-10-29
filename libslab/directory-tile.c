@@ -644,5 +644,5 @@ static void
 disown_spawned_child (gpointer user_data)
 {
 	setsid  ();
-	setpgid (0, 0);
+	setpgrp ();
 }

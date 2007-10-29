@@ -120,16 +120,18 @@ libslab_gnome_desktop_item_new_from_unknown_id (const gchar *id)
 	}
 
 	basename = g_strrstr (id, "/");
-	if (basename)
+
+	if (basename) {
 		basename++;
 
-	item = gnome_desktop_item_new_from_basename (basename, 0, &error);
+		item = gnome_desktop_item_new_from_basename (basename, 0, &error);
 
-	if (! error)
-		return item;
-	else {
-		g_error_free (error);
-		error = NULL;
+		if (! error)
+			return item;
+		else {
+			g_error_free (error);
+			error = NULL;
+		}
 	}
 
 	return NULL;
