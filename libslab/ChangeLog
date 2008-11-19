@@ -1,4 +1,43 @@
+2008-11-06  Federico Mena Quintero  <federico@novell.com>
+
+	Merged from trunk:
+
+	Use the new GtkTooltip mechanism rather than the deprecated
+	GtkTooltips.  This also fixes a leak of GtkTooltips objects.
+
+	* nameplate-tile.c (NameplateTilePrivate): Removed the "tooltips" field.
+	(nameplate_tile_set_property): Use gtk_widget_set_tooltip_text()
+	rather than creating a GtkTooltips object and setting the tooltips there.
+	(nameplate_tile_get_property): Use gtk_widget_get_tooltip_text()
+	instead of getting a GtkTooltipsData object.
+
+2008-11-06  Federico Mena Quintero  <federico@novell.com>
+
+	Merged from trunk:
+
+	* bookmark-agent.c (create_app_item): Free the title of the
+	bookmark file.
+
+2008-10-27  Federico Mena Quintero  <federico@novell.com>
+
+	Merged from trunk:
+
+	Fix some memory leaks:
+
+	* tile.c (tile_finalize): Actually destroy the context menu, don't
+	ref/sink it.
+	(tile_set_property): Attach the context menu to the tile, don't
+	just store its pointer.
+
+	* nameplate-tile.c (nameplate_tile_finalize): Free the tooltips.
+
+	* bookmark-agent.c (create_app_item): Free the URI.
+	(create_doc_item): Likewise.
+	(create_dir_item): Likewise.
+
 2008-07-28  Federico Mena Quintero  <federico@novell.com>
+
+	Merged from trunk:
 
 	https://bugzilla.novell.com/show_bug.cgi?id=402256 - Main-menu has
 	high CPU usage on NIS/NFS home directories.

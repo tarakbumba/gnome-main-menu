@@ -826,43 +826,75 @@ load_recent_store (BookmarkAgent *this)
 {
 	BookmarkAgentPrivate *priv = PRIVATE (this);
 
-	GBookmarkFile *store;
+#ifdef USE_GTK_RECENT_MANAGER
+	GtkRecentInfo *info;
+	gboolean       include;
+#else
+	EggRecentModel *model;
+	EggRecentItem  *info;
+#endif
 
-	gchar **uris          = NULL;
-	GList  *items_ordered = NULL;
+	GList *items;
+	GList *items_ordered = NULL;
 
 	BookmarkItem *item;
 
-	gboolean include;
-
-	gint    i;
-	GList  *node;
+	GList *node;
 
 
-	store = g_bookmark_file_new ();
-	g_bookmark_file_load_from_file (store, priv->store_path, NULL);
+#ifdef USE_GTK_RECENT_MANAGER
+	items = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
+#else
+	model = egg_recent_model_new (EGG_RECENT_MODEL_SORT_MRU);
 
-	uris = g_bookmark_file_get_uris (store, NULL);
+	if (priv->type == BOOKMARK_STORE_RECENT_APPS)
+		egg_recent_model_set_filter_groups (model, "recently-used-apps", NULL);
+	else
+		egg_recent_model_set_filter_groups (model, NULL);
 
-	for (i = 0; uris && uris [i]; ++i) {
+	items = egg_recent_model_get_list (model);
+#endif
+
+	for (node = items; node; node = node->next) {
+#ifdef USE_GTK_RECENT_MANAGER
+		info = (GtkRecentInfo *) node->data;
+
 		if (priv->type == BOOKMARK_STORE_RECENT_APPS)
-			include = g_bookmark_file_has_group (store, uris [i], "recently-used-apps", NULL);
+			include = gtk_recent_info_has_group (info, "recently-used-apps");
 		else
-			include = ! g_bookmark_file_get_is_private (store, uris [i], NULL);
+			include = ! gtk_recent_info_get_private_hint (info);
 
 		if (include) {
 			item = g_new0 (BookmarkItem, 1);
 
-			item->uri       = g_strdup (uris [i]);
-			item->mime_type = g_bookmark_file_get_mime_type (store, uris [i], NULL);
-			item->mtime     = g_bookmark_file_get_modified  (store, uris [i], NULL);
+			item->uri       = g_strdup (gtk_recent_info_get_uri       (info));
+			item->mime_type = g_strdup (gtk_recent_info_get_mime_type (info));
+			item->mtime     = gtk_recent_info_get_modified            (info);
 
 			items_ordered = g_list_insert_sorted (items_ordered, item, recent_item_mru_comp_func);
 		}
+
+		gtk_recent_info_unref (info);
+#else
+		info = (EggRecentItem *) node->data;
+
+		item = g_new0 (BookmarkItem, 1);
+
+		item->uri       = egg_recent_item_get_uri       (info);
+		item->mime_type = egg_recent_item_get_mime_type (info);
+		item->mtime     = egg_recent_item_get_timestamp (info);
+
+		items_ordered = g_list_append (items_ordered, item);
+
+		egg_recent_item_unref (info);
+#endif
 	}
 
-	g_strfreev (uris);
-	g_bookmark_file_free (store);
+	g_list_free (items);
+
+#ifndef USE_GTK_RECENT_MANAGER
+	g_object_unref (model);
+#endif
 
 	g_bookmark_file_free (priv->store);
 	priv->store = g_bookmark_file_new ();
@@ -914,8 +946,9 @@ update_user_spec_path (BookmarkAgent *this)
 
 	if (use_user_path)
 		path = g_strdup (priv->user_store_path);
-	else
+	else {
 		path = find_package_data_file (priv->store_filename);
+	}
 
 	if (use_user_path)
 		status = BOOKMARK_STORE_USER;
@@ -1063,8 +1096,14 @@ create_doc_item (BookmarkAgent *this, const gchar *uri)
 	if (! uri_new)
 		return;
 
+	g_free (name);
+
 	if (libslab_strcmp (uri, uri_new))
 		g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
+
+	g_free (uri_new);
+
+	g_free (uri_new);
 }
 
 static void
@@ -1150,6 +1189,8 @@ create_dir_item (BookmarkAgent *this, const gchar *uri)
 
 	if (uri_new && libslab_strcmp (uri, uri_new))
 		g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
+
+	g_free (uri_new);
 }
 
 static void

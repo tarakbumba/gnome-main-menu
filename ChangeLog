@@ -1,19 +1,12 @@
-2007-12-21  Scott Reeves  <sreeves@novell.com>
-	* configure.in:
-	bump rev
+2008-10-27  Federico Mena Quintero  <federico@novell.com>
 
-2007-12-21  Scott Reeves  <sreeves@novell.com>
-	* configure.in
-	* main-menu/src/hard-drive-status-tile.c
-	* main-menu/src/main-menu-ui.c
-	* main-menu/src/network-status-agent.c
-	* libslab/application-tile.c
-	* libslab/slab-gnome-util.c
-	* libslab/libslab-utils.c
-	* libslab/directory-tile.c
-	* libslab/bookmark-agent.c
-	* libslab/document-tile.c:
-	Merge in changes (rev 353-361) from openSUSE10.3 branch
+	Merged from trunk:
+
+	* main-menu/src/tile-table.c (TileTablePrivate): Add an
+	icon_size_group field.
+	(tile_table_reload): Remember the size group we use for icons,
+	instead of creating it (and leaking it) every time.
+	(finalize): Free the icon_size_group.
 
 2007-11-28  Scott Reeves  <sreeves@novell.com>
 	* libslab/app-shell-startup.c
