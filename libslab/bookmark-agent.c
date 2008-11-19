@@ -1096,12 +1096,8 @@ create_doc_item (BookmarkAgent *this, const gchar *uri)
 	if (! uri_new)
 		return;
 
-	g_free (name);
-
 	if (libslab_strcmp (uri, uri_new))
 		g_bookmark_file_move_item (priv->store, uri, uri_new, NULL);
-
-	g_free (uri_new);
 
 	g_free (uri_new);
 }
