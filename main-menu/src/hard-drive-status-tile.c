@@ -37,7 +37,7 @@
 G_DEFINE_TYPE (HardDriveStatusTile, hard_drive_status_tile, NAMEPLATE_TILE_TYPE)
 
 static void hard_drive_status_tile_finalize (GObject *);
-static void hard_drive_status_tile_destroy (GtkObject *);
+static void hard_drive_status_tile_dispose (GObject *);
 static void hard_drive_status_tile_style_set (GtkWidget *, GtkStyle *);
 
 static void hard_drive_status_tile_activated (Tile *, TileEvent *);
@@ -66,13 +66,11 @@ typedef struct
 static void hard_drive_status_tile_class_init (HardDriveStatusTileClass * hd_tile_class)
 {
 	GObjectClass *g_obj_class = G_OBJECT_CLASS (hd_tile_class);
-	GtkObjectClass *gtk_obj_class = GTK_OBJECT_CLASS (hd_tile_class);
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (hd_tile_class);
 	TileClass *tile_class = TILE_CLASS (hd_tile_class);
 
 	g_obj_class->finalize = hard_drive_status_tile_finalize;
-
-	gtk_obj_class->destroy = hard_drive_status_tile_destroy;
+	g_obj_class->dispose = hard_drive_status_tile_dispose;
 
 	widget_class->style_set = hard_drive_status_tile_style_set;
 
@@ -104,8 +102,10 @@ hard_drive_status_tile_new ()
 
 	subheader = gtk_label_new (NULL);
 	gtk_misc_set_alignment (GTK_MISC (subheader), 0.0, 0.5);
+#ifdef PORTING_MORE
 	gtk_widget_modify_fg (subheader, GTK_STATE_NORMAL,
 		&subheader->style->fg[GTK_STATE_INSENSITIVE]);
+#endif
 
 	tile = g_object_new (HARD_DRIVE_STATUS_TILE_TYPE, "tile-uri", "tile://hard-drive-status",
 		"nameplate-image", image, "nameplate-header", header, "nameplate-subheader",
@@ -153,7 +153,7 @@ hard_drive_status_tile_finalize (GObject * g_object)
 }
 
 static void
-hard_drive_status_tile_destroy (GtkObject * gtk_object)
+hard_drive_status_tile_dispose (GObject * gtk_object)
 {
 	HardDriveStatusTile *tile = HARD_DRIVE_STATUS_TILE (gtk_object);
 	HardDriveStatusTilePrivate *priv = HARD_DRIVE_STATUS_TILE_GET_PRIVATE (tile);
@@ -322,9 +322,8 @@ tile_show_event_cb (GtkWidget * widget, gpointer user_data)
 static void
 open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 {
-	GnomeDesktopItem *ditem;
+	GKeyFile *ditem;
 	gchar *fb_ditem_id;
-	
 
 	fb_ditem_id = (gchar *) libslab_get_gconf_value (SYSTEM_MONITOR_GCONF_KEY);
 
@@ -336,6 +335,6 @@ open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 	if (! open_desktop_item_exec (ditem))
 		g_warning ("open_hard_drive_tile: couldn't exec item\n");
 
-	gnome_desktop_item_unref (ditem);
+	g_object_unref (ditem);
 	g_free (fb_ditem_id);
 }

@@ -385,8 +385,8 @@ drag_motion (GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint t
 
 	g_object_get (G_OBJECT (widget), "n-rows", & n_rows, "n-columns", & n_cols, NULL);
 
-	bin_row = y * n_rows / widget->allocation.height;
-	bin_col = x * n_cols / widget->allocation.width;
+	bin_row = y * n_rows / gtk_widget_get_allocated_height (widget);
+	bin_col = x * n_cols / gtk_widget_get_allocated_width (widget);
 
 	bin_index = bin_row * n_cols + bin_col;
 

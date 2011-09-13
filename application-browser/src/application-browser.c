@@ -23,8 +23,6 @@
 #include <string.h>
 
 #include <gtk/gtk.h>
-#include <libgnome/gnome-desktop-item.h>
-#include <unique/unique.h>
 #include <stdlib.h>
 #include <glib/gi18n.h>
 #include <libslab/slab.h>
@@ -32,6 +30,7 @@
 #define APPLICATION_BROWSER_PREFIX  "/desktop/gnome/applications/main-menu/ab_"
 #define NEW_APPS_MAX_ITEMS  (APPLICATION_BROWSER_PREFIX "new_apps_max_items")
 
+#ifdef PORTING_REQUIRED
 static UniqueResponse
 unique_app_message_cb (UniqueApp *app, gint command, UniqueMessageData *data,
 		       guint time, gpointer user_data)
@@ -52,11 +51,14 @@ unique_app_message_cb (UniqueApp *app, gint command, UniqueMessageData *data,
 
 	return UNIQUE_RESPONSE_OK;
 }
+#endif
 
 int
 main (int argc, char *argv[])
 {
+#ifdef PORTING_REQUIRED
 	UniqueApp *unique_app = NULL;
+#endif
 	gboolean hidden = FALSE;
 	GError *error;
 	GOptionEntry options[] = {
@@ -78,6 +80,8 @@ main (int argc, char *argv[])
 		return 1;
 	}
 
+	g_warning ("Turn me into a GApplication!");
+#ifdef PORTING_REQUIRED
 	unique_app = unique_app_new ("org.gnome.MainMenu", NULL);
 
 	if (unique_app_is_running (unique_app))
@@ -87,6 +91,7 @@ main (int argc, char *argv[])
 
 		return 0;
 	}
+#endif
 
 	NewAppConfig *config = g_new0 (NewAppConfig, 1);
 	config->max_items = get_slab_gconf_int (NEW_APPS_MAX_ITEMS);
@@ -100,12 +105,16 @@ main (int argc, char *argv[])
 	create_main_window (app_data, "MyApplicationBrowser", _("Application Browser"),
 		"gnome-fs-client", 940, 600, hidden);
 
+#ifdef PORTING_REQUIRED
 	unique_app_watch_window (unique_app, GTK_WINDOW (app_data->main_app));
 	g_signal_connect (unique_app, "message-received", G_CALLBACK (unique_app_message_cb), app_data);
+#endif
 
 	gtk_main ();
 
+#ifdef PORTING_REQUIRED
 	g_object_unref (unique_app);
+#endif
 
 	return 0;
 };

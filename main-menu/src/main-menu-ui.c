@@ -33,6 +33,7 @@
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
 #include <gio/gio.h>
+#include <glib/gi18n.h>
 #include <unistd.h>
 #include <libslab/slab.h>
 
@@ -189,7 +190,7 @@ static void     panel_button_clicked_cb           (GtkButton *, gpointer);
 static gboolean panel_button_button_press_cb      (GtkWidget *, GdkEventButton *, gpointer);
 static void     panel_button_drag_data_rcv_cb     (GtkWidget *, GdkDragContext *, gint, gint,
                                                    GtkSelectionData *, guint, guint, gpointer);
-static gboolean slab_window_expose_cb             (GtkWidget *, GdkEventExpose *, gpointer);
+static gboolean slab_window_draw_cb               (GtkWidget *, cairo_t *cr, gpointer);
 static gboolean slab_window_key_press_cb          (GtkWidget *, GdkEventKey *, gpointer);
 static gboolean slab_window_button_press_cb       (GtkWidget *, GdkEventButton *, gpointer);
 static void     slab_window_allocate_cb           (GtkWidget *, GtkAllocation *, gpointer);
@@ -205,11 +206,11 @@ static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
 static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
 static void     lockdown_notify_cb                (GConfClient *, guint, GConfEntry *, gpointer);
-static void     panel_menu_open_cb                (BonoboUIComponent *, gpointer, const gchar *);
-static void     panel_menu_about_cb               (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_applet_change_orient_cb     (PanelApplet *, PanelAppletOrient, gpointer);
-static void     panel_applet_change_background_cb (PanelApplet *, PanelAppletBackgroundType, GdkColor *,
+#ifdef MORE_PORTING
+ static void     panel_applet_change_background_cb (PanelApplet *, PanelAppletBackgroundType, GdkColor *,
                                                    GdkPixmap * pixmap, gpointer);
+#endif
 static void     slab_window_tomboy_bindkey_cb     (gchar *, gpointer);
 static void     search_tomboy_bindkey_cb          (gchar *, gpointer);
 static gboolean grabbing_window_event_cb          (GtkWidget *, GdkEvent *, gpointer);
@@ -219,11 +220,13 @@ static void     volume_monitor_mount_cb           (GVolumeMonitor *, GMount *, g
 
 static GdkFilterReturn slab_gdk_message_filter (GdkXEvent *, GdkEvent *, gpointer);
 
+#ifdef MORE_PORTING
 static const BonoboUIVerb applet_bonobo_verbs [] = {
 	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen",  panel_menu_open_cb),
 	BONOBO_UI_UNSAFE_VERB ("MainMenuAbout", panel_menu_about_cb),
 	BONOBO_UI_VERB_END
 };
+#endif
 
 static const gchar *main_menu_authors [] = {
 	"Jim Krehl <jimmyk@novell.com>",
@@ -550,6 +553,7 @@ create_panel_button (MainMenuUI *this)
 
 	reorient_panel_button (this);
 
+#ifdef MORE_PORTING
 	panel_applet_setup_menu_from_file (
 		priv->panel_applet, NULL, "GNOME_MainMenu_ContextMenu.xml",
 		NULL, applet_bonobo_verbs, this);
@@ -561,6 +565,8 @@ create_panel_button (MainMenuUI *this)
 	g_signal_connect (
 		G_OBJECT (priv->panel_applet), "change_background",
 		G_CALLBACK (panel_applet_change_background_cb), this);
+#endif
+	g_warning ("no verbs added !");
 }
 
 static GtkWidget *
@@ -592,12 +598,14 @@ create_slab_window (MainMenuUI *this)
 	slab_action_atom = gdk_atom_intern ("_SLAB_ACTION", FALSE);
 	slab_action_main_menu_atom = XInternAtom (
 		GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), "_SLAB_ACTION_MAIN_MENU", FALSE);
+#ifdef MORE_PORTING
 	gdk_display_add_client_message_filter (
 		gdk_display_get_default (), slab_action_atom, slab_gdk_message_filter, this);
+#endif
 
 	g_signal_connect (
-		G_OBJECT (priv->slab_window), "expose-event",
-		G_CALLBACK (slab_window_expose_cb), this);
+		G_OBJECT (priv->slab_window), "draw",
+		G_CALLBACK (slab_window_draw_cb), this);
 
 	g_signal_connect (
 		G_OBJECT (priv->slab_window), "key-press-event",
@@ -1611,12 +1619,13 @@ grab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
 		gtk_grab_add          (priv->slab_window);
 
 		status = gdk_pointer_grab (
-			priv->slab_window->window, TRUE, GDK_BUTTON_PRESS_MASK,
-			NULL, NULL, time);
+			gtk_widget_get_window (priv->slab_window), TRUE,
+			GDK_BUTTON_PRESS_MASK, NULL, NULL, time);
 
 		priv->ptr_is_grabbed = (status == GDK_GRAB_SUCCESS);
 
-		status = gdk_keyboard_grab (priv->slab_window->window, TRUE, time);
+		status = gdk_keyboard_grab (gtk_widget_get_window (priv->slab_window),
+					    TRUE, time);
 
 		priv->kbd_is_grabbed = (status == GDK_GRAB_SUCCESS);
 	}
@@ -1959,35 +1968,32 @@ panel_button_drag_data_rcv_cb (GtkWidget *widget, GdkDragContext *context, gint 
 }
 
 static gboolean
-slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+slab_window_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
-	cairo_t         *cr;
+	GtkStyle *style;
+	GtkAllocation allocation, left_pane_allocation,
+		      top_pane_allocation;
 	cairo_pattern_t *gradient;
-
-
-	cr = gdk_cairo_create (widget->window);
-
-	cairo_rectangle (
-		cr,
-		event->area.x, event->area.y,
-		event->area.width, event->area.height);
-
-	cairo_clip (cr);
 
 /* draw window background */
 
+	style = gtk_widget_get_style (widget);
+	gtk_widget_get_allocation (widget, &allocation);
+	gtk_widget_get_allocation (priv->top_pane, &allocation);
+	gtk_widget_get_allocation (priv->left_pane, &allocation);
+
 	cairo_rectangle (
-		cr, 
-		widget->allocation.x + 0.5, widget->allocation.y + 0.5,
-		widget->allocation.width - 1, widget->allocation.height - 1);
+		cr,
+		allocation.x + 0.5, allocation.y + 0.5,
+		allocation.width - 1, allocation.height - 1);
 
 	cairo_set_source_rgb (
 		cr,
-		widget->style->bg [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->bg [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->bg [GTK_STATE_ACTIVE].blue  / 65535.0);
+		style->bg [GTK_STATE_ACTIVE].red   / 65535.0,
+		style->bg [GTK_STATE_ACTIVE].green / 65535.0,
+		style->bg [GTK_STATE_ACTIVE].blue  / 65535.0);
 
 	cairo_fill_preserve (cr);
 
@@ -1995,9 +2001,9 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
 	cairo_set_source_rgb (
 		cr,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
+		style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
 
 	cairo_set_line_width (cr, 1.0);
 	cairo_stroke (cr);
@@ -2006,14 +2012,14 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
 	cairo_rectangle (
 		cr,
-		priv->left_pane->allocation.x + 0.5, priv->left_pane->allocation.y + 0.5,
-		priv->left_pane->allocation.width - 1, priv->left_pane->allocation.height - 1);
+		left_pane_allocation.x + 0.5, left_pane_allocation.y + 0.5,
+		left_pane_allocation.width - 1, left_pane_allocation.height - 1);
 
 	cairo_set_source_rgb (
 		cr,
-		widget->style->bg [GTK_STATE_NORMAL].red   / 65535.0,
-		widget->style->bg [GTK_STATE_NORMAL].green / 65535.0,
-		widget->style->bg [GTK_STATE_NORMAL].blue  / 65535.0);
+		style->bg [GTK_STATE_NORMAL].red   / 65535.0,
+		style->bg [GTK_STATE_NORMAL].green / 65535.0,
+		style->bg [GTK_STATE_NORMAL].blue  / 65535.0);
 
 	cairo_fill_preserve (cr);
 
@@ -2021,9 +2027,9 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
 	cairo_set_source_rgb (
 		cr,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
+		style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
 
 	cairo_stroke (cr);
 
@@ -2031,19 +2037,19 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
 	cairo_move_to (
 		cr,
-		priv->top_pane->allocation.x + 0.5,
-		priv->top_pane->allocation.y + priv->top_pane->allocation.height - 0.5);
+		top_pane_allocation.x + 0.5,
+		top_pane_allocation.y + top_pane_allocation.height - 0.5);
 
 	cairo_line_to (
 		cr,
-		priv->top_pane->allocation.x + priv->top_pane->allocation.width - 0.5,
-		priv->top_pane->allocation.y + priv->top_pane->allocation.height - 0.5);
+		top_pane_allocation.x + top_pane_allocation.width - 0.5,
+		top_pane_allocation.y + top_pane_allocation.height - 0.5);
 
 	cairo_set_source_rgb (
 		cr,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
+		style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].blue  / 65535.0);
 
 	cairo_stroke (cr);
 
@@ -2051,32 +2057,31 @@ slab_window_expose_cb (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
 	cairo_rectangle (
 		cr,
-		priv->top_pane->allocation.x + 0.5, priv->top_pane->allocation.y + 0.5,
-		priv->top_pane->allocation.width - 1, priv->top_pane->allocation.height - 1);
+		top_pane_allocation.x + 0.5, top_pane_allocation.y + 0.5,
+		top_pane_allocation.width - 1, top_pane_allocation.height - 1);
 
 	gradient = cairo_pattern_create_linear (
-		priv->top_pane->allocation.x,
-		priv->top_pane->allocation.y,
-		priv->top_pane->allocation.x,
-		priv->top_pane->allocation.y + priv->top_pane->allocation.height);
+		top_pane_allocation.x,
+		top_pane_allocation.y,
+		top_pane_allocation.x,
+		top_pane_allocation.y + top_pane_allocation.height);
 	cairo_pattern_add_color_stop_rgba (
 		gradient, 0,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
 		0.0);
 	cairo_pattern_add_color_stop_rgba (
 		gradient, 1,
-		widget->style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].green / 65535.0,
-		widget->style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].red   / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].green / 65535.0,
+		style->dark [GTK_STATE_ACTIVE].blue  / 65535.0,
 		0.2);
 
 	cairo_set_source (cr, gradient);
 	cairo_fill_preserve (cr);
 
 	cairo_pattern_destroy (gradient);
-	cairo_destroy (cr);
 
 	return FALSE;
 }
@@ -2087,14 +2092,14 @@ slab_window_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer user_d
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	switch (event->keyval) {
-		case GDK_Super_L:
-		case GDK_Escape:
+		case GDK_KEY_Super_L:
+		case GDK_KEY_Escape:
 			gtk_toggle_button_set_active (priv->panel_button, FALSE);
 
 			return TRUE;
 
-		case GDK_W:
-		case GDK_w:
+		case GDK_KEY_W:
+		case GDK_KEY_w:
 			if (event->state & GDK_CONTROL_MASK) {
 				gtk_toggle_button_set_active (priv->panel_button, FALSE);
 
@@ -2113,11 +2118,10 @@ slab_window_button_press_cb (GtkWidget *widget, GdkEventButton *event, gpointer 
 	MainMenuUIPrivate *priv = PRIVATE      (this);
 
 	GdkWindow *ptr_window;
-	
-	
+
 	ptr_window = gdk_window_at_pointer (NULL, NULL);
 
-	if (priv->slab_window->window != ptr_window) {
+	if (gtk_widget_get_window (priv->slab_window) != ptr_window) {
 		hide_slab_if_urgent_close (this);
 
 		return TRUE;
@@ -2139,21 +2143,26 @@ slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 	GdkRectangle monitor_geom;
 
 	PanelAppletOrient orient;
+	GtkAllocation button_allocation, slab_allocation;
 
+	gtk_widget_get_allocation (GTK_WIDGET (priv->slab_window), &slab_allocation);
+	gtk_widget_get_allocation (GTK_WIDGET (priv->panel_button), &button_allocation);
 
-	gdk_window_get_origin (GTK_WIDGET (priv->panel_button)->window, & button_geom.x, & button_geom.y);
-	button_geom.width  = GTK_WIDGET (priv->panel_button)->allocation.width;
-	button_geom.height = GTK_WIDGET (priv->panel_button)->allocation.height;
+	gdk_window_get_origin (gtk_widget_get_window (GTK_WIDGET (priv->panel_button)),
+			       & button_geom.x, & button_geom.y);
+	button_geom.width  = button_allocation.width;
+	button_geom.height = button_allocation.height;
 
-	slab_geom.width  = priv->slab_window->allocation.width;
-	slab_geom.height = priv->slab_window->allocation.height;
+	slab_geom.width  = slab_allocation.width;
+	slab_geom.height = slab_allocation.height;
 
 	panel_button_screen = gtk_widget_get_screen (GTK_WIDGET (priv->panel_button));
 
 	gdk_screen_get_monitor_geometry (
 		panel_button_screen,
 		gdk_screen_get_monitor_at_window (
-			panel_button_screen, GTK_WIDGET (priv->panel_button)->window),
+			panel_button_screen,
+			gtk_widget_get_window (GTK_WIDGET (priv->panel_button))),
 		& monitor_geom);
 
 	orient = panel_applet_get_orient (priv->panel_applet);
@@ -2323,14 +2332,13 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	GTimeVal current_time;
 	guint32 current_time_millis;
 
-	GnomeDesktopItem *ditem;
-	gchar            *ditem_id;
+	GKeyFile *ditem;
+	gchar *ditem_id;
 
 	gchar *cmd_template;
 	gchar *cmd;
 	gchar *dir;
 	gchar *uri;
-
 
 	detector = DOUBLE_CLICK_DETECTOR (
 		g_object_get_data (G_OBJECT (button), "double-click-detector"));
@@ -2402,6 +2410,7 @@ lockdown_notify_cb (GConfClient *client, guint conn_id,
 	apply_lockdown_settings (MAIN_MENU_UI (user_data));
 }
 
+#ifdef MORE_PORTING
 static void
 panel_menu_open_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
 {
@@ -2437,6 +2446,7 @@ panel_menu_about_cb (BonoboUIComponent *component, gpointer user_data, const gch
 
 	gtk_window_present (GTK_WINDOW (priv->panel_about_dialog));
 }
+#endif
 
 static void
 panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gpointer user_data)
@@ -2444,6 +2454,7 @@ panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gp
 	reorient_panel_button (MAIN_MENU_UI (user_data));
 }
 
+#ifdef MORE_PORTING
 static void
 panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundType type, GdkColor *color,
                                    GdkPixmap *pixmap, gpointer user_data)
@@ -2487,6 +2498,7 @@ panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundTyp
 			break;
 	}
 }
+#endif
 
 static void
 slab_window_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
