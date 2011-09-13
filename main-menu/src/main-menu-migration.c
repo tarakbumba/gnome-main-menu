@@ -93,7 +93,7 @@ migrate_system_gconf_to_bookmark_file ()
 
 	GList            *gconf_system_list;
 	gint              system_tile_type;
-	GnomeDesktopItem *ditem;
+	GKeyFile *ditem;
 	gchar            *path;
 	const gchar      *loc;
 	gchar            *uri;
@@ -178,33 +178,44 @@ migrate_system_gconf_to_bookmark_file ()
 					exec_string = (gchar *) node_j->data;
 
 					g_shell_parse_argv (exec_string, NULL, & argv, NULL);
-		
+
 					cmd_path = g_find_program_in_path (argv [0]);
 
 					if (cmd_path) {
-						ditem = gnome_desktop_item_new ();
+						ditem = g_key_file_new ();
 
 						path = g_build_filename (
 							g_get_user_data_dir (), PACKAGE, "lockscreen.desktop", NULL);
 
-						gnome_desktop_item_set_location_file (ditem, path);
-						gnome_desktop_item_set_string (
-							ditem, GNOME_DESKTOP_ITEM_NAME, _("Lock Screen"));
-						gnome_desktop_item_set_string (
-							ditem, GNOME_DESKTOP_ITEM_ICON, "gnome-lockscreen");
-						gnome_desktop_item_set_string (
-							ditem, GNOME_DESKTOP_ITEM_EXEC, exec_string);
-						gnome_desktop_item_set_boolean (
-							ditem, GNOME_DESKTOP_ITEM_TERMINAL, FALSE);
-						gnome_desktop_item_set_entry_type (
-							ditem, GNOME_DESKTOP_ITEM_TYPE_APPLICATION);
-						gnome_desktop_item_set_string (
-							ditem, GNOME_DESKTOP_ITEM_CATEGORIES, "GNOME;GTK;");
-						gnome_desktop_item_set_string (
-							ditem, GNOME_DESKTOP_ITEM_ONLY_SHOW_IN, "GNOME;");
+						g_key_file_set_string (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_NAME, _("Lock Screen"));
+						g_key_file_set_string (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_ICON, "gnome-lockscreen");
+						g_key_file_set_string (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_EXEC, exec_string);
+						g_key_file_set_boolean (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_TERMINAL, FALSE);
+						g_key_file_set_string (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_TYPE,
+							G_KEY_FILE_DESKTOP_TYPE_APPLICATION);
+						g_key_file_set_string (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_CATEGORIES, "GNOME;GTK;");
+						g_key_file_set_string (
+							ditem, G_KEY_FILE_DESKTOP_GROUP,
+							G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, "GNOME;");
 
-						gnome_desktop_item_save (ditem, NULL, TRUE, NULL);
-
+						{ /* save */
+							gsize  length;
+							gchar *flat_text = g_key_file_to_data (ditem,
+											       &length, NULL);
+							g_file_set_contents (path, flat_text, length, NULL);
+						}
 						g_free (path);
 
 						break;
@@ -225,7 +236,7 @@ migrate_system_gconf_to_bookmark_file ()
 				ditem = NULL;
 
 			if (ditem) {
-				loc = gnome_desktop_item_get_location (ditem);
+				loc = libslab_keyfile_get_location (ditem);
 
 				if (g_path_is_absolute (loc))
 					uri = g_filename_to_uri (loc, NULL, NULL);
@@ -239,10 +250,10 @@ migrate_system_gconf_to_bookmark_file ()
 				g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
 				g_bookmark_file_add_application (
 					bm_file, uri,
-					gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
-					gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+					libslab_keyfile_get_locale (ditem, G_KEY_FILE_DESKTOP_KEY_NAME),
+					libslab_keyfile_get_locale (ditem, G_KEY_FILE_DESKTOP_KEY_EXEC));
 
-				name = gnome_desktop_item_get_string (ditem, GNOME_DESKTOP_ITEM_NAME);
+				name = libslab_keyfile_get (ditem, G_KEY_FILE_DESKTOP_KEY_NAME);
 
 				if (! strcmp (name, "Yelp"))
 					g_bookmark_file_set_title (bm_file, uri, _("Help"));
@@ -255,7 +266,7 @@ migrate_system_gconf_to_bookmark_file ()
 			g_free (uri);
 
 			if (ditem)
-				gnome_desktop_item_unref (ditem);
+				g_object_unref (ditem);
 		}
 
 		bm_path = g_build_filename (bm_dir, SYSTEM_BOOKMARK_FILENAME, NULL);
@@ -283,7 +294,7 @@ migrate_user_apps_gconf_to_bookmark_file ()
 
 	GList *user_apps_list;
 
-	GnomeDesktopItem *ditem;
+	GKeyFile *ditem;
 	const gchar      *loc;
 	gchar            *uri;
 
@@ -314,7 +325,7 @@ migrate_user_apps_gconf_to_bookmark_file ()
 		ditem = libslab_gnome_desktop_item_new_from_unknown_id ((gchar *) node->data);
 
 		if (ditem) {
-			loc = gnome_desktop_item_get_location (ditem);
+			loc = libslab_keyfile_get_location (ditem);
 
 			if (g_path_is_absolute (loc))
 				uri = g_filename_to_uri (loc, NULL, NULL);
@@ -328,14 +339,14 @@ migrate_user_apps_gconf_to_bookmark_file ()
 			g_bookmark_file_set_mime_type (bm_file, uri, "application/x-desktop");
 			g_bookmark_file_add_application (
 				bm_file, uri,
-				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_NAME),
-				gnome_desktop_item_get_localestring (ditem, GNOME_DESKTOP_ITEM_EXEC));
+				libslab_keyfile_get_locale (ditem, G_KEY_FILE_DESKTOP_KEY_NAME),
+				libslab_keyfile_get_locale (ditem, G_KEY_FILE_DESKTOP_KEY_EXEC));
 		}
 
 		g_free (uri);
 
 		if (ditem)
-			gnome_desktop_item_unref (ditem);
+			g_object_unref (ditem);
 
 		g_free (node->data);
 	}

@@ -9,16 +9,16 @@ run_dialog (GdkDisplay *display, GdkScreen  *screen, guint32 timestamp)
 	Atom atom;
 	Window root;
 	XClientMessageEvent ev;
-	
+
 	if (!display)
 		display = gdk_display_get_default ();
 	if (!screen)
 		screen = gdk_display_get_default_screen (display);
-	root = GDK_WINDOW_XWINDOW (gdk_screen_get_root_window (screen));
-	
+	root = gdk_x11_window_get_xid (gdk_screen_get_root_window (screen));
+
 	action_atom = gdk_x11_get_xatom_by_name_for_display (display, "_GNOME_PANEL_ACTION");
 	atom = gdk_x11_get_xatom_by_name_for_display (display, "_GNOME_PANEL_ACTION_RUN_DIALOG");
-	
+
 	ev.type = ClientMessage;
 	ev.window = root;
 	ev.message_type = action_atom;

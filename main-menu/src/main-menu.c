@@ -23,6 +23,7 @@
 #endif
 
 #include <glib.h>
+#include <glib/gi18n.h>
 #include <panel-applet.h>
 #include <string.h>
 #include <libslab/slab.h>
@@ -33,8 +34,8 @@
 
 static gboolean main_menu_applet_init (PanelApplet *, const gchar *, gpointer);
 
-PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_MainMenu_Factory", PANEL_TYPE_APPLET, "Main Menu", "0",
-	main_menu_applet_init, NULL);
+PANEL_APPLET_OUT_PROCESS_FACTORY ("GNOME_MainMenu_Factory", PANEL_TYPE_APPLET,
+				  main_menu_applet_init, NULL);
 
 #define CHECKPOINT_CONFIG_BASENAME "main-menu-checkpoint.conf"
 #define CHECKPOINT_FILE_BASENAME "main-menu"
