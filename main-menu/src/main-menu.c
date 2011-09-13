@@ -34,7 +34,8 @@
 
 static gboolean main_menu_applet_init (PanelApplet *, const gchar *, gpointer);
 
-PANEL_APPLET_OUT_PROCESS_FACTORY ("GNOME_MainMenu_Factory", PANEL_TYPE_APPLET,
+PANEL_APPLET_OUT_PROCESS_FACTORY ("GNOME_MainMenu_Factory",
+				  PANEL_TYPE_APPLET, /* FIXME: our gobject type ? */
 				  main_menu_applet_init, NULL);
 
 #define CHECKPOINT_CONFIG_BASENAME "main-menu-checkpoint.conf"
@@ -47,9 +48,6 @@ main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data
 	libslab_checkpoint_init (CHECKPOINT_CONFIG_BASENAME, CHECKPOINT_FILE_BASENAME);
 
 	libslab_checkpoint ("Main-menu starts up");
-
-	if (strcmp (iid, "OAFIID:GNOME_MainMenu") != 0)
-		return FALSE;
 
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
