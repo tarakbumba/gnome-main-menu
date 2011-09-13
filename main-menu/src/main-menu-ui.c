@@ -226,7 +226,6 @@ static const BonoboUIVerb applet_bonobo_verbs [] = {
 	BONOBO_UI_UNSAFE_VERB ("MainMenuAbout", panel_menu_about_cb),
 	BONOBO_UI_VERB_END
 };
-#endif
 
 static const gchar *main_menu_authors [] = {
 	"Jim Krehl <jimmyk@novell.com>",
@@ -240,6 +239,7 @@ static const gchar *main_menu_artists [] = {
 	"Jakub Steiner <jimmac@novell.com>",
 	NULL
 };
+#endif
 
 enum {
 	APPS_PAGE,
@@ -1109,42 +1109,6 @@ item_to_recent_doc_tile (BookmarkItem *item, gpointer data)
 {
 	MainMenuUIPrivate *priv = PRIVATE (data);
 
-	GMount         *mount;
-	GVolume        *volume;
-	GFile          *file;
-	char           *nfs_id;
-	gboolean        is_nfs = FALSE;
-	gboolean        is_local = TRUE;
-
-	GList *node;
-
-	/* we no longer do our own thumbnailing so this "should" not hang on stale mounts, slow endpoints ... */
-	/*
-	if (! g_str_has_prefix (item->uri, "file://"))
-		return NULL;
-
-	for (node = priv->mounts; ! is_nfs && node; node = node->next) {
-		mount = node->data;
-		volume = g_mount_get_volume (mount); //need to check for null here
-
-		nfs_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_NFS_MOUNT);
-		is_nfs = (nfs_id != NULL);
-
-		g_free (nfs_id);
-		g_object_unref (volume);
-	}
-
-	if (is_nfs)
-		return NULL;
-
-	file = g_file_new_for_uri (item->uri);
-	is_local = g_file_is_native (file);
-	g_object_unref (file);
-
-	if (! is_local)
-		return NULL;
-	*/
-
 	if (bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_USER_DOCS], item->uri))
 		return NULL;
 
@@ -1161,32 +1125,14 @@ static Tile *
 item_to_system_tile (BookmarkItem *item, gpointer data)
 {
 	Tile  *tile;
-	gchar *basename;
 	gchar *translated_title;
 
 	if (app_is_in_blacklist (item->uri))
 		return NULL;
-	
+
 	translated_title = item->title ? _(item->title) : NULL;
 
 	tile = TILE (system_tile_new (item->uri, translated_title));
-
-	/* with 0.9.12 we start with clean system area - see move_system_area_to_new_set
-	   no longer need this code to clean up old junk
-	if (tile)
-		return tile;
-
-	basename = g_strrstr (item->uri, "/");
-	if (basename)
-		basename++;
-	else
-		basename = item->uri;
-
-	if (! libslab_strcmp (basename, "control-center.desktop"))
-		tile = TILE (system_tile_new ("gnomecc.desktop", translated_title));
-	else if (! libslab_strcmp (basename, "zen-installer.desktop"))
-		tile = TILE (system_tile_new ("package-manager.desktop", translated_title));
-	*/
 
 	return tile;
 }
@@ -1981,8 +1927,8 @@ slab_window_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 	style = gtk_widget_get_style (widget);
 	gtk_widget_get_allocation (widget, &allocation);
-	gtk_widget_get_allocation (priv->top_pane, &allocation);
-	gtk_widget_get_allocation (priv->left_pane, &allocation);
+	gtk_widget_get_allocation (priv->top_pane, &top_pane_allocation);
+	gtk_widget_get_allocation (priv->left_pane, &left_pane_allocation);
 
 	cairo_rectangle (
 		cr,
@@ -2446,7 +2392,6 @@ panel_menu_about_cb (BonoboUIComponent *component, gpointer user_data, const gch
 
 	gtk_window_present (GTK_WINDOW (priv->panel_about_dialog));
 }
-#endif
 
 static void
 panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gpointer user_data)
@@ -2454,7 +2399,6 @@ panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gp
 	reorient_panel_button (MAIN_MENU_UI (user_data));
 }
 
-#ifdef MORE_PORTING
 static void
 panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundType type, GdkColor *color,
                                    GdkPixmap *pixmap, gpointer user_data)
