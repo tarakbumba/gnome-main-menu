@@ -449,5 +449,5 @@ launch_network_config (const gchar * desktop_key)
 
 	if (!open_desktop_item_exec (desktop_item))
 		g_warning ("network_status_tile_open: couldn't exec item\n");
-	gnome_desktop_item_unref (desktop_item);
+	slab_key_file_unref (desktop_item);
 }

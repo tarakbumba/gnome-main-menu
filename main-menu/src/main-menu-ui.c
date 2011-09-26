@@ -1209,20 +1209,20 @@ app_is_in_blacklist (const gchar *uri)
 
 
 	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
-	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
+	blacklisted  = disable_term && slab_key_file_is_a_terminal (uri);
 
 	if (blacklisted)
 		return TRUE;
 
 	disable_logout = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOGOUT_GCONF_KEY));
-	blacklisted    = disable_logout && libslab_desktop_item_is_logout (uri);
+	blacklisted    = disable_logout && slab_key_file_is_logout (uri);
 
 	if (blacklisted)
 		return TRUE;
 
 	disable_lockscreen = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOCKSCREEN_GCONF_KEY));
 	/* Dont allow lock screen if root - same as gnome-panel */
-	blacklisted = libslab_desktop_item_is_lockscreen (uri) &&
+	blacklisted = slab_key_file_is_lockscreen (uri) &&
 		( (geteuid () == 0) || disable_lockscreen );
 
 	if (blacklisted)
@@ -2278,7 +2278,7 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	GTimeVal current_time;
 	guint32 current_time_millis;
 
-	GKeyFile *ditem;
+	SlabKeyFile *ditem;
 	gchar *ditem_id;
 
 	gchar *cmd_template;
@@ -2325,10 +2325,10 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 		else
 			ditem_id = libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
 
-		ditem = libslab_gnome_desktop_item_new_from_unknown_id (ditem_id);
+		ditem = slab_key_file_new_from_unknown_id (ditem_id);
 
 		if (ditem) {
-			libslab_gnome_desktop_item_launch_default (ditem);
+			slab_key_file_launch_default (ditem);
 
 			hide_slab_if_urgent_close (this);
 		}

@@ -322,7 +322,7 @@ tile_show_event_cb (GtkWidget * widget, gpointer user_data)
 static void
 open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 {
-	GKeyFile *ditem;
+	SlabKeyFile *ditem;
 	gchar *fb_ditem_id;
 
 	fb_ditem_id = (gchar *) libslab_get_gconf_value (SYSTEM_MONITOR_GCONF_KEY);
@@ -330,7 +330,7 @@ open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 	if (! fb_ditem_id)
 		fb_ditem_id = g_strdup ("gnome-system-monitor.desktop");
 
-	ditem = libslab_gnome_desktop_item_new_from_unknown_id (fb_ditem_id);
+	ditem = slab_key_file_new_from_unknown_id (fb_ditem_id);
 
 	if (! open_desktop_item_exec (ditem))
 		g_warning ("open_hard_drive_tile: couldn't exec item\n");
