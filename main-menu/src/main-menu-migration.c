@@ -69,7 +69,7 @@ move_system_area_to_new_set ()
 			g_object_unref (filestream);
 		g_object_unref (file);
 		g_free (filename);
-		
+
 		filename = g_build_filename (
 			g_get_user_data_dir (), PACKAGE, SYSTEM_BOOKMARK_FILENAME, NULL);
 		if (g_file_test (filename, G_FILE_TEST_EXISTS))
