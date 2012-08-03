@@ -1,712 +1,654 @@
 # Romanian message file for YaST2 (@memory@).
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2003 SuSE Linux AG.
-#
+# crenguta bacaoanu <crengutamirela@gmail.com>, 2010.
+# Daniel Șerbănescu <daniel@serbanescu.dk>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: YaST (@memory@)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-06 17:53+0100\n"
-"PO-Revision-Date: 2003-02-25 15:04+0100\n"
-"Last-Translator: <i18n@suse.de>\n"
-"Language-Team: Romanian <i18n@suse.de>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
+"main-menu&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2012-07-03 10:16+0000\n"
+"PO-Revision-Date: 2012-08-04 00:03+0200\n"
+"Last-Translator: Daniel Șerbănescu <daniel@serbanescu.dk>\n"
+"Language-Team: Gnome Romanian Translation Team\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);;\n"
+"X-Generator: Virtaal 0.7.0\n"
+"X-Project-Style: gnome\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:93
-#, fuzzy
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Browser"
-msgstr "Ordinea de aplicare"
+msgstr "Navigator de aplicații"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:1
-#: ../control-center/etc/control-center.schemas.in.h:2
-msgid "Exit shell on add or remove action performed"
-msgstr ""
+msgid "Filename of existing .desktop files"
+msgstr "Numele fișierelor .desktop existente"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:2
-#: ../control-center/etc/control-center.schemas.in.h:3
-msgid "Exit shell on help action performed"
-msgstr ""
+msgid "Max number of New Applications"
+msgstr "Număr maxim de aplicații noi"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:3
-#: ../control-center/etc/control-center.schemas.in.h:4
-msgid "Exit shell on start action performed"
+msgid ""
+"The maximum number of applications that will be displayed in the New "
+"Applications category"
 msgstr ""
+"Numărul maxim de aplicații ce vor fi afișate în categoria „Aplicații noi”"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:4
-#: ../control-center/etc/control-center.schemas.in.h:5
-msgid "Exit shell on upgrade or uninstall action performed"
-msgstr ""
+msgid "Exit shell on start action performed"
+msgstr "Ieși din shell la executarea acțiunii de start"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:5
-msgid "Filename of existing .desktop files"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:6
-#: ../control-center/etc/control-center.schemas.in.h:6
-msgid "Indicates whether to close the shell when a help action is performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:7
-#: ../control-center/etc/control-center.schemas.in.h:7
 msgid "Indicates whether to close the shell when a start action is performed"
 msgstr ""
+"Indică dacă să se închidă shell-ul atunci când o acțiune de start este "
+"executată"
+
+#: ../application-browser/etc/application-browser.schemas.in.h:6
+msgid "Exit shell on help action performed"
+msgstr "Ieși din shell la executarea acțiunii de ajutor"
+
+#: ../application-browser/etc/application-browser.schemas.in.h:7
+msgid "Indicates whether to close the shell when a help action is performed"
+msgstr ""
+"Indică dacă să se închidă shell-ul atunci când o acțiune de ajutor este "
+"executată"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:8
-#: ../control-center/etc/control-center.schemas.in.h:8
-msgid "Indicates whether to close the shell when an add or remove action is performed"
-msgstr ""
+msgid "Exit shell on add or remove action performed"
+msgstr "Ieși din shell la executarea acțiunii de adăugare sau eliminare"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:9
-#: ../control-center/etc/control-center.schemas.in.h:9
-msgid "Indicates whether to close the shell when an upgrade or uninstall action is performed"
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
 msgstr ""
+"Indică dacă să se închidă shell-ul atunci când o acțiune de adăugare sau "
+"eliminare este executată"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:10
-#, fuzzy
-msgid "Max number of New Applications"
-msgstr "Ordinea de aplicare"
+msgid "Exit shell on upgrade or uninstall action performed"
+msgstr "Ieși din shell la executarea acțiunii de înnoire sau dezinstalare"
 
 #: ../application-browser/etc/application-browser.schemas.in.h:11
-msgid "The maximum number of applications that will be displayed in the New Applications category"
-msgstr ""
-
-#: ../application-browser/src/application-browser.c:85
-#, fuzzy
-msgid "New Applications"
-msgstr "Ordinea de aplicare"
-
-#: ../application-browser/src/application-browser.c:90
-#: ../control-center/src/control-center.c:160
-#, fuzzy
-msgid "Filter"
-msgstr "&Filtru"
-
-#: ../application-browser/src/application-browser.c:90
-#: ../control-center/src/control-center.c:160
-#, fuzzy
-msgid "Groups"
-msgstr "&Grup"
-
-#: ../application-browser/src/application-browser.c:90
-#, fuzzy
-msgid "Application Actions"
-msgstr "Ordinea de aplicare"
-
-#: ../control-center/etc/control-center.desktop.in.in.h:1
-#: ../control-center/src/control-center.c:164
-#, fuzzy
-msgid "Control Center"
-msgstr "Centrul de control YaST2"
-
-#: ../control-center/etc/control-center.schemas.in.h:1
-msgid "Close the control-center when a task is activated"
-msgstr ""
-
-#: ../control-center/etc/control-center.schemas.in.h:10
-msgid "Task names and associated .desktop files"
-msgstr ""
-
-#: ../control-center/etc/control-center.schemas.in.h:11
-msgid "The task name to be displayed in the control-center (thus needing to be translated) followed by a \";\" separator then the filename of an associated .desktop file to launch for that task."
-msgstr ""
-
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid "[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager.desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd.desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST.desktop]"
-msgstr ""
-
-#: ../control-center/etc/control-center.schemas.in.h:14
-msgid "if true, the control-center will close when a \"Common Task\" is activated"
-msgstr ""
-
-#: ../control-center/src/control-center.c:62
-#, c-format
-msgid "key not found [%s]\n"
-msgstr ""
-
-#: ../control-center/src/control-center.c:160
-msgid "Common Tasks"
-msgstr ""
-
-#. make start action
-#: ../libslab/application-tile.c:316
-#, fuzzy, c-format
-msgid "<b>Start %s</b>"
-msgstr "<b>Autori: </b>"
-
-#: ../libslab/application-tile.c:335
-#: ../main-menu/src/main-menu-migration.c:116
-#: ../main-menu/src/main-menu-migration.c:270
-msgid "Help"
-msgstr "Ajutor"
-
-#: ../libslab/application-tile.c:342
-#, fuzzy
-msgid "Help Unavailable"
-msgstr "Nu este disponibil"
-
-#: ../libslab/application-tile.c:381
-#, fuzzy
-msgid "Upgrade"
-msgstr "Actualizează"
-
-#: ../libslab/application-tile.c:390
-#, fuzzy
-msgid "Uninstall"
-msgstr "Instalează"
-
-#: ../libslab/application-tile.c:712 ../libslab/document-tile.c:525
-#: ../nautilus-main-menu/nautilus-main-menu.c:133
-#: ../nautilus-main-menu/nautilus-main-menu.c:138
-msgid "Remove from Favorites"
-msgstr ""
-
-#: ../libslab/application-tile.c:714 ../libslab/document-tile.c:527
-#: ../nautilus-main-menu/nautilus-main-menu.c:123
-#: ../nautilus-main-menu/nautilus-main-menu.c:128
-msgid "Add to Favorites"
-msgstr ""
-
-#: ../libslab/application-tile.c:769
-msgid "Remove from Startup Programs"
-msgstr ""
-
-#: ../libslab/application-tile.c:771
-msgid "Add to Startup Programs"
-msgstr ""
-
-#: ../libslab/app-shell.c:740
-#, c-format
 msgid ""
-"<span size=\"large\"><b>No matches found.</b> </span><span>\n"
-"\n"
-" Your filter \"<b>%s</b>\" does not match any items.</span>"
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
 msgstr ""
+"Indică dacă să se închidă shell-ul atunci când o acțiune de înnoire sau "
+"dezinstalare este executată"
 
-#: ../libslab/app-shell.c:879
-msgid "Other"
-msgstr ""
+#: ../application-browser/src/application-browser.c:63
+msgid "Hide on start (useful to preload the shell)"
+msgstr "Ascunde la pornire (folositor pentru preîncărcarea shell-ului)"
 
-#. make open with default action
-#: ../libslab/directory-tile.c:163
-#, fuzzy
-msgid "<b>Open</b>"
-msgstr "<b>Intră în conflict cu: </b>"
+#: ../application-browser/src/application-browser.c:93
+msgid "New Applications"
+msgstr "Aplicații noi"
 
-#. make rename action
-#: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
-#, fuzzy
-msgid "Rename..."
-msgstr "Re&testează..."
+#: ../application-browser/src/application-browser.c:98
+msgid "Filter"
+msgstr "Filtru"
 
-#. make move to trash action
-#: ../libslab/directory-tile.c:195 ../libslab/document-tile.c:249
-msgid "Move to Trash"
-msgstr ""
+#: ../application-browser/src/application-browser.c:98
+msgid "Groups"
+msgstr "Grupuri"
 
-#: ../libslab/directory-tile.c:205 ../libslab/directory-tile.c:448
-#: ../libslab/document-tile.c:259 ../libslab/document-tile.c:629
-msgid "Delete"
-msgstr "Şterge"
-
-#: ../libslab/directory-tile.c:225 ../libslab/directory-tile.c:234
-#: ../libslab/document-tile.c:295 ../libslab/document-tile.c:304
-#, fuzzy
-msgid "Send To..."
-msgstr "Salvează ca..."
-
-#: ../libslab/document-tile.c:154
-msgid "Edited %m/%d/%Y"
-msgstr ""
-
-#: ../libslab/document-tile.c:192
-#, fuzzy, c-format
-msgid "<b>Open with \"%s\"</b>"
-msgstr "<b>Intră în conflict cu: </b>"
-
-#: ../libslab/document-tile.c:204
-msgid "Open with Default Application"
-msgstr ""
-
-#: ../libslab/document-tile.c:220
-msgid "Open in File Manager"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
-#: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
-#, c-format
-msgid "Unexpected attribute '%s' for element '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:920 ../libslab/eggbookmarkfile.c:1012
-#: ../libslab/eggbookmarkfile.c:1022 ../libslab/eggbookmarkfile.c:1138
-#, c-format
-msgid "Attribute '%s' of element '%s' not found"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:1329 ../libslab/eggbookmarkfile.c:1394
-#: ../libslab/eggbookmarkfile.c:1444 ../libslab/eggbookmarkfile.c:1454
-#, c-format
-msgid "Unexpected tag '%s', tag '%s' expected"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:1354 ../libslab/eggbookmarkfile.c:1368
-#: ../libslab/eggbookmarkfile.c:1422 ../libslab/eggbookmarkfile.c:1476
-#, c-format
-msgid "Unexpected tag '%s' inside '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2187
-msgid "No valid bookmark file was be found in data dirs"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2388
-#, c-format
-msgid "A bookmark for URI '%s' already exists"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2432 ../libslab/eggbookmarkfile.c:2593
-#: ../libslab/eggbookmarkfile.c:2682 ../libslab/eggbookmarkfile.c:2763
-#: ../libslab/eggbookmarkfile.c:2848 ../libslab/eggbookmarkfile.c:2931
-#: ../libslab/eggbookmarkfile.c:3009 ../libslab/eggbookmarkfile.c:3088
-#: ../libslab/eggbookmarkfile.c:3130 ../libslab/eggbookmarkfile.c:3227
-#: ../libslab/eggbookmarkfile.c:3350 ../libslab/eggbookmarkfile.c:3540
-#: ../libslab/eggbookmarkfile.c:3616 ../libslab/eggbookmarkfile.c:3765
-#: ../libslab/eggbookmarkfile.c:3830 ../libslab/eggbookmarkfile.c:3919
-#: ../libslab/eggbookmarkfile.c:4053
-#, c-format
-msgid "No bookmark found for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2772
-#, c-format
-msgid "No MIME type defined in the bookmark for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2857
-#, c-format
-msgid "No private flag has been defined in bookmark for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:3236
-#, c-format
-msgid "No groups set in bookmark for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:3634 ../libslab/eggbookmarkfile.c:3775
-#, c-format
-msgid "No application with name '%s' registered a bookmark for '%s'"
-msgstr ""
-
-#: ../libslab/search-bar.c:255
-msgid "Find Now"
-msgstr ""
-
-#: ../libslab/system-tile.c:113
-#, fuzzy, c-format
-msgid "<b>Open %s</b>"
-msgstr "<b>Intră în conflict cu: </b>"
-
-#: ../libslab/system-tile.c:126
-msgid "Remove from System Items"
-msgstr ""
+#: ../application-browser/src/application-browser.c:98
+msgid "Application Actions"
+msgstr "Acțiunile aplicațiilor"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-#, fuzzy
-msgid "Default menu and application browser"
-msgstr "Ordinea de aplicare"
+msgid "GNOME Main Menu Factory"
+msgstr "Fabrica Meniu principal GNOME"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:1560 ../main-menu/src/slab-window.glade.h:7
+#: ../main-menu/src/main-menu-ui.c:2423 ../main-menu/src/main-menu.c:66
+#: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
-msgstr ""
+msgstr "Meniul principal GNOME"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "GNOME Main Menu Factory"
-msgstr ""
+msgid "Main Menu"
+msgstr "Meniu principal"
 
 #: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Main Menu"
-msgstr ""
+msgid "Default menu and application browser"
+msgstr "Meniul și navigatorul de aplicații implicit"
 
 #: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_About"
-msgstr ""
+msgid "_Open Menu"
+msgstr "_Meniu deschis"
 
 #: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_Open Menu"
-msgstr ""
+msgid "_About"
+msgstr "_Despre"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:1
-msgid ".desktop file for the YaST2 network_devices utility"
-msgstr ""
+msgid "command to uninstall packages"
+msgstr "comandă pentru dezinstalarea pachetelor"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:2
-msgid ".desktop file for the file browser"
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
 msgstr ""
+"comandă pentru dezinstalarea pachetelor, PACKAGE_NAME este înlocuit cu "
+"numele pachetului din comandă"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:3
-msgid ".desktop file for the gnome-system-monitor"
-msgstr ""
+msgid "command to upgrade packages"
+msgstr "comandă pentru înnoirea pachetelor"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:4
-msgid ".desktop file for the net config tool"
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
 msgstr ""
+"comandă pentru înnoirea pachetelor, PACKAGE_NAME este înlocuit cu numele "
+"pachetului din comandă"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:5
 msgid ".desktop path for the application browser"
-msgstr ""
+msgstr "calea .desktop pentru navigatorul de aplicații"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:6
-msgid "Location of the system-wide directory in which startup programs are found."
-msgstr ""
+msgid ".desktop file for the file browser"
+msgstr "fișierul .desktop pentru navigatorul de fișiere"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid "Location of the user directory in which startup programs are found. The dir path should not be absolute, as the value of this key is appended to this path: ~/."
-msgstr ""
+msgid ".desktop file for the gnome-system-monitor"
+msgstr "fișierul .desktop pentru gnome-system-monitor"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid "System-wide autostart program drop dir"
-msgstr ""
+msgid ".desktop file for the net config tool"
+msgstr "fișierul .desktop pentru utilitarul de configurare a rețelei"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated."
-msgstr ""
+msgid ".desktop file for the YaST2 network_devices utility"
+msgstr "fișierul .desktop pentru utilitatea „network_devices” YaST2"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated. FILE_URI is replaced with a uri corresponding to the dirname of the activated file."
-msgstr ""
+msgid ".desktop file for the Network Manager editor utility"
+msgstr "fișierul .desktop pentru utilitatea editorului Manager de Rețea"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the \"Send To...\" menu item is activated."
-msgstr ""
+msgid "This is the command to execute when the search entry is used."
+msgstr "Aceasta este comanda de executat când intrarea căutării este folosită."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:12
-msgid "This is the command to execute when the \"Send To...\" menu item is activated. DIRNAME and BASENAME are replaced with the corresponding components of the activated tile."
+msgid ""
+"This is the command to execute when the search entry is used. SEARCH_STRING "
+"is replaced with the entered search text."
 msgstr ""
+"Aceasta este comanda de executat când intrarea căutării este folosită. "
+"SEARCH_STRING este înlocuit cu textul căutat introdus."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:13
-msgid "This is the command to execute when the search entry is used."
-msgstr ""
+msgid "if true, main menu is more anxious to close"
+msgstr "dacă este „adevărat”, meniul principal se va închide mai repede"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:14
-msgid "This is the command to execute when the search entry is used. SEARCH_STRING is replaced with the entered search text."
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
 msgstr ""
+"dacă este „adevărat”, meniul principal se va închide după aceste condiții "
+"adiționale: mozaicul este activat, căutarea activată"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:15
-msgid "User autostart program drop dir (within the home dir)"
-msgstr ""
+msgid "determines which types of files to display in the file area"
+msgstr "determină ce tip de fișiere să se afișeze în zona fișierelor"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:16
-msgid "command to uninstall packages"
-msgstr ""
+msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
+msgstr "valori posibile = 0 [Aplicații], 1 [Documente], 2 [Locuri]"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:17
-msgid "command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command"
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated."
 msgstr ""
+"Aceasta este comanda de executat când elementul de meniu „Deschide în "
+"Administratorul de fișiere” este activat."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:18
-msgid "command to upgrade packages"
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated. FILE_URI is replaced with a uri corresponding to the dirname "
+"of the activated file."
 msgstr ""
+"Aceasta este comanda de executat când elementul de meniu „„Deschide în "
+"Administratorul de fișiere” este activat. FILE_URI este înlocuit cu o adresă "
+"uri corespunzând cu „dirname” al fișierului activat."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command"
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated."
 msgstr ""
+"Aceasta este comanda de executat când elementul de meniu „Trimite la...” "
+"este activat."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:20
-msgid "contains the list (in no particular order) of allowable file tables to show in the file area. possible values: 0 - show the user-specified or \"Favorite\" applications table, 1 - show the recently used applications table, 2 - show the user-specified or \"Favorite\" documents table, 3 - show the recently used documents table, 4 - show the user-specified of \"Favorite\" directories or \"Places\" table, and 5 - show the recently used directories or \"Places\" table."
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated. DIRNAME and BASENAME are replaced with the corresponding "
+"components of the activated tile."
 msgstr ""
+"Aceasta este comanda de executat când elementul de meniu „Trimite la...” "
+"este activat. DIRNAME și BASENAME sunt înlocuite cu componentele "
+"corespunzătoare ale mozaicurilor activate."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid "contains the list of files (including .desktop files) to be excluded from the \"Recently Used Applications\" and \"Recent Files\" lists"
-msgstr ""
+msgid "determines the limit of items in the file-area."
+msgstr "determină limita de elementele din zona fișierelor."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:22
-msgid "determines the limit of items in the file-area."
+msgid ""
+"determines the limit of items in the file-area. The number of favorite items "
+"is not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items then this limit is ignored."
 msgstr ""
+"determină limita de elementele din zona fișierelor. Numărul de elemente "
+"favorite nu este limitat. Această limită se aplică la numărul de articole "
+"recente, adică numărul de elemente recente afișate este limitat la "
+"„max_total_items” - numărul de elemente favorite. Dacă numărul de elemente "
+"favorite depășește „max_total_items - min_recent_items” atunci această "
+"limită este ignorată."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:23
-msgid "determines the limit of items in the file-area. The number favorite items is not limited. This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items. If the number of favorite items exceeds max_total_items - min_recent_items than this limit is ignored."
+msgid ""
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
 msgstr ""
+"determină numărul minim de elemente ale secțiunii „recente” din zona "
+"fișierelor."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:24
-msgid "determines the minimum number of items in the \"recent\" section of the file-area."
+msgid ""
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
+"conține lista de fișiere (inclusiv fișierele .desktop) ce vor fi excluse din "
+"listele „Aplicații utilizate recent” și „Fișiere recente”"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:25
-msgid "determines which types of files to display in the file area"
-msgstr ""
+msgid "lock-down status for the application browser link"
+msgstr "starea de blocare pentru legătura navigatorului de aplicații"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:26
-msgid "if true, main menu is more anxious to close"
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
 msgstr ""
+"desemnați adevărat dacă legătura la navigatorul de aplicații trebuie să fie "
+"vizibilă și activă."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "if true, main menu will close under these additional conditions: tile is activated, search activated"
-msgstr ""
+msgid "lock-down status for the search area"
+msgstr "starea de blocare pentru zona de căutare"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:28
-msgid "lock-down configuration of the file area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:29
-msgid "lock-down status for the application browser link"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:30
-msgid "lock-down status for the search area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:31
-msgid "lock-down status for the status area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:32
-msgid "lock-down status for the system area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:33
-msgid "lock-down status for the user-specified apps section"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:34
-msgid "lock-down status for the user-specified dirs section"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:35
-msgid "lock-down status for the user-specified docs section"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:36
-msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:37
-msgid "set to true if the link to the application browser should be visible and active."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:38
 msgid "set to true if the search area should be visible and active."
 msgstr ""
+"desemnați adevărat dacă zona căutării trebuie să fie vizibilă și activă."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:39
+#: ../main-menu/etc/slab.schemas.in.in.h:29
+msgid "lock-down status for the status area"
+msgstr "starea de blocare pentru zona de stare"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:30
 msgid "set to true if the status area should be visible and active."
 msgstr ""
+"desemnați adevărat dacă zona de stare trebuie să fie vizibilă și activă."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:40
+#: ../main-menu/etc/slab.schemas.in.in.h:31
+msgid "lock-down status for the system area"
+msgstr "starea de blocare pentru zona sistemului"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:32
 msgid "set to true if the system area should be visible and active."
 msgstr ""
+"desemnați adevărat dacă zona sistemului trebuie să fie vizibilă și activă."
+
+#: ../main-menu/etc/slab.schemas.in.in.h:33
+msgid "set to true if the user is allowed to modify the list of system items."
+msgstr ""
+"desemnați adevărat dacă utilizatorul este permis să modifice lista de "
+"elemente de sistem."
+
+#: ../main-menu/etc/slab.schemas.in.in.h:34
+msgid "lock-down status for the user-specified apps section"
+msgstr ""
+"starea de blocare pentru secțiunea de aplicații specificată de utilizator"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:35
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
+msgstr ""
+"desemnați adevărat dacă utilizatorul este permis să modifice lista de "
+"aplicații specificate de utilizator sau lista de „Favorite”."
+
+#: ../main-menu/etc/slab.schemas.in.in.h:36
+msgid "lock-down status for the user-specified docs section"
+msgstr ""
+"starea de blocare pentru secțiunea de documente specificată de utilizator"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:37
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
+msgstr ""
+"desemnați adevărat dacă utilizatorul este permis să modifice lista de "
+"documente specificate de utilizator sau lista de „Favorite”."
+
+#: ../main-menu/etc/slab.schemas.in.in.h:38
+msgid "lock-down status for the user-specified dirs section"
+msgstr "starea de blocare pentru secțiunea de dosare specificată de utilizator"
+
+#: ../main-menu/etc/slab.schemas.in.in.h:39
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
+msgstr ""
+"desemnați adevărat dacă utilizatorul este permis să modifice lista de "
+"directoare „Favorite” sau „Locuri”."
+
+#: ../main-menu/etc/slab.schemas.in.in.h:40
+msgid "lock-down configuration of the file area"
+msgstr "blochează configurația zonei fișierelor"
 
 #: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" applications."
+msgid ""
+"contains the list (in no particular order) of allowable file tables to show "
+"in the file area. possible values: 0 - show the user-specified or \"Favorite"
+"\" applications table, 1 - show the recently used applications table, 2 - "
+"show the user-specified or \"Favorite\" documents table, 3 - show the "
+"recently used documents table, 4 - show the user-specified of \"Favorite\" "
+"directories or \"Places\" table, and 5 - show the recently used directories "
+"or \"Places\" table."
 msgstr ""
+"conține lista (în nicio ordine specială) cu tabelele fișierelor admisibile "
+"ce de afișat în zona fișierelor. valori posibile: 0 - afișează tabelul "
+"aplicațiilor „Favorite” sau specificate de utilizator, 1 - afișează tabelul "
+"aplicațiilor folosite recent, 2 - afișează tabelul documentelor „Favorite” "
+"sau specificate de utilizator, 3 - afișează tabelul documentelor utilizate "
+"recent, 4 - afișează specificările utilizatorului de dosare „Favorite” sau "
+"tabelul „Locuri”, și 5 - afișează dosarele utilizate recent sau tabelul "
+"„Locuri\"."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:42
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" directories or \"Places\"."
-msgstr ""
+#: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:1
+msgid "Run Application"
+msgstr "Rulare aplicație"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:43
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" documents."
-msgstr ""
+#: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:2
+msgid "Show the \"Run Application\" dialog"
+msgstr "Afișează dialogul „Rulare aplicație”"
 
-#: ../main-menu/src/hard-drive-status-tile.c:110
-#, fuzzy
-msgid "Hard _Drive"
-msgstr "Hard disk"
+#: ../main-menu/src/hard-drive-status-tile.c:99
+msgid "_System Monitor"
+msgstr "Monitor de _sistem"
 
-#: ../main-menu/src/hard-drive-status-tile.c:345
+#: ../main-menu/src/hard-drive-status-tile.c:212
 #, c-format
-msgid "%lluG"
-msgstr ""
+msgid "%.1fG"
+msgstr "%.1fG"
 
-#: ../main-menu/src/hard-drive-status-tile.c:347
+#: ../main-menu/src/hard-drive-status-tile.c:214
 #, c-format
-msgid "%lluM"
-msgstr ""
+msgid "%.1fM"
+msgstr "%.1fM"
 
-#: ../main-menu/src/hard-drive-status-tile.c:349
+#: ../main-menu/src/hard-drive-status-tile.c:216
 #, c-format
-msgid "%lluK"
-msgstr ""
+msgid "%.1fK"
+msgstr "%.1fK"
 
-#: ../main-menu/src/hard-drive-status-tile.c:351
+#: ../main-menu/src/hard-drive-status-tile.c:218
 #, c-format
-msgid "%llub"
-msgstr ""
+msgid "%.1fb"
+msgstr "%.1fb"
 
-#: ../main-menu/src/hard-drive-status-tile.c:372
+#: ../main-menu/src/hard-drive-status-tile.c:239
 #, c-format
-msgid "%s Free / %s Total"
-msgstr ""
+msgid "Home: %s Free / %s"
+msgstr "Acasă: %s liberi / %s"
 
-#: ../main-menu/src/main-menu-migration.c:118
-#: ../main-menu/src/main-menu-migration.c:273
+#: ../main-menu/src/main-menu-migration.c:126
+#: ../main-menu/src/main-menu-migration.c:248
+#: ../main-menu/etc/system-items.xbel.in.h:1
+msgid "Help"
+msgstr "Ajutor"
+
+#: ../main-menu/src/main-menu-migration.c:130
+#: ../main-menu/src/main-menu-migration.c:250
+#: ../main-menu/etc/system-items.xbel.in.h:3
 msgid "Logout"
-msgstr ""
+msgstr "Deconectează"
 
-#: ../main-menu/src/main-menu-migration.c:120
-#: ../main-menu/src/main-menu-migration.c:276
+#: ../main-menu/src/main-menu-migration.c:134
+#: ../main-menu/src/main-menu-migration.c:252
+#: ../main-menu/etc/system-items.xbel.in.h:4
 msgid "Shutdown"
-msgstr ""
+msgstr "Închide"
 
-#: ../main-menu/src/main-menu-migration.c:205
+#: ../main-menu/src/main-menu-migration.c:192
+#: ../main-menu/etc/system-items.xbel.in.h:2
 msgid "Lock Screen"
-msgstr ""
+msgstr "Blochează ecranul"
 
-#: ../main-menu/src/main-menu-migration.c:207
-msgid "gnome-lockscreen"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:531
-msgid "New Spreadsheet"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:536
-msgid "New Document"
-msgstr ""
-
-#: ../main-menu/src/main-menu-ui.c:1561
+#: ../main-menu/src/main-menu-ui.c:2424
 msgid "The GNOME Main Menu"
-msgstr ""
+msgstr "Meniul principal GNOME"
 
-#: ../main-menu/src/network-status-tile.c:91
-#, fuzzy
+#: ../main-menu/src/network-status-tile.c:89
 msgid "Network: None"
-msgstr "Reţea"
+msgstr "Rețea: Nespecificată"
 
-#: ../main-menu/src/network-status-tile.c:94
-#: ../main-menu/src/network-status-tile.c:199
-#, fuzzy
+#: ../main-menu/src/network-status-tile.c:92
+#: ../main-menu/src/network-status-tile.c:205
 msgid "Click to configure network"
-msgstr "Listează înregistrările configurate"
+msgstr "Clic pentru configurarea rețelei"
 
-#: ../main-menu/src/network-status-tile.c:198
-#, fuzzy
+#: ../main-menu/src/network-status-tile.c:204
 msgid "Networ_k: None"
-msgstr "Reţea"
+msgstr "_Rețea: Nespecificată"
 
-#: ../main-menu/src/network-status-tile.c:207
-#, fuzzy, c-format
+#: ../main-menu/src/network-status-tile.c:213
+#: ../main-menu/src/network-status-tile.c:230
+#: ../main-menu/src/network-status-tile.c:238
+#, c-format
 msgid "Connected to: %s"
-msgstr "Conectat la monitorul:"
+msgstr "Conectat la: %s"
 
-#: ../main-menu/src/network-status-tile.c:210
-#, fuzzy
+#: ../main-menu/src/network-status-tile.c:216
 msgid "Networ_k: Wireless"
-msgstr "Adresa de reţea"
+msgstr "_Rețea: Fără fir"
 
-#: ../main-menu/src/network-status-tile.c:215
+#: ../main-menu/src/network-status-tile.c:221
 #, c-format
 msgid "Using ethernet (%s)"
-msgstr ""
+msgstr "Se utilizează ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:219
-#, fuzzy
+#: ../main-menu/src/network-status-tile.c:225
 msgid "Networ_k: Wired"
-msgstr "Card de reţea"
+msgstr "_Rețea: Cu fir"
 
-#: ../main-menu/src/network-status-tile.c:320
+#: ../main-menu/src/network-status-tile.c:233
+msgid "Networ_k: GSM"
+msgstr "_Rețea: GSM"
+
+#: ../main-menu/src/network-status-tile.c:241
+msgid "Networ_k: CDMA"
+msgstr "_Rețea: CDMA"
+
+#: ../main-menu/src/network-status-tile.c:344
 #, c-format
 msgid "Wireless Ethernet (%s)"
-msgstr ""
+msgstr "Ethernet fără fir (%s)"
 
-#: ../main-menu/src/network-status-tile.c:325
+#: ../main-menu/src/network-status-tile.c:349
 #, c-format
 msgid "Wired Ethernet (%s)"
-msgstr ""
+msgstr "Ethernet cu fir (%s)"
 
-#: ../main-menu/src/network-status-tile.c:329
-#: ../main-menu/src/network-status-tile.c:339
+#: ../main-menu/src/network-status-tile.c:354
+#: ../main-menu/src/network-status-tile.c:359
+#, c-format
+msgid "Mobile Ethernet (%s)"
+msgstr "Ethernet mobil (%s)"
+
+#: ../main-menu/src/network-status-tile.c:363
+#: ../main-menu/src/network-status-tile.c:373
+#, c-format
 msgid "Unknown"
-msgstr "Necunoscut"
+msgstr "Necunoscută"
 
-#: ../main-menu/src/network-status-tile.c:337
+#: ../main-menu/src/network-status-tile.c:371
 #, c-format
 msgid "%d Mb/s"
-msgstr ""
+msgstr "%d Mb/s"
 
-#: ../main-menu/src/slab-window.glade.h:1
-#, fuzzy
-msgid "Applications"
-msgstr "Ordinea de aplicare"
-
-#: ../main-menu/src/slab-window.glade.h:2
-#, fuzzy
+#: ../main-menu/src/slab-button.ui.h:1
 msgid "Computer"
-msgstr "&Ţara"
+msgstr "Calculator"
 
-#: ../main-menu/src/slab-window.glade.h:3
-msgid "Documents"
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:4
-#, fuzzy
-msgid "Favorite Applications"
-msgstr "Ordinea de aplicare"
-
-#: ../main-menu/src/slab-window.glade.h:5
-msgid "Favorite Documents"
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:6
-msgid "Favorite Places"
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:8
-#, fuzzy
-msgid "More Applications..."
-msgstr "Ordinea de aplicare"
-
-#: ../main-menu/src/slab-window.glade.h:9
-msgid "More Documents..."
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:10
-msgid "More Places..."
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:11
-msgid "Places"
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:12
-#, fuzzy
-msgid "Recent Applications"
-msgstr "Ordinea de aplicare"
-
-#: ../main-menu/src/slab-window.glade.h:13
-msgid "Recent Documents"
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:14
-#, fuzzy
+#: ../main-menu/src/slab-window.ui.h:2
 msgid "Search:"
-msgstr "C&aută:"
+msgstr "Caută:"
 
-#: ../main-menu/src/slab-window.glade.h:15
-msgid "Status"
-msgstr "Status"
+#: ../main-menu/src/slab-window.ui.h:3
+msgid "Applications"
+msgstr "Aplicații"
 
-#: ../main-menu/src/slab-window.glade.h:16
+#: ../main-menu/src/slab-window.ui.h:4
+msgid "Documents"
+msgstr "Documente"
+
+#: ../main-menu/src/slab-window.ui.h:5
+msgid "Places"
+msgstr "Locuri"
+
+#: ../main-menu/src/slab-window.ui.h:6
+msgid "Favorite Applications"
+msgstr "Aplicații favorite"
+
+#: ../main-menu/src/slab-window.ui.h:7
+msgid "Recent Applications"
+msgstr "Aplicații recente"
+
+#: ../main-menu/src/slab-window.ui.h:8
+msgid "More Applications..."
+msgstr "Mai multe aplicații..."
+
+#: ../main-menu/src/slab-window.ui.h:9
+msgid "Favorite Documents"
+msgstr "Documente favorite"
+
+#: ../main-menu/src/slab-window.ui.h:10
+msgid "Recent Documents"
+msgstr "Documente recente"
+
+#: ../main-menu/src/slab-window.ui.h:11
+msgid "More Documents..."
+msgstr "Mai multe documente..."
+
+#: ../main-menu/src/slab-window.ui.h:12
+msgid "Favorite Places"
+msgstr "Locuri favorite"
+
+#: ../main-menu/src/slab-window.ui.h:13
+msgid "More Places..."
+msgstr "Mai multe locuri..."
+
+#: ../main-menu/src/slab-window.ui.h:14
 msgid "System"
 msgstr "Sistem"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
+#: ../main-menu/src/slab-window.ui.h:15
+msgid "Status"
+msgstr "Stare"
+
+#: ../nautilus-main-menu/nautilus-main-menu.c:114
+#: ../nautilus-main-menu/nautilus-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Adaugă la favorite"
+
+#: ../nautilus-main-menu/nautilus-main-menu.c:115
 msgid "Add the current launcher to favorites"
-msgstr ""
+msgstr "Adaugă lansatorul curent la favorite"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
+#: ../nautilus-main-menu/nautilus-main-menu.c:120
 msgid "Add the current document to favorites"
-msgstr ""
+msgstr "Adaugă documentul curent la favorite"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:134
-#: ../nautilus-main-menu/nautilus-main-menu.c:139
+#: ../nautilus-main-menu/nautilus-main-menu.c:124
+#: ../nautilus-main-menu/nautilus-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Elimină din favorite"
+
+#: ../nautilus-main-menu/nautilus-main-menu.c:125
+#: ../nautilus-main-menu/nautilus-main-menu.c:130
 msgid "Remove the current document from favorites"
-msgstr ""
+msgstr "Elimină documentul curent din favorite"
+
+#, fuzzy
+#~ msgid "Control Center"
+#~ msgstr "Centrul de control YaST2"
+
+#, fuzzy
+#~ msgid "<b>Start %s</b>"
+#~ msgstr "<b>Autori: </b>"
+
+#, fuzzy
+#~ msgid "Help Unavailable"
+#~ msgstr "Nu este disponibil"
+
+#, fuzzy
+#~ msgid "Upgrade"
+#~ msgstr "Actualizează"
+
+#, fuzzy
+#~ msgid "Uninstall"
+#~ msgstr "Instalează"
+
+#, fuzzy
+#~ msgid "<b>Open</b>"
+#~ msgstr "<b>Intră în conflict cu: </b>"
+
+#, fuzzy
+#~ msgid "Rename..."
+#~ msgstr "Re&testează..."
+
+#~ msgid "Delete"
+#~ msgstr "Şterge"
+
+#, fuzzy
+#~ msgid "Send To..."
+#~ msgstr "Salvează ca..."
+
+#, fuzzy
+#~ msgid "<b>Open with \"%s\"</b>"
+#~ msgstr "<b>Intră în conflict cu: </b>"
+
+#, fuzzy
+#~ msgid "<b>Open %s</b>"
+#~ msgstr "<b>Intră în conflict cu: </b>"
+
+#, fuzzy
+#~ msgid "Hard _Drive"
+#~ msgstr "Hard disk"
 
 #, fuzzy
 #~ msgid "Install Software"
