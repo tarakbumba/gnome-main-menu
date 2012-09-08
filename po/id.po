@@ -1,24 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Indonesian translation of gnome-main-menu
+# Copyright (C) 2010 THE gnome-main-menu'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-main-menu package.
+# Andika Triwidada <andika@gmail.com>, 2010, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-main-menu master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&component=general\n"
-"POT-Creation-Date: 2010-05-27 21:38+0000\n"
-"PO-Revision-Date: 2010-06-01 10:56+0700\n"
+"POT-Creation-Date: 2010-06-28 13:19+0000\n"
+"PO-Revision-Date: 2012-09-08 22:58+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: GNOME Indonesian Translation Team <gnome@i15n.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Poedit-Language: Indonesian\n"
-"X-Poedit-Country: Indonesia\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"Language: id_ID\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:100
@@ -257,12 +256,18 @@ msgid "determines the limit of items in the file-area."
 msgstr "menentukan batas butir di wilayah berkas."
 
 #: ../main-menu/etc/slab.schemas.in.in.h:20
+#| msgid ""
+#| "determines the limit of items in the file-area. The number favorite items "
+#| "is not limited. This limit applies to the number of recent items, i.e. "
+#| "the number of recent items displayed is limited to max_total_items - the "
+#| "number of favorite items. If the number of favorite items exceeds "
+#| "max_total_items - min_recent_items than this limit is ignored."
 msgid ""
-"determines the limit of items in the file-area. The number favorite items is "
-"not limited. This limit applies to the number of recent items, i.e. the "
+"determines the limit of items in the file-area. The number of favorite items "
+"is not limited. This limit applies to the number of recent items, i.e. the "
 "number of recent items displayed is limited to max_total_items - the number "
 "of favorite items. If the number of favorite items exceeds max_total_items - "
-"min_recent_items than this limit is ignored."
+"min_recent_items then this limit is ignored."
 msgstr ""
 "menentukan batas butir di wilayah berkas. Cacah butir favorit tidak "
 "dibatasi. Batas ini berlaku pada cacah butir terakhir, yaitu cacah butir "
