@@ -22,9 +22,15 @@
 
 #include <string.h>
 #include <glib/gi18n.h>
+#include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
 
 #include "network-status-agent.h"
 #include "network-status-info.h"
+
+#define GNOME_MAIN_MENU_SCHEMA "org.mate.gnome-main-menu"
+#define NETWORK_CONFIG_TOOL_KEY "network-config-tool"
+#define NETWORK_CONFIG_TOOL_NM_KEY "network-config-tool-nm"
 
 G_DEFINE_TYPE (NetworkStatusTile, network_status_tile, NAMEPLATE_TILE_TYPE)
 
@@ -157,13 +163,13 @@ network_status_tile_open (Tile * tile, TileEvent * event, TileAction * action)
 
 	if (!priv->status_info || !priv->agent->nm_present)
 	{
-		launch_network_config (SLAB_NETWORK_CONFIG_TOOL_KEY);
+		launch_network_config (NETWORK_CONFIG_TOOL_KEY);
 
 		return;
 	}
 	else
 	{
-		launch_network_config (SLAB_NETWORK_CONFIG_TOOL_NM_KEY);
+		launch_network_config (NETWORK_CONFIG_TOOL_NM_KEY);
 		return;
 	}
 
@@ -444,10 +450,28 @@ set_ui_label (GtkBuilder * ui, const gchar * id, const gchar * text)
 static void
 launch_network_config (const gchar * desktop_key)
 {
-	GnomeDesktopItem *desktop_item =
-		load_desktop_item_from_gconf_key (desktop_key);
+	GSettings *settings;
+	GError *error = NULL;
+	GDesktopAppInfo *appinfo;
+	gchar *desktop_file;
 
-	if (!open_desktop_item_exec (desktop_item))
+	settings = g_settings_new (GNOME_MAIN_MENU_SCHEMA);
+	desktop_file = g_settings_get_string (settings, desktop_key);
+	g_object_unref (settings);
+	appinfo = g_desktop_app_info_new (desktop_file);
+	g_free (desktop_file);
+
+	if (appinfo)
+	{
+		g_app_info_launch (G_APP_INFO (appinfo), NULL, NULL, &error);
+		if (error) {
+			g_warning ("network_status_tile_open: couldn't exec item: %s\n", error->message);
+			g_error_free (error);
+		}
+		g_object_unref (appinfo);
+	}
+	else
+	{
 		g_warning ("network_status_tile_open: couldn't exec item\n");
-	gnome_desktop_item_unref (desktop_item);
+	}
 }
