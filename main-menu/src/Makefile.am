@@ -17,7 +17,6 @@ AM_CPPFLAGS =								\
 main_menu_SOURCES =							\
 	main-menu.c							\
 	main-menu-ui.c			main-menu-ui.h			\
-	main-menu-migration.c		main-menu-migration.h		\
 	tile-table.c			tile-table.h			\
 	hard-drive-status-tile.c	hard-drive-status-tile.h	\
 	tomboykeybinder.c		tomboykeybinder.h		\

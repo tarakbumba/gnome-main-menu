@@ -29,8 +29,6 @@
 
 #include "main-menu-ui.h"
 
-#include "main-menu-migration.h"
-
 static gboolean main_menu_applet_init (PanelApplet *, const gchar *, gpointer);
 
 PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_MainMenu_Factory", PANEL_TYPE_APPLET, "Main Menu", "0",
@@ -64,12 +62,6 @@ main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data
 #endif
 
 	g_set_application_name (_("GNOME Main Menu"));
-
-	libslab_checkpoint ("Migrating old configurations");
-	move_system_area_to_new_set ();
-	//migrate_system_gconf_to_bookmark_file    ();
-	migrate_user_apps_gconf_to_bookmark_file ();
-	migrate_showable_file_types              ();
 
 	libslab_checkpoint ("Creating user interface for whole applet");
 	main_menu_ui_new (applet);
