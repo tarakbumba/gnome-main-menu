@@ -2,9 +2,12 @@ serverdir   = $(libdir)/bonobo/servers
 server_DATA = GNOME_MainMenu.server
 @INTLTOOL_SERVER_RULE@
 
-schemasdir   = @GCONF_SCHEMA_FILE_DIR@
-schemas_DATA = slab.schemas
-@INTLTOOL_SCHEMAS_RULE@
+@INTLTOOL_XML_NOMERGE_RULE@
+gsettings_SCHEMAS = org.mate.gnome-main-menu.gschema.xml
+@GSETTINGS_RULES@
+
+%.gschema.xml.in: %.gschema.xml.in.in Makefile
+	$(AM_V_GEN) $(SED) -e 's^\@DATADIR\@^$(datadir)^g' -e 's^\@GETTEXT_PACKAGE\@^$(GETTEXT_PACKAGE)^g' < $< > $@
 
 uidir   = $(datadir)/gnome-2.0/ui
 ui_DATA = GNOME_MainMenu_ContextMenu.xml
@@ -28,19 +31,9 @@ $(desktop_DATA).in: $(desktop_DATA).in.in
 $(server_DATA).in: $(server_DATA).in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
 
-$(schemas_DATA).in: $(schemas_DATA).in.in
-	sed -e "s|\@DATADIR\@|$(datadir)|g" $< > $@
-
 $(systemitems_DATA): $(systemitems_DATA).in
 	sed -e "s|_title>|title>|g" $< > $@
 
-install-data-local:
-	if test -z "$(DESTDIR)" ; then \
-		for p in $(schemas_DATA) ; do \
-			GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $$p; \
-		done \
-	fi
+EXTRA_DIST = $(server_DATA).in.in $(gsettings_SCHEMAS).in.in $(ui_DATA) $(desktop_helper_DATA) $(desktop_DATA).in.in $(bookmark_DATA) $(systemitems_DATA).in
 
-EXTRA_DIST = $(server_DATA).in.in $(schemas_DATA).in.in $(ui_DATA) $(desktop_helper_DATA) $(desktop_DATA).in.in $(bookmark_DATA) $(systemitems_DATA).in
-
-CLEANFILES = $(server_DATA) $(schemas_DATA) $(server_DATA).in $(schemas_DATA).in $(systemitems_DATA) $(desktop_DATA) $(desktop_DATA).in
+CLEANFILES = $(server_DATA) $(gsettings_SCHEMAS) $(server_DATA).in $(gsettings_SCHEMAS).in $(systemitems_DATA) $(desktop_DATA) $(desktop_DATA).in

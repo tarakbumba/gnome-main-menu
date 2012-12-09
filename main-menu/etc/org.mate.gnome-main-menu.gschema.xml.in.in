@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<schemalist gettext-domain="@GETTEXT_PACKAGE@">
+  <schema id="org.mate.gnome-main-menu" path="/org/mate/gnome-main-menu/">
+    <key name="uninstall-package-command" type="s">
+      <default>'package-manager --remove PACKAGE_NAME'</default>
+      <_summary>command to uninstall packages</_summary>
+      <_description>command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command</_description>
+    </key>
+    <key name="upgrade-package-command" type="s">
+      <default>'package-manager --update PACKAGE_NAME'</default>
+      <_summary>command to upgrade packages</_summary>
+      <_description>command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command</_description>
+    </key>
+    <key name="application-browser" type="s">
+      <default>'@DATADIR@/applications/application-browser.desktop'</default>
+      <_summary>.desktop path for the application browser</_summary>
+      <_description>.desktop path for the application browser</_description>
+    </key>
+    <key name="file-browser" type="s">
+      <default>'caja-home.desktop'</default>
+      <_summary>.desktop file for the file browser</_summary>
+      <_description>.desktop file for the file browser</_description>
+    </key>
+    <key name="system-monitor" type="s">
+      <default>'mate-system-monitor.desktop'</default>
+      <_summary>.desktop file for the mate-system-monitor</_summary>
+      <_description>.desktop file for the mate-system-monitor</_description>
+    </key>
+    <key name="network-config-tool" type="s">
+      <default>'/usr/share/applications/YaST2/lan.desktop'</default>
+      <_summary>.desktop file for the net config tool</_summary>
+      <_description>.desktop file for the YaST2 network_devices utility</_description>
+    </key>
+    <key name="network-config-tool-nm" type="s">
+      <default>'/usr/share/applications/nm-connection-editor.desktop'</default>
+      <_summary>.desktop file for the net config tool</_summary>
+      <_description>.desktop file for the Network Manager editor utility</_description>
+    </key>
+    <key name="search-command" type="s">
+      <default>'tracker-needle SEARCH_STRING'</default>
+      <_summary>This is the command to execute when the search entry is used.</_summary>
+      <_description>This is the command to execute when the search entry is used.  SEARCH_STRING is replaced with the entered search text.</_description>
+    </key>
+    <key name="urgent-close" type="b">
+      <default>true</default>
+      <_summary>if true, main menu is more anxious to close</_summary>
+      <_description>if true, main menu will close under these additional conditions: tile is activated, search activated</_description>
+    </key>
+    <child name="file-area" schema="org.mate.gnome-main-menu.file-area"/>
+    <child name="lock-down" schema="org.mate.gnome-main-menu.lock-down"/>
+  </schema>
+  <schema id="org.mate.gnome-main-menu.file-area" path="/org/mate/gnome-main-menu/file-area/">
+    <key name="file-class" type="i">
+      <default>0</default>
+      <_summary>determines which types of files to display in the file area</_summary>
+      <_description>possible values = 0 [Applications], 1 [Documents], 2 [Places]</_description>
+    </key>
+    <key name="file-mgr-open-cmd" type="s">
+      <default>'nautilus FILE_URI'</default>
+      <_summary>This is the command to execute when the "Open in File Manager" menu item is activated.</_summary>
+      <_description>This is the command to execute when the "Open in File Manager" menu item is activated.  FILE_URI is replaced with a uri corresponding to the dirname of the activated file.</_description>
+    </key>
+    <key name="file-send-to-cmd" type="s">
+      <default>'nautilus-sendto DIRNAME/BASENAME'</default>
+      <_summary>This is the command to execute when the "Send To..." menu item is activated.</_summary>
+      <_description>This is the command to execute when the "Send To..." menu item is activated.  DIRNAME and BASENAME are replaced with the corresponding components of the activated tile.</_description>
+    </key>
+    <key name="max-total-items" type="i">
+      <default>8</default>
+      <_summary>determines the limit of items in the file-area.</_summary>
+      <_description>determines the limit of items in the file-area.  The number of favorite items is not limited.  This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items.  If the number of favorite items exceeds max_total_items - min_recent_items then this limit is ignored.</_description>
+    </key>
+    <key name="min-recent-items" type="i">
+      <default>2</default>
+      <_summary>determines the minimum number of items in the "recent" section of the file-area.</_summary>
+      <_description>determines the minimum number of items in the "recent" section of the file-area.</_description>
+    </key>
+    <key name="file-blacklist" type="as">
+      <default>[ 'application-browser.desktop' ]</default>
+      <_summary>contains the list of files (including .desktop files) to be excluded from the "Recently Used Applications" and "Recent Files" lists</_summary>
+      <_description>contains the list of files (including .desktop files) to be excluded from the "Recently Used Applications" and "Recent Files" lists</_description>
+    </key>
+  </schema>
+  <schema id="org.mate.gnome-main-menu.lock-down" path="/org/mate/gnome-main-menu/lock-down/">
+    <key name="application-browser-link-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the application browser link</_summary>
+      <_description>set to true if the link to the application browser should be visible and active.</_description>
+    </key>
+    <key name="search-area-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the search area</_summary>
+      <_description>set to true if the search area should be visible and active.</_description>
+    </key>
+    <key name="status-area-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the status area</_summary>
+      <_description>set to true if the status area should be visible and active.</_description>
+    </key>
+    <key name="system-area-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the system area</_summary>
+      <_description>set to true if the system area should be visible and active.</_description>
+    </key>
+    <key name="user-modifiable-system-area" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the system area</_summary>
+      <_description>set to true if the user is allowed to modify the list of system items.</_description>
+    </key>
+    <key name="user-modifiable-apps" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the user-specified apps section</_summary>
+      <_description>set to true if the user is allowed to modify the list of user-specified or "Favorite" applications.</_description>
+    </key>
+    <key name="user-modifiable-docs" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the user-specified docs section</_summary>
+      <_description>set to true if the user is allowed to modify the list of user-specified or "Favorite" documents.</_description>
+    </key>
+    <key name="user-modifiable-dirs" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the user-specified dirs section</_summary>
+      <_description>set to true if the user is allowed to modify the list of user-specified or "Favorite" directories or "Places".</_description>
+    </key>
+    <key name="showable-file-types" type="ai">
+      <default>[ 0, 1, 2, 3, 4, 5 ]</default>
+      <_summary>lock-down configuration of the file area</_summary>
+      <_description>contains the list (in no particular order) of allowable file tables to show in the file area.  possible values: 0 - show the user-specified or "Favorite" applications table, 1 - show the recently used applications table, 2 - show the user-specified or "Favorite" documents table, 3 - show the recently used documents table, 4 - show the user-specified of "Favorite" directories or "Places" table, and 5 - show the recently used directories or "Places" table.</_description>
+    </key>
+  </schema>
+</schemalist>
