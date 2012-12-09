@@ -3,16 +3,16 @@
 application-browser/etc/application-browser.desktop.in.in
 application-browser/etc/application-browser.schemas.in
 application-browser/src/application-browser.c
-main-menu/etc/GNOME_MainMenu.server.in.in
 main-menu/etc/GNOME_MainMenu_ContextMenu.xml
+main-menu/etc/GNOME_MainMenu.server.in.in
 main-menu/etc/gnome-screensaver-lock.desktop
-main-menu/etc/slab.schemas.in.in
+main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in
+[type: gettext/xml]main-menu/etc/system-items.xbel.in
 main-menu/etc/trigger-panel-run-dialog.desktop.in.in
 main-menu/src/hard-drive-status-tile.c
-main-menu/src/main-menu-ui.c
 main-menu/src/main-menu.c
+main-menu/src/main-menu-ui.c
 main-menu/src/network-status-tile.c
 [type: gettext/glade]main-menu/src/slab-button.ui
 [type: gettext/glade]main-menu/src/slab-window.ui
 nautilus-main-menu/nautilus-main-menu.c
-[type: gettext/xml] main-menu/etc/system-items.xbel.in
