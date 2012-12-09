@@ -322,6 +322,10 @@ open_hard_drive_tile (Tile * tile, TileEvent * event, TileAction * action)
 	if (appinfo)
 	{
 		g_app_info_launch (G_APP_INFO (appinfo), NULL, NULL, &error);
+		if (error) {
+			g_warning ("open_hard_drive_tile: couldn't exec item: %s\n", error->message);
+			g_error_free (error);
+		}
 		g_object_unref (appinfo);
 	}
 	else
