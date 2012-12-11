@@ -33,6 +33,7 @@
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
 #include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
 #include <unistd.h>
 #include <libslab/slab.h>
 
@@ -46,31 +47,36 @@
 
 #include "tomboykeybinder.h"
 
-#define ROOT_GCONF_DIR             "/desktop/gnome/applications/main-menu"
-#define CURRENT_PAGE_GCONF_KEY     ROOT_GCONF_DIR "/file-area/file_class"
-#define URGENT_CLOSE_GCONF_KEY     ROOT_GCONF_DIR "/urgent_close"
-#define MAX_TOTAL_ITEMS_GCONF_KEY  ROOT_GCONF_DIR "/file-area/max_total_items"
-#define MIN_RECENT_ITEMS_GCONF_KEY ROOT_GCONF_DIR "/file-area/min_recent_items"
-#define APP_BROWSER_GCONF_KEY      ROOT_GCONF_DIR "/application_browser"
-#define FILE_BROWSER_GCONF_KEY     ROOT_GCONF_DIR "/file_browser"
-#define SEARCH_CMD_GCONF_KEY       ROOT_GCONF_DIR "/search_command"
-#define FILE_MGR_OPEN_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_mgr_open_cmd"
-#define APP_BLACKLIST_GCONF_KEY    ROOT_GCONF_DIR "/file-area/file_blacklist"
+#define SETTINGS_SCHEMA                 "org.mate.gnome-main-menu"
+#define URGENT_CLOSE_SETTINGS_KEY       "urgent-close"
+#define APP_BROWSER_SETTINGS_KEY        "application-browser"
+#define FILE_BROWSER_SETTINGS_KEY       "file-browser"
+#define SEARCH_CMD_SETTINGS_KEY         "search-command"
 
-#define LOCKDOWN_GCONF_DIR           ROOT_GCONF_DIR "/lock-down"
-#define MORE_LINK_VIS_GCONF_KEY      LOCKDOWN_GCONF_DIR "/application_browser_link_visible"
-#define SEARCH_VIS_GCONF_KEY         LOCKDOWN_GCONF_DIR "/search_area_visible"
-#define STATUS_VIS_GCONF_KEY         LOCKDOWN_GCONF_DIR "/status_area_visible"
-#define SYSTEM_VIS_GCONF_KEY         LOCKDOWN_GCONF_DIR "/system_area_visible"
-#define SHOWABLE_TYPES_GCONF_KEY     LOCKDOWN_GCONF_DIR "/showable_file_types"
-#define MODIFIABLE_SYSTEM_GCONF_KEY  LOCKDOWN_GCONF_DIR "/user_modifiable_system_area"
-#define MODIFIABLE_APPS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/user_modifiable_apps"
-#define MODIFIABLE_DOCS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/user_modifiable_docs"
-#define MODIFIABLE_DIRS_GCONF_KEY    LOCKDOWN_GCONF_DIR "/user_modifiable_dirs"
-#define DISABLE_TERMINAL_GCONF_KEY   "/desktop/gnome/lockdown/disable_command_line"
-#define PANEL_LOCKDOWN_GCONF_DIR     "/apps/panel/global"
-#define DISABLE_LOGOUT_GCONF_KEY     PANEL_LOCKDOWN_GCONF_DIR "/disable_log_out"
-#define DISABLE_LOCKSCREEN_GCONF_KEY PANEL_LOCKDOWN_GCONF_DIR "/disable_lock_screen"
+#define FILE_AREA_SCHEMA                SETTINGS_SCHEMA ".file-area"
+#define CURRENT_PAGE_SETTINGS_KEY       "file-class"
+#define MAX_TOTAL_ITEMS_SETTINGS_KEY    "max-total-items"
+#define MIN_RECENT_ITEMS_SETTINGS_KEY   "min-recent-items"
+#define FILE_MGR_OPEN_SETTINGS_KEY      "file-mgr-open-cmd"
+#define APP_BLACKLIST_SETTINGS_KEY      "file-blacklist"
+
+#define LOCKDOWN_SETTINGS_SCHEMA        SETTINGS_SCHEMA ".lock-down"
+#define MORE_LINK_VIS_SETTINGS_KEY      "application-browser-link-visible"
+#define SEARCH_VIS_SETTINGS_KEY         "search-area-visible"
+#define STATUS_VIS_SETTINGS_KEY         "status-area-visible"
+#define SYSTEM_VIS_SETTINGS_KEY         "system-area-visible"
+#define SHOWABLE_TYPES_SETTINGS_KEY     "showable-file-types"
+#define MODIFIABLE_SYSTEM_SETTINGS_KEY  "user-modifiable-system-area"
+#define MODIFIABLE_APPS_SETTINGS_KEY    "user-modifiable-apps"
+#define MODIFIABLE_DOCS_SETTINGS_KEY    "user-modifiable-docs"
+#define MODIFIABLE_DIRS_SETTINGS_KEY    "user-modifiable-dirs"
+
+#define MATE_LOCKDOWN_SCHEMA            "org.mate.lockdown"
+#define DISABLE_TERMINAL_SETTINGS_KEY   "disable-command-line"
+#define DISABLE_LOCKSCREEN_SETTINGS_KEY "disable-lock-screen"
+
+#define PANEL_SCHEMA                    "org.mate.panel"
+#define DISABLE_LOGOUT_SETTINGS_KEY     "disable-log-out"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
@@ -119,20 +125,11 @@ typedef struct {
 	GFileMonitor *recently_used_store_monitor;
 	guint recently_used_timeout_id;
 
-	guint search_cmd_gconf_mntr_id;
-	guint current_page_gconf_mntr_id;
-	guint more_link_vis_gconf_mntr_id;
-	guint search_vis_gconf_mntr_id;
-	guint status_vis_gconf_mntr_id;
-	guint system_vis_gconf_mntr_id;
-	guint showable_types_gconf_mntr_id;
-	guint modifiable_system_gconf_mntr_id;
-	guint modifiable_apps_gconf_mntr_id;
-	guint modifiable_docs_gconf_mntr_id;
-	guint modifiable_dirs_gconf_mntr_id;
-	guint disable_term_gconf_mntr_id;
-	guint disable_logout_gconf_mntr_id;
-	guint disable_lockscreen_gconf_mntr_id;
+	GSettings *settings;
+	GSettings *filearea_settings;
+	GSettings *lockdown_settings;
+	GSettings *mate_lockdown_settings;
+	GSettings *panel_settings;
 
 	gboolean ptr_is_grabbed;
 	gboolean kbd_is_grabbed;
@@ -174,7 +171,7 @@ static void       bind_beagle_search_key     (MainMenuUI *);
 static void       launch_search              (MainMenuUI *);
 static void       grab_pointer_and_keyboard  (MainMenuUI *, guint32);
 static void       apply_lockdown_settings    (MainMenuUI *);
-static gboolean   app_is_in_blacklist        (const gchar *);
+static gboolean   app_is_in_blacklist        (const gchar *, MainMenuUI *);
 
 static Tile *item_to_user_app_tile   (BookmarkItem *, gpointer);
 static Tile *item_to_recent_app_tile (BookmarkItem *, gpointer);
@@ -202,9 +199,9 @@ static void     tile_table_notify_cb              (GObject *, GParamSpec *, gpoi
 static void     gtk_table_notify_cb               (GObject *, GParamSpec *, gpointer);
 static void     tile_action_triggered_cb          (Tile *, TileEvent *, TileAction *, gpointer);
 static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
-static void     search_cmd_notify_cb              (GConfClient *, guint, GConfEntry *, gpointer);
-static void     current_page_notify_cb            (GConfClient *, guint, GConfEntry *, gpointer);
-static void     lockdown_notify_cb                (GConfClient *, guint, GConfEntry *, gpointer);
+static void     search_cmd_notify_cb              (GSettings *, gchar *, gpointer);
+static void     current_page_notify_cb            (GSettings *, gchar *, gpointer);
+static void     lockdown_notify_cb                (GSettings *, gchar *, gpointer);
 static void     panel_menu_open_cb                (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_menu_about_cb               (BonoboUIComponent *, gpointer, const gchar *);
 static void     panel_applet_change_orient_cb     (PanelApplet *, PanelAppletOrient, gpointer);
@@ -324,6 +321,12 @@ main_menu_ui_new (PanelApplet *applet)
 
 	priv->panel_applet = applet;
 
+	priv->settings = g_settings_new (SETTINGS_SCHEMA);
+	priv->filearea_settings = g_settings_new (FILE_AREA_SCHEMA);
+	priv->lockdown_settings = g_settings_new (LOCKDOWN_SETTINGS_SCHEMA);
+	priv->mate_lockdown_settings = g_settings_new (MATE_LOCKDOWN_SCHEMA);
+	priv->panel_settings = g_settings_new (PANEL_SCHEMA);
+
 	window_ui_path = g_build_filename (DATADIR, PACKAGE, "slab-window.ui", NULL);
 	button_ui_path = g_build_filename (DATADIR, PACKAGE, "slab-button.ui", NULL);
 
@@ -417,20 +420,11 @@ main_menu_ui_init (MainMenuUI *this)
 
 	priv->volume_mon                                 = NULL;
 
-	priv->search_cmd_gconf_mntr_id                   = 0;
-	priv->current_page_gconf_mntr_id                 = 0;
-	priv->more_link_vis_gconf_mntr_id                = 0;
-	priv->search_vis_gconf_mntr_id                   = 0;
-	priv->status_vis_gconf_mntr_id                   = 0;
-	priv->system_vis_gconf_mntr_id                   = 0;
-	priv->showable_types_gconf_mntr_id               = 0;
-	priv->modifiable_system_gconf_mntr_id            = 0;
-	priv->modifiable_apps_gconf_mntr_id              = 0;
-	priv->modifiable_docs_gconf_mntr_id              = 0;
-	priv->modifiable_dirs_gconf_mntr_id              = 0;
-	priv->disable_term_gconf_mntr_id                 = 0;
-	priv->disable_logout_gconf_mntr_id               = 0;
-	priv->disable_lockscreen_gconf_mntr_id           = 0;
+	priv->settings                                   = NULL;
+	priv->filearea_settings                          = NULL;
+	priv->lockdown_settings                          = NULL;
+	priv->mate_lockdown_settings                     = NULL;
+	priv->panel_settings                             = NULL;
 
 	priv->ptr_is_grabbed                             = FALSE;
 	priv->kbd_is_grabbed                             = FALSE;
@@ -440,8 +434,6 @@ static void
 main_menu_ui_finalize (GObject *g_obj)
 {
 	MainMenuUIPrivate *priv = PRIVATE (g_obj);
-
-	GConfClient *client;
 
 	gint i;
 
@@ -458,24 +450,11 @@ main_menu_ui_finalize (GObject *g_obj)
 		g_object_unref (priv->panel_buttons [i]);
 	}
 
-	libslab_gconf_notify_remove (priv->search_cmd_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->current_page_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->more_link_vis_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->search_vis_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->status_vis_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->system_vis_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->showable_types_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->modifiable_system_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->modifiable_apps_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->modifiable_docs_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->modifiable_dirs_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->disable_term_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->disable_logout_gconf_mntr_id);
-	libslab_gconf_notify_remove (priv->disable_lockscreen_gconf_mntr_id);
-
-	client  = gconf_client_get_default ();
-	gconf_client_remove_dir (client, PANEL_LOCKDOWN_GCONF_DIR, NULL);
-	g_object_unref (client);
+	g_object_unref (priv->settings);
+	g_object_unref (priv->filearea_settings);
+	g_object_unref (priv->lockdown_settings);
+	g_object_unref (priv->mate_lockdown_settings);
+	g_object_unref (priv->panel_settings);
 
 	for (i = 0; i < BOOKMARK_STORE_N_TYPES; ++i)
 		g_object_unref (priv->bm_agents [i]);
@@ -638,8 +617,8 @@ create_search_section (MainMenuUI *this)
 
 	set_search_section_visible (this);
 
-	priv->search_cmd_gconf_mntr_id = libslab_gconf_notify_add (
-		SEARCH_CMD_GCONF_KEY, search_cmd_notify_cb, this);
+	g_signal_connect (priv->settings, "changed::" SEARCH_CMD_SETTINGS_KEY,
+		G_CALLBACK (search_cmd_notify_cb), this);
 }
 
 static void
@@ -679,8 +658,8 @@ create_file_section (MainMenuUI *this)
 			G_CALLBACK (page_button_clicked_cb), this);
 	}
 
-	priv->current_page_gconf_mntr_id = libslab_gconf_notify_add (
-		CURRENT_PAGE_GCONF_KEY, current_page_notify_cb, this);
+	g_signal_connect (priv->filearea_settings, "changed::" CURRENT_PAGE_SETTINGS_KEY,
+		G_CALLBACK (current_page_notify_cb), this);
 
 	priv->table_sections [USER_APPS_TABLE] =
         get_widget (priv, "user-apps-section");
@@ -942,36 +921,14 @@ setup_lock_down (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	GConfClient *client;
-
-	client = gconf_client_get_default ();
-	gconf_client_add_dir (client, PANEL_LOCKDOWN_GCONF_DIR, GCONF_CLIENT_PRELOAD_NONE, NULL);
-	g_object_unref (client);
-
-	priv->more_link_vis_gconf_mntr_id = libslab_gconf_notify_add (
-		MORE_LINK_VIS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->search_vis_gconf_mntr_id = libslab_gconf_notify_add (
-		SEARCH_VIS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->status_vis_gconf_mntr_id = libslab_gconf_notify_add (
-		STATUS_VIS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->system_vis_gconf_mntr_id = libslab_gconf_notify_add (
-		SYSTEM_VIS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->showable_types_gconf_mntr_id = libslab_gconf_notify_add (
-		SHOWABLE_TYPES_GCONF_KEY, lockdown_notify_cb, this);
-	priv->modifiable_system_gconf_mntr_id = libslab_gconf_notify_add (
-		MODIFIABLE_SYSTEM_GCONF_KEY, lockdown_notify_cb, this);
-	priv->modifiable_apps_gconf_mntr_id = libslab_gconf_notify_add (
-		MODIFIABLE_APPS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->modifiable_docs_gconf_mntr_id = libslab_gconf_notify_add (
-		MODIFIABLE_DOCS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->modifiable_dirs_gconf_mntr_id = libslab_gconf_notify_add (
-		MODIFIABLE_DIRS_GCONF_KEY, lockdown_notify_cb, this);
-	priv->disable_term_gconf_mntr_id = libslab_gconf_notify_add (
-		DISABLE_TERMINAL_GCONF_KEY, lockdown_notify_cb, this);
-	priv->disable_logout_gconf_mntr_id = libslab_gconf_notify_add (
-		DISABLE_LOGOUT_GCONF_KEY, lockdown_notify_cb, this);
-	priv->disable_lockscreen_gconf_mntr_id = libslab_gconf_notify_add (
-		DISABLE_LOCKSCREEN_GCONF_KEY, lockdown_notify_cb, this);
+	g_signal_connect (priv->lockdown_settings, "changed",
+		G_CALLBACK (lockdown_notify_cb), this);
+	g_signal_connect (priv->mate_lockdown_settings, "changed::" DISABLE_TERMINAL_SETTINGS_KEY,
+		G_CALLBACK (lockdown_notify_cb), this);
+	g_signal_connect (priv->mate_lockdown_settings, "changed::" DISABLE_LOCKSCREEN_SETTINGS_KEY,
+		G_CALLBACK (lockdown_notify_cb), this);
+	g_signal_connect (priv->panel_settings, "changed:" DISABLE_LOGOUT_SETTINGS_KEY.
+		G_CALLBACK (lockdown_notify_cb), this);
 }
 
 static char *
@@ -1053,7 +1010,7 @@ setup_recently_used_store_monitor (MainMenuUI *this, gboolean is_startup)
 static Tile *
 item_to_user_app_tile (BookmarkItem *item, gpointer data)
 {
-	if (app_is_in_blacklist (item->uri))
+	if (app_is_in_blacklist (item->uri, data))
 		return NULL;
 
 	return TILE (application_tile_new (item->uri));
@@ -1072,7 +1029,7 @@ item_to_recent_app_tile (BookmarkItem *item, gpointer data)
 	blacklisted =
 		bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_SYSTEM],    item->uri) ||
 		bookmark_agent_has_item (priv->bm_agents [BOOKMARK_STORE_USER_APPS], item->uri) ||
-		app_is_in_blacklist (item->uri);
+		app_is_in_blacklist (item->uri, data);
 
 	if (! blacklisted)
 		tile = TILE (application_tile_new (item->uri));
@@ -1156,7 +1113,7 @@ item_to_system_tile (BookmarkItem *item, gpointer data)
 	gchar *basename;
 	gchar *translated_title;
 
-	if (app_is_in_blacklist (item->uri))
+	if (app_is_in_blacklist (item->uri, data))
 		return NULL;
 	
 	translated_title = item->title ? _(item->title) : NULL;
@@ -1241,9 +1198,11 @@ doc_uri_to_item (const gchar *uri, gpointer data)
 }
 
 static gboolean
-app_is_in_blacklist (const gchar *uri)
+app_is_in_blacklist (const gchar *uri, MainMenuUI *this)
 {
-	GList *blacklist;
+	MainMenuUIPrivate *priv = PRIVATE (this);
+	gchar **blacklist;
+	gint i;
 
 	gboolean disable_term;
 	gboolean disable_logout;
@@ -1251,22 +1210,19 @@ app_is_in_blacklist (const gchar *uri)
 
 	gboolean blacklisted;
 
-	GList *node;
-
-
-	disable_term = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_TERMINAL_GCONF_KEY));
+	disable_term = g_settings_get_boolean (priv->mate_lockdown_settings, DISABLE_TERMINAL_SETTINGS_KEY);
 	blacklisted  = disable_term && libslab_desktop_item_is_a_terminal (uri);
 
 	if (blacklisted)
 		return TRUE;
 
-	disable_logout = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOGOUT_GCONF_KEY));
+	disable_logout = g_settings_get_boolean (priv->panel_settings, DISABLE_LOGOUT_SETTINGS_KEY);
 	blacklisted    = disable_logout && libslab_desktop_item_is_logout (uri);
 
 	if (blacklisted)
 		return TRUE;
 
-	disable_lockscreen = GPOINTER_TO_INT (libslab_get_gconf_value (DISABLE_LOCKSCREEN_GCONF_KEY));
+	disable_lockscreen = g_settings_get_boolean (priv->lockdown_settings, DISABLE_LOCKSCREEN_SETTINGS_KEY);
 	/* Dont allow lock screen if root - same as gnome-panel */
 	blacklisted = libslab_desktop_item_is_lockscreen (uri) &&
 		( (geteuid () == 0) || disable_lockscreen );
@@ -1274,16 +1230,15 @@ app_is_in_blacklist (const gchar *uri)
 	if (blacklisted)
 		return TRUE;
 
-	blacklist = libslab_get_gconf_value (APP_BLACKLIST_GCONF_KEY);
+	blacklist = g_settings_get_strv (priv->filearea_settings, APP_BLACKLIST_SETTINGS_KEY);
 
-	for (node = blacklist; node; node = node->next) {
-		if (! blacklisted && strstr (uri, (gchar *) node->data))
+	for (i = 0; blacklist[i] != NULL, i++) {
+		if (! blacklisted && strstr (uri, blacklist[i]))
 			blacklisted = TRUE;
-
-		g_free (node->data);
 	}
 
-	g_list_free (blacklist);
+	if (blacklist)
+		g_strfreev (blacklist);
 
 	return blacklisted;
 }
@@ -1297,7 +1252,7 @@ select_page (MainMenuUI *this)
 	gint curr_page;
 
 
-	curr_page = GPOINTER_TO_INT (libslab_get_gconf_value (CURRENT_PAGE_GCONF_KEY));
+	curr_page = g_settings_get_int (priv->filearea_settings, CURRENT_PAGE_SETTINGS_KEY);
 	button    = GTK_TOGGLE_BUTTON (priv->page_selectors [curr_page]);
 
 	gtk_toggle_button_set_active (button, TRUE);
@@ -1334,10 +1289,10 @@ update_limits (MainMenuUI *this)
 
 /* TODO: make this instant apply */
 
-	max_total_items_default = GPOINTER_TO_INT (
-		libslab_get_gconf_value (MAX_TOTAL_ITEMS_GCONF_KEY));
-	min_recent_items = GPOINTER_TO_INT (
-		libslab_get_gconf_value (MIN_RECENT_ITEMS_GCONF_KEY));
+	max_total_items_default =
+		g_settings_get_int (priv->filearea_settings, MAX_TOTAL_ITEMS_SETTINGS_KEY);
+	min_recent_items =
+		g_settings_get_int (priv->filearea_settings, MIN_RECENT_ITEMS_SETTINGS_KEY);
 
 	priv->max_total_items = max_total_items_default;
 
@@ -1405,7 +1360,7 @@ hide_slab_if_urgent_close (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	if (! GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY)))
+	if (! g_settings_get_boolean (priv->settings, URGENT_CLOSE_SETTINGS_KEY))
 		return;
 
 	gtk_toggle_button_set_active (priv->panel_button, FALSE);
@@ -1423,7 +1378,7 @@ set_search_section_visible (MainMenuUI *this)
 	gchar  *found_cmd = NULL;
 
 
-	allowable = GPOINTER_TO_INT (libslab_get_gconf_value (SEARCH_VIS_GCONF_KEY));
+	allowable = g_settings_get_boolean (priv->lockdown_settings, SEARCH_VIS_SETTINGS_KEY);
 
 	if (allowable) {
 		argv = get_search_argv (NULL);
@@ -1494,10 +1449,10 @@ get_search_argv (const gchar *search_txt)
 	gint i;
 
 
-	cmd = (gchar *) libslab_get_gconf_value (SEARCH_CMD_GCONF_KEY);
+	cmd = g_settings_get_string (priv->settings, SEARCH_CMD_SETTINGS_KEY);
 
 	if (! cmd) {
-		g_warning ("could not find search command in gconf [" SEARCH_CMD_GCONF_KEY "]\n");
+		g_warning ("could not find search command in gsettings [" SEARCH_CMD_SETTINGS_KEY "]\n");
 
 		return NULL;
 	}
@@ -1606,7 +1561,7 @@ grab_pointer_and_keyboard (MainMenuUI *this, guint32 time)
 	if (time == 0)
 		time = GDK_CURRENT_TIME;
 
-	if (GPOINTER_TO_INT (libslab_get_gconf_value (URGENT_CLOSE_GCONF_KEY))) {
+	if (g_settings_get_boolean (priv->settings, URGENT_CLOSE_SETTINGS_KEY)) {
 		gtk_widget_grab_focus (priv->slab_window);
 		gtk_grab_add          (priv->slab_window);
 
@@ -1640,20 +1595,21 @@ apply_lockdown_settings (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	gboolean  more_link_visible;
-	gboolean  status_area_visible;
-	gboolean  system_area_visible;
-	GList    *showable_types;
-
-	GList *node;
-	gint   i;
+	gboolean    more_link_visible;
+	gboolean    status_area_visible;
+	gboolean    system_area_visible;
+	GVariant   *showable_types_value;
+	const gint *showable_types;
+	gsize       nvalues;
+	gint        i;
 
 	libslab_checkpoint ("apply_lockdown_settings(): start");
 
-	more_link_visible   = GPOINTER_TO_INT (libslab_get_gconf_value (MORE_LINK_VIS_GCONF_KEY));
-	status_area_visible = GPOINTER_TO_INT (libslab_get_gconf_value (STATUS_VIS_GCONF_KEY));
-	system_area_visible = GPOINTER_TO_INT (libslab_get_gconf_value (SYSTEM_VIS_GCONF_KEY));
-	showable_types      = (GList *) libslab_get_gconf_value (SHOWABLE_TYPES_GCONF_KEY);
+	more_link_visible    = g_settings_get_boolean (priv->lockdown_settings, MORE_LINK_VIS_SETTINGS_KEY);
+	status_area_visible  = g_settings_get_boolean (priv->lockdown_settings, STATUS_VIS_SETTINGS_KEY);
+	system_area_visible  = g_settings_get_boolean (priv->lockdown_settings, SYSTEM_VIS_SETTINGS_KEY);
+	showable_types_value = g_settings_get_value (priv->lockdown_settings, SHOWABLE_TYPES_SETTINGS_KEY);
+	showable_types       = g_variant_get_fixed_array (showable_types_value, &nvalues, sizeof (gint32));
 
 	for (i = 0; i < 3; ++i)
 		if (more_link_visible)
@@ -1676,14 +1632,14 @@ apply_lockdown_settings (MainMenuUI *this)
 	for (i = 0; i < 5; ++i)
 		priv->allowable_types [i] = FALSE;
 
-	for (node = showable_types; node; node = node->next) {
-		i = GPOINTER_TO_INT (node->data);
-
-		if (0 <= i && i < 5)
-			priv->allowable_types [i] = TRUE;
+	if (nvalues > 0) {
+		for (i = 0; showable_types[i] != NULL; i++) {
+			if (0 <= showable_types[i] && showable_types[i] < 5)
+				priv->allowable_types [showable_types[i]] = TRUE;
+		}
 	}
 
-	g_list_free (showable_types);
+	g_variant_unref (showable_types_value);
 
 	for (i = 0; i < 5; ++i)
 		set_table_section_visible (this, priv->file_tables [i]);
@@ -2261,7 +2217,7 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 
 	gtk_notebook_set_current_page (priv->file_section, priv->notebook_page_ids [page_type]);
 
-	libslab_set_gconf_value (CURRENT_PAGE_GCONF_KEY, GINT_TO_POINTER (page_type));
+	g_settings_set_int (priv->filearea_settings, CURRENT_PAGE_SETTINGS_KEY, page_type);
 }
 
 static void
@@ -2323,7 +2279,8 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	GTimeVal current_time;
 	guint32 current_time_millis;
 
-	GnomeDesktopItem *ditem;
+	GError           *error = NULL;
+	GDesktopAppInfo  *ditem;
 	gchar            *ditem_id;
 
 	gchar *cmd_template;
@@ -2341,7 +2298,7 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 
 	if (! double_click_detector_is_double_click (detector, current_time_millis, TRUE)) {
 		if (GTK_WIDGET (button) == priv->more_buttons [APPS_PAGE])
-			ditem_id = libslab_get_gconf_value (APP_BROWSER_GCONF_KEY);
+			ditem_id = g_settings_get_string (priv->settings, APP_BROWSER_SETTINGS_KEY);
 		else if (GTK_WIDGET (button) == priv->more_buttons [DOCS_PAGE]) {
 			dir = g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
 			if (! dir)
@@ -2354,7 +2311,7 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 
 			uri = g_filename_to_uri (dir, NULL, NULL);
 
-			cmd_template = (gchar *) libslab_get_gconf_value (FILE_MGR_OPEN_GCONF_KEY);
+			cmd_template = g_settings_get_string (priv->filearea_settings, FILE_MGR_OPEN_SETTINGS_KEY);
 			cmd = libslab_string_replace_once (cmd_template, "FILE_URI", uri);
 
 			libslab_spawn_command (cmd);
@@ -2369,35 +2326,38 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 			hide_slab_if_urgent_close (this);
 		}
 		else
-			ditem_id = libslab_get_gconf_value (FILE_BROWSER_GCONF_KEY);
+			ditem_id = g_settings_get_string (priv->settings, FILE_BROWSER_SETTINGS_KEY);
 
-		ditem = libslab_gnome_desktop_item_new_from_unknown_id (ditem_id);
+		ditem = g_desktop_app_info_new (ditem_id);
 
 		if (ditem) {
-			libslab_gnome_desktop_item_launch_default (ditem);
+			g_app_info_launch (G_APP_INFO (ditem), NULL, NULL, &error);
+			if (error) {
+				g_error_free (error);
+			}
+			g_object_unref (ditem);
 
 			hide_slab_if_urgent_close (this);
 		}
+		if (ditem_id)
+			g_free (ditem_id);
 	}
 }
 
 static void
-search_cmd_notify_cb (GConfClient *client, guint conn_id,
-                      GConfEntry *entry, gpointer user_data)
+search_cmd_notify_cb (GSettings *settings, gchar *key, gpointer user_data)
 {
 	set_search_section_visible (MAIN_MENU_UI (user_data));
 }
 
 static void
-current_page_notify_cb (GConfClient *client, guint conn_id,
-                        GConfEntry *entry, gpointer user_data)
+current_page_notify_cb (GSettings *settings, gchar *key, gpointer user_data)
 {
 	select_page (MAIN_MENU_UI (user_data));
 }
 
 static void
-lockdown_notify_cb (GConfClient *client, guint conn_id,
-                    GConfEntry *entry, gpointer user_data)
+lockdown_notify_cb (GSettings *settings, gchar *key, gpointer user_data)
 {
 	apply_lockdown_settings (MAIN_MENU_UI (user_data));
 }
