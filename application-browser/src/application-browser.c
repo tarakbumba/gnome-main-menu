@@ -23,14 +23,14 @@
 #include <string.h>
 
 #include <gtk/gtk.h>
-#include <libgnome/gnome-desktop-item.h>
 #include <unique/unique.h>
 #include <stdlib.h>
 #include <glib/gi18n.h>
+#include <gio/gio.h>
 #include <libslab/slab.h>
 
-#define APPLICATION_BROWSER_PREFIX  "/desktop/gnome/applications/main-menu/ab_"
-#define NEW_APPS_MAX_ITEMS  (APPLICATION_BROWSER_PREFIX "new_apps_max_items")
+#define APPLICATION_BROWSER_SCHEMA  "org.mate.gnome-main-menu.application-browser"
+#define NEW_APPS_MAX_ITEMS          "new-apps-max-items"
 
 static UniqueResponse
 unique_app_message_cb (UniqueApp *app, gint command, UniqueMessageData *data,
@@ -88,11 +88,13 @@ main (int argc, char *argv[])
 		return 0;
 	}
 
-	NewAppConfig *config = g_new0 (NewAppConfig, 1);
-	config->max_items = get_slab_gconf_int (NEW_APPS_MAX_ITEMS);
-	config->name = _("New Applications");
-	AppShellData *app_data = appshelldata_new ("applications.menu", config,
-		APPLICATION_BROWSER_PREFIX, GTK_ICON_SIZE_DND, TRUE, FALSE);
+	//NewAppConfig *config = g_new0 (NewAppConfig, 1);
+	GSettings *settings = g_settings_new (APPLICATION_BROWSER_SCHEMA);
+	gint max_items = g_settings_get_int (settings, NEW_APPS_MAX_ITEMS);
+	g_object_unref (settings);
+	//config->name = _("New Applications");
+	AppShellData *app_data = appshelldata_new ("applications.menu",
+		GTK_ICON_SIZE_DND, TRUE, FALSE, max_items);
 	generate_categories (app_data);
 
 	layout_shell (app_data, _("Filter"), _("Groups"), _("Application Actions"), NULL, NULL);

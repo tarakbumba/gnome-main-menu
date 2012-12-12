@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<schemalist gettext-domain="@GETTEXT_PACKAGE@">
+  <schema id="org.mate.gnome-main-menu.application-browser" path="/org/mate/gnome-main-menu/application-browser/">
+    <key name="new-apps-file-key" type="s">
+      <default>'.config/ab-newapps.txt'</default>
+      <_summary>Filename of existing .desktop files</_summary>
+      <_description>Filename of existing .desktop files</_description>
+    </key>
+    <key name="new-apps-max-items" type="i">
+      <default>9</default>
+      <_summary>Max number of New Applications</_summary>
+      <_description>The maximum number of applications that will be displayed in the New Applications category</_description>
+    </key>
+    <key name="exit-shell-on-action-start" type="b">
+      <default>true</default>
+      <_summary>Exit shell on start action performed</_summary>
+      <_description>Indicates whether to close the shell when a start action is performed</_description>
+    </key>
+    <key name="exit-shell-on-action-help" type="b">
+      <default>false</default>
+      <_summary>Exit shell on help action performed</_summary>
+      <_description>Indicates whether to close the shell when a help action is performed</_description>
+    </key>
+    <key name="exit-shell-on-action-add-remove" type="b">
+      <default>false</default>
+      <_summary>Exit shell on add or remove action performed</_summary>
+      <_description>Indicates whether to close the shell when an add or remove action is performed</_description>
+    </key>
+    <key name="exit-shell-on-action-upgrade-uninstall" type="b">
+      <default>true</default>
+      <_summary>Exit shell on upgrade or uninstall action performed</_summary>
+      <_description>Indicates whether to close the shell when an upgrade or uninstall action is performed</_description>
+    </key>
+  </schema>
+</schemalist>
