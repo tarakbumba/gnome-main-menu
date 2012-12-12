@@ -56,12 +56,12 @@
       <_description>possible values = 0 [Applications], 1 [Documents], 2 [Places]</_description>
     </key>
     <key name="file-mgr-open-cmd" type="s">
-      <default>'nautilus FILE_URI'</default>
+      <default>'caja FILE_URI'</default>
       <_summary>This is the command to execute when the "Open in File Manager" menu item is activated.</_summary>
       <_description>This is the command to execute when the "Open in File Manager" menu item is activated.  FILE_URI is replaced with a uri corresponding to the dirname of the activated file.</_description>
     </key>
     <key name="file-send-to-cmd" type="s">
-      <default>'nautilus-sendto DIRNAME/BASENAME'</default>
+      <default>'caja-sendto DIRNAME/BASENAME'</default>
       <_summary>This is the command to execute when the "Send To..." menu item is activated.</_summary>
       <_description>This is the command to execute when the "Send To..." menu item is activated.  DIRNAME and BASENAME are replaced with the corresponding components of the activated tile.</_description>
     </key>
