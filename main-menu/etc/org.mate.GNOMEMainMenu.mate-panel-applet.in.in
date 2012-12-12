@@ -1,0 +1,11 @@
+[Applet Factory]
+Id=GNOMEMainMenuFactory
+Location=@LIBEXECDIR@/main-menu
+_Name=GNOME Main Menu Factory
+_Description=Factory for the GNOME Main Menu applet
+ 
+[GNOMEMainMenu]
+_Name=GNOME Main Menu
+_Description=Default menu and application browser
+Icon=computer
+MateComponentId=OAFIID:GNOME_MainMenu

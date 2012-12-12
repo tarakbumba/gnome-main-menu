@@ -24,7 +24,7 @@
 #	include <config.h>
 #endif
 
-#include <panel-applet.h>
+#include <mate-panel-applet.h>
 #include <cairo.h>
 #include <string.h>
 #include <libxml/parser.h>
@@ -32,6 +32,8 @@
 #include <gdk/gdkkeysyms.h>
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
+#include <glib.h>
+#include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
 #include <unistd.h>
@@ -81,7 +83,7 @@
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
 
 typedef struct {
-	PanelApplet *panel_applet;
+	MatePanelApplet *panel_applet;
 	GtkWidget   *panel_about_dialog;
 
 	GtkBuilder *main_menu_ui;
@@ -202,10 +204,10 @@ static void     more_buttons_clicked_cb            (GtkButton *, gpointer);
 static void     search_cmd_notify_cb              (GSettings *, gchar *, gpointer);
 static void     current_page_notify_cb            (GSettings *, gchar *, gpointer);
 static void     lockdown_notify_cb                (GSettings *, gchar *, gpointer);
-static void     panel_menu_open_cb                (BonoboUIComponent *, gpointer, const gchar *);
-static void     panel_menu_about_cb               (BonoboUIComponent *, gpointer, const gchar *);
-static void     panel_applet_change_orient_cb     (PanelApplet *, PanelAppletOrient, gpointer);
-static void     panel_applet_change_background_cb (PanelApplet *, PanelAppletBackgroundType, GdkColor *,
+static void     panel_menu_open_cb                (GtkAction *, gpointer);
+static void     panel_menu_about_cb               (GtkAction *, gpointer);
+static void     panel_applet_change_orient_cb     (MatePanelApplet *, MatePanelAppletOrient, gpointer);
+static void     panel_applet_change_background_cb (MatePanelApplet *, MatePanelAppletBackgroundType, GdkColor *,
                                                    GdkPixmap * pixmap, gpointer);
 static void     slab_window_tomboy_bindkey_cb     (gchar *, gpointer);
 static void     search_tomboy_bindkey_cb          (gchar *, gpointer);
@@ -216,10 +218,13 @@ static void     volume_monitor_mount_cb           (GVolumeMonitor *, GMount *, g
 
 static GdkFilterReturn slab_gdk_message_filter (GdkXEvent *, GdkEvent *, gpointer);
 
-static const BonoboUIVerb applet_bonobo_verbs [] = {
-	BONOBO_UI_UNSAFE_VERB ("MainMenuOpen",  panel_menu_open_cb),
-	BONOBO_UI_UNSAFE_VERB ("MainMenuAbout", panel_menu_about_cb),
-	BONOBO_UI_VERB_END
+static const GtkActionEntry applet_actions [] = {
+	{ "MainMenuOpen", GTK_STOCK_OPEN, N_("_Open Menu"),
+		NULL, NULL,
+		G_CALLBACK (panel_menu_open_cb) },
+	{ "MainMenuAbout", GTK_STOCK_ABOUT, N_("_About"),
+		NULL, NULL,
+		G_CALLBACK (panel_menu_about_cb) }
 };
 
 static const gchar *main_menu_authors [] = {
@@ -308,7 +313,7 @@ main_menu_delayed_setup (MainMenuUI *this)
 }
 
 MainMenuUI *
-main_menu_ui_new (PanelApplet *applet)
+main_menu_ui_new (MatePanelApplet *applet)
 {
 	MainMenuUI        *this;
 	MainMenuUIPrivate *priv;
@@ -474,6 +479,9 @@ create_panel_button (MainMenuUI *this)
 	GtkWidget *button_root;
 	GtkWidget *button_parent;
 
+	GtkActionGroup* action_group;
+	gchar* ui_path;
+
 	gint i;
 
 
@@ -525,13 +533,18 @@ create_panel_button (MainMenuUI *this)
 
 	gtk_widget_destroy (button_root);
 
-	panel_applet_set_flags (priv->panel_applet, PANEL_APPLET_EXPAND_MINOR);
+	mate_panel_applet_set_flags (priv->panel_applet, MATE_PANEL_APPLET_EXPAND_MINOR);
 
 	reorient_panel_button (this);
 
-	panel_applet_setup_menu_from_file (
-		priv->panel_applet, NULL, "GNOME_MainMenu_ContextMenu.xml",
-		NULL, applet_bonobo_verbs, this);
+	action_group = gtk_action_group_new ("GNOME MainMenu Applet Actions");
+	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions (action_group,
+		applet_actions, G_N_ELEMENTS (applet_actions), this);
+	ui_path = g_build_filename (UIDIR, "GNOME_MainMenu_ContextMenu.xml", NULL);
+	mate_panel_applet_setup_menu_from_file (priv->panel_applet, ui_path, action_group);
+	g_free (ui_path);
+	g_object_unref (action_group);
 
 	g_signal_connect (
 		G_OBJECT (priv->panel_applet), "change_orient",
@@ -927,7 +940,7 @@ setup_lock_down (MainMenuUI *this)
 		G_CALLBACK (lockdown_notify_cb), this);
 	g_signal_connect (priv->mate_lockdown_settings, "changed::" DISABLE_LOCKSCREEN_SETTINGS_KEY,
 		G_CALLBACK (lockdown_notify_cb), this);
-	g_signal_connect (priv->panel_settings, "changed:" DISABLE_LOGOUT_SETTINGS_KEY.
+	g_signal_connect (priv->panel_settings, "changed:" DISABLE_LOGOUT_SETTINGS_KEY,
 		G_CALLBACK (lockdown_notify_cb), this);
 }
 
@@ -1232,7 +1245,7 @@ app_is_in_blacklist (const gchar *uri, MainMenuUI *this)
 
 	blacklist = g_settings_get_strv (priv->filearea_settings, APP_BLACKLIST_SETTINGS_KEY);
 
-	for (i = 0; blacklist[i] != NULL, i++) {
+	for (i = 0; blacklist[i] != NULL; i++) {
 		if (! blacklisted && strstr (uri, blacklist[i]))
 			blacklisted = TRUE;
 	}
@@ -1448,8 +1461,13 @@ get_search_argv (const gchar *search_txt)
 
 	gint i;
 
+	GSettings *settings = NULL;
 
-	cmd = g_settings_get_string (priv->settings, SEARCH_CMD_SETTINGS_KEY);
+	settings = g_settings_new (SETTINGS_SCHEMA);
+
+	cmd = g_settings_get_string (settings, SEARCH_CMD_SETTINGS_KEY);
+
+	g_object_unref (settings);
 
 	if (! cmd) {
 		g_warning ("could not find search command in gsettings [" SEARCH_CMD_SETTINGS_KEY "]\n");
@@ -1484,12 +1502,12 @@ reorient_panel_button (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	PanelAppletOrient orientation;
+	MatePanelAppletOrient orientation;
 
 	GtkWidget *child;
 
 
-	orientation = panel_applet_get_orient (priv->panel_applet);
+	orientation = mate_panel_applet_get_orient (priv->panel_applet);
 
 	child = gtk_bin_get_child (GTK_BIN (priv->panel_applet));
 
@@ -1497,15 +1515,15 @@ reorient_panel_button (MainMenuUI *this)
 		gtk_container_remove (GTK_CONTAINER (priv->panel_applet), child);
 
 	switch (orientation) {
-		case PANEL_APPLET_ORIENT_LEFT:
+		case MATE_PANEL_APPLET_ORIENT_LEFT:
 			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_RIGHT];
 			break;
 
-		case PANEL_APPLET_ORIENT_RIGHT:
+		case MATE_PANEL_APPLET_ORIENT_RIGHT:
 			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_LEFT];
 			break;
 
-		case PANEL_APPLET_ORIENT_UP:
+		case MATE_PANEL_APPLET_ORIENT_UP:
 			priv->panel_button = priv->panel_buttons [PANEL_BUTTON_ORIENT_BOTTOM];
 			break;
 
@@ -2094,7 +2112,7 @@ slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 	GdkRectangle slab_geom;
 	GdkRectangle monitor_geom;
 
-	PanelAppletOrient orient;
+	MatePanelAppletOrient orient;
 
 
 	gdk_window_get_origin (GTK_WIDGET (priv->panel_button)->window, & button_geom.x, & button_geom.y);
@@ -2112,25 +2130,25 @@ slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 			panel_button_screen, GTK_WIDGET (priv->panel_button)->window),
 		& monitor_geom);
 
-	orient = panel_applet_get_orient (priv->panel_applet);
+	orient = mate_panel_applet_get_orient (priv->panel_applet);
 
 	switch (orient) {
-		case PANEL_APPLET_ORIENT_UP:
+		case MATE_PANEL_APPLET_ORIENT_UP:
 			slab_geom.x = button_geom.x;
 			slab_geom.y = button_geom.y - slab_geom.height;
 			break;
 
-		case PANEL_APPLET_ORIENT_DOWN:
+		case MATE_PANEL_APPLET_ORIENT_DOWN:
 			slab_geom.x = button_geom.x;
 			slab_geom.y = button_geom.y + button_geom.height;
 			break;
 
-		case PANEL_APPLET_ORIENT_RIGHT:
+		case MATE_PANEL_APPLET_ORIENT_RIGHT:
 			slab_geom.x = button_geom.x + button_geom.width;
 			slab_geom.y = button_geom.y;
 			break;
 
-		case PANEL_APPLET_ORIENT_LEFT:
+		case MATE_PANEL_APPLET_ORIENT_LEFT:
 			slab_geom.x = button_geom.x - slab_geom.width;
 			slab_geom.y = button_geom.y;
 			break;
@@ -2141,7 +2159,7 @@ slab_window_allocate_cb (GtkWidget *widget, GtkAllocation *alloc, gpointer user_
 			break;
 	}
 
-	if (orient == PANEL_APPLET_ORIENT_UP || orient == PANEL_APPLET_ORIENT_DOWN) {
+	if (orient == MATE_PANEL_APPLET_ORIENT_UP || orient == MATE_PANEL_APPLET_ORIENT_DOWN) {
 		if ((slab_geom.x + slab_geom.width) > (monitor_geom.x + monitor_geom.width))
 			slab_geom.x = MAX (monitor_geom.x, monitor_geom.x + monitor_geom.width - slab_geom.width);
 	}
@@ -2363,13 +2381,13 @@ lockdown_notify_cb (GSettings *settings, gchar *key, gpointer user_data)
 }
 
 static void
-panel_menu_open_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
+panel_menu_open_cb (GtkAction *action, gpointer user_data)
 {
 	gtk_toggle_button_set_active (PRIVATE (user_data)->panel_button, TRUE);
 }
 
 static void
-panel_menu_about_cb (BonoboUIComponent *component, gpointer user_data, const gchar *verb)
+panel_menu_about_cb (GtkAction *action, gpointer user_data)
 {
 	MainMenuUI *this        = MAIN_MENU_UI (user_data);
 	MainMenuUIPrivate *priv = PRIVATE      (this);
@@ -2399,13 +2417,13 @@ panel_menu_about_cb (BonoboUIComponent *component, gpointer user_data, const gch
 }
 
 static void
-panel_applet_change_orient_cb (PanelApplet *applet, PanelAppletOrient orient, gpointer user_data)
+panel_applet_change_orient_cb (MatePanelApplet *applet, MatePanelAppletOrient orient, gpointer user_data)
 {
 	reorient_panel_button (MAIN_MENU_UI (user_data));
 }
 
 static void
-panel_applet_change_background_cb (PanelApplet *applet, PanelAppletBackgroundType type, GdkColor *color,
+panel_applet_change_background_cb (MatePanelApplet *applet, MatePanelAppletBackgroundType type, GdkColor *color,
                                    GdkPixmap *pixmap, gpointer user_data)
 {
 	MainMenuUI        *this = MAIN_MENU_UI (user_data);

@@ -1,6 +1,22 @@
-serverdir   = $(libdir)/bonobo/servers
-server_DATA = GNOME_MainMenu.server
-@INTLTOOL_SERVER_RULE@
+appletdir       = $(datadir)/mate-panel/applets
+applet_in_files = org.mate.GNOMEMainMenu.mate-panel-applet.in
+applet_DATA     = $(applet_in_files:.mate-panel-applet.in=.mate-panel-applet)
+
+$(applet_in_files): $(applet_in_files).in Makefile
+	$(AM_V_GEN) $(SED) \
+		-e "s|\@LIBEXECDIR\@|$(libexecdir)|" \
+		$< > $@
+
+%.mate-panel-applet: %.mate-panel-applet.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*po) ; $(INTLTOOL_MERGE) $(top_srcdir)/po $< $@ -d -u -c $(top_builddir)/po/.intltool-merge-cache
+
+servicedir       = $(datadir)/dbus-1/services
+service_in_files = org.mate.panel.applet.GNOMEMainMenuFactory.service.in
+service_DATA     = $(service_in_files:.service.in=.service)
+
+org.mate.panel.applet.GNOMEMainMenuFactory.service: $(service_in_files)
+	$(AM_V_GEN) $(SED) \
+		-e "s|\@LIBEXECDIR\@|$(libexecdir)|" \
+		$< > $@
 
 @INTLTOOL_XML_NOMERGE_RULE@
 gsettings_SCHEMAS = org.mate.gnome-main-menu.gschema.xml
@@ -9,7 +25,7 @@ gsettings_SCHEMAS = org.mate.gnome-main-menu.gschema.xml
 %.gschema.xml.in: %.gschema.xml.in.in Makefile
 	$(AM_V_GEN) $(SED) -e 's^\@DATADIR\@^$(datadir)^g' -e 's^\@GETTEXT_PACKAGE\@^$(GETTEXT_PACKAGE)^g' < $< > $@
 
-uidir   = $(datadir)/gnome-2.0/ui
+uidir   = $(datadir)/$(PACKAGE)
 ui_DATA = GNOME_MainMenu_ContextMenu.xml
 
 desktop_helperdir = $(datadir)/applications
@@ -28,12 +44,9 @@ systemitems_DATA = system-items.xbel
 $(desktop_DATA).in: $(desktop_DATA).in.in
 	sed -e "s|\@BINDIR\@|$(bindir)|" $< > $@
 
-$(server_DATA).in: $(server_DATA).in.in
-	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
-
 $(systemitems_DATA): $(systemitems_DATA).in
 	sed -e "s|_title>|title>|g" $< > $@
 
-EXTRA_DIST = $(server_DATA).in.in $(gsettings_SCHEMAS).in.in $(ui_DATA) $(desktop_helper_DATA) $(desktop_DATA).in.in $(bookmark_DATA) $(systemitems_DATA).in
+EXTRA_DIST = $(service_in_files) $(gsettings_SCHEMAS).in.in $(ui_DATA) $(desktop_helper_DATA) $(desktop_DATA).in.in $(bookmark_DATA) $(systemitems_DATA).in
 
-CLEANFILES = $(server_DATA) $(gsettings_SCHEMAS) $(server_DATA).in $(gsettings_SCHEMAS).in $(systemitems_DATA) $(desktop_DATA) $(desktop_DATA).in
+CLEANFILES = org.mate.panel.applet.GNOMEMainMenuFactory.service $(gsettings_SCHEMAS) $(gsettings_SCHEMAS).in $(systemitems_DATA) $(desktop_DATA) $(desktop_DATA).in

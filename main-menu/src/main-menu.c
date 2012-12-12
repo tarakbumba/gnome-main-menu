@@ -23,29 +23,31 @@
 #endif
 
 #include <glib.h>
-#include <panel-applet.h>
+#include <glib/gi18n.h>
+#include <mate-panel-applet.h>
 #include <string.h>
 #include <libslab/slab.h>
 
 #include "main-menu-ui.h"
 
-static gboolean main_menu_applet_init (PanelApplet *, const gchar *, gpointer);
+static gboolean main_menu_applet_init (MatePanelApplet *, const gchar *, gpointer);
 
-PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_MainMenu_Factory", PANEL_TYPE_APPLET, "Main Menu", "0",
+
+MATE_PANEL_APPLET_OUT_PROCESS_FACTORY ("GNOMEMainMenuFactory", PANEL_TYPE_APPLET, "Main Menu",
 	main_menu_applet_init, NULL);
 
 #define CHECKPOINT_CONFIG_BASENAME "main-menu-checkpoint.conf"
 #define CHECKPOINT_FILE_BASENAME "main-menu"
 
 static gboolean
-main_menu_applet_init (PanelApplet *applet, const gchar *iid, gpointer user_data)
+main_menu_applet_init (MatePanelApplet *applet, const gchar *iid, gpointer user_data)
 {
 
 	libslab_checkpoint_init (CHECKPOINT_CONFIG_BASENAME, CHECKPOINT_FILE_BASENAME);
 
 	libslab_checkpoint ("Main-menu starts up");
 
-	if (strcmp (iid, "OAFIID:GNOME_MainMenu") != 0)
+	if (strcmp (iid, "GNOMEMainMenu") != 0)
 		return FALSE;
 
 #ifdef ENABLE_NLS
