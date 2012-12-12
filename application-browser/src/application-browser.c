@@ -93,7 +93,7 @@ main (int argc, char *argv[])
 	gint max_items = g_settings_get_int (settings, NEW_APPS_MAX_ITEMS);
 	g_object_unref (settings);
 	//config->name = _("New Applications");
-	AppShellData *app_data = appshelldata_new ("applications.menu",
+	AppShellData *app_data = appshelldata_new ("mate-applications.menu",
 		GTK_ICON_SIZE_DND, TRUE, FALSE, max_items);
 	generate_categories (app_data);
 
