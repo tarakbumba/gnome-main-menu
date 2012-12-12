@@ -305,7 +305,7 @@ tile_show_event_cb (GtkWidget * widget, gpointer user_data)
 		timeout = MAX (timeout, 1000);
 
 		priv->timeout_notify =
-			g_signal_connect (priv->settings, TIMEOUT_KEY, timeout_changed_cb, tile);
+			g_signal_connect (priv->settings, "changed::" TIMEOUT_KEY, timeout_changed_cb, tile);
 
 		priv->update_timeout = g_timeout_add (timeout, timeout_cb, tile);
 	}

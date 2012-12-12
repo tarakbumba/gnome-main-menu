@@ -940,7 +940,7 @@ setup_lock_down (MainMenuUI *this)
 		G_CALLBACK (lockdown_notify_cb), this);
 	g_signal_connect (priv->mate_lockdown_settings, "changed::" DISABLE_LOCKSCREEN_SETTINGS_KEY,
 		G_CALLBACK (lockdown_notify_cb), this);
-	g_signal_connect (priv->panel_settings, "changed:" DISABLE_LOGOUT_SETTINGS_KEY,
+	g_signal_connect (priv->panel_settings, "changed::" DISABLE_LOGOUT_SETTINGS_KEY,
 		G_CALLBACK (lockdown_notify_cb), this);
 }
 
