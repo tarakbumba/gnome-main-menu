@@ -9,13 +9,6 @@
 
   <maintainer>
     <foaf:Person>
-      <foaf:name>Nelson Marques</foaf:name>
-      <gnome:userid>nmarques</gnome:userid>
-    </foaf:Person>
-  </maintainer>
-
-  <maintainer>
-    <foaf:Person>
       <foaf:name>Stefano Karapetsas</foaf:name>
       <gnome:userid>stefanok</gnome:userid>
     </foaf:Person>
