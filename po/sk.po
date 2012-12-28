@@ -1,754 +1,652 @@
-# Slovak message file for YaST2 (@memory@).
+# Slovak translation for gnome-main-menu.
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002, 2003 SuSE Linux AG.
 # Copyright (C) 2000, 2001 SuSE GmbH.
-# Stanislav Visnovsky <visnovsky@kde.org>, 2003
 # Milan Hromada <mhromada@elas.sk>, 2000.
+# Stanislav Visnovsky <visnovsky@kde.org>, 2003.
+# Ján Kyselica <kyselica.jan@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: YaST (@memory@)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-06 17:53+0100\n"
-"PO-Revision-Date: 2003-05-27 16:53+0200\n"
-"Last-Translator:  Stanislav Visnovsky <visnovsky@kde.org>\n"
-"Language-Team: Slovak <i18n@suse.de>\n"
+"Project-Id-Version: gnome-main-menu\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
+"main-menu&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2012-12-26 15:03+0000\n"
+"PO-Revision-Date: 2012-12-28 23:55+0000\n"
+"Last-Translator: Ján Kyselica <kyselica.jan@gmail.com>\n"
+"Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
+"X-Generator: Poedit 1.5.4\n"
 
-#  frame
+# frame
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:93
-#, fuzzy
+#: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
-msgstr "Poradie použitia"
+msgstr "Prehliadač aplikácií"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:1
-#: ../control-center/etc/control-center.schemas.in.h:2
-msgid "Exit shell on add or remove action performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:2
-#: ../control-center/etc/control-center.schemas.in.h:3
-msgid "Exit shell on help action performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:3
-#: ../control-center/etc/control-center.schemas.in.h:4
-msgid "Exit shell on start action performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:4
-#: ../control-center/etc/control-center.schemas.in.h:5
-msgid "Exit shell on upgrade or uninstall action performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:5
+# description, summary
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
-msgstr ""
+msgstr "Názvy existujúcich súborov typu .desktop"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:6
-#: ../control-center/etc/control-center.schemas.in.h:6
-msgid "Indicates whether to close the shell when a help action is performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:7
-#: ../control-center/etc/control-center.schemas.in.h:7
-msgid "Indicates whether to close the shell when a start action is performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:8
-#: ../control-center/etc/control-center.schemas.in.h:8
-msgid "Indicates whether to close the shell when an add or remove action is performed"
-msgstr ""
-
-#: ../application-browser/etc/application-browser.schemas.in.h:9
-#: ../control-center/etc/control-center.schemas.in.h:9
-msgid "Indicates whether to close the shell when an upgrade or uninstall action is performed"
-msgstr ""
-
-#  frame
-#: ../application-browser/etc/application-browser.schemas.in.h:10
-#, fuzzy
+# frame
+# summary
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
-msgstr "Poradie použitia"
+msgstr "Maximálny počet nových aplikácií"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:11
-msgid "The maximum number of applications that will be displayed in the New Applications category"
+# description
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
+msgid ""
+"The maximum number of applications that will be displayed in the New "
+"Applications category"
 msgstr ""
+"Maximálny počet aplikácií, ktoré môžu byť zobrazené v kategórií s novými "
+"aplikáciami"
 
-#  frame
-#: ../application-browser/src/application-browser.c:85
-#, fuzzy
-msgid "New Applications"
-msgstr "Poradie použitia"
+# summary
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
+msgid "Exit shell on start action performed"
+msgstr "Ukončiť shell po vykonaní akcie spustiť"
 
-#: ../application-browser/src/application-browser.c:90
-#: ../control-center/src/control-center.c:160
-#, fuzzy
+# description
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
+msgid "Indicates whether to close the shell when a start action is performed"
+msgstr "Indikuje, či sa má ukončiť shell po vykonaní akcie spustiť"
+
+# summary
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
+msgid "Exit shell on help action performed"
+msgstr "Ukončiť shell po zavolaní pomocníka"
+
+# description
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
+msgid "Indicates whether to close the shell when a help action is performed"
+msgstr "Indikuje, či sa má ukončiť shell po zavolaní pomocníka"
+
+# summary
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
+msgid "Exit shell on add or remove action performed"
+msgstr "Ukončiť shell po vykonaní akcie pridať alebo odstániť"
+
+# description
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
+msgstr ""
+"Indikuje, či sa má ukončiť shell po vykonaní akcie pridať alebo odstrániť"
+
+# summary
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
+msgid "Exit shell on upgrade or uninstall action performed"
+msgstr "Ukončiť shell po vykonaní akcie aktualizovať alebo odinštalovať"
+
+# description
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
+msgid ""
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
+msgstr ""
+"Indikuje, či sa má ukončiť shell po vykonaní akcie aktualizovať alebo "
+"odinštalovať"
+
+#: ../application-browser/src/application-browser.c:63
+msgid "Hide on start (useful to preload the shell)"
+msgstr "Skryť pri spustení (užitočné v prípade prednačítania shellu)"
+
+#: ../application-browser/src/application-browser.c:100
 msgid "Filter"
-msgstr "Filter:"
+msgstr "Filter"
 
-#: ../application-browser/src/application-browser.c:90
-#: ../control-center/src/control-center.c:160
+#: ../application-browser/src/application-browser.c:100
 msgid "Groups"
-msgstr "Skupina"
+msgstr "Skupiny"
 
-#  frame
-#: ../application-browser/src/application-browser.c:90
-#, fuzzy
+# frame
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
-msgstr "Poradie použitia"
+msgstr "Akcie aplikácií"
 
-#: ../control-center/etc/control-center.desktop.in.in.h:1
-#: ../control-center/src/control-center.c:164
+# menu item
+#: ../caja-main-menu/caja-main-menu.c:114
+#: ../caja-main-menu/caja-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Pridať k obľúbeným"
+
+# tooltip
+#: ../caja-main-menu/caja-main-menu.c:115
+msgid "Add the current launcher to favorites"
+msgstr "Pridá aktuálny spúštač k obľúbeným"
+
+# tooltip
+#: ../caja-main-menu/caja-main-menu.c:120
+msgid "Add the current document to favorites"
+msgstr "Pridá aktuálny dokument k obľubeným"
+
+# menu item
+#: ../caja-main-menu/caja-main-menu.c:124
+#: ../caja-main-menu/caja-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Odstrániť z obľúbených"
+
+# tooltip
+#: ../caja-main-menu/caja-main-menu.c:125
+#: ../caja-main-menu/caja-main-menu.c:130
+msgid "Remove the current document from favorites"
+msgstr "Odstráni aktuálny dokument z obľúbených"
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
+msgid "command to uninstall packages"
+msgstr "príkaz na odinštalovanie balíkov"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:2
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"príkaz na odinštalovanie balíkov, NÁZOV_BALÍKA je nahradený názvom balíka "
+"uvedeného v príkaze"
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:3
+msgid "command to upgrade packages"
+msgstr "príkaz na aktualizáciu balíkov"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:4
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"príkaz na aktualizáciu balíkov, NÁZOV_BALÍKA je nahradený názvom balíka "
+"uvedeného v príkaze"
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:5
+msgid ".desktop path for the application browser"
+msgstr "cesta súboru typu .dektop pre prehliadač aplikácií"
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:6
+msgid ".desktop file for the file browser"
+msgstr "súbor typu .desktop pre prehliadač aplikácií"
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
+msgid ".desktop file for the mate-system-monitor"
+msgstr "súbor typu .desktop pre mate-system-monitor"
+
+# PK: net je nazov nastroja alebo prikazu?
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:8
 #, fuzzy
-msgid "Control Center"
-msgstr "Ovládacie centrum YaST"
+msgid ".desktop file for the net config tool"
+msgstr "súbor typu .desktop pre konfiguračný nástroj net"
 
-#: ../control-center/etc/control-center.schemas.in.h:1
-msgid "Close the control-center when a task is activated"
+# PK: co je network_devices?
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:9
+#, fuzzy
+msgid ".desktop file for the YaST2 network_devices utility"
+msgstr "súbor typu .desktop pre nástroj YaST2 sieťové_zariadenia"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:10
+msgid ".desktop file for the Network Manager editor utility"
+msgstr "súbor typu .desktop pre editor Správca siete"
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:11
+msgid "This is the command to execute when the search entry is used."
+msgstr "Toto je príkaz na spustenie, ak je použité pole vyhľadávania."
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:12
+msgid ""
+"This is the command to execute when the search entry is used. SEARCH_STRING "
+"is replaced with the entered search text."
 msgstr ""
+"Toto je príkaz na spustenie, ak je použité pole vyhľadávania. "
+"HĽADANÝ_REŤAZEC je nahradený zadaným textom."
 
-#: ../control-center/etc/control-center.schemas.in.h:10
-msgid "Task names and associated .desktop files"
+# summary
+# JK: tento preklad som našiel na open-tran použitý v SUSE memory
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
+msgid "if true, main menu is more anxious to close"
+msgstr "ak je nastavené na true, hlavná ponuka sa zatvára horlivejšie"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
 msgstr ""
+"ak je nastavené na true, hlavná ponuka sa zatvorí na základe ďalších "
+"podmienok: dlaždica je aktivovaná, vyhľadávanie je aktivované"
 
-#: ../control-center/etc/control-center.schemas.in.h:11
-msgid "The task name to be displayed in the control-center (thus needing to be translated) followed by a \";\" separator then the filename of an associated .desktop file to launch for that task."
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
+msgid "determines which types of files to display in the file area"
+msgstr "určuje, ktorý typ súborov bude zobrazený v súborovej oblasti"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
+msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
+msgstr "možné hodnoty = 0 [Aplikácie], 1 [Dokumenty], 2 [Miesta]"
+
+# PK: Aktivacoiu polozky "" v ponuke sa spusti tento prikaz
+# PK: menu = ponuka, viackrat
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated."
 msgstr ""
+"Toto je príkaz na spustenie, ak je aktívna položka ponuky „Otvoriť v správcovi "
+"súborov“."
 
-#. Translators: The format of this string is the task name to be displayed (translate that part) followed by a ";" separator then the filename (DONT translate the file name) of a .desktop file to launch. Multiple entries are separated by a ","
-#: ../control-center/etc/control-center.schemas.in.h:13
-msgid "[Change Desktop Background;background.desktop,Add Printer;gnome-cups-manager.desktop,Configure Network;YaST2/lan.desktop,Change Password;gnome-passwd.desktop,Add User;YaST2/users.desktop,Open Administrator Settings;YaST.desktop]"
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated. FILE_URI is replaced with a uri corresponding to the dirname "
+"of the activated file."
 msgstr ""
+"Toto je príkaz na spustenie ak je aktívna položka menu „Otvoriť v správcovi "
+"súborov“. SÚBOR_URI je nahradený URI adresára zodpovedajúceho aktivovaného "
+"súboru."
 
-#: ../control-center/etc/control-center.schemas.in.h:14
-msgid "if true, the control-center will close when a \"Common Task\" is activated"
+# summary
+# DK: "Send To..." by pravdepodobne malo byt prelozene ako "Poslať kam..." ako sa pouziva v Nautiluse. over
+# JK: Zmenil som na Poslať kam
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated."
+msgstr "Toto je príkaz na spustenie, ak je aktívna položka menu „Poslať kam…“."
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
+#, fuzzy
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated. DIRNAME and BASENAME are replaced with the corresponding "
+"components of the activated tile."
 msgstr ""
+"Toto je príkaz na spustenie, ak je aktívna položka menu „Poslať kam…“. Názov "
+"PRIEČINKA a ZÁKLADNÝ NÁZOV sú nahradené zodpovedajúcimi komponentami "
+"aktivovanej dlaždice."
 
-#: ../control-center/src/control-center.c:62
-#, c-format
-msgid "key not found [%s]\n"
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
+msgid "determines the limit of items in the file-area."
+msgstr "určuje limit položiek v súborovej oblasti."
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
+msgid ""
+"determines the limit of items in the file-area. The number of favorite items "
+"is not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items then this limit is ignored."
 msgstr ""
+"určuje limit položiek v súborovej oblasti. Počet obľúbených položiek nie je "
+"obmedzený. Tento limit obmedzuje počet naposledy zobrazených položiek, napr. "
+"počet naposledy zobrazených položiek je obmedzený na max_total_items - počet "
+"obľúbených položiek. Ak počet obľúbených položiek prekročí max_total_items - "
+"min_recent_items potom je tento limit ignorovaný."
 
-#: ../control-center/src/control-center.c:160
-msgid "Common Tasks"
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
+msgid ""
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
+msgstr "určuje minimálny počet položiek v sekcii súborovej oblasti „nedávne“."
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
+msgid ""
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
+"obsahuje zoznam súborov (vrátane .desktop súborov), ktoré budú vyňaté zo "
+"zoznamov „Naposledy použité aplikácie“ a „Nedávne súbory“."
 
-#. make start action
-#: ../libslab/application-tile.c:316
-#, fuzzy, c-format
-msgid "<b>Start %s</b>"
-msgstr "<b>Oprava:</b>"
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
+msgid "lock-down status for the application browser link"
+msgstr "uzamknúť stav odkazu na prehliadač aplikácie"
 
-#: ../libslab/application-tile.c:335
-#: ../main-menu/src/main-menu-migration.c:116
-#: ../main-menu/src/main-menu-migration.c:270
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
+msgstr ""
+"Nastavte na hodnotu true, ak má byť odkaz na prehliadač aplikácie viditeľný "
+"a aktívny."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
+msgid "lock-down status for the search area"
+msgstr "uzamknúť stav oblasti vyhľadávania"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
+msgid "set to true if the search area should be visible and active."
+msgstr ""
+"nastavte na hodnotu true, ak má byť oblasť vyhľadávania viditeľná a aktívna."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
+msgid "lock-down status for the status area"
+msgstr "uzamknúť stav stavovej oblasti"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
+msgid "set to true if the status area should be visible and active."
+msgstr ""
+"nastavte na hodnotu true, ak má byť stavová oblasť viditeľná a aktívna."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
+msgid "lock-down status for the system area"
+msgstr "uzamknúť stav systémovej oblasti"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
+msgid "set to true if the system area should be visible and active."
+msgstr ""
+"nastavte na hodnotu true, ak má byť systémová oblasť viditeľná a aktívna."
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
+msgid "set to true if the user is allowed to modify the list of system items."
+msgstr ""
+"nastavte na hodnotu true, ak má mať používateľ oprávnenie upravovať zoznam "
+"systémových položiek."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
+msgid "lock-down status for the user-specified apps section"
+msgstr "uzamknúť stav sekcie používateľom špecifikovaných aplikácií"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
+msgstr ""
+"nastavte na hodnotu true, ak má mať používateľ oprávnenie upravovať zoznam "
+"používateľom špecifikovaných alebo „Obľúbených“ aplikácií."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
+msgid "lock-down status for the user-specified docs section"
+msgstr "uzamknúť stav sekcie používateľom špecifikovaných dokumentov"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
+msgstr ""
+"nastavte na hodnotu true, ak má mať používateľ oprávnenie upravovať zoznam "
+"používateľom špecifikovaných alebo „Obľúbených“ dokumentov."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
+msgid "lock-down status for the user-specified dirs section"
+msgstr "uzamknúť stav sekcie používateľom špecifikovaných priečinkov"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
+msgstr ""
+"nastavte na hodnotu true, ak má mať používateľ oprávnenie upravovať zoznam "
+"používateľom špecifikovaných alebo „Obľúbených“ adresárov alebo „Miest“."
+
+# summary
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
+msgid "lock-down configuration of the file area"
+msgstr "uzamknúť stav konfigurácie súborovej oblasti"
+
+# description
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
+msgid ""
+"contains the list (in no particular order) of allowable file tables to show "
+"in the file area. possible values: 0 - show the user-specified or \"Favorite"
+"\" applications table, 1 - show the recently used applications table, 2 - "
+"show the user-specified or \"Favorite\" documents table, 3 - show the "
+"recently used documents table, 4 - show the user-specified of \"Favorite\" "
+"directories or \"Places\" table, and 5 - show the recently used directories "
+"or \"Places\" table."
+msgstr ""
+"obsahuje zoznam (v neurčitom poradí) prípustných tabuliek súborov, ktoré sa "
+"majú zobraziť v súborovej oblasti. možné hodnoty: 0 - zobraziť tabuľku "
+"používateľom špecifikovaných alebo „Obľúbených“ aplikácií, 1 - zobraziť "
+"tabuľku nedávno použitých aplikácií, 2 - zobraziť tabuľku používateľom "
+"špecifikovaných alebo „Obľúbených“ dokumentov, 3 - zobraziť tabuľku nedávno "
+"použitých dokumentov, 4 - zobraziť tabuľku používateľom špecifikovaných "
+"„Obľúbených“ adresárov alebo „Miest“ a 5 - zobraziť tabuľku nedávno "
+"použitých adresárov alebo „Miest“."
+
+#: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
 msgstr "Pomocník"
 
-#: ../libslab/application-tile.c:342
-#, fuzzy
-msgid "Help Unavailable"
-msgstr "Nie je k dispozícii"
+#: ../main-menu/etc/system-items.xbel.in.h:2
+msgid "Lock Screen"
+msgstr "Uzamknúť obrazovku"
 
-#: ../libslab/application-tile.c:381
-#, fuzzy
-msgid "Upgrade"
-msgstr "Aktualizácia"
+#: ../main-menu/etc/system-items.xbel.in.h:3
+msgid "Logout"
+msgstr "Odhlásiť"
 
-#: ../libslab/application-tile.c:390
-#, fuzzy
-msgid "Uninstall"
-msgstr "Inštalovať"
-
-#: ../libslab/application-tile.c:712 ../libslab/document-tile.c:525
-#: ../nautilus-main-menu/nautilus-main-menu.c:133
-#: ../nautilus-main-menu/nautilus-main-menu.c:138
-#, fuzzy
-msgid "Remove from Favorites"
-msgstr "Odstrániť záznamy fstab"
-
-#: ../libslab/application-tile.c:714 ../libslab/document-tile.c:527
-#: ../nautilus-main-menu/nautilus-main-menu.c:123
-#: ../nautilus-main-menu/nautilus-main-menu.c:128
-#, fuzzy
-msgid "Add to Favorites"
-msgstr "&Pridať k filtru"
-
-#: ../libslab/application-tile.c:769
-msgid "Remove from Startup Programs"
-msgstr ""
-
-#: ../libslab/application-tile.c:771
-msgid "Add to Startup Programs"
-msgstr ""
-
-#: ../libslab/app-shell.c:740
-#, c-format
-msgid ""
-"<span size=\"large\"><b>No matches found.</b> </span><span>\n"
-"\n"
-" Your filter \"<b>%s</b>\" does not match any items.</span>"
-msgstr ""
-
-#: ../libslab/app-shell.c:879
-msgid "Other"
-msgstr "Iné"
-
-#. make open with default action
-#: ../libslab/directory-tile.c:163
-#, fuzzy
-msgid "<b>Open</b>"
-msgstr "<b>V konflikte s:</b>"
-
-#. make rename action
-#: ../libslab/directory-tile.c:182 ../libslab/document-tile.c:236
-#, fuzzy
-msgid "Rename..."
-msgstr "Preme&novať"
-
-#. make move to trash action
-#: ../libslab/directory-tile.c:195 ../libslab/document-tile.c:249
-#, fuzzy
-msgid "Move to Trash"
-msgstr "Prevody"
-
-#: ../libslab/directory-tile.c:205 ../libslab/directory-tile.c:448
-#: ../libslab/document-tile.c:259 ../libslab/document-tile.c:629
-msgid "Delete"
-msgstr "Odstrániť"
-
-#: ../libslab/directory-tile.c:225 ../libslab/directory-tile.c:234
-#: ../libslab/document-tile.c:295 ../libslab/document-tile.c:304
-#, fuzzy
-msgid "Send To..."
-msgstr "&Prepnúť na..."
-
-#: ../libslab/document-tile.c:154
-msgid "Edited %m/%d/%Y"
-msgstr ""
-
-#: ../libslab/document-tile.c:192
-#, fuzzy, c-format
-msgid "<b>Open with \"%s\"</b>"
-msgstr "<b>V konflikte s:</b>"
-
-#: ../libslab/document-tile.c:204
-msgid "Open with Default Application"
-msgstr ""
-
-#: ../libslab/document-tile.c:220
-msgid "Open in File Manager"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:909 ../libslab/eggbookmarkfile.c:1001
-#: ../libslab/eggbookmarkfile.c:1080 ../libslab/eggbookmarkfile.c:1127
-#, c-format
-msgid "Unexpected attribute '%s' for element '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:920 ../libslab/eggbookmarkfile.c:1012
-#: ../libslab/eggbookmarkfile.c:1022 ../libslab/eggbookmarkfile.c:1138
-#, c-format
-msgid "Attribute '%s' of element '%s' not found"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:1329 ../libslab/eggbookmarkfile.c:1394
-#: ../libslab/eggbookmarkfile.c:1444 ../libslab/eggbookmarkfile.c:1454
-#, c-format
-msgid "Unexpected tag '%s', tag '%s' expected"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:1354 ../libslab/eggbookmarkfile.c:1368
-#: ../libslab/eggbookmarkfile.c:1422 ../libslab/eggbookmarkfile.c:1476
-#, c-format
-msgid "Unexpected tag '%s' inside '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2187
-msgid "No valid bookmark file was be found in data dirs"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2388
-#, c-format
-msgid "A bookmark for URI '%s' already exists"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2432 ../libslab/eggbookmarkfile.c:2593
-#: ../libslab/eggbookmarkfile.c:2682 ../libslab/eggbookmarkfile.c:2763
-#: ../libslab/eggbookmarkfile.c:2848 ../libslab/eggbookmarkfile.c:2931
-#: ../libslab/eggbookmarkfile.c:3009 ../libslab/eggbookmarkfile.c:3088
-#: ../libslab/eggbookmarkfile.c:3130 ../libslab/eggbookmarkfile.c:3227
-#: ../libslab/eggbookmarkfile.c:3350 ../libslab/eggbookmarkfile.c:3540
-#: ../libslab/eggbookmarkfile.c:3616 ../libslab/eggbookmarkfile.c:3765
-#: ../libslab/eggbookmarkfile.c:3830 ../libslab/eggbookmarkfile.c:3919
-#: ../libslab/eggbookmarkfile.c:4053
-#, c-format
-msgid "No bookmark found for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2772
-#, c-format
-msgid "No MIME type defined in the bookmark for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:2857
-#, c-format
-msgid "No private flag has been defined in bookmark for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:3236
-#, c-format
-msgid "No groups set in bookmark for URI '%s'"
-msgstr ""
-
-#: ../libslab/eggbookmarkfile.c:3634 ../libslab/eggbookmarkfile.c:3775
-#, c-format
-msgid "No application with name '%s' registered a bookmark for '%s'"
-msgstr ""
-
-#: ../libslab/search-bar.c:255
-#, fuzzy
-msgid "Find Now"
-msgstr "Windows"
-
-#: ../libslab/system-tile.c:113
-#, fuzzy, c-format
-msgid "<b>Open %s</b>"
-msgstr "<b>V konflikte s:</b>"
-
-#: ../libslab/system-tile.c:126
-#, fuzzy
-msgid "Remove from System Items"
-msgstr "Odstrániť záznamy fstab"
+#: ../main-menu/etc/system-items.xbel.in.h:4
+msgid "Shutdown"
+msgstr "Vypnúť"
 
 #  frame
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-#, fuzzy
-msgid "Default menu and application browser"
-msgstr "Poradie použitia"
+#: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:1
+msgid "Run Application"
+msgstr "Spustiť aplikáciu"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:1560 ../main-menu/src/slab-window.glade.h:7
-msgid "GNOME Main Menu"
-msgstr ""
+#: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:2
+msgid "Show the \"Run Application\" dialog"
+msgstr "Zobrazuje dialógové okno „Spustiť aplikáciu“"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "GNOME Main Menu Factory"
-msgstr ""
+#: ../main-menu/src/hard-drive-status-tile.c:98
+msgid "_System Monitor"
+msgstr "_Monitor systému"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Main Menu"
-msgstr "Hlavné menu"
-
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_About"
-msgstr ""
-
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-#, fuzzy
-msgid "_Open Menu"
-msgstr "Hlavné menu"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:1
-msgid ".desktop file for the YaST2 network_devices utility"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:2
-msgid ".desktop file for the file browser"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:3
-msgid ".desktop file for the gnome-system-monitor"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:4
-msgid ".desktop file for the net config tool"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:5
-msgid ".desktop path for the application browser"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:6
-msgid "Location of the system-wide directory in which startup programs are found."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid "Location of the user directory in which startup programs are found. The dir path should not be absolute, as the value of this key is appended to this path: ~/."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid "System-wide autostart program drop dir"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated. FILE_URI is replaced with a uri corresponding to the dirname of the activated file."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the \"Send To...\" menu item is activated."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:12
-msgid "This is the command to execute when the \"Send To...\" menu item is activated. DIRNAME and BASENAME are replaced with the corresponding components of the activated tile."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:13
-msgid "This is the command to execute when the search entry is used."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:14
-msgid "This is the command to execute when the search entry is used. SEARCH_STRING is replaced with the entered search text."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:15
-msgid "User autostart program drop dir (within the home dir)"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:16
-msgid "command to uninstall packages"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:17
-msgid "command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:18
-msgid "command to upgrade packages"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:20
-msgid "contains the list (in no particular order) of allowable file tables to show in the file area. possible values: 0 - show the user-specified or \"Favorite\" applications table, 1 - show the recently used applications table, 2 - show the user-specified or \"Favorite\" documents table, 3 - show the recently used documents table, 4 - show the user-specified of \"Favorite\" directories or \"Places\" table, and 5 - show the recently used directories or \"Places\" table."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid "contains the list of files (including .desktop files) to be excluded from the \"Recently Used Applications\" and \"Recent Files\" lists"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:22
-msgid "determines the limit of items in the file-area."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:23
-msgid "determines the limit of items in the file-area. The number favorite items is not limited. This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items. If the number of favorite items exceeds max_total_items - min_recent_items than this limit is ignored."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:24
-msgid "determines the minimum number of items in the \"recent\" section of the file-area."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:25
-msgid "determines which types of files to display in the file area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:26
-msgid "if true, main menu is more anxious to close"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "if true, main menu will close under these additional conditions: tile is activated, search activated"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:28
-msgid "lock-down configuration of the file area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:29
-msgid "lock-down status for the application browser link"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:30
-msgid "lock-down status for the search area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:31
-msgid "lock-down status for the status area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:32
-msgid "lock-down status for the system area"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:33
-msgid "lock-down status for the user-specified apps section"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:34
-msgid "lock-down status for the user-specified dirs section"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:35
-msgid "lock-down status for the user-specified docs section"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:36
-msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:37
-msgid "set to true if the link to the application browser should be visible and active."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:38
-msgid "set to true if the search area should be visible and active."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:39
-msgid "set to true if the status area should be visible and active."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:40
-msgid "set to true if the system area should be visible and active."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" applications."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:42
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" directories or \"Places\"."
-msgstr ""
-
-#: ../main-menu/etc/slab.schemas.in.in.h:43
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" documents."
-msgstr ""
-
-#: ../main-menu/src/hard-drive-status-tile.c:110
-#, fuzzy
-msgid "Hard _Drive"
-msgstr "Disk"
-
-#: ../main-menu/src/hard-drive-status-tile.c:345
+#: ../main-menu/src/hard-drive-status-tile.c:205
 #, c-format
-msgid "%lluG"
-msgstr ""
+msgid "%.1fG"
+msgstr "%.1fG"
 
-#: ../main-menu/src/hard-drive-status-tile.c:347
+#: ../main-menu/src/hard-drive-status-tile.c:207
 #, c-format
-msgid "%lluM"
-msgstr ""
+msgid "%.1fM"
+msgstr "%.1fM"
 
-#: ../main-menu/src/hard-drive-status-tile.c:349
+#: ../main-menu/src/hard-drive-status-tile.c:209
 #, c-format
-msgid "%lluK"
-msgstr ""
+msgid "%.1fK"
+msgstr "%.1fK"
 
-#: ../main-menu/src/hard-drive-status-tile.c:351
+#: ../main-menu/src/hard-drive-status-tile.c:211
 #, c-format
-msgid "%llub"
-msgstr ""
+msgid "%.1fb"
+msgstr "%.1fb"
 
-#: ../main-menu/src/hard-drive-status-tile.c:372
-#, c-format
-msgid "%s Free / %s Total"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:118
-#: ../main-menu/src/main-menu-migration.c:273
-msgid "Logout"
-msgstr "Odhlásenie"
-
-#: ../main-menu/src/main-menu-migration.c:120
-#: ../main-menu/src/main-menu-migration.c:276
-#, fuzzy
-msgid "Shutdown"
-msgstr "Vypnúť počítač"
-
-#: ../main-menu/src/main-menu-migration.c:205
-#, fuzzy
-msgid "Lock Screen"
-msgstr "Zamknúť obrazovku"
-
-#: ../main-menu/src/main-menu-migration.c:207
-msgid "gnome-lockscreen"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:531
-msgid "New Spreadsheet"
-msgstr ""
-
-#: ../main-menu/src/main-menu-migration.c:536
-#, fuzzy
-msgid "New Document"
-msgstr "Moje dokumenty"
-
-#: ../main-menu/src/main-menu-ui.c:1561
-msgid "The GNOME Main Menu"
-msgstr ""
-
-#: ../main-menu/src/network-status-tile.c:91
-#, fuzzy
-msgid "Network: None"
-msgstr "Sieť:"
-
-#: ../main-menu/src/network-status-tile.c:94
-#: ../main-menu/src/network-status-tile.c:199
-#, fuzzy
-msgid "Click to configure network"
-msgstr "Vypísať nastavené položky"
-
-#: ../main-menu/src/network-status-tile.c:198
-#, fuzzy
-msgid "Networ_k: None"
-msgstr "Sieť:"
-
-#: ../main-menu/src/network-status-tile.c:207
+# DK: dal by som Domovský priečinok: %s Voľné miesto / %s
+# JK: v slovníku pre gnome je, ze Home sa neprekladá ak ide o adresár
+# PK: preco nie?
+#: ../main-menu/src/hard-drive-status-tile.c:232
 #, fuzzy, c-format
-msgid "Connected to: %s"
-msgstr "Pripojené k"
+msgid "Home: %s Free / %s"
+msgstr "Home: %s Voľné / %s"
+
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
+#: ../main-menu/src/slab-window.ui.h:1
+msgid "GNOME Main Menu"
+msgstr "Hlavná ponuka prostredia GNOME"
+
+#: ../main-menu/src/main-menu-ui.c:222
+msgid "_Open Menu"
+msgstr "_Otvoriť hlavnú ponuku"
+
+#: ../main-menu/src/main-menu-ui.c:225
+msgid "_About"
+msgstr "_O programe"
+
+#: ../main-menu/src/main-menu-ui.c:2402
+msgid "The GNOME Main Menu"
+msgstr "Hlavná ponuka prostredia GNOME"
+
+#: ../main-menu/src/network-status-tile.c:95
+msgid "Network: None"
+msgstr "Sieť: Žiadna"
+
+# label
+#: ../main-menu/src/network-status-tile.c:98
+#: ../main-menu/src/network-status-tile.c:211
+msgid "Click to configure network"
+msgstr "Kliknutím nakonfigurujte sieť"
 
 #: ../main-menu/src/network-status-tile.c:210
-#, fuzzy
-msgid "Networ_k: Wireless"
-msgstr "Sieťová adresa"
-
-#: ../main-menu/src/network-status-tile.c:215
-#, c-format
-msgid "Using ethernet (%s)"
-msgstr ""
+msgid "Networ_k: None"
+msgstr "Si_eť: Žiadna"
 
 #: ../main-menu/src/network-status-tile.c:219
-#, fuzzy
+#: ../main-menu/src/network-status-tile.c:236
+#: ../main-menu/src/network-status-tile.c:244
+#, c-format
+msgid "Connected to: %s"
+msgstr "Pripojené k: %s"
+
+#: ../main-menu/src/network-status-tile.c:222
+msgid "Networ_k: Wireless"
+msgstr "Si_eť: Bezdrôtová"
+
+#: ../main-menu/src/network-status-tile.c:227
+#, c-format
+msgid "Using ethernet (%s)"
+msgstr "Používa Ethernet (%s)"
+
+#: ../main-menu/src/network-status-tile.c:231
 msgid "Networ_k: Wired"
-msgstr "Sieťová karta"
+msgstr "Si_eť: Drôtová"
 
-#: ../main-menu/src/network-status-tile.c:320
-#, fuzzy, c-format
+#: ../main-menu/src/network-status-tile.c:239
+msgid "Networ_k: GSM"
+msgstr "Si_eť: GSM"
+
+#: ../main-menu/src/network-status-tile.c:247
+msgid "Networ_k: CDMA"
+msgstr "Si_eť: CDMA"
+
+#: ../main-menu/src/network-status-tile.c:350
+#, c-format
 msgid "Wireless Ethernet (%s)"
-msgstr "Expertné nastavenia bezdrôtového spojenia"
+msgstr "Bezdrôtový Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:325
+#: ../main-menu/src/network-status-tile.c:355
 #, c-format
 msgid "Wired Ethernet (%s)"
-msgstr ""
+msgstr "Drôtový Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:329
-#: ../main-menu/src/network-status-tile.c:339
+#: ../main-menu/src/network-status-tile.c:360
+#: ../main-menu/src/network-status-tile.c:365
+#, c-format
+msgid "Mobile Ethernet (%s)"
+msgstr "Mobilný Ethernet (%s)"
+
+# JK: stav siete, neviem či neznámy stav alebo neznáma sieť
+# DK: ak ide o stav siete, tak potom Neznámy nechaj
+#: ../main-menu/src/network-status-tile.c:369
+#: ../main-menu/src/network-status-tile.c:379
+#, c-format
 msgid "Unknown"
 msgstr "Neznámy"
 
-#: ../main-menu/src/network-status-tile.c:337
+#: ../main-menu/src/network-status-tile.c:377
 #, c-format
 msgid "%d Mb/s"
-msgstr ""
+msgstr "%d Mb/s"
 
-#  frame
-#: ../main-menu/src/slab-window.glade.h:1
-#, fuzzy
-msgid "Applications"
-msgstr "Poradie použitia"
-
-#: ../main-menu/src/slab-window.glade.h:2
+#: ../main-menu/src/slab-button.ui.h:1
 msgid "Computer"
 msgstr "Počítač"
 
-#: ../main-menu/src/slab-window.glade.h:3
-#, fuzzy
-msgid "Documents"
-msgstr "Moje dokumenty"
-
-#: ../main-menu/src/slab-window.glade.h:4
-#, fuzzy
-msgid "Favorite Applications"
-msgstr "Uložiť nastavenie"
-
-#: ../main-menu/src/slab-window.glade.h:5
-#, fuzzy
-msgid "Favorite Documents"
-msgstr "Moje dokumenty"
-
-#: ../main-menu/src/slab-window.glade.h:6
-#, fuzzy
-msgid "Favorite Places"
-msgstr "Uložiť nastavenie"
-
-#: ../main-menu/src/slab-window.glade.h:8
-#, fuzzy
-msgid "More Applications..."
-msgstr "Možnosti &LDAP..."
-
-#: ../main-menu/src/slab-window.glade.h:9
-#, fuzzy
-msgid "More Documents..."
-msgstr "Dokument"
-
-#: ../main-menu/src/slab-window.glade.h:10
-msgid "More Places..."
-msgstr ""
-
-#: ../main-menu/src/slab-window.glade.h:11
-msgid "Places"
-msgstr ""
+#: ../main-menu/src/slab-window.ui.h:2
+msgid "Search:"
+msgstr "Hľadať:"
 
 #  frame
-#: ../main-menu/src/slab-window.glade.h:12
-#, fuzzy
+#: ../main-menu/src/slab-window.ui.h:3
+msgid "Applications"
+msgstr "Aplikácie"
+
+#: ../main-menu/src/slab-window.ui.h:4
+msgid "Documents"
+msgstr "Dokumenty"
+
+#: ../main-menu/src/slab-window.ui.h:5
+msgid "Places"
+msgstr "Miesta"
+
+#: ../main-menu/src/slab-window.ui.h:6
+msgid "Favorite Applications"
+msgstr "Obľubené aplikácie"
+
+#  frame
+#: ../main-menu/src/slab-window.ui.h:7
 msgid "Recent Applications"
-msgstr "Poradie použitia"
+msgstr "Nedávne aplikácie"
 
-#: ../main-menu/src/slab-window.glade.h:13
-#, fuzzy
+#: ../main-menu/src/slab-window.ui.h:8
+msgid "More Applications..."
+msgstr "Viac aplikácií…"
+
+#: ../main-menu/src/slab-window.ui.h:9
+msgid "Favorite Documents"
+msgstr "Obľubené dokumenty"
+
+#: ../main-menu/src/slab-window.ui.h:10
 msgid "Recent Documents"
-msgstr "Dokument"
+msgstr "Nedávne dokumenty"
 
-#: ../main-menu/src/slab-window.glade.h:14
-#, fuzzy
-msgid "Search:"
-msgstr "&Hľadať:"
+#: ../main-menu/src/slab-window.ui.h:11
+msgid "More Documents..."
+msgstr "Viac dokumentov…"
 
-#: ../main-menu/src/slab-window.glade.h:15
-msgid "Status"
-msgstr "Stav"
+#: ../main-menu/src/slab-window.ui.h:12
+msgid "Favorite Places"
+msgstr "Obľúbené miesta"
 
-#: ../main-menu/src/slab-window.glade.h:16
+#: ../main-menu/src/slab-window.ui.h:13
+msgid "More Places..."
+msgstr "Viac miest…"
+
+#: ../main-menu/src/slab-window.ui.h:14
 msgid "System"
 msgstr "Systém"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
-msgid "Add the current launcher to favorites"
-msgstr ""
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
-msgid "Add the current document to favorites"
-msgstr ""
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:134
-#: ../nautilus-main-menu/nautilus-main-menu.c:139
-#, fuzzy
-msgid "Remove the current document from favorites"
-msgstr "Odstrániť záznamy fstab"
-
-#~ msgid "Software Update"
-#~ msgstr "Aktualizácia softvéru"
-
-#, fuzzy
-#~ msgid ".desktop files for \"Favorite Applications\""
-#~ msgstr "Uložiť nastavenie"
-
-#, fuzzy
-#~ msgid "Show:"
-#~ msgstr "Teraz:"
-
-#, fuzzy
-#~ msgid "Install Software"
-#~ msgstr "Inštalácia firmvéru"
-
-#, fuzzy
-#~ msgid "Log Out ..."
-#~ msgstr "Odhlásiť"
-
-#~ msgid "Search"
-#~ msgstr "Nájsť"
+#: ../main-menu/src/slab-window.ui.h:15
+msgid "Status"
+msgstr "Stav"
