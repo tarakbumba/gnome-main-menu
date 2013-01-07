@@ -3,7 +3,7 @@
 # Copyright (C) 2004 SuSE Linux AG.
 # Rade Radenkovic <rrade@tesla.rcub.bg.ac.yu>, 2004
 # Bojan Jovanovic <bojov@fon.bg.ac.yu>, 2004
-# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2013.
+# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: YaST2 (@memory@)\n"
@@ -11,7 +11,7 @@ msgstr ""
 "main-menu&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-12-13 21:21+0000\n"
 "PO-Revision-Date: 2013-01-07 12:07+0200\n"
-"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
+"Last-Translator: Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
@@ -24,193 +24,193 @@ msgstr ""
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
 #: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
-msgstr "Прегледник програма"
+msgstr "Preglednik programa"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
-msgstr "Назив датотеке постојећих „.desktop“ датотека"
+msgstr "Naziv datoteke postojećih „.desktop“ datoteka"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
-msgstr "Највећи број нових програма"
+msgstr "Najveći broj novih programa"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
 msgid ""
 "The maximum number of applications that will be displayed in the New "
 "Applications category"
 msgstr ""
-"Највећи број програма који ће бити приказани у категорији нових програма"
+"Najveći broj programa koji će biti prikazani u kategoriji novih programa"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
 msgid "Exit shell on start action performed"
-msgstr "Напушта шкољку при обављеној радњи покретања"
+msgstr "Napušta školjku pri obavljenoj radnji pokretanja"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
 msgid "Indicates whether to close the shell when a start action is performed"
-msgstr "Наводи да ли ће шкољка бити затворена када се обави радња покретања"
+msgstr "Navodi da li će školjka biti zatvorena kada se obavi radnja pokretanja"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
 msgid "Exit shell on help action performed"
-msgstr "Напушта шкољку при обављеној радњи помоћи"
+msgstr "Napušta školjku pri obavljenoj radnji pomoći"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
 msgid "Indicates whether to close the shell when a help action is performed"
-msgstr "Наводи да ли ће шкољка бити затворена када се обави радња помоћи"
+msgstr "Navodi da li će školjka biti zatvorena kada se obavi radnja pomoći"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
 msgid "Exit shell on add or remove action performed"
-msgstr "Напушта шкољку при обављеној радњи додавања или уклањања"
+msgstr "Napušta školjku pri obavljenoj radnji dodavanja ili uklanjanja"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
 msgid ""
 "Indicates whether to close the shell when an add or remove action is "
 "performed"
 msgstr ""
-"Наводи да ли ће шкољка бити затворена када се обави радња додавања или "
-"уклањања"
+"Navodi da li će školjka biti zatvorena kada se obavi radnja dodavanja ili "
+"uklanjanja"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
 msgid "Exit shell on upgrade or uninstall action performed"
-msgstr "Напушта шкољку при обављеној радњи надоградње или уклањања"
+msgstr "Napušta školjku pri obavljenoj radnji nadogradnje ili uklanjanja"
 
 #: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
 msgid ""
 "Indicates whether to close the shell when an upgrade or uninstall action is "
 "performed"
 msgstr ""
-"Наводи да ли ће шкољка бити затворена када се обави радња надоградње или "
-"уклањања"
+"Navodi da li će školjka biti zatvorena kada se obavi radnja nadogradnje ili "
+"uklanjanja"
 
 #: ../application-browser/src/application-browser.c:63
 msgid "Hide on start (useful to preload the shell)"
-msgstr "Сакриј при покретању (корисно за предучитавање шкољке)"
+msgstr "Sakrij pri pokretanju (korisno za predučitavanje školjke)"
 
 #: ../application-browser/src/application-browser.c:100
 msgid "Filter"
-msgstr "Пропусник"
+msgstr "Propusnik"
 
 #  table header
 #: ../application-browser/src/application-browser.c:100
 msgid "Groups"
-msgstr "Групе"
+msgstr "Grupe"
 
 #: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
-msgstr "Радње програма"
+msgstr "Radnje programa"
 
 #: ../caja-main-menu/caja-main-menu.c:114
 #: ../caja-main-menu/caja-main-menu.c:119
 msgid "Add to Favorites"
-msgstr "Додај у омиљене"
+msgstr "Dodaj u omiljene"
 
 #: ../caja-main-menu/caja-main-menu.c:115
 msgid "Add the current launcher to favorites"
-msgstr "Додајте текући покретач у омиљене"
+msgstr "Dodajte tekući pokretač u omiljene"
 
 #: ../caja-main-menu/caja-main-menu.c:120
 msgid "Add the current document to favorites"
-msgstr "Додајте текући документ у омиљене"
+msgstr "Dodajte tekući dokument u omiljene"
 
 #  translators: command line help text for remove action
 #: ../caja-main-menu/caja-main-menu.c:124
 #: ../caja-main-menu/caja-main-menu.c:129
 msgid "Remove from Favorites"
-msgstr "Уклони из омиљених"
+msgstr "Ukloni iz omiljenih"
 
 #  translators: command line help text for remove action
 #: ../caja-main-menu/caja-main-menu.c:125
 #: ../caja-main-menu/caja-main-menu.c:130
 msgid "Remove the current document from favorites"
-msgstr "Уклоните текући документ у омиљене"
+msgstr "Uklonite tekući dokument u omiljene"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
 msgid "command to uninstall packages"
-msgstr "наредба за уклањање пакета"
+msgstr "naredba za uklanjanje paketa"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:2
 msgid ""
 "command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
 msgstr ""
-"наредба за уклањање пакета, НАЗИВ_ПАКЕТА се замењује називом пакета у "
-"наредби"
+"naredba za uklanjanje paketa, NAZIV_PAKETA se zamenjuje nazivom paketa u "
+"naredbi"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:3
 msgid "command to upgrade packages"
-msgstr "наредба за надоградњу пакета"
+msgstr "naredba za nadogradnju paketa"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:4
 msgid ""
 "command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
 "package in the command"
 msgstr ""
-"наредба за надоградњу пакета, НАЗИВ_ПАКЕТА се замењује називом пакета у "
-"наредби"
+"naredba za nadogradnju paketa, NAZIV_PAKETA se zamenjuje nazivom paketa u "
+"naredbi"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:5
 msgid ".desktop path for the application browser"
-msgstr "„.desktop“ путања за прегледника програма"
+msgstr "„.desktop“ putanja za preglednika programa"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:6
 msgid ".desktop file for the file browser"
-msgstr "„.desktop“ датотека за прегледника датотека"
+msgstr "„.desktop“ datoteka za preglednika datoteka"
 
 #  progress stages
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
 msgid ".desktop file for the mate-system-monitor"
-msgstr "„.desktop“ датотека за мејт пратиоца система"
+msgstr "„.desktop“ datoteka za mejt pratioca sistema"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:8
 msgid ".desktop file for the net config tool"
-msgstr "„.desktop“ датотека за алат подешавања мреже"
+msgstr "„.desktop“ datoteka za alat podešavanja mreže"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:9
 msgid ".desktop file for the YaST2 network_devices utility"
-msgstr "„.desktop“ датотека за помагало ЈаСТ2 мрежног_уређаја"
+msgstr "„.desktop“ datoteka za pomagalo JaST2 mrežnog_uređaja"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:10
 msgid ".desktop file for the Network Manager editor utility"
-msgstr "„.desktop“ датотека за помагало уређивача управника мрежом"
+msgstr "„.desktop“ datoteka za pomagalo uređivača upravnika mrežom"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:11
 msgid "This is the command to execute when the search entry is used."
-msgstr "Ова наредба ће се извршити када се користи унос претраге."
+msgstr "Ova naredba će se izvršiti kada se koristi unos pretrage."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:12
 msgid ""
 "This is the command to execute when the search entry is used. SEARCH_STRING "
 "is replaced with the entered search text."
 msgstr ""
-"Ова наредба ће се извршити када се користи унос претраге. НИСКА_ПРЕТРАГЕ се "
-"замењује унетим текстом за претрагу."
+"Ova naredba će se izvršiti kada se koristi unos pretrage. NISKA_PRETRAGE se "
+"zamenjuje unetim tekstom za pretragu."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
 msgid "if true, main menu is more anxious to close"
-msgstr "ако је изабрано главни изборник тежи затварању"
+msgstr "ako je izabrano glavni izbornik teži zatvaranju"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
 msgstr ""
-"ако је изабрано, главни изборник ће се затворити под овим додатним условима: "
-"плочица је покренута, претрага је покренута"
+"ako je izabrano, glavni izbornik će se zatvoriti pod ovim dodatnim uslovima: "
+"pločica je pokrenuta, pretraga je pokrenuta"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
 msgid "determines which types of files to display in the file area"
-msgstr "одређује која врста датотека ће бити приказана у области датотеке"
+msgstr "određuje koja vrsta datoteka će biti prikazana u oblasti datoteke"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
-msgstr "могуће вредности = 0 [Програми], 1 [Документа], 2 [Пречице]"
+msgstr "moguće vrednosti = 0 [Programi], 1 [Dokumenta], 2 [Prečice]"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
 msgstr ""
-"Ова наредба ће бити извршена када се покрене ставка „Отвори у управнику "
-"датотека“."
+"Ova naredba će biti izvršena kada se pokrene stavka „Otvori u upravniku "
+"datoteka“."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
 msgid ""
@@ -218,15 +218,15 @@ msgid ""
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
 "of the activated file."
 msgstr ""
-"Ова наредба ће бити извршена када се покрене ставка „Отвори у управнику "
-"датотека“. ПУТАЊА_ДАТОТЕКЕ бива замењена путањом која одговара називу "
-"директоријума покренуте датотеке."
+"Ova naredba će biti izvršena kada se pokrene stavka „Otvori u upravniku "
+"datoteka“. PUTANJA_DATOTEKE biva zamenjena putanjom koja odgovara nazivu "
+"direktorijuma pokrenute datoteke."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
-msgstr "Ова наредба ће бити извршена када се покрене ставка „Пошаљи...“."
+msgstr "Ova naredba će biti izvršena kada se pokrene stavka „Pošalji...“."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
 msgid ""
@@ -234,13 +234,13 @@ msgid ""
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
 "components of the activated tile."
 msgstr ""
-"Ова наредба ће бити извршена када се покрене ставка „Пошаљи...“. "
-"НАЗИВ_ДИРЕКТОРИЈУМА и ОСНОВНИ_НАЗИВ бивају замењени одговарајућим састојком "
-"покренуте плочице."
+"Ova naredba će biti izvršena kada se pokrene stavka „Pošalji...“. "
+"NAZIV_DIREKTORIJUMA i OSNOVNI_NAZIV bivaju zamenjeni odgovarajućim sastojkom "
+"pokrenute pločice."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
 msgid "determines the limit of items in the file-area."
-msgstr "одређује број ставки у области датотека."
+msgstr "određuje broj stavki u oblasti datoteka."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
 msgid ""
@@ -250,107 +250,107 @@ msgid ""
 "of favorite items. If the number of favorite items exceeds max_total_items - "
 "min_recent_items then this limit is ignored."
 msgstr ""
-"одређује ограничење ставки у области датотека. Број омиљених ставки није "
-"ограничен. Ово ограничење се примењује на број скорашњих ставки, тј. број "
-"скорашњих приказаних ставки је ограничен на „max_total_items“ "
-"(највише_укупних_ставки) — број омиљених ставки. Ако број омиљених ставки "
-"премаши највише_укупних_ставки — најмање_скорашњих_ставки онда се ово "
-"ограничење занемарује."
+"određuje ograničenje stavki u oblasti datoteka. Broj omiljenih stavki nije "
+"ograničen. Ovo ograničenje se primenjuje na broj skorašnjih stavki, tj. broj "
+"skorašnjih prikazanih stavki je ograničen na „max_total_items“ "
+"(najviše_ukupnih_stavki) — broj omiljenih stavki. Ako broj omiljenih stavki "
+"premaši najviše_ukupnih_stavki — najmanje_skorašnjih_stavki onda se ovo "
+"ograničenje zanemaruje."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
-msgstr "одређује најмањи број ставки у одељку „скорашњих“ у области датотека."
+msgstr "određuje najmanji broj stavki u odeljku „skorašnjih“ u oblasti datoteka."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
-"садржи списак датотека (укључујући „.desktop“ датотеке) које ће бити "
-"искључене из спискова „Скоро коришћени програми“ и „Скорашње датотеке“"
+"sadrži spisak datoteka (uključujući „.desktop“ datoteke) koje će biti "
+"isključene iz spiskova „Skoro korišćeni programi“ i „Skorašnje datoteke“"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
 msgid "lock-down status for the application browser link"
-msgstr "закључава стање за везу прегледника програма"
+msgstr "zaključava stanje za vezu preglednika programa"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
 msgstr ""
-"изаберите ово ако веза до прегледника програма треба да буде видљива и "
-"радна."
+"izaberite ovo ako veza do preglednika programa treba da bude vidljiva i "
+"radna."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
 msgid "lock-down status for the search area"
-msgstr "закључава стање за област претраге"
+msgstr "zaključava stanje za oblast pretrage"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
 msgid "set to true if the search area should be visible and active."
-msgstr "изаберите ово ако област претраге треба да буде видљива и радна."
+msgstr "izaberite ovo ako oblast pretrage treba da bude vidljiva i radna."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
 msgid "lock-down status for the status area"
-msgstr "закључава стање за област стања"
+msgstr "zaključava stanje za oblast stanja"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
 msgid "set to true if the status area should be visible and active."
-msgstr "изаберите ово ако област стања треба да буде видљива и радна."
+msgstr "izaberite ovo ako oblast stanja treba da bude vidljiva i radna."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
 msgid "lock-down status for the system area"
-msgstr "закључава стање за област система"
+msgstr "zaključava stanje za oblast sistema"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
 msgid "set to true if the system area should be visible and active."
-msgstr "изаберите ово ако област система треба да буде видљива и радна."
+msgstr "izaberite ovo ako oblast sistema treba da bude vidljiva i radna."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
 msgid "set to true if the user is allowed to modify the list of system items."
 msgstr ""
-"изаберите ово ако је кориснику допуштено да мења списак системских ставки."
+"izaberite ovo ako je korisniku dopušteno da menja spisak sistemskih stavki."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
 msgid "lock-down status for the user-specified apps section"
-msgstr "закључава стање за одељак програма које наведе корисник"
+msgstr "zaključava stanje za odeljak programa koje navede korisnik"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
 msgstr ""
-"изаберите ово ако је кориснику допуштено да мења списак „Омиљених“ програма "
-"или оних које одреди корисник."
+"izaberite ovo ako je korisniku dopušteno da menja spisak „Omiljenih“ programa "
+"ili onih koje odredi korisnik."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
 msgid "lock-down status for the user-specified docs section"
-msgstr "закључава стање за одељак докумената које наведе корисник"
+msgstr "zaključava stanje za odeljak dokumenata koje navede korisnik"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
 msgstr ""
-"изаберите ово ако је кориснику допуштено да мења списак „Омиљених“ "
-"докумената или оних које одреди корисник."
+"izaberite ovo ako je korisniku dopušteno da menja spisak „Omiljenih“ "
+"dokumenata ili onih koje odredi korisnik."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
 msgid "lock-down status for the user-specified dirs section"
-msgstr "закључава стање за одељак директоријума које наведе корисник"
+msgstr "zaključava stanje za odeljak direktorijuma koje navede korisnik"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
 msgstr ""
-"изаберите ово ако је кориснику допуштено да мења списак „Омиљених“ "
-"директоријума или „Пречица“ или оних које одреди корисник."
+"izaberite ovo ako je korisniku dopušteno da menja spisak „Omiljenih“ "
+"direktorijuma ili „Prečica“ ili onih koje odredi korisnik."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
 msgid "lock-down configuration of the file area"
-msgstr "закључава подешавања области датотека"
+msgstr "zaključava podešavanja oblasti datoteka"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
 msgid ""
@@ -362,44 +362,44 @@ msgid ""
 "directories or \"Places\" table, and 5 - show the recently used directories "
 "or \"Places\" table."
 msgstr ""
-"садржи списак (редослед није битан) допустљивих табела датотека за приказ у "
-"области датотека. могуће вредности су: 0 — приказује табелу „Омиљених“ "
-"програма или које одреди корисник, 1 — приказује табелу скоро коришћених "
-"програма, 2 — приказује табелу „Омиљених“ докумената или које одреди "
-"корисник, 3 — приказује табелу скоро коришћених докумената, 4 — приказује "
-"табелу „Пречица“ или „Омиљених“ директоријума које одреди корисник, и 5 — "
-"приказује табелу „Пречица“ или скоро коришћених директоријума."
+"sadrži spisak (redosled nije bitan) dopustljivih tabela datoteka za prikaz u "
+"oblasti datoteka. moguće vrednosti su: 0 — prikazuje tabelu „Omiljenih“ "
+"programa ili koje odredi korisnik, 1 — prikazuje tabelu skoro korišćenih "
+"programa, 2 — prikazuje tabelu „Omiljenih“ dokumenata ili koje odredi "
+"korisnik, 3 — prikazuje tabelu skoro korišćenih dokumenata, 4 — prikazuje "
+"tabelu „Prečica“ ili „Omiljenih“ direktorijuma koje odredi korisnik, i 5 — "
+"prikazuje tabelu „Prečica“ ili skoro korišćenih direktorijuma."
 
 #  popup heading
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
-msgstr "Помоћ"
+msgstr "Pomoć"
 
 #: ../main-menu/etc/system-items.xbel.in.h:2
 msgid "Lock Screen"
-msgstr "Закључај екран"
+msgstr "Zaključaj ekran"
 
 #: ../main-menu/etc/system-items.xbel.in.h:3
 msgid "Logout"
-msgstr "Одјави се"
+msgstr "Odjavi se"
 
 #  Headline above bar graph that displays current partition size
 #  Headline above bar graph that displays current partition size
 #: ../main-menu/etc/system-items.xbel.in.h:4
 msgid "Shutdown"
-msgstr "Угаси"
+msgstr "Ugasi"
 
 #: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:1
 msgid "Run Application"
-msgstr "Покрени програм"
+msgstr "Pokreni program"
 
 #: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:2
 msgid "Show the \"Run Application\" dialog"
-msgstr "Прикажи прозорче „Покрени програм“"
+msgstr "Prikaži prozorče „Pokreni program“"
 
 #: ../main-menu/src/hard-drive-status-tile.c:98
 msgid "_System Monitor"
-msgstr "_Праћење система"
+msgstr "_Praćenje sistema"
 
 #: ../main-menu/src/hard-drive-status-tile.c:205
 #, c-format
@@ -424,92 +424,92 @@ msgstr "%.1f b"
 #: ../main-menu/src/hard-drive-status-tile.c:232
 #, c-format
 msgid "Home: %s Free / %s"
-msgstr "Лично: %s Слободно / %s"
+msgstr "Lično: %s Slobodno / %s"
 
 #: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
 #: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
-msgstr "Гномов главни изборник"
+msgstr "Gnomov glavni izbornik"
 
 #: ../main-menu/src/main-menu-ui.c:222
 msgid "_Open Menu"
-msgstr "_Отвори изборник"
+msgstr "_Otvori izbornik"
 
 #: ../main-menu/src/main-menu-ui.c:225
 msgid "_About"
-msgstr "_О програму"
+msgstr "_O programu"
 
 #: ../main-menu/src/main-menu-ui.c:2402
 msgid "The GNOME Main Menu"
-msgstr "Гномов главни изборник"
+msgstr "Gnomov glavni izbornik"
 
 #: ../main-menu/src/network-status-tile.c:95
 msgid "Network: None"
-msgstr "Мрежа: Ништа"
+msgstr "Mreža: Ništa"
 
 #  translators: help text for list subcommand (listen command line action)
 #: ../main-menu/src/network-status-tile.c:98
 #: ../main-menu/src/network-status-tile.c:211
 msgid "Click to configure network"
-msgstr "Кликните да подесите мрежу"
+msgstr "Kliknite da podesite mrežu"
 
 #: ../main-menu/src/network-status-tile.c:210
 msgid "Networ_k: None"
-msgstr "_Мрежа: Ништа"
+msgstr "_Mreža: Ništa"
 
 #: ../main-menu/src/network-status-tile.c:219
 #: ../main-menu/src/network-status-tile.c:236
 #: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
-msgstr "Повезани сте на: %s"
+msgstr "Povezani ste na: %s"
 
 #  table header
 #: ../main-menu/src/network-status-tile.c:222
 msgid "Networ_k: Wireless"
-msgstr "_Мрежа: Бежична"
+msgstr "_Mreža: Bežična"
 
 #: ../main-menu/src/network-status-tile.c:227
 #, c-format
 msgid "Using ethernet (%s)"
-msgstr "Користим етернет (%s)"
+msgstr "Koristim eternet (%s)"
 
 #  Selection box item
 #: ../main-menu/src/network-status-tile.c:231
 msgid "Networ_k: Wired"
-msgstr "_Мрежа: Жична"
+msgstr "_Mreža: Žična"
 
 #: ../main-menu/src/network-status-tile.c:239
 msgid "Networ_k: GSM"
-msgstr "_Мрежа: ГСМ"
+msgstr "_Mreža: GSM"
 
 #: ../main-menu/src/network-status-tile.c:247
 msgid "Networ_k: CDMA"
-msgstr "_Мрежа: ЦДМА"
+msgstr "_Mreža: CDMA"
 
 #  Wireless expert dialog caption
 #: ../main-menu/src/network-status-tile.c:350
 #, c-format
 msgid "Wireless Ethernet (%s)"
-msgstr "Бежични етернет (%s)"
+msgstr "Bežični eternet (%s)"
 
 #: ../main-menu/src/network-status-tile.c:355
 #, c-format
 msgid "Wired Ethernet (%s)"
-msgstr "Жични етернет (%s)"
+msgstr "Žični eternet (%s)"
 
 #  Wireless expert dialog caption
 #: ../main-menu/src/network-status-tile.c:360
 #: ../main-menu/src/network-status-tile.c:365
 #, c-format
 msgid "Mobile Ethernet (%s)"
-msgstr "Преносни етернет (%s)"
+msgstr "Prenosni eternet (%s)"
 
 #: ../main-menu/src/network-status-tile.c:369
 #: ../main-menu/src/network-status-tile.c:379
 #, c-format
 msgid "Unknown"
-msgstr "Непознато"
+msgstr "Nepoznato"
 
 #: ../main-menu/src/network-status-tile.c:377
 #, c-format
@@ -518,68 +518,68 @@ msgstr "%d Mb/s"
 
 #: ../main-menu/src/slab-button.ui.h:1
 msgid "Computer"
-msgstr "Рачунар"
+msgstr "Računar"
 
 #: ../main-menu/src/slab-window.ui.h:2
 msgid "Search:"
-msgstr "Потражи:"
+msgstr "Potraži:"
 
 #: ../main-menu/src/slab-window.ui.h:3
 msgid "Applications"
-msgstr "Програми"
+msgstr "Programi"
 
 #: ../main-menu/src/slab-window.ui.h:4
 msgid "Documents"
-msgstr "Документа"
+msgstr "Dokumenta"
 
 #: ../main-menu/src/slab-window.ui.h:5
 msgid "Places"
-msgstr "Пречице"
+msgstr "Prečice"
 
 #  progress stages
 #: ../main-menu/src/slab-window.ui.h:6
 msgid "Favorite Applications"
-msgstr "Омиљени програми"
+msgstr "Omiljeni programi"
 
 #: ../main-menu/src/slab-window.ui.h:7
 msgid "Recent Applications"
-msgstr "Скорашњи програми"
+msgstr "Skorašnji programi"
 
 #  Menu Buton label
 #  Menu Buton label
 #: ../main-menu/src/slab-window.ui.h:8
 msgid "More Applications..."
-msgstr "Још програма..."
+msgstr "Još programa..."
 
 #: ../main-menu/src/slab-window.ui.h:9
 msgid "Favorite Documents"
-msgstr "Омиљени документи"
+msgstr "Omiljeni dokumenti"
 
 #: ../main-menu/src/slab-window.ui.h:10
 msgid "Recent Documents"
-msgstr "Скорашњи документи"
+msgstr "Skorašnji dokumenti"
 
 #: ../main-menu/src/slab-window.ui.h:11
 msgid "More Documents..."
-msgstr "Још докумената..."
+msgstr "Još dokumenata..."
 
 #  progress stages
 #: ../main-menu/src/slab-window.ui.h:12
 msgid "Favorite Places"
-msgstr "Омиљене пречице"
+msgstr "Omiljene prečice"
 
 #: ../main-menu/src/slab-window.ui.h:13
 msgid "More Places..."
-msgstr "Још пречица..."
+msgstr "Još prečica..."
 
 #: ../main-menu/src/slab-window.ui.h:14
 msgid "System"
-msgstr "Систем"
+msgstr "Sistem"
 
 #  table header: module status
 #: ../main-menu/src/slab-window.ui.h:15
 msgid "Status"
-msgstr "Стање"
+msgstr "Stanje"
 
 #, fuzzy
 #~ msgid "New Applications"
