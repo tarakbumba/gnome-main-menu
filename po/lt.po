@@ -5,74 +5,39 @@
 # Jonas Gocentas <jonasgocentas@florida.usa.com>, 2001.
 # Linas Spraunius <lsprauni@radio.lt>, 2000.
 # Algimantas Margevičius <gymka@mail.ru>, 2011.
+# Aurimas Černius <aurisc4@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: YaST (@memory@)\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-28 14:33+0000\n"
-"PO-Revision-Date: 2011-10-09 08:45+0300\n"
-"Last-Translator: Algimantas Margevičius <gymka@mail.ru>\n"
-"Language-Team: Lietuvių <>\n"
+"POT-Creation-Date: 2012-12-13 21:21+0000\n"
+"PO-Revision-Date: 2013-01-29 22:58+0200\n"
+"Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
+"Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bits\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%"
-"100<10 || n%100>=20) ? 1 : 2)\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
+"%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:100
+#: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
 msgstr "Programų naršyklė"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:1
-msgid "Exit shell on add or remove action performed"
-msgstr "Išeiti iš apvalkalo įvykdžius pridėjimo ar pašalinimo veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:2
-msgid "Exit shell on help action performed"
-msgstr "Išeiti iš apvalkalo įvykdžius pagalbos veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:3
-msgid "Exit shell on start action performed"
-msgstr "Išeiti iš apvalkalo įvykdžius paleidimo veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:4
-msgid "Exit shell on upgrade or uninstall action performed"
-msgstr "Išeiti iš apvalkalo įvykdžius naujinimo arba išinstaliavimo veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:5
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
 msgstr "Esamų .desktop failų vardai"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:6
-msgid "Indicates whether to close the shell when a help action is performed"
-msgstr "Nurodo, ar užverti apvalkalą įvykdžius pagalbos veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:7
-msgid "Indicates whether to close the shell when a start action is performed"
-msgstr "Nurodo, ar užverti apvalkalą įvykdžius paleidimo veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:8
-msgid ""
-"Indicates whether to close the shell when an add or remove action is "
-"performed"
-msgstr ""
-"Nurodo, ar užverti apvalkalą įvykdžius pridėjimo arba pašalinimo veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:9
-msgid ""
-"Indicates whether to close the shell when an upgrade or uninstall action is "
-"performed"
-msgstr ""
-"Nurodo, ar užverti apvalkalą įvykdžius naujinimo arba išinstaliavimo veiksmą"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:10
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
 msgstr "Didžiausias naujų programų skaičius"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:11
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
 msgid ""
 "The maximum number of applications that will be displayed in the New "
 "Applications category"
@@ -80,84 +45,172 @@ msgstr ""
 "Didžiausias programų, kurios bus rodomos Naujų programų kategorijoje, "
 "skaičius"
 
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
+msgid "Exit shell on start action performed"
+msgstr "Išeiti iš apvalkalo įvykdžius paleidimo veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
+msgid "Indicates whether to close the shell when a start action is performed"
+msgstr "Nurodo, ar užverti apvalkalą įvykdžius paleidimo veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
+msgid "Exit shell on help action performed"
+msgstr "Išeiti iš apvalkalo įvykdžius pagalbos veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
+msgid "Indicates whether to close the shell when a help action is performed"
+msgstr "Nurodo, ar užverti apvalkalą įvykdžius pagalbos veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
+msgid "Exit shell on add or remove action performed"
+msgstr "Išeiti iš apvalkalo įvykdžius pridėjimo ar pašalinimo veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
+msgstr ""
+"Nurodo, ar užverti apvalkalą įvykdžius pridėjimo arba pašalinimo veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
+msgid "Exit shell on upgrade or uninstall action performed"
+msgstr "Išeiti iš apvalkalo įvykdžius naujinimo arba išinstaliavimo veiksmą"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
+msgid ""
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
+msgstr ""
+"Nurodo, ar užverti apvalkalą įvykdžius naujinimo arba išinstaliavimo veiksmą"
+
 #: ../application-browser/src/application-browser.c:63
 msgid "Hide on start (useful to preload the shell)"
 msgstr "Slėpti paleidžiant (naudinga iš anksto pakrauti apvalkalą)"
 
-#: ../application-browser/src/application-browser.c:93
-msgid "New Applications"
-msgstr "Naujos programos"
-
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Filter"
 msgstr "Filtras"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Groups"
 msgstr "Grupės"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
 msgstr "Programų veiksmai"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-msgid "Default menu and application browser"
-msgstr "Numatytoji meniu ir programų naršyklė"
+#: ../caja-main-menu/caja-main-menu.c:114
+#: ../caja-main-menu/caja-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Į&traukti į mėgiamus"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2423 ../main-menu/src/main-menu.c:66
-#: ../main-menu/src/slab-window.ui.h:6
-msgid "GNOME Main Menu"
-msgstr "GNOME pagrindinis meniu"
+#: ../caja-main-menu/caja-main-menu.c:115
+msgid "Add the current launcher to favorites"
+msgstr "Pridėti leistuką į mėgiamus"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "GNOME Main Menu Factory"
-msgstr "GNOME pagrindinio meniu gamykla"
+#: ../caja-main-menu/caja-main-menu.c:120
+msgid "Add the current document to favorites"
+msgstr "Pridėti dokumentą į mėgiamus"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Main Menu"
-msgstr "Pagrindinis meniu"
+#: ../caja-main-menu/caja-main-menu.c:124
+#: ../caja-main-menu/caja-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Pašalinti iš mėgiamų"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_About"
-msgstr "_Apie"
+#: ../caja-main-menu/caja-main-menu.c:125
+#: ../caja-main-menu/caja-main-menu.c:130
+msgid "Remove the current document from favorites"
+msgstr "Pašalinti dokumentą iš mėgiamų"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_Open Menu"
-msgstr "_Atverti meniu"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
+msgid "command to uninstall packages"
+msgstr "komanda paketų išinstaliavimui"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:1
-msgid ".desktop file for the Network Manager editor utility"
-msgstr ".desktop failas Network Manager redagavimo įrankiui"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:2
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"komanda paketų išinstaliavimui, PACKAGE_NAME komandoje pakeičiama paketo "
+"pavadinimu"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:2
-msgid ".desktop file for the YaST2 network_devices utility"
-msgstr ".desktop failas YaST2 network_devices įrankiui"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:3
+msgid "command to upgrade packages"
+msgstr "komanda paketų atnaujinimui"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:3
-msgid ".desktop file for the file browser"
-msgstr ".desktop failas failų naršyklei"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:4
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"komanda paketų atnaujinimui, PACKAGE_NAME komandoje pakeičiama paketo "
+"pavadinimu"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:4
-msgid ".desktop file for the gnome-system-monitor"
-msgstr ".desktop failas programai gnome-system-monitor"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:5
-msgid ".desktop file for the net config tool"
-msgstr ".desktop failas tinklo konfigūravimo įrankiui"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:6
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:5
 msgid ".desktop path for the application browser"
 msgstr ".desktop kelias programų naršyklei"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:7
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:6
+msgid ".desktop file for the file browser"
+msgstr ".desktop failas failų naršyklei"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
+#| msgid ".desktop file for the gnome-system-monitor"
+msgid ".desktop file for the mate-system-monitor"
+msgstr ".desktop failas programai mate-system-monitor"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:8
+msgid ".desktop file for the net config tool"
+msgstr ".desktop failas tinklo konfigūravimo įrankiui"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:9
+msgid ".desktop file for the YaST2 network_devices utility"
+msgstr ".desktop failas YaST2 network_devices įrankiui"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:10
+msgid ".desktop file for the Network Manager editor utility"
+msgstr ".desktop failas Network Manager redagavimo įrankiui"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:11
+msgid "This is the command to execute when the search entry is used."
+msgstr "Ši komanda įvykdoma kai naudojamas paieškos laukas."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:12
+msgid ""
+"This is the command to execute when the search entry is used. SEARCH_STRING "
+"is replaced with the entered search text."
+msgstr ""
+"Ši komanda įvykdoma kai naudojamas paieškos laukas. SEARCH_STRING pakeičiama "
+"įvestu paieškos tekstu."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
+msgid "if true, main menu is more anxious to close"
+msgstr "jei teigiamas, pagrindinis meniu sparčiau užsiveria"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
+msgstr ""
+"jei teigiama, pagrindinis meniu užsivers prie šių papildomų sąlygų: "
+"aktyvuojamas pavadinimas, aktyvuojama paieška"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
+msgid "determines which types of files to display in the file area"
+msgstr "nusako, kokio tipo failus rodyti failų srityje"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
+msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
+msgstr "galimos reikšmės = 0 [Programos], 1 [Dokumentai], 2 [Vietos]"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
 msgstr ""
 "Ši komanda, įvykdoma pasirinkus meniu punktą „Atverti failų naršyklėje“."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:8
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -166,13 +219,13 @@ msgstr ""
 "Ši komanda, įvykdoma pasirinkus meniu punktą „Atverti failų naršyklėje“. "
 "FILE_URI yra pakeičiamas uri atitinkančiu pasirinkto failo katalogą."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:9
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
 msgstr "Ši komanda įvykdoma pasirinkus meniu punktą „Siųsti...“."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:10
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -181,43 +234,121 @@ msgstr ""
 "Ši komanda įvykdoma pasirinkus meniu punktą „Siųsti...“. DIRNAME ir BASENAME "
 "pakeičiami atitinkamais pasirinkto failo komponentais."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the search entry is used."
-msgstr "Ši komanda įvykdoma kai naudojamas paieškos laukas."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
+msgid "determines the limit of items in the file-area."
+msgstr "nustato elementų kiekį failų skiltyje."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:12
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
 msgid ""
-"This is the command to execute when the search entry is used. SEARCH_STRING "
-"is replaced with the entered search text."
+"determines the limit of items in the file-area. The number of favorite items "
+"is not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items then this limit is ignored."
 msgstr ""
-"Ši komanda įvykdoma kai naudojamas paieškos laukas. SEARCH_STRING pakeičiama "
-"įvestu paieškos tekstu."
+"nustato elementų kiekį failų skiltyje. Mėgiamiausių elementų kiekis "
+"neribojamas. Šis ribojimas taikomas neseniai naudotiems elementams, pvz. "
+"rodomų neseniai naudotų elementų skaičius ribojamas iki max_total_items - "
+"mėgiamiausių elementų skaičius. Jei mėgiamiausių elementų skaičius viršija "
+"max_total_items - min_recent_items, tuomet šis ribojimas yra nepaisomas."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:13
-msgid "command to uninstall packages"
-msgstr "komanda paketų išinstaliavimui"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:14
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
 msgid ""
-"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
-"package in the command"
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
 msgstr ""
-"komanda paketų išinstaliavimui, PACKAGE_NAME komandoje pakeičiama paketo "
-"pavadinimu"
+"nusako mažiausią elementų skaičių failų srities „neseniai naudotų“sekcijoje."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:15
-msgid "command to upgrade packages"
-msgstr "komanda paketų atnaujinimui"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:16
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
 msgid ""
-"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
-"package in the command"
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
-"komanda paketų atnaujinimui, PACKAGE_NAME komandoje pakeičiama paketo "
-"pavadinimu"
+"turi failų sąrašą (įskaitant .desktop failus), vykdomus iš sąrašų „Neseniai "
+"naudotos programos“ ir „Neseniai naudoti failai“"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:17
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
+msgid "lock-down status for the application browser link"
+msgstr "rakinti programų naršyklės saitą"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
+msgstr ""
+"nustatyti teigiamą, jei saitas į programų naršyklę turi būti matomas ir "
+"aktyvus."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
+msgid "lock-down status for the search area"
+msgstr "rakinti paieškos lauką"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
+msgid "set to true if the search area should be visible and active."
+msgstr "nustatyti teigiamą, jei paieškos laukas turi būti matomas ir aktyvus."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
+msgid "lock-down status for the status area"
+msgstr "rakinti būsenos lauką"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
+msgid "set to true if the status area should be visible and active."
+msgstr "nustatyti teigiamą, jei būsenos sritis turi būti matoma ir aktyvi."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
+msgid "lock-down status for the system area"
+msgstr "rakinti sistemos sritį"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
+msgid "set to true if the system area should be visible and active."
+msgstr "nustatyti teigiamą, jei sistemos sritis turi būti matoma ir aktyvi."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
+msgid "set to true if the user is allowed to modify the list of system items."
+msgstr ""
+"nustatyti teigiamą, jei naudotojui leidžiama keisti sistemos elementų sąrašą."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
+msgid "lock-down status for the user-specified apps section"
+msgstr "rakinti naudotojo nurodytų programų sekciją"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
+msgstr ""
+"nustatyti teigiamą, jei naudotojui leidžiama keisti naudotojų nurodytų "
+"„Mėgiamiausių“ programų sąrašą."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
+msgid "lock-down status for the user-specified docs section"
+msgstr "rakinti naudotojo nurodytų dokumentų sekciją"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
+msgstr ""
+"nustatyti teigiamą jei naudotojui leidžiama keisti naudotojų nurodytų "
+"„Mėgiamiausių“ dokumentų sąrašą."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
+msgid "lock-down status for the user-specified dirs section"
+msgstr "rakinti naudotojo nurodytų katalogų sekciją"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
+msgstr ""
+"nustatyti teigiamą, jei naudotojui leidžiama keisti naudotojų nurodytų "
+"„Mėgiamiausių“ katalogų arba „Vietų“ sąrašus."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
+msgid "lock-down configuration of the file area"
+msgstr "rakinti failų srities nustatymus"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
 msgid ""
 "contains the list (in no particular order) of allowable file tables to show "
 "in the file area. possible values: 0 - show the user-specified or \"Favorite"
@@ -235,139 +366,21 @@ msgstr ""
 "lentelę „Vietos“ ir 5 - rodyti neseniai naudotus katalogus arba lentelę "
 "„Vietos“."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:18
-msgid ""
-"contains the list of files (including .desktop files) to be excluded from "
-"the \"Recently Used Applications\" and \"Recent Files\" lists"
-msgstr ""
-"turi failų sąrašą (įskaitant .desktop failus), vykdomus iš sąrašų „Neseniai "
-"naudotos programos“ ir „Neseniai naudoti failai“"
+#: ../main-menu/etc/system-items.xbel.in.h:1
+msgid "Help"
+msgstr "Pagalba"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "determines the limit of items in the file-area."
-msgstr "nustato elementų kiekį failų skiltyje."
+#: ../main-menu/etc/system-items.xbel.in.h:2
+msgid "Lock Screen"
+msgstr "Užrakinti ekraną"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:20
-msgid ""
-"determines the limit of items in the file-area. The number of favorite items "
-"is not limited. This limit applies to the number of recent items, i.e. the "
-"number of recent items displayed is limited to max_total_items - the number "
-"of favorite items. If the number of favorite items exceeds max_total_items - "
-"min_recent_items then this limit is ignored."
-msgstr ""
-"nustato elementų kiekį failų skiltyje. Mėgiamiausių elementų kiekis "
-"neribojamas. Šis ribojimas taikomas neseniai naudotiems elementams, pvz. "
-"rodomų neseniai naudotų elementų skaičius ribojamas iki max_total_items - "
-"mėgiamiausių elementų skaičius. Jei mėgiamiausių elementų skaičius viršija "
-"max_total_items - min_recent_items, tuomet šis ribojimas yra nepaisomas."
+#: ../main-menu/etc/system-items.xbel.in.h:3
+msgid "Logout"
+msgstr "Išsiregistruoti"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid ""
-"determines the minimum number of items in the \"recent\" section of the file-"
-"area."
-msgstr ""
-"nusako mažiausią elementų skaičių failų srities „neseniai naudotų“sekcijoje."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:22
-msgid "determines which types of files to display in the file area"
-msgstr "nusako, kokio tipo failus rodyti failų srityje"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:23
-msgid "if true, main menu is more anxious to close"
-msgstr "jei teigiamas, pagrindinis meniu sparčiau užsiveria"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:24
-msgid ""
-"if true, main menu will close under these additional conditions: tile is "
-"activated, search activated"
-msgstr ""
-"jei teigiama, pagrindinis meniu užsivers prie šių papildomų sąlygų: "
-"aktyvuojamas pavadinimas, aktyvuojama paieška"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:25
-msgid "lock-down configuration of the file area"
-msgstr "rakinti failų srities nustatymus"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:26
-msgid "lock-down status for the application browser link"
-msgstr "rakinti programų naršyklės saitą"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "lock-down status for the search area"
-msgstr "rakinti paieškos lauką"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:28
-msgid "lock-down status for the status area"
-msgstr "rakinti būsenos lauką"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:29
-msgid "lock-down status for the system area"
-msgstr "rakinti sistemos sritį"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:30
-msgid "lock-down status for the user-specified apps section"
-msgstr "rakinti naudotojo nurodytų programų sekciją"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:31
-msgid "lock-down status for the user-specified dirs section"
-msgstr "rakinti naudotojo nurodytų katalogų sekciją"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:32
-msgid "lock-down status for the user-specified docs section"
-msgstr "rakinti naudotojo nurodytų dokumentų sekciją"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:33
-msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
-msgstr "galimos reikšmės = 0 [Programos], 1 [Dokumentai], 2 [Vietos]"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:34
-msgid ""
-"set to true if the link to the application browser should be visible and "
-"active."
-msgstr ""
-"nustatyti teigiamą, jei saitas į programų naršyklę turi būti matomas ir "
-"aktyvus."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:35
-msgid "set to true if the search area should be visible and active."
-msgstr "nustatyti teigiamą, jei paieškos laukas turi būti matomas ir aktyvus."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:36
-msgid "set to true if the status area should be visible and active."
-msgstr "nustatyti teigiamą, jei būsenos sritis turi būti matoma ir aktyvi."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:37
-msgid "set to true if the system area should be visible and active."
-msgstr "nustatyti teigiamą, jei sistemos sritis turi būti matoma ir aktyvi."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:38
-msgid "set to true if the user is allowed to modify the list of system items."
-msgstr ""
-"nustatyti teigiamą, jei naudotojui leidžiama keisti sistemos elementų sąrašą."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:39
-msgid ""
-"set to true if the user is allowed to modify the list of user-specified or "
-"\"Favorite\" applications."
-msgstr ""
-"nustatyti teigiamą, jei naudotojui leidžiama keisti naudotojų nurodytų "
-"„Mėgiamiausių“ programų sąrašą."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:40
-msgid ""
-"set to true if the user is allowed to modify the list of user-specified or "
-"\"Favorite\" directories or \"Places\"."
-msgstr ""
-"nustatyti teigiamą, jei naudotojui leidžiama keisti naudotojų nurodytų "
-"„Mėgiamiausių“ katalogų arba „Vietų“ sąrašus."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid ""
-"set to true if the user is allowed to modify the list of user-specified or "
-"\"Favorite\" documents."
-msgstr ""
-"nustatyti teigiamą jei naudotojui leidžiama keisti naudotojų nurodytų "
-"„Mėgiamiausių“ dokumentų sąrašą."
+#: ../main-menu/etc/system-items.xbel.in.h:4
+msgid "Shutdown"
+msgstr "Išjungti"
 
 #: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:1
 msgid "Run Application"
@@ -377,126 +390,116 @@ msgstr "Paleisti programą"
 msgid "Show the \"Run Application\" dialog"
 msgstr "Rodyti dialogą „Paleisti programą“"
 
-#: ../main-menu/src/hard-drive-status-tile.c:99
+#: ../main-menu/src/hard-drive-status-tile.c:98
 msgid "_System Monitor"
 msgstr "_Sistemos stebyklė"
 
-#: ../main-menu/src/hard-drive-status-tile.c:212
+#: ../main-menu/src/hard-drive-status-tile.c:205
 #, c-format
 msgid "%.1fG"
 msgstr "%.1fG"
 
-#: ../main-menu/src/hard-drive-status-tile.c:214
+#: ../main-menu/src/hard-drive-status-tile.c:207
 #, c-format
 msgid "%.1fM"
 msgstr "%.1fM"
 
-#: ../main-menu/src/hard-drive-status-tile.c:216
+#: ../main-menu/src/hard-drive-status-tile.c:209
 #, c-format
 msgid "%.1fK"
 msgstr "%.1fK"
 
-#: ../main-menu/src/hard-drive-status-tile.c:218
+#: ../main-menu/src/hard-drive-status-tile.c:211
 #, c-format
 msgid "%.1fb"
 msgstr "%.1fb"
 
-#: ../main-menu/src/hard-drive-status-tile.c:239
+#: ../main-menu/src/hard-drive-status-tile.c:232
 #, c-format
 msgid "Home: %s Free / %s"
 msgstr "Namų aplankas: %s Laisva / %s"
 
-#: ../main-menu/src/main-menu-migration.c:126
-#: ../main-menu/src/main-menu-migration.c:248
-#: ../main-menu/etc/system-items.xbel.in.h:1
-msgid "Help"
-msgstr "Pagalba"
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
+#: ../main-menu/src/slab-window.ui.h:1
+msgid "GNOME Main Menu"
+msgstr "GNOME pagrindinis meniu"
 
-#: ../main-menu/src/main-menu-migration.c:130
-#: ../main-menu/src/main-menu-migration.c:250
-#: ../main-menu/etc/system-items.xbel.in.h:3
-msgid "Logout"
-msgstr "Išsiregistruoti"
+#: ../main-menu/src/main-menu-ui.c:222
+msgid "_Open Menu"
+msgstr "_Atverti meniu"
 
-#: ../main-menu/src/main-menu-migration.c:134
-#: ../main-menu/src/main-menu-migration.c:252
-#: ../main-menu/etc/system-items.xbel.in.h:4
-msgid "Shutdown"
-msgstr "Išjungti"
+#: ../main-menu/src/main-menu-ui.c:225
+msgid "_About"
+msgstr "_Apie"
 
-#: ../main-menu/src/main-menu-migration.c:192
-#: ../main-menu/etc/system-items.xbel.in.h:2
-msgid "Lock Screen"
-msgstr "Užrakinti ekraną"
-
-#: ../main-menu/src/main-menu-ui.c:2424
+#: ../main-menu/src/main-menu-ui.c:2402
 msgid "The GNOME Main Menu"
 msgstr "GNOME pagrindinis meniu"
 
-#: ../main-menu/src/network-status-tile.c:89
+#: ../main-menu/src/network-status-tile.c:95
 msgid "Network: None"
 msgstr "Tinklas: jokio"
 
-#: ../main-menu/src/network-status-tile.c:92
-#: ../main-menu/src/network-status-tile.c:205
+#: ../main-menu/src/network-status-tile.c:98
+#: ../main-menu/src/network-status-tile.c:211
 msgid "Click to configure network"
 msgstr "Spausk tinklo konfigūravimui"
 
-#: ../main-menu/src/network-status-tile.c:204
+#: ../main-menu/src/network-status-tile.c:210
 msgid "Networ_k: None"
 msgstr "Tin_klas: jokio"
 
-#: ../main-menu/src/network-status-tile.c:213
-#: ../main-menu/src/network-status-tile.c:230
-#: ../main-menu/src/network-status-tile.c:238
+#: ../main-menu/src/network-status-tile.c:219
+#: ../main-menu/src/network-status-tile.c:236
+#: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
 msgstr "Prijungtas prie: %s"
 
-#: ../main-menu/src/network-status-tile.c:216
+#: ../main-menu/src/network-status-tile.c:222
 msgid "Networ_k: Wireless"
 msgstr "Tin_klas: belaidis"
 
-#: ../main-menu/src/network-status-tile.c:221
+#: ../main-menu/src/network-status-tile.c:227
 #, c-format
 msgid "Using ethernet (%s)"
 msgstr "Naudojamas ethernet tinklas (%s)"
 
-#: ../main-menu/src/network-status-tile.c:225
+#: ../main-menu/src/network-status-tile.c:231
 msgid "Networ_k: Wired"
 msgstr "Tin_klas: laidinis"
 
-#: ../main-menu/src/network-status-tile.c:233
+#: ../main-menu/src/network-status-tile.c:239
 msgid "Networ_k: GSM"
 msgstr "Tin_klas: GSM"
 
-#: ../main-menu/src/network-status-tile.c:241
+#: ../main-menu/src/network-status-tile.c:247
 msgid "Networ_k: CDMA"
 msgstr "Tin_klas: CDMA"
 
-#: ../main-menu/src/network-status-tile.c:344
+#: ../main-menu/src/network-status-tile.c:350
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Belaidis tinklas (%s)"
 
-#: ../main-menu/src/network-status-tile.c:349
+#: ../main-menu/src/network-status-tile.c:355
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Laidinis tinklas (%s)"
 
-#: ../main-menu/src/network-status-tile.c:354
-#: ../main-menu/src/network-status-tile.c:359
+#: ../main-menu/src/network-status-tile.c:360
+#: ../main-menu/src/network-status-tile.c:365
 #, c-format
 msgid "Mobile Ethernet (%s)"
 msgstr "Mobilus tinklas (%s)"
 
-#: ../main-menu/src/network-status-tile.c:363
-#: ../main-menu/src/network-status-tile.c:373
+#: ../main-menu/src/network-status-tile.c:369
+#: ../main-menu/src/network-status-tile.c:379
 #, c-format
 msgid "Unknown"
 msgstr "Nežinoma"
 
-#: ../main-menu/src/network-status-tile.c:371
+#: ../main-menu/src/network-status-tile.c:377
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
@@ -505,84 +508,73 @@ msgstr "%d Mb/s"
 msgid "Computer"
 msgstr "Kompiuteris"
 
-#: ../main-menu/src/slab-window.ui.h:1
-msgid "Applications"
-msgstr "Programos"
-
 #: ../main-menu/src/slab-window.ui.h:2
-msgid "Documents"
-msgstr "Dokumentai"
-
-#: ../main-menu/src/slab-window.ui.h:3
-msgid "Favorite Applications"
-msgstr "Mėgstamiausios programos"
-
-#: ../main-menu/src/slab-window.ui.h:4
-msgid "Favorite Documents"
-msgstr "Mėgiami dokumentai"
-
-#: ../main-menu/src/slab-window.ui.h:5
-msgid "Favorite Places"
-msgstr "Mėgiamos vietos"
-
-#: ../main-menu/src/slab-window.ui.h:7
-msgid "More Applications..."
-msgstr "Daugiau programų"
-
-#: ../main-menu/src/slab-window.ui.h:8
-msgid "More Documents..."
-msgstr "Daugiau dokumentų..."
-
-#: ../main-menu/src/slab-window.ui.h:9
-msgid "More Places..."
-msgstr "Daugiau vietų..."
-
-#: ../main-menu/src/slab-window.ui.h:10
-msgid "Places"
-msgstr "Vietos"
-
-#: ../main-menu/src/slab-window.ui.h:11
-msgid "Recent Applications"
-msgstr "Neseniai naudotos programos"
-
-#: ../main-menu/src/slab-window.ui.h:12
-msgid "Recent Documents"
-msgstr "Neseni dokumentai"
-
-#: ../main-menu/src/slab-window.ui.h:13
 msgid "Search:"
 msgstr "Ieškoti:"
 
-#: ../main-menu/src/slab-window.ui.h:14
-msgid "Status"
-msgstr "Būsena"
+#: ../main-menu/src/slab-window.ui.h:3
+msgid "Applications"
+msgstr "Programos"
 
-#: ../main-menu/src/slab-window.ui.h:15
+#: ../main-menu/src/slab-window.ui.h:4
+msgid "Documents"
+msgstr "Dokumentai"
+
+#: ../main-menu/src/slab-window.ui.h:5
+msgid "Places"
+msgstr "Vietos"
+
+#: ../main-menu/src/slab-window.ui.h:6
+msgid "Favorite Applications"
+msgstr "Mėgstamiausios programos"
+
+#: ../main-menu/src/slab-window.ui.h:7
+msgid "Recent Applications"
+msgstr "Neseniai naudotos programos"
+
+#: ../main-menu/src/slab-window.ui.h:8
+msgid "More Applications..."
+msgstr "Daugiau programų"
+
+#: ../main-menu/src/slab-window.ui.h:9
+msgid "Favorite Documents"
+msgstr "Mėgiami dokumentai"
+
+#: ../main-menu/src/slab-window.ui.h:10
+msgid "Recent Documents"
+msgstr "Neseni dokumentai"
+
+#: ../main-menu/src/slab-window.ui.h:11
+msgid "More Documents..."
+msgstr "Daugiau dokumentų..."
+
+#: ../main-menu/src/slab-window.ui.h:12
+msgid "Favorite Places"
+msgstr "Mėgiamos vietos"
+
+#: ../main-menu/src/slab-window.ui.h:13
+msgid "More Places..."
+msgstr "Daugiau vietų..."
+
+#: ../main-menu/src/slab-window.ui.h:14
 msgid "System"
 msgstr "Sistema"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:114
-#: ../nautilus-main-menu/nautilus-main-menu.c:119
-msgid "Add to Favorites"
-msgstr "Į&traukti į mėgiamus"
+#: ../main-menu/src/slab-window.ui.h:15
+msgid "Status"
+msgstr "Būsena"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:115
-msgid "Add the current launcher to favorites"
-msgstr "Pridėti leistuką į mėgiamus"
+#~ msgid "New Applications"
+#~ msgstr "Naujos programos"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:120
-msgid "Add the current document to favorites"
-msgstr "Pridėti dokumentą į mėgiamus"
+#~ msgid "Default menu and application browser"
+#~ msgstr "Numatytoji meniu ir programų naršyklė"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
-msgid "Remove from Favorites"
-msgstr "Pašalinti iš mėgiamų"
+#~ msgid "GNOME Main Menu Factory"
+#~ msgstr "GNOME pagrindinio meniu gamykla"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:125
-#: ../nautilus-main-menu/nautilus-main-menu.c:130
-msgid "Remove the current document from favorites"
-msgstr "Pašalinti dokumentą iš mėgiamų"
+#~ msgid "Main Menu"
+#~ msgstr "Pagrindinis meniu"
 
 #, fuzzy
 #~ msgid "gnome-lockscreen"
