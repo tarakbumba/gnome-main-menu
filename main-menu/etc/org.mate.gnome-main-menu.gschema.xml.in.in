@@ -12,7 +12,7 @@
       <_description>command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command</_description>
     </key>
     <key name="application-browser" type="s">
-      <default>'@DATADIR@/applications/application-browser.desktop'</default>
+      <default>'application-browser.desktop'</default>
       <_summary>.desktop path for the application browser</_summary>
       <_description>.desktop path for the application browser</_description>
     </key>
@@ -27,12 +27,12 @@
       <_description>.desktop file for the mate-system-monitor</_description>
     </key>
     <key name="network-config-tool" type="s">
-      <default>'/usr/share/applications/YaST2/lan.desktop'</default>
+      <default>'lan.desktop'</default>
       <_summary>.desktop file for the net config tool</_summary>
       <_description>.desktop file for the YaST2 network_devices utility</_description>
     </key>
     <key name="network-config-tool-nm" type="s">
-      <default>'/usr/share/applications/nm-connection-editor.desktop'</default>
+      <default>'nm-connection-editor.desktop'</default>
       <_summary>.desktop file for the net config tool</_summary>
       <_description>.desktop file for the Network Manager editor utility</_description>
     </key>
