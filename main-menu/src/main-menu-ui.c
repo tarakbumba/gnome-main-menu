@@ -1235,7 +1235,7 @@ app_is_in_blacklist (const gchar *uri, MainMenuUI *this)
 	if (blacklisted)
 		return TRUE;
 
-	disable_lockscreen = g_settings_get_boolean (priv->lockdown_settings, DISABLE_LOCKSCREEN_SETTINGS_KEY);
+	disable_lockscreen = g_settings_get_boolean (priv->mate_lockdown_settings, DISABLE_LOCKSCREEN_SETTINGS_KEY);
 	/* Dont allow lock screen if root - same as gnome-panel */
 	blacklisted = libslab_desktop_item_is_lockscreen (uri) &&
 		( (geteuid () == 0) || disable_lockscreen );
