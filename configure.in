@@ -62,7 +62,7 @@ if test "x$NM_GLIB" = "x"; then
 	NM_GLIB=libnm-glib
 fi
 
-PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager $NM_GLIB >= 0.7.0 libnm-util >= 0.7.0], HAVE_NM=1, HAVE_NM=0)
+PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager $NM_GLIB >= 0.8.0 libnm-util >= 0.8.0], HAVE_NM=1, HAVE_NM=0)
 if test "x$HAVE_NM" != "x1"; then
 	AC_WARN(NetworkManager is not available)
 fi

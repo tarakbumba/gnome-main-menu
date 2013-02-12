@@ -25,8 +25,7 @@
 #include <NetworkManager.h>
 #include <nm-device-wifi.h>
 #include <nm-device-ethernet.h>
-#include <nm-gsm-device.h>
-#include <nm-cdma-device.h>
+#include <nm-device-modem.h>
 #include <nm-setting-ip4-config.h>
 #include <nm-utils.h>
 #include <arpa/inet.h>
@@ -242,7 +241,7 @@ nm_get_device_info (NetworkStatusAgent * agent, NMDevice * device)
 		NMAccessPoint * activeap = NULL;
 		const GByteArray * ssid;
 
-		info->type = DEVICE_TYPE_802_11_WIRELESS;
+		info->type = NM_DEVICE_TYPE_WIFI;
 		info->speed_mbs = nm_device_wifi_get_bitrate (NM_DEVICE_WIFI(device));
 		info->hw_addr = g_strdup (nm_device_wifi_get_hw_address (NM_DEVICE_WIFI(device)));
 
@@ -259,19 +258,13 @@ nm_get_device_info (NetworkStatusAgent * agent, NMDevice * device)
 	}
 	else if (NM_IS_DEVICE_ETHERNET (device))
 	{
-		info->type = DEVICE_TYPE_802_3_ETHERNET;
+		info->type = NM_DEVICE_TYPE_ETHERNET;
 		info->speed_mbs = nm_device_ethernet_get_speed (NM_DEVICE_ETHERNET(device));
 		info->hw_addr = g_strdup (nm_device_ethernet_get_hw_address (NM_DEVICE_ETHERNET(device)));
 	}
-	else if (NM_IS_GSM_DEVICE (device))
+	else if (NM_IS_DEVICE_MODEM (device))
 	{
-		info->type = DEVICE_TYPE_GSM;
-		info->speed_mbs = 0;
-		info->hw_addr = NULL;
-	}
-	else if (NM_IS_CDMA_DEVICE (device))
-	{
-		info->type = DEVICE_TYPE_CDMA;
+		info->type = NM_DEVICE_TYPE_MODEM;
 		info->speed_mbs = 0;
 		info->hw_addr = NULL;
 	}
@@ -340,7 +333,7 @@ gtop_get_first_active_device_info ()
 
 			if (ret >= 0)
 			{
-				info->type = DEVICE_TYPE_802_11_WIRELESS;
+				info->type = NM_DEVICE_TYPE_WIFI;
 				info->essid = g_strdup (wl_cfg.essid);
 				info->iface = g_strdup (networks[i]);
 
@@ -348,7 +341,7 @@ gtop_get_first_active_device_info ()
 			}
 			else
 			{
-				info->type = DEVICE_TYPE_802_3_ETHERNET;
+				info->type = NM_DEVICE_TYPE_ETHERNET;
 				info->essid = NULL;
 				info->iface = g_strdup (networks[i]);
 

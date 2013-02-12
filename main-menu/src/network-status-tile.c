@@ -215,7 +215,7 @@ update_tile (NetworkStatusTile * tile)
 	{
 		switch (priv->status_info->type)
 		{
-		case DEVICE_TYPE_802_11_WIRELESS:
+		case NM_DEVICE_TYPE_WIFI:
 			markup = g_strdup_printf (_("Connected to: %s"), priv->status_info->essid);
 
 			icon_name = "nm-device-wireless";
@@ -223,7 +223,7 @@ update_tile (NetworkStatusTile * tile)
 			subheader_text = markup;
 			break;
 
-		case DEVICE_TYPE_802_3_ETHERNET:
+		case NM_DEVICE_TYPE_ETHERNET:
 			markup = g_strdup_printf (_("Using ethernet (%s)"),
 				priv->status_info->iface);
 
@@ -232,19 +232,11 @@ update_tile (NetworkStatusTile * tile)
 			subheader_text = markup;
 			break;
 
-		case DEVICE_TYPE_GSM:
+		case NM_DEVICE_TYPE_MODEM:
 			markup = g_strdup_printf (_("Connected to: %s"), priv->status_info->iface);
 
 			icon_name = "nm-device-wireless";
 			header_text = _("Networ_k: GSM");
-			subheader_text = markup;
-			break;
-
-		case DEVICE_TYPE_CDMA:
-			markup = g_strdup_printf (_("Connected to: %s"), priv->status_info->iface);
-
-			icon_name = "nm-device-wireless";
-			header_text = _("Networ_k: CDMA");
 			subheader_text = markup;
 			break;
 
@@ -345,22 +337,17 @@ update_info_dialog (NetworkStatusTile * tile)
 
 	switch (priv->status_info->type)
 	{
-	case DEVICE_TYPE_802_11_WIRELESS:
+	case NM_DEVICE_TYPE_WIFI:
 		iface_and_type =
 			g_strdup_printf (_("Wireless Ethernet (%s)"), priv->status_info->iface);
 		break;
 
-	case DEVICE_TYPE_802_3_ETHERNET:
+	case NM_DEVICE_TYPE_ETHERNET:
 		iface_and_type =
 			g_strdup_printf (_("Wired Ethernet (%s)"), priv->status_info->iface);
 		break;
 
-	case DEVICE_TYPE_GSM:
-		iface_and_type =
-			g_strdup_printf (_("Mobile Ethernet (%s)"), priv->status_info->iface);
-		break;
-
-	case DEVICE_TYPE_CDMA:
+	case NM_DEVICE_TYPE_MODEM:
 		iface_and_type =
 			g_strdup_printf (_("Mobile Ethernet (%s)"), priv->status_info->iface);
 		break;
@@ -459,7 +446,6 @@ launch_network_config (const gchar * desktop_key)
 	desktop_file = g_settings_get_string (settings, desktop_key);
 	g_object_unref (settings);
 	appinfo = g_desktop_app_info_new (desktop_file);
-	g_free (desktop_file);
 
 	if (appinfo)
 	{
@@ -472,6 +458,7 @@ launch_network_config (const gchar * desktop_key)
 	}
 	else
 	{
-		g_warning ("network_status_tile_open: couldn't exec item\n");
+		g_warning ("network_status_tile_open: couldn't exec item: %s\n", desktop_file);
 	}
+	g_free (desktop_file);
 }

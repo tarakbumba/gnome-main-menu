@@ -35,7 +35,7 @@ static void
 network_status_info_init (NetworkStatusInfo * info)
 {
 	info->active = FALSE;
-	info->type = DEVICE_TYPE_UNKNOWN;
+	info->type = NM_DEVICE_TYPE_UNKNOWN;
 	info->iface = NULL;
 	info->essid = NULL;
 
