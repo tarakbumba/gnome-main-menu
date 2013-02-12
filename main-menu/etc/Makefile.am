@@ -29,16 +29,16 @@ uidir   = $(datadir)/$(PACKAGE)
 ui_DATA = GNOME_MainMenu_ContextMenu.xml
 
 desktop_helperdir = $(datadir)/applications
-desktop_helper_DATA = gnome-screensaver-lock.desktop gnome-session-logout.desktop gnome-session-shutdown.desktop
+desktop_helper_DATA = mate-screensaver-lock.desktop mate-session-logout.desktop mate-session-shutdown.desktop
 
 desktopdir   = $(datadir)/applications
 desktop_DATA = trigger-panel-run-dialog.desktop
 @INTLTOOL_DESKTOP_RULE@
 
-bookmarkdir = $(datadir)/gnome-main-menu
+bookmarkdir = $(datadir)/mate-control-center
 bookmark_DATA = applications.xbel documents.xbel places.xbel empty.ots empty.ott
 
-systemitemsdir = $(datadir)/gnome-main-menu
+systemitemsdir = $(datadir)/mate-control-center
 systemitems_DATA = system-items.xbel
 
 $(desktop_DATA).in: $(desktop_DATA).in.in
