@@ -4,7 +4,6 @@ application-browser/etc/application-browser.desktop.in.in
 application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in
 application-browser/src/application-browser.c
 caja-main-menu/caja-main-menu.c
-main-menu/etc/gnome-screensaver-lock.desktop
 main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in
 main-menu/etc/org.mate.GNOMEMainMenu.mate-panel-applet.in.in
 [type: gettext/xml]main-menu/etc/system-items.xbel.in
