@@ -8,14 +8,14 @@
 # Stanisław Małolepszy <smalolepszy@aviary.pl>, 2006-2007.
 # Tomasz Dominikowski <dominikowski@gmail.com>, 2007-2008.
 # Wadim Dziedzic <wdziedzic@aviary.pl>, 2008.
-# Piotr Drąg <piotrdrag@gmail.com>, 2010-2012.
-# Aviary.pl <gnomepl@aviary.pl>, 2006-2012.
+# Piotr Drąg <piotrdrag@gmail.com>, 2010-2013.
+# Aviary.pl <gnomepl@aviary.pl>, 2006-2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-main-menu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-09 21:17+0100\n"
-"PO-Revision-Date: 2012-12-09 21:18+0100\n"
+"POT-Creation-Date: 2013-02-17 17:59+0100\n"
+"PO-Revision-Date: 2013-02-17 18:00+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -28,49 +28,49 @@ msgstr ""
 "X-Poedit-Country: Poland\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:100
+#: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
 msgstr "Przeglądarka programów"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:1
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
 msgstr "Nazwa istniejących plików .desktop"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:2
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
 msgstr "Maksymalna liczba nowych programów"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:3
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
 msgid ""
 "The maximum number of applications that will be displayed in the New "
 "Applications category"
 msgstr ""
 "Maksymalna liczba programów, które będą wyświetlane w kategorii Nowe programy"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:4
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
 msgid "Exit shell on start action performed"
 msgstr "Wyjście z powłoki przy wykonaniu czynności: uruchomienie"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:5
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
 msgid "Indicates whether to close the shell when a start action is performed"
 msgstr ""
 "Określa, czy powłoka ma zostać zamknięta przy wykonaniu czynności: "
 "uruchomienie"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:6
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
 msgid "Exit shell on help action performed"
 msgstr "Wyjście z powłoki przy wykonaniu czynności: pomoc"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:7
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
 msgid "Indicates whether to close the shell when a help action is performed"
 msgstr ""
 "Określa, czy powłoka ma zostać zamknięta przy wykonaniu czynności: pomoc"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:8
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
 msgid "Exit shell on add or remove action performed"
 msgstr "Wyjście z powłoki przy wykonaniu czynności: dodawanie lub usunięcie"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:9
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
 msgid ""
 "Indicates whether to close the shell when an add or remove action is "
 "performed"
@@ -78,12 +78,12 @@ msgstr ""
 "Określa, czy powłoka ma zostać zamknięta przy wykonaniu czynności: dodanie "
 "lub usunięcie"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:10
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
 msgid "Exit shell on upgrade or uninstall action performed"
 msgstr ""
 "Wyjście z powłoki przy wykonaniu czynności: aktualizacja lub deinstalacja"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:11
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
 msgid ""
 "Indicates whether to close the shell when an upgrade or uninstall action is "
 "performed"
@@ -96,47 +96,40 @@ msgid "Hide on start (useful to preload the shell)"
 msgstr ""
 "Ukrycie po uruchomieniu (przydatne do wczytywania powłoki z wyprzedzeniem)"
 
-#: ../application-browser/src/application-browser.c:93
-msgid "New Applications"
-msgstr "Nowe programy"
-
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Filter"
 msgstr "Filtr"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Groups"
 msgstr "Grupy"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
 msgstr "Czynności programów"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_Open Menu"
-msgstr "_Otwórz menu"
+#: ../caja-main-menu/caja-main-menu.c:114
+#: ../caja-main-menu/caja-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Dodaj do ulubionych"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_About"
-msgstr "_O programie"
+#: ../caja-main-menu/caja-main-menu.c:115
+msgid "Add the current launcher to favorites"
+msgstr "Dodaje bieżący aktywator do ulubionych"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-msgid "GNOME Main Menu Factory"
-msgstr "Generator głównego menu GNOME"
+#: ../caja-main-menu/caja-main-menu.c:120
+msgid "Add the current document to favorites"
+msgstr "Dodaje bieżący dokument do ulubionych"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu.c:64 ../main-menu/src/main-menu-ui.c:2423
-#: ../main-menu/src/slab-window.ui.h:1
-msgid "GNOME Main Menu"
-msgstr "Główne menu GNOME"
+#: ../caja-main-menu/caja-main-menu.c:124
+#: ../caja-main-menu/caja-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Usuń z ulubionych"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "Main Menu"
-msgstr "Menu główne"
-
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Default menu and application browser"
-msgstr "Domyślna przeglądarka menu i programów"
+#: ../caja-main-menu/caja-main-menu.c:125
+#: ../caja-main-menu/caja-main-menu.c:130
+msgid "Remove the current document from favorites"
+msgstr "Usuwa bieżący dokument z ulubionych"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
 msgid "command to uninstall packages"
@@ -170,7 +163,7 @@ msgstr "Ścieżka .desktop dla przeglądarki programów"
 msgid ".desktop file for the file browser"
 msgstr "Plik .desktop dla przeglądarki plików"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7s
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
 msgid ".desktop file for the mate-system-monitor"
 msgstr "Plik .desktop dla mate-system-monitor"
 
@@ -285,7 +278,7 @@ msgid ""
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
 msgstr ""
 "zawiera listę plików (w tym plików .desktop), które mają nie być dostępne z "
-"list \"Ostatnio używane programy\" i \"Ostatnio używane pliki\"."
+"list \"Ostatnio używane programy\" i \"Ostatnio używane pliki\""
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
 msgid "lock-down status for the application browser link"
@@ -339,7 +332,7 @@ msgid ""
 "\"Favorite\" applications."
 msgstr ""
 "ustawione na \"true\", jeśli użytkownik może modyfikować listę \"Ulubionych"
-"\" dokumentów lub dokumentów określonych przez użytkownika"
+"\" dokumentów lub dokumentów określonych przez użytkownika."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
 msgid "lock-down status for the user-specified docs section"
@@ -351,7 +344,7 @@ msgid ""
 "\"Favorite\" documents."
 msgstr ""
 "ustawione na \"true\", jeśli użytkownik może modyfikować listę \"Ulubionych"
-"\" dokumentów lub dokumentów określonych przez użytkownika"
+"\" dokumentów lub dokumentów określonych przez użytkownika."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
 msgid "lock-down status for the user-specified dirs section"
@@ -363,7 +356,7 @@ msgid ""
 "\"Favorite\" directories or \"Places\"."
 msgstr ""
 "ustawione na \"true\", jeśli użytkownik może modyfikować listę \"Ulubionych"
-"\" katalogów lub katalogów określonych przez użytkownika"
+"\" katalogów lub katalogów określonych przez użytkownika."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
 msgid "lock-down configuration of the file area"
@@ -386,7 +379,7 @@ msgstr ""
 "określonych przez użytkownika lub \"Ulubionych\", 3 - wyświetlanie tablicy "
 "ostatnio używanych dokumentów, 4 - wyświetlanie katalogów określonych przez "
 "użytkownika lub \"Ulubione\" lub tablicę \"Miejsca\", 5 - wyświetlanie "
-"ostatnio używanych katalogów lub tablicy \"Miejsca"
+"ostatnio używanych katalogów lub tablicy \"Miejsca\"."
 
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
@@ -441,7 +434,20 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Katalog domowy: wolne %s z %s"
 
-#: ../main-menu/src/main-menu-ui.c:2424
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
+#: ../main-menu/src/slab-window.ui.h:1
+msgid "GNOME Main Menu"
+msgstr "Główne menu GNOME"
+
+#: ../main-menu/src/main-menu-ui.c:222
+msgid "_Open Menu"
+msgstr "_Otwórz menu"
+
+#: ../main-menu/src/main-menu-ui.c:225
+msgid "_About"
+msgstr "_O programie"
+
+#: ../main-menu/src/main-menu-ui.c:2402
 msgid "The GNOME Main Menu"
 msgstr "Główne menu GNOME"
 
@@ -460,7 +466,6 @@ msgstr "_Sieć: brak"
 
 #: ../main-menu/src/network-status-tile.c:219
 #: ../main-menu/src/network-status-tile.c:236
-#: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
 msgstr "Połączono z: %s"
@@ -482,33 +487,28 @@ msgstr "_Sieć: przewodowa"
 msgid "Networ_k: GSM"
 msgstr "_Sieć: GSM"
 
-#: ../main-menu/src/network-status-tile.c:247
-msgid "Networ_k: CDMA"
-msgstr "_Sieć: CDMA"
-
-#: ../main-menu/src/network-status-tile.c:350
+#: ../main-menu/src/network-status-tile.c:342
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Ethernet bezprzewodowy (%s)"
 
-#: ../main-menu/src/network-status-tile.c:355
+#: ../main-menu/src/network-status-tile.c:347
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Ethernet przewodowy (%s)"
 
-#: ../main-menu/src/network-status-tile.c:360
-#: ../main-menu/src/network-status-tile.c:365
+#: ../main-menu/src/network-status-tile.c:352
 #, c-format
 msgid "Mobile Ethernet (%s)"
 msgstr "Ethernet mobilny (%s)"
 
-#: ../main-menu/src/network-status-tile.c:369
-#: ../main-menu/src/network-status-tile.c:379
+#: ../main-menu/src/network-status-tile.c:356
+#: ../main-menu/src/network-status-tile.c:366
 #, c-format
 msgid "Unknown"
 msgstr "Nieznane"
 
-#: ../main-menu/src/network-status-tile.c:377
+#: ../main-menu/src/network-status-tile.c:364
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
@@ -572,26 +572,3 @@ msgstr "System"
 #: ../main-menu/src/slab-window.ui.h:15
 msgid "Status"
 msgstr "Stan"
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:114
-#: ../nautilus-main-menu/nautilus-main-menu.c:119
-msgid "Add to Favorites"
-msgstr "Dodaj do ulubionych"
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:115
-msgid "Add the current launcher to favorites"
-msgstr "Dodaje bieżący aktywator do ulubionych"
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:120
-msgid "Add the current document to favorites"
-msgstr "Dodaje bieżący dokument do ulubionych"
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
-msgid "Remove from Favorites"
-msgstr "Usuń z ulubionych"
-
-#: ../nautilus-main-menu/nautilus-main-menu.c:125
-#: ../nautilus-main-menu/nautilus-main-menu.c:130
-msgid "Remove the current document from favorites"
-msgstr "Usuwa bieżący dokument z ulubionych"
