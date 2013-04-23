@@ -67,7 +67,11 @@
 #define SEARCH_VIS_SETTINGS_KEY         "search-area-visible"
 #define STATUS_VIS_SETTINGS_KEY         "status-area-visible"
 #define SYSTEM_VIS_SETTINGS_KEY         "system-area-visible"
-#define SHOWABLE_TYPES_SETTINGS_KEY     "showable-file-types"
+#define USER_APPS_VIS_SETTINGS_KEY      "user-apps-visible"
+#define RCNT_APPS_VIS_SETTINGS_KEY      "recent-apps-visible"
+#define USER_DOCS_VIS_SETTINGS_KEY      "user-docs-visible"
+#define RCNT_DOCS_VIS_SETTINGS_KEY      "recent-docs-visible"
+#define USER_DIRS_VIS_SETTINGS_KEY      "user-dirs-visible"
 #define MODIFIABLE_SYSTEM_SETTINGS_KEY  "user-modifiable-system-area"
 #define MODIFIABLE_APPS_SETTINGS_KEY    "user-modifiable-apps"
 #define MODIFIABLE_DOCS_SETTINGS_KEY    "user-modifiable-docs"
@@ -1264,11 +1268,11 @@ select_page (MainMenuUI *this)
 	GtkToggleButton *button;
 	gint curr_page;
 
-
 	curr_page = g_settings_get_int (priv->filearea_settings, CURRENT_PAGE_SETTINGS_KEY);
 	button    = GTK_TOGGLE_BUTTON (priv->page_selectors [curr_page]);
 
-	gtk_toggle_button_set_active (button, TRUE);
+	if (gtk_toggle_button_get_active (button) == FALSE)
+		gtk_toggle_button_set_active (button, TRUE);
 }
 
 static void
@@ -1613,21 +1617,16 @@ apply_lockdown_settings (MainMenuUI *this)
 {
 	MainMenuUIPrivate *priv = PRIVATE (this);
 
-	gboolean    more_link_visible;
-	gboolean    status_area_visible;
-	gboolean    system_area_visible;
-	GVariant   *showable_types_value;
-	const gint *showable_types;
-	gsize       nvalues;
-	gint        i;
+	gboolean      more_link_visible;
+	gboolean      status_area_visible;
+	gboolean      system_area_visible;
+	gint          i;
 
 	libslab_checkpoint ("apply_lockdown_settings(): start");
 
 	more_link_visible    = g_settings_get_boolean (priv->lockdown_settings, MORE_LINK_VIS_SETTINGS_KEY);
 	status_area_visible  = g_settings_get_boolean (priv->lockdown_settings, STATUS_VIS_SETTINGS_KEY);
 	system_area_visible  = g_settings_get_boolean (priv->lockdown_settings, SYSTEM_VIS_SETTINGS_KEY);
-	showable_types_value = g_settings_get_value (priv->lockdown_settings, SHOWABLE_TYPES_SETTINGS_KEY);
-	showable_types       = g_variant_get_fixed_array (showable_types_value, &nvalues, sizeof (gint32));
 
 	for (i = 0; i < 3; ++i)
 		if (more_link_visible)
@@ -1647,17 +1646,16 @@ apply_lockdown_settings (MainMenuUI *this)
 	else
 		gtk_widget_hide (priv->system_section);
 
-	for (i = 0; i < 5; ++i)
-		priv->allowable_types [i] = FALSE;
-
-	if (nvalues > 0) {
-		for (i = 0; showable_types[i] != NULL; i++) {
-			if (0 <= showable_types[i] && showable_types[i] < 5)
-				priv->allowable_types [showable_types[i]] = TRUE;
-		}
-	}
-
-	g_variant_unref (showable_types_value);
+	priv->allowable_types [USER_APPS_TABLE] =
+		g_settings_get_boolean (priv->lockdown_settings, USER_APPS_VIS_SETTINGS_KEY);
+	priv->allowable_types [RCNT_APPS_TABLE] =
+		g_settings_get_boolean (priv->lockdown_settings, RCNT_APPS_VIS_SETTINGS_KEY);
+	priv->allowable_types [USER_DOCS_TABLE] =
+		g_settings_get_boolean (priv->lockdown_settings, USER_DOCS_VIS_SETTINGS_KEY);
+	priv->allowable_types [RCNT_DOCS_TABLE] =
+		g_settings_get_boolean (priv->lockdown_settings, RCNT_DOCS_VIS_SETTINGS_KEY);
+	priv->allowable_types [USER_DIRS_TABLE] =
+		g_settings_get_boolean (priv->lockdown_settings, USER_DIRS_VIS_SETTINGS_KEY);
 
 	for (i = 0; i < 5; ++i)
 		set_table_section_visible (this, priv->file_tables [i]);
@@ -2229,13 +2227,15 @@ page_button_clicked_cb (GtkButton *button, gpointer user_data)
 	MainMenuUIPrivate *priv = PRIVATE (user_data);
 
 	gint page_type;
-
+	gint curr_page;
 
 	page_type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button), "page-type"));
+	curr_page = g_settings_get_int (priv->filearea_settings, CURRENT_PAGE_SETTINGS_KEY);
 
-	gtk_notebook_set_current_page (priv->file_section, priv->notebook_page_ids [page_type]);
-
-	g_settings_set_int (priv->filearea_settings, CURRENT_PAGE_SETTINGS_KEY, page_type);
+	if (page_type != curr_page) {
+		gtk_notebook_set_current_page (priv->file_section, priv->notebook_page_ids [page_type]);
+		g_settings_set_int (priv->filearea_settings, CURRENT_PAGE_SETTINGS_KEY, page_type);
+	}
 }
 
 static void
@@ -2298,8 +2298,8 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 	guint32 current_time_millis;
 
 	GError           *error = NULL;
-	GDesktopAppInfo  *ditem;
-	gchar            *ditem_id;
+	GDesktopAppInfo  *ditem = NULL;
+	gchar            *ditem_id = NULL;
 
 	gchar *cmd_template;
 	gchar *cmd;
@@ -2346,19 +2346,21 @@ more_buttons_clicked_cb (GtkButton *button, gpointer user_data)
 		else
 			ditem_id = g_settings_get_string (priv->settings, FILE_BROWSER_SETTINGS_KEY);
 
-		ditem = g_desktop_app_info_new (ditem_id);
+		if (ditem_id != NULL) {
+			ditem = g_desktop_app_info_new (ditem_id);
 
-		if (ditem) {
-			g_app_info_launch (G_APP_INFO (ditem), NULL, NULL, &error);
-			if (error) {
-				g_error_free (error);
+			if (ditem != NULL) {
+				g_app_info_launch (G_APP_INFO (ditem), NULL, NULL, &error);
+				if (error != NULL) {
+					g_error_free (error);
+				}
+				g_object_unref (ditem);
+
+				hide_slab_if_urgent_close (this);
 			}
-			g_object_unref (ditem);
-
-			hide_slab_if_urgent_close (this);
+			if (ditem_id != NULL)
+				g_free (ditem_id);
 		}
-		if (ditem_id)
-			g_free (ditem_id);
 	}
 }
 
@@ -2371,7 +2373,8 @@ search_cmd_notify_cb (GSettings *settings, gchar *key, gpointer user_data)
 static void
 current_page_notify_cb (GSettings *settings, gchar *key, gpointer user_data)
 {
-	select_page (MAIN_MENU_UI (user_data));
+	/* FIXME add a way to listen GSettings page changes */
+	/*select_page (MAIN_MENU_UI (user_data));*/
 }
 
 static void

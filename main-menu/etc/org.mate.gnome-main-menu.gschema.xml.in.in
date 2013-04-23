@@ -122,10 +122,30 @@
       <_summary>lock-down status for the user-specified dirs section</_summary>
       <_description>set to true if the user is allowed to modify the list of user-specified or "Favorite" directories or "Places".</_description>
     </key>
-    <key name="showable-file-types" type="ai">
-      <default>[ 0, 1, 2, 3, 4, 5 ]</default>
-      <_summary>lock-down configuration of the file area</_summary>
-      <_description>contains the list (in no particular order) of allowable file tables to show in the file area.  possible values: 0 - show the user-specified or "Favorite" applications table, 1 - show the recently used applications table, 2 - show the user-specified or "Favorite" documents table, 3 - show the recently used documents table, 4 - show the user-specified of "Favorite" directories or "Places" table, and 5 - show the recently used directories or "Places" table.</_description>
+    <key name="user-apps-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the user applications</_summary>
+      <_description>set to true if the user applications should be visible and active.</_description>
+    </key>
+    <key name="recent-apps-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the recent applications</_summary>
+      <_description>set to true if the recent applications should be visible and active.</_description>
+    </key>
+    <key name="user-docs-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the user documents</_summary>
+      <_description>set to true if the user documents should be visible and active.</_description>
+    </key>
+    <key name="recent-docs-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the recent documents</_summary>
+      <_description>set to true if the recent documents should be visible and active.</_description>
+    </key>
+    <key name="user-dirs-visible" type="b">
+      <default>true</default>
+      <_summary>lock-down status for the user directories</_summary>
+      <_description>set to true if the user directories should be visible and active.</_description>
     </key>
   </schema>
 </schemalist>
