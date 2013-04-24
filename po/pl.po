@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-main-menu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-17 17:59+0100\n"
-"PO-Revision-Date: 2013-02-17 18:00+0100\n"
+"POT-Creation-Date: 2013-04-24 17:52+0200\n"
+"PO-Revision-Date: 2013-04-24 17:53+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -359,27 +359,44 @@ msgstr ""
 "\" katalogów lub katalogów określonych przez użytkownika."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
-msgid "lock-down configuration of the file area"
-msgstr "konfiguracja blokady obszaru plików"
+msgid "lock-down status for the user applications"
+msgstr "stan blokady dla programów użytkownika"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
-msgid ""
-"contains the list (in no particular order) of allowable file tables to show "
-"in the file area. possible values: 0 - show the user-specified or \"Favorite"
-"\" applications table, 1 - show the recently used applications table, 2 - "
-"show the user-specified or \"Favorite\" documents table, 3 - show the "
-"recently used documents table, 4 - show the user-specified of \"Favorite\" "
-"directories or \"Places\" table, and 5 - show the recently used directories "
-"or \"Places\" table."
-msgstr ""
-"zawiera listę (bez kolejności) dozwolonych tablic plików do wyświetlenia w "
-"obszarze plików. możliwe wartości: 0 - wyświetlanie tabeli programów "
-"określonych przez użytkownika lub \"Ulubionych\", 1 - wyświetlanie tablicy "
-"ostatnio używanych programów, 2 - wyświetlanie tablicy dokumentów "
-"określonych przez użytkownika lub \"Ulubionych\", 3 - wyświetlanie tablicy "
-"ostatnio używanych dokumentów, 4 - wyświetlanie katalogów określonych przez "
-"użytkownika lub \"Ulubione\" lub tablicę \"Miejsca\", 5 - wyświetlanie "
-"ostatnio używanych katalogów lub tablicy \"Miejsca\"."
+msgid "set to true if the user applications should be visible and active."
+msgstr "określa, czy programu użytkownika powinny być widoczne i aktywne."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+msgid "lock-down status for the recent applications"
+msgstr "stan blokady dla ostatnich programów"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+msgid "set to true if the recent applications should be visible and active."
+msgstr "określa, czy ostatnie programy powinny być widoczne i aktywne."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+msgid "lock-down status for the user documents"
+msgstr "stan blokady dla dokumentów użytkownika"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+msgid "set to true if the user documents should be visible and active."
+msgstr "określa, czy dokumenty użytkownika powinny być widoczne i aktywne."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+msgid "lock-down status for the recent documents"
+msgstr "stan blokady dla ostatnich dokumentów"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+msgid "set to true if the recent documents should be visible and active."
+msgstr "określa, czy ostatnie dokumenty powinny być widoczne i aktywne."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+msgid "lock-down status for the user directories"
+msgstr "stan blokady dla słowników użytkownika"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+msgid "set to true if the user directories should be visible and active."
+msgstr "określa, czy słowniki użytkownika powinny być widoczne i aktywne"
 
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
@@ -434,20 +451,20 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Katalog domowy: wolne %s z %s"
 
-#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2404
 #: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
 msgstr "Główne menu GNOME"
 
-#: ../main-menu/src/main-menu-ui.c:222
+#: ../main-menu/src/main-menu-ui.c:226
 msgid "_Open Menu"
 msgstr "_Otwórz menu"
 
-#: ../main-menu/src/main-menu-ui.c:225
+#: ../main-menu/src/main-menu-ui.c:229
 msgid "_About"
 msgstr "_O programie"
 
-#: ../main-menu/src/main-menu-ui.c:2402
+#: ../main-menu/src/main-menu-ui.c:2405
 msgid "The GNOME Main Menu"
 msgstr "Główne menu GNOME"
 
