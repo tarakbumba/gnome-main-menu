@@ -9,15 +9,15 @@
 # Jordi Jaen Pallares <jordi@suse.de>, 1999, 2000, 2001.
 # Pablo Iranzo Gómez <Pablo.Iranzo@uv.es>, 2000.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007, 2008, 2009, 2010.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-main-menu.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-12-09 20:16+0000\n"
-"PO-Revision-Date: 2012-12-12 11:16+0100\n"
+"POT-Creation-Date: 2013-04-23 18:19+0000\n"
+"PO-Revision-Date: 2013-04-25 17:55+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -28,19 +28,19 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:100
+#: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
 msgstr "Navegador de aplicaciones"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:1
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
 msgstr "Nombre de archivo de los archivos .desktop existentes"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:2
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
 msgstr "Número máximo de nuevas aplicaciones"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:3
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
 msgid ""
 "The maximum number of applications that will be displayed in the New "
 "Applications category"
@@ -48,28 +48,28 @@ msgstr ""
 "Número máximo de aplicaciones que deben aparecer en la categoría de nuevas "
 "aplicaciones"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:4
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
 msgid "Exit shell on start action performed"
 msgstr "Salir de la shell al llevar a cabo acción de inicio"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:5
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
 msgid "Indicates whether to close the shell when a start action is performed"
 msgstr ""
 "Indica si se debe cerrar la shell al llevar a cabo una acción de inicio"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:6
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
 msgid "Exit shell on help action performed"
 msgstr "Salir de la shell al llevar a cabo acción de ayuda"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:7
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
 msgid "Indicates whether to close the shell when a help action is performed"
 msgstr "Indica si se debe cerrar la shell al llevar a cabo una acción de ayuda"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:8
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
 msgid "Exit shell on add or remove action performed"
 msgstr "Salir de la shell al llevar a cabo acción de añadir o quitar"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:9
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
 msgid ""
 "Indicates whether to close the shell when an add or remove action is "
 "performed"
@@ -77,12 +77,12 @@ msgstr ""
 "Indica si se debe cerrar la shell al llevar a cabo una acción de adición o "
 "eliminación"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:10
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
 msgid "Exit shell on upgrade or uninstall action performed"
 msgstr ""
 "Salir de la shell al llevar a cabo acción de actualización o desinstalación"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:11
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
 msgid ""
 "Indicates whether to close the shell when an upgrade or uninstall action is "
 "performed"
@@ -94,47 +94,40 @@ msgstr ""
 msgid "Hide on start (useful to preload the shell)"
 msgstr "Ocultar al iniciar (útil para precargar la shell)"
 
-#: ../application-browser/src/application-browser.c:93
-msgid "New Applications"
-msgstr "Nuevas aplicaciones"
-
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Filter"
 msgstr "Filtro"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Groups"
 msgstr "Grupos"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
 msgstr "Acciones sobre las aplicaciones"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_Open Menu"
-msgstr "Menú _Abrir"
+#: ../caja-main-menu/caja-main-menu.c:114
+#: ../caja-main-menu/caja-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Añadir a favoritos"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_About"
-msgstr "_Acerca de"
+#: ../caja-main-menu/caja-main-menu.c:115
+msgid "Add the current launcher to favorites"
+msgstr "Añadir el lanzador actual a favoritos"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-msgid "GNOME Main Menu Factory"
-msgstr "Factoría del menú principal de GNOME"
+#: ../caja-main-menu/caja-main-menu.c:120
+msgid "Add the current document to favorites"
+msgstr "Añadir el documento actual a favoritos"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu.c:64 ../main-menu/src/main-menu-ui.c:2423
-#: ../main-menu/src/slab-window.ui.h:1
-msgid "GNOME Main Menu"
-msgstr "Menú principal de GNOME"
+#: ../caja-main-menu/caja-main-menu.c:124
+#: ../caja-main-menu/caja-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Eliminar de favoritos"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "Main Menu"
-msgstr "Menú principal"
-
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Default menu and application browser"
-msgstr "Menú por defecto y navegador de aplicaciones"
+#: ../caja-main-menu/caja-main-menu.c:125
+#: ../caja-main-menu/caja-main-menu.c:130
+msgid "Remove the current document from favorites"
+msgstr "Eliminar de favoritos el documento actual"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
 msgid "command to uninstall packages"
@@ -169,7 +162,6 @@ msgid ".desktop file for the file browser"
 msgstr "Archivo .desktop para el gestor de archivos"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
-#| msgid ".desktop file for the gnome-system-monitor"
 msgid ".desktop file for the mate-system-monitor"
 msgstr "Archivo .desktop para el monitor del sistema de Mate"
 
@@ -379,28 +371,66 @@ msgstr ""
 "especificadas por el usuario o carpetas «Favoritos» o «Lugares»."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
-msgid "lock-down configuration of the file area"
-msgstr "configuración de bloqueo del área de archivos"
+#| msgid "lock-down status for the application browser link"
+msgid "lock-down status for the user applications"
+msgstr "estado de bloqueo para las aplicaciones del usuario"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
-msgid ""
-"contains the list (in no particular order) of allowable file tables to show "
-"in the file area. possible values: 0 - show the user-specified or \"Favorite"
-"\" applications table, 1 - show the recently used applications table, 2 - "
-"show the user-specified or \"Favorite\" documents table, 3 - show the "
-"recently used documents table, 4 - show the user-specified of \"Favorite\" "
-"directories or \"Places\" table, and 5 - show the recently used directories "
-"or \"Places\" table."
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the user applications should be visible and active."
 msgstr ""
-"contiene una lista (sin ningún orden particular) de tablas de archivos "
-"disponibles que mostrar en el área de archivo. Los valores posibles son: 0, "
-"muestra las aplicaciones especificados por el usuario o la tabla de "
-"aplicaciones «Favoritas», 1, muestra la tabla de aplicaciones usadas "
-"recientemente, 2, muestra los documentos especificados por el usuario o "
-"documentos «Favoritos», 3, muestra la tabla de documentos usados "
-"recientemente, 4, muestra las carpetas especificadas como «Favoritos» por el "
-"usuario o la tabla de «Lugares», y 5, muestra la tabla de carpetas usadas "
-"recientemente o tabla «Lugares»."
+"establecer a cierto si las aplicaciones del usuario deben ser visibles y "
+"estar activas."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+#| msgid "lock-down status for the application browser link"
+msgid "lock-down status for the recent applications"
+msgstr "estado de bloqueo para las aplicaciones recientes"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+#| msgid ""
+#| "set to true if the link to the application browser should be visible and "
+#| "active."
+msgid "set to true if the recent applications should be visible and active."
+msgstr ""
+"establecer a cierto si las aplicaciones recientes deben ser visibles y estar "
+"activas."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+#| msgid "lock-down status for the search area"
+msgid "lock-down status for the user documents"
+msgstr "estado de bloqueo para los documentos del usuario"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the user documents should be visible and active."
+msgstr ""
+"establecer a cierto si los documentos del usuario deben ser visibles y estar "
+"activos."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+#| msgid "lock-down status for the search area"
+msgid "lock-down status for the recent documents"
+msgstr "estado de bloqueo para los documentos recientes"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the recent documents should be visible and active."
+msgstr ""
+"establecer a cierto si los documentos recientes deben ser visibles y estar "
+"activos."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+#| msgid "lock-down status for the search area"
+msgid "lock-down status for the user directories"
+msgstr "estado de bloqueo para las carpetas del usuario"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the user directories should be visible and active."
+msgstr ""
+"establecer a cierto si las carpetas del usuario deben ser visibles y estar "
+"activas."
 
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
@@ -455,7 +485,20 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Carpeta personal: %s Disponible / %s"
 
-#: ../main-menu/src/main-menu-ui.c:2424
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2404
+#: ../main-menu/src/slab-window.ui.h:1
+msgid "GNOME Main Menu"
+msgstr "Menú principal de GNOME"
+
+#: ../main-menu/src/main-menu-ui.c:226
+msgid "_Open Menu"
+msgstr "Menú _Abrir"
+
+#: ../main-menu/src/main-menu-ui.c:229
+msgid "_About"
+msgstr "_Acerca de"
+
+#: ../main-menu/src/main-menu-ui.c:2405
 msgid "The GNOME Main Menu"
 msgstr "Menú principal de GNOME"
 
@@ -483,7 +526,6 @@ msgstr "Red: ninguna"
 # include/scanner/scanner_overview.ycp:85
 #: ../main-menu/src/network-status-tile.c:219
 #: ../main-menu/src/network-status-tile.c:236
-#: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
 msgstr "Conectado a: %s"
@@ -513,36 +555,29 @@ msgstr "_Red: cableada"
 msgid "Networ_k: GSM"
 msgstr "_Red: GSM"
 
-#
-# include/network/lan/address.ycp:102
-#: ../main-menu/src/network-status-tile.c:247
-msgid "Networ_k: CDMA"
-msgstr "_Red: CDMA"
-
 # include/network/modem/dialogs.ycp:145
-#: ../main-menu/src/network-status-tile.c:350
+#: ../main-menu/src/network-status-tile.c:342
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Conexión ethernet inalámbrica (%s)"
 
-#: ../main-menu/src/network-status-tile.c:355
+#: ../main-menu/src/network-status-tile.c:347
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Conexión ethernet fija (%s)"
 
-#: ../main-menu/src/network-status-tile.c:360
-#: ../main-menu/src/network-status-tile.c:365
+#: ../main-menu/src/network-status-tile.c:352
 #, c-format
 msgid "Mobile Ethernet (%s)"
 msgstr "Conexión ethernet móvil (%s)"
 
-#: ../main-menu/src/network-status-tile.c:369
-#: ../main-menu/src/network-status-tile.c:379
+#: ../main-menu/src/network-status-tile.c:356
+#: ../main-menu/src/network-status-tile.c:366
 #, c-format
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: ../main-menu/src/network-status-tile.c:377
+#: ../main-menu/src/network-status-tile.c:364
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
@@ -611,28 +646,44 @@ msgstr "Sistema"
 msgid "Status"
 msgstr "Estado"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:114
-#: ../nautilus-main-menu/nautilus-main-menu.c:119
-msgid "Add to Favorites"
-msgstr "Añadir a favoritos"
+#~ msgid "New Applications"
+#~ msgstr "Nuevas aplicaciones"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:115
-msgid "Add the current launcher to favorites"
-msgstr "Añadir el lanzador actual a favoritos"
+#~ msgid "GNOME Main Menu Factory"
+#~ msgstr "Factoría del menú principal de GNOME"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:120
-msgid "Add the current document to favorites"
-msgstr "Añadir el documento actual a favoritos"
+#~ msgid "Main Menu"
+#~ msgstr "Menú principal"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
-msgid "Remove from Favorites"
-msgstr "Eliminar de favoritos"
+#~ msgid "Default menu and application browser"
+#~ msgstr "Menú por defecto y navegador de aplicaciones"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:125
-#: ../nautilus-main-menu/nautilus-main-menu.c:130
-msgid "Remove the current document from favorites"
-msgstr "Eliminar de favoritos el documento actual"
+#~ msgid "lock-down configuration of the file area"
+#~ msgstr "configuración de bloqueo del área de archivos"
+
+#~ msgid ""
+#~ "contains the list (in no particular order) of allowable file tables to "
+#~ "show in the file area. possible values: 0 - show the user-specified or "
+#~ "\"Favorite\" applications table, 1 - show the recently used applications "
+#~ "table, 2 - show the user-specified or \"Favorite\" documents table, 3 - "
+#~ "show the recently used documents table, 4 - show the user-specified of "
+#~ "\"Favorite\" directories or \"Places\" table, and 5 - show the recently "
+#~ "used directories or \"Places\" table."
+#~ msgstr ""
+#~ "contiene una lista (sin ningún orden particular) de tablas de archivos "
+#~ "disponibles que mostrar en el área de archivo. Los valores posibles son: "
+#~ "0, muestra las aplicaciones especificados por el usuario o la tabla de "
+#~ "aplicaciones «Favoritas», 1, muestra la tabla de aplicaciones usadas "
+#~ "recientemente, 2, muestra los documentos especificados por el usuario o "
+#~ "documentos «Favoritos», 3, muestra la tabla de documentos usados "
+#~ "recientemente, 4, muestra las carpetas especificadas como «Favoritos» por "
+#~ "el usuario o la tabla de «Lugares», y 5, muestra la tabla de carpetas "
+#~ "usadas recientemente o tabla «Lugares»."
+
+#
+# include/network/lan/address.ycp:102
+#~ msgid "Networ_k: CDMA"
+#~ msgstr "_Red: CDMA"
 
 #~ msgid "gnome-lockscreen"
 #~ msgstr "gnome-lockscreen"
