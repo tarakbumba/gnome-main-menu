@@ -12,10 +12,10 @@ msgstr ""
 "Project-Id-Version: gnome-main-menu\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-12-13 21:21+0000\n"
-"PO-Revision-Date: 2013-01-21 22:20+0100\n"
+"POT-Creation-Date: 2013-04-23 18:19+0000\n"
+"PO-Revision-Date: 2013-04-26 14:07+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
-"Language-Team: čeština <gnome-cs-list@gnome.org>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -151,7 +151,6 @@ msgid ".desktop file for the file browser"
 msgstr "soubor .desktop prohlížeče souborů"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
-#| msgid ".desktop file for the gnome-system-monitor"
 msgid ".desktop file for the mate-system-monitor"
 msgstr "soubor .desktop pro mate-system-monitor"
 
@@ -181,14 +180,14 @@ msgstr ""
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
 msgid "if true, main menu is more anxious to close"
-msgstr "Nastavíte-li na hodnotu PRAVDA, zavírá se hlavní nabídka horlivěji"
+msgstr "Nastavíte-li na zapnuto, zavírá se hlavní nabídka horlivěji"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
 msgstr ""
-"Nastavíte-li na hodnotu PRAVDA, zavře se hlavní nabídka za těchto dalších "
+"Nastavíte-li na zapnuto, zavře se hlavní nabídka za těchto dalších "
 "okolností: aktivace dlaždice, aktivace hledání"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
@@ -271,9 +270,7 @@ msgstr "uzamknout stav odkazu na prohlížeč aplikací"
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
-msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud má být odkaz na prohlížeč aplikací "
-"viditelný a aktivní."
+msgstr "Zapněte, pokud má být odkaz na prohlížeč aplikací viditelný a aktivní."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
 msgid "lock-down status for the search area"
@@ -281,8 +278,7 @@ msgstr "uzamknout stav oblasti hledání"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
 msgid "set to true if the search area should be visible and active."
-msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud má být oblast hledání viditelná a aktivní."
+msgstr "Zapněte, pokud má být oblast hledání viditelná a aktivní."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
 msgid "lock-down status for the status area"
@@ -290,8 +286,7 @@ msgstr "uzamknout stav stavové oblasti"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
 msgid "set to true if the status area should be visible and active."
-msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud má být stavová oblast viditelná a aktivní."
+msgstr "Zapněte, pokud má být stavová oblast viditelná a aktivní."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
 msgid "lock-down status for the system area"
@@ -299,15 +294,12 @@ msgstr "uzamknout stav systémové oblasti"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
 msgid "set to true if the system area should be visible and active."
-msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud má být systémová oblast viditelná a "
-"aktivní."
+msgstr "Zapněte, pokud má být systémová oblast viditelná a aktivní."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
 msgid "set to true if the user is allowed to modify the list of system items."
 msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud je uživatel oprávněn upravovat seznam "
-"systémových položek."
+"Zapněte, pokud je uživatel oprávněn upravovat seznam systémových položek."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
 msgid "lock-down status for the user-specified apps section"
@@ -318,8 +310,8 @@ msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
 msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud je uživatel oprávněn upravovat seznam "
-"uživatelem specifikovaných nebo „Oblíbených“ aplikací."
+"Zapněte, pokud je uživatel oprávněn upravovat seznam uživatelem "
+"specifikovaných nebo „Oblíbených“ aplikací."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
 msgid "lock-down status for the user-specified docs section"
@@ -330,8 +322,8 @@ msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
 msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud je uživatel oprávněn upravovat seznam "
-"uživatelem specifikovaných nebo „Oblíbených“ dokumentů."
+"Zapněte, pokud je uživatel oprávněn upravovat seznam uživatelem "
+"specifikovaných nebo „Oblíbených“ dokumentů."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
 msgid "lock-down status for the user-specified dirs section"
@@ -342,31 +334,48 @@ msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
 msgstr ""
-"Nastavte na hodnotu PRAVDA, pokud je uživatel oprávněn upravovat seznam "
-"uživatelem specifikovaných nebo „Oblíbených“ adresářů nebo „Míst“."
+"Zapněte, pokud je uživatel oprávněn upravovat seznam uživatelem "
+"specifikovaných nebo „Oblíbených“ adresářů nebo „Míst“."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
-msgid "lock-down configuration of the file area"
-msgstr "uzamknout konfiguraci souborové oblasti"
+msgid "lock-down status for the user applications"
+msgstr "uzamknout stav pro uživatelské aplikace"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
-msgid ""
-"contains the list (in no particular order) of allowable file tables to show "
-"in the file area. possible values: 0 - show the user-specified or \"Favorite"
-"\" applications table, 1 - show the recently used applications table, 2 - "
-"show the user-specified or \"Favorite\" documents table, 3 - show the "
-"recently used documents table, 4 - show the user-specified of \"Favorite\" "
-"directories or \"Places\" table, and 5 - show the recently used directories "
-"or \"Places\" table."
-msgstr ""
-"obsahuje seznam (v neurčitém pořadí) přípustných tabulek souborů, které se "
-"mají zobrazit v souborové oblasti. možné hodnoty: 0 - zobrazit tabulku "
-"uživatelem specifikovaných nebo „Oblíbených“ aplikací, 1 - zobrazit tabulku "
-"naposledy použitých aplikací, 2 - zobrazit tabulku uživatelem "
-"specifikovaných nebo „Oblíbených“ dokumentů, 3 - zobrazit tabulku nedávných "
-"dokumentů, 4 - zobrazit tabulku uživatelem specifikovaných „Oblíbených“ "
-"adresářů nebo „Míst“, a 5 - zobrazit tabulku nedávno otevřených adresářů "
-"nebo „Míst“."
+msgid "set to true if the user applications should be visible and active."
+msgstr "Zapněte, pokud mají být uživatelské aplikace viditelné a aktivní."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+msgid "lock-down status for the recent applications"
+msgstr "uzamknout stav pro nedávné aplikace"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+msgid "set to true if the recent applications should be visible and active."
+msgstr "Zapněte, pokud mají být nedávné aplikace viditelné a aktivní."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+msgid "lock-down status for the user documents"
+msgstr "uzamknout stav pro uživatelské dokumenty"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+msgid "set to true if the user documents should be visible and active."
+msgstr "Zapněte, pokud mají být uživatelské dokumenty viditelné a aktivní."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+msgid "lock-down status for the recent documents"
+msgstr "uzamknout stav pro nedávné dokumenty"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+msgid "set to true if the recent documents should be visible and active."
+msgstr "Zapněte, pokud mají být nedávné dokumenty viditelné a aktivní."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+msgid "lock-down status for the user directories"
+msgstr "uzamknout stav pro uživatelské složky"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+msgid "set to true if the user directories should be visible and active."
+msgstr "Zapněte, pokud mají být uživatelské složky viditelné a aktivní."
 
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
@@ -421,20 +430,20 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Domovská složka: %s volné / %s"
 
-#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2404
 #: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
 msgstr "Hlavní nabídka GNOME"
 
-#: ../main-menu/src/main-menu-ui.c:222
+#: ../main-menu/src/main-menu-ui.c:226
 msgid "_Open Menu"
 msgstr "_Otevřít nabídku"
 
-#: ../main-menu/src/main-menu-ui.c:225
+#: ../main-menu/src/main-menu-ui.c:229
 msgid "_About"
 msgstr "O _aplikaci"
 
-#: ../main-menu/src/main-menu-ui.c:2402
+#: ../main-menu/src/main-menu-ui.c:2405
 msgid "The GNOME Main Menu"
 msgstr "Hlavní nabídka GNOME"
 
@@ -453,7 +462,6 @@ msgstr "_Síť: žádná"
 
 #: ../main-menu/src/network-status-tile.c:219
 #: ../main-menu/src/network-status-tile.c:236
-#: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
 msgstr "Připojen k: %s"
@@ -475,33 +483,28 @@ msgstr "_Síť: drátová"
 msgid "Networ_k: GSM"
 msgstr "_Síť: GSM"
 
-#: ../main-menu/src/network-status-tile.c:247
-msgid "Networ_k: CDMA"
-msgstr "_Síť: CDMA"
-
-#: ../main-menu/src/network-status-tile.c:350
+#: ../main-menu/src/network-status-tile.c:342
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Bezdrátový Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:355
+#: ../main-menu/src/network-status-tile.c:347
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:360
-#: ../main-menu/src/network-status-tile.c:365
+#: ../main-menu/src/network-status-tile.c:352
 #, c-format
 msgid "Mobile Ethernet (%s)"
 msgstr "Mobilní Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:369
-#: ../main-menu/src/network-status-tile.c:379
+#: ../main-menu/src/network-status-tile.c:356
+#: ../main-menu/src/network-status-tile.c:366
 #, c-format
 msgid "Unknown"
 msgstr "Neznámé"
 
-#: ../main-menu/src/network-status-tile.c:377
+#: ../main-menu/src/network-status-tile.c:364
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
