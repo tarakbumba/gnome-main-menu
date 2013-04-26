@@ -2193,6 +2193,12 @@ slab_window_unmap_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_da
 	gtk_grab_remove (widget);
 }
 
+static void
+grabbing_window_unmap_cb (GtkWidget *widget, gpointer user_data)
+{
+	grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), 0);
+}
+
 static gboolean
 slab_window_grab_broken_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
@@ -2203,10 +2209,15 @@ slab_window_grab_broken_cb (GtkWidget *widget, GdkEvent *event, gpointer user_da
 	if (grab_event->grab_window) {
 		gdk_window_get_user_data (grab_event->grab_window, & window_data);
 
-		if (GTK_IS_WIDGET (window_data))
+		if (GTK_IS_WIDGET (window_data)) {
 			g_signal_connect (
 				G_OBJECT (window_data), "event",
 				G_CALLBACK (grabbing_window_event_cb), user_data);
+			g_signal_connect (
+				(gpointer) (window_data), "unmap",
+				G_CALLBACK (grabbing_window_unmap_cb),
+				user_data);
+		}
 	}
 
 	return FALSE;
@@ -2484,7 +2495,7 @@ search_tomboy_bindkey_cb (gchar *key_string, gpointer user_data)
 static gboolean
 grabbing_window_event_cb (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-	if (event->type == GDK_UNMAP || event->type == GDK_SELECTION_CLEAR)
+	if (event->type == GDK_SELECTION_CLEAR)
 		grab_pointer_and_keyboard (MAIN_MENU_UI (user_data), gdk_event_get_time (event));
 
 	return FALSE;
