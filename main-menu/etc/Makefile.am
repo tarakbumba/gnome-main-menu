@@ -47,6 +47,6 @@ $(desktop_DATA).in: $(desktop_DATA).in.in
 $(systemitems_DATA): $(systemitems_DATA).in
 	sed -e "s|_title>|title>|g" $< > $@
 
-EXTRA_DIST = $(service_in_files) $(gsettings_SCHEMAS).in.in $(ui_DATA) $(desktop_helper_DATA) $(desktop_DATA).in.in $(bookmark_DATA) $(systemitems_DATA).in
+EXTRA_DIST = $(applet_in_files).in $(service_in_files) $(gsettings_SCHEMAS).in.in $(ui_DATA) $(desktop_helper_DATA) $(desktop_DATA).in.in $(bookmark_DATA) $(systemitems_DATA).in
 
-CLEANFILES = org.mate.panel.applet.GNOMEMainMenuFactory.service $(gsettings_SCHEMAS) $(gsettings_SCHEMAS).in $(systemitems_DATA) $(desktop_DATA) $(desktop_DATA).in
+CLEANFILES = $(applet_DATA) $(applet_in_files) org.mate.panel.applet.GNOMEMainMenuFactory.service $(gsettings_SCHEMAS) $(gsettings_SCHEMAS).in $(systemitems_DATA) $(desktop_DATA) $(desktop_DATA).in
