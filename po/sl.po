@@ -1,17 +1,21 @@
+# Slovenian translation for gnome-main-menu.
+# Copyright (C) 2002-2007 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gnome-main-menu package.
+#
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002 SuSE Linux AG.
 # Copyright (C) 2001 SuSE GmbH.
 # Janez Krek <janez.krek@euroteh.si>, 2001.
-# Matej Urbančič <mateju@svn.gnome.org>, 2008.
-# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009 - 2010.
+# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009-2010.
+# Matej Urbančič <mateju@svn.gnome.org>, 2008-2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-main-menu\n"
+"Project-Id-Version: gnome-main-menu master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-12-09 20:16+0000\n"
-"PO-Revision-Date: 2012-12-10 21:47+0100\n"
+"POT-Creation-Date: 2013-05-01 18:24+0000\n"
+"PO-Revision-Date: 2013-05-04 22:02+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
 "Language: Slovenian\n"
@@ -24,56 +28,56 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:100
+#: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
 msgstr "Brskalnik programov"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:1
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
 msgstr "Ime datoteke obstoječih .desktop datotek"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:2
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
 msgstr "Največje število novih programov"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:3
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
 msgid ""
 "The maximum number of applications that will be displayed in the New "
 "Applications category"
 msgstr "Največje število programov za prikaz v kategoriji novi programi"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:4
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
 msgid "Exit shell on start action performed"
 msgstr "Končaj lupino ob zagonu programa"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:5
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
 msgid "Indicates whether to close the shell when a start action is performed"
 msgstr "Določa, ali naj se lupina zapre ob zagonu dejanja."
 
-#: ../application-browser/etc/application-browser.schemas.in.h:6
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
 msgid "Exit shell on help action performed"
 msgstr "Končaj lupino ob zagonu pomoči"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:7
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
 msgid "Indicates whether to close the shell when a help action is performed"
 msgstr "Določa, ali naj se lupina zapre ob zagonu pomoči."
 
-#: ../application-browser/etc/application-browser.schemas.in.h:8
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
 msgid "Exit shell on add or remove action performed"
 msgstr "Končaj lupino ob dodajanju ali odstranjevanju programov"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:9
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
 msgid ""
 "Indicates whether to close the shell when an add or remove action is "
 "performed"
 msgstr ""
 "Določa, ali naj se lupina zapre ob dodajanju oziroma odstranjevanju dejanj."
 
-#: ../application-browser/etc/application-browser.schemas.in.h:10
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
 msgid "Exit shell on upgrade or uninstall action performed"
 msgstr "Končaj lupino ob posodobitvi ali odstranjevanju programov"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:11
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
 msgid ""
 "Indicates whether to close the shell when an upgrade or uninstall action is "
 "performed"
@@ -84,47 +88,40 @@ msgstr ""
 msgid "Hide on start (useful to preload the shell)"
 msgstr "Skrij ob zagonu (uporabno pri nalaganju lupine)"
 
-#: ../application-browser/src/application-browser.c:93
-msgid "New Applications"
-msgstr "Novi programi"
-
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Filter"
 msgstr "Filter"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Groups"
 msgstr "Skupine"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
 msgstr "Dejanja programov"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_Open Menu"
-msgstr "_Odpri meni"
+#: ../caja-main-menu/caja-main-menu.c:114
+#: ../caja-main-menu/caja-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Dodaj med priljubljene"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_About"
-msgstr "_O Programu"
+#: ../caja-main-menu/caja-main-menu.c:115
+msgid "Add the current launcher to favorites"
+msgstr "Dodaj trenutni zaganjalnik med priljubljene"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-msgid "GNOME Main Menu Factory"
-msgstr "GNOME tovarna glavnega menija"
+#: ../caja-main-menu/caja-main-menu.c:120
+msgid "Add the current document to favorites"
+msgstr "Dodaj trenutni dokument med priljubljene"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu.c:64 ../main-menu/src/main-menu-ui.c:2423
-#: ../main-menu/src/slab-window.ui.h:1
-msgid "GNOME Main Menu"
-msgstr "Glavni meni GNOME"
+#: ../caja-main-menu/caja-main-menu.c:124
+#: ../caja-main-menu/caja-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Odstrani iz priljubljenih"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "Main Menu"
-msgstr "Glavni meni"
-
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Default menu and application browser"
-msgstr "Privzeti meni in brskalnik programov"
+#: ../caja-main-menu/caja-main-menu.c:125
+#: ../caja-main-menu/caja-main-menu.c:130
+msgid "Remove the current document from favorites"
+msgstr "Odstrani trenutni dokument iz priljubljenih"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
 msgid "command to uninstall packages"
@@ -157,7 +154,6 @@ msgid ".desktop file for the file browser"
 msgstr ".desktop datoteka za upravljalnik datotek"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
-#| msgid ".desktop file for the gnome-system-monitor"
 msgid ".desktop file for the mate-system-monitor"
 msgstr ".desktop datoteka za mate-system-monitor"
 
@@ -351,26 +347,47 @@ msgstr ""
 "določenih ali \"Priljubljenih\" dokumentov ali \"Mest\"."
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
-msgid "lock-down configuration of the file area"
-msgstr "zaklepanje nastavitev območja datotek"
+msgid "lock-down status for the user applications"
+msgstr "zaklenjeno stanje uporabniških programov"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
-msgid ""
-"contains the list (in no particular order) of allowable file tables to show "
-"in the file area. possible values: 0 - show the user-specified or \"Favorite"
-"\" applications table, 1 - show the recently used applications table, 2 - "
-"show the user-specified or \"Favorite\" documents table, 3 - show the "
-"recently used documents table, 4 - show the user-specified of \"Favorite\" "
-"directories or \"Places\" table, and 5 - show the recently used directories "
-"or \"Places\" table."
+msgid "set to true if the user applications should be visible and active."
+msgstr "izbrana možnost določa, da bodo uporabniški programi vidni in dejavni."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+msgid "lock-down status for the recent applications"
+msgstr "zaklenjeno stanje nedavno uporabljenih programov"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+msgid "set to true if the recent applications should be visible and active."
 msgstr ""
-"vsebuje neurejen seznam dovoljenih preglednic datotek za prikaz v območju "
-"datotek. Možne vrednosti: 0 - prikaže preglednico uporabniško-določenih ali "
-"\"Priljubljenih\" programov, 1 - prikaže preglednico nedavno uporabljenih "
-"programov, 2 - prikaže uporabniško določeno ali \"Priljubljeno\" preglednico "
-"dokumentov, 3 - prikaže preglednico nedavno uporabljenih dokumentov, 4- "
-"prikaže uporabniško določene ali \"Priljubljene\" mape ali preglednico "
-"\"Mesta\" in 5 - prikaže nedavno uporabljene mape ali preglednico \"Mesta\". "
+"izbrana možnost določa, da bodo nedavno uporabljeni programi vidni in "
+"dejavni."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+msgid "lock-down status for the user documents"
+msgstr "zaklenjeno stanje iskalnega območja"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+msgid "set to true if the user documents should be visible and active."
+msgstr ""
+"izbrana možnost določa, da bodo uporabniški dokumenti vidni in dejavni."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+msgid "lock-down status for the recent documents"
+msgstr "zaklenjeno stanje nedavnih dokumentov"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+msgid "set to true if the recent documents should be visible and active."
+msgstr "izbrana možnost določa, da bodo nedavni dokumenti vidni in dejavni."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+msgid "lock-down status for the user directories"
+msgstr "zaklenjeno stanje uporabniških map"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+msgid "set to true if the user directories should be visible and active."
+msgstr "izbrana možnost določa, da bodo uporabniške mape vidne in dejavne."
 
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
@@ -425,7 +442,20 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Domača mapa: %s Prosto / %s"
 
-#: ../main-menu/src/main-menu-ui.c:2424
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2415
+#: ../main-menu/src/slab-window.ui.h:1
+msgid "GNOME Main Menu"
+msgstr "Glavni meni GNOME"
+
+#: ../main-menu/src/main-menu-ui.c:226
+msgid "_Open Menu"
+msgstr "_Odpri meni"
+
+#: ../main-menu/src/main-menu-ui.c:229
+msgid "_About"
+msgstr "_O Programu"
+
+#: ../main-menu/src/main-menu-ui.c:2416
 msgid "The GNOME Main Menu"
 msgstr "Glavni meni GNOME"
 
@@ -444,7 +474,6 @@ msgstr "Omrež_je: brez"
 
 #: ../main-menu/src/network-status-tile.c:219
 #: ../main-menu/src/network-status-tile.c:236
-#: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
 msgstr "Povezava z: %s"
@@ -466,33 +495,28 @@ msgstr "Omrež_je: žično"
 msgid "Networ_k: GSM"
 msgstr "Omrež_je: GSM"
 
-#: ../main-menu/src/network-status-tile.c:247
-msgid "Networ_k: CDMA"
-msgstr "Omrež_je: CDMA"
-
-#: ../main-menu/src/network-status-tile.c:350
+#: ../main-menu/src/network-status-tile.c:342
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Brezžični eternet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:355
+#: ../main-menu/src/network-status-tile.c:347
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Žični eternet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:360
-#: ../main-menu/src/network-status-tile.c:365
+#: ../main-menu/src/network-status-tile.c:352
 #, c-format
 msgid "Mobile Ethernet (%s)"
 msgstr "Mobilni eternet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:369
-#: ../main-menu/src/network-status-tile.c:379
+#: ../main-menu/src/network-status-tile.c:356
+#: ../main-menu/src/network-status-tile.c:366
 #, c-format
 msgid "Unknown"
 msgstr "Neznano"
 
-#: ../main-menu/src/network-status-tile.c:377
+#: ../main-menu/src/network-status-tile.c:364
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
@@ -557,28 +581,41 @@ msgstr "Sistem"
 msgid "Status"
 msgstr "Stanje"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:114
-#: ../nautilus-main-menu/nautilus-main-menu.c:119
-msgid "Add to Favorites"
-msgstr "Dodaj med priljubljene"
+#~ msgid "New Applications"
+#~ msgstr "Novi programi"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:115
-msgid "Add the current launcher to favorites"
-msgstr "Dodaj trenutni zaganjalnik med priljubljene"
+#~ msgid "GNOME Main Menu Factory"
+#~ msgstr "GNOME tovarna glavnega menija"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:120
-msgid "Add the current document to favorites"
-msgstr "Dodaj trenutni dokument med priljubljene"
+#~ msgid "Main Menu"
+#~ msgstr "Glavni meni"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
-msgid "Remove from Favorites"
-msgstr "Odstrani iz priljubljenih"
+#~ msgid "Default menu and application browser"
+#~ msgstr "Privzeti meni in brskalnik programov"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:125
-#: ../nautilus-main-menu/nautilus-main-menu.c:130
-msgid "Remove the current document from favorites"
-msgstr "Odstrani trenutni dokument iz priljubljenih"
+#~ msgid "lock-down configuration of the file area"
+#~ msgstr "zaklepanje nastavitev območja datotek"
+
+#~ msgid ""
+#~ "contains the list (in no particular order) of allowable file tables to "
+#~ "show in the file area. possible values: 0 - show the user-specified or "
+#~ "\"Favorite\" applications table, 1 - show the recently used applications "
+#~ "table, 2 - show the user-specified or \"Favorite\" documents table, 3 - "
+#~ "show the recently used documents table, 4 - show the user-specified of "
+#~ "\"Favorite\" directories or \"Places\" table, and 5 - show the recently "
+#~ "used directories or \"Places\" table."
+#~ msgstr ""
+#~ "vsebuje neurejen seznam dovoljenih preglednic datotek za prikaz v območju "
+#~ "datotek. Možne vrednosti: 0 - prikaže preglednico uporabniško-določenih "
+#~ "ali \"Priljubljenih\" programov, 1 - prikaže preglednico nedavno "
+#~ "uporabljenih programov, 2 - prikaže uporabniško določeno ali "
+#~ "\"Priljubljeno\" preglednico dokumentov, 3 - prikaže preglednico nedavno "
+#~ "uporabljenih dokumentov, 4- prikaže uporabniško določene ali "
+#~ "\"Priljubljene\" mape ali preglednico \"Mesta\" in 5 - prikaže nedavno "
+#~ "uporabljene mape ali preglednico \"Mesta\". "
+
+#~ msgid "Networ_k: CDMA"
+#~ msgstr "Omrež_je: CDMA"
 
 #~ msgid "gnome-lockscreen"
 #~ msgstr "gnome-lockscreen"
