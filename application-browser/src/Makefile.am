@@ -1,4 +1,4 @@
-INCLUDES =							\
+AM_CPPFLAGS =							\
 	$(APPLICATION_BROWSER_CFLAGS)				\
 	$(WARN_CFLAGS)
 

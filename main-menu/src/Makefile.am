@@ -1,4 +1,4 @@
-INCLUDES =								\
+AM_CPPFLAGS =								\
 	$(MAIN_MENU_CFLAGS)						\
 	$(NETWORK_CFLAGS)						\
 	$(WARN_CFLAGS)

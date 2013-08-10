@@ -1,4 +1,4 @@
-INCLUDES =						\
+AM_CPPFLAGS =						\
 	-DG_LOG_DOMAIN=\"Caja-Main-Menu\"		\
 	-DDATADIR=\"$(datadir)\"			\
 	-I$(top_srcdir)					\
