@@ -1,4 +1,4 @@
-AC_INIT([gnome-main-menu], [1.5.0], [http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-main-menu])
+AC_INIT([gnome-main-menu], [1.5.1], [http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-main-menu])
 
 AC_CONFIG_SRCDIR([.])
 AC_CONFIG_HEADERS([config.h])
