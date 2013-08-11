@@ -953,9 +953,9 @@ get_recently_used_store_filename (void)
 {
 	const char *basename;
 
-	basename = ".recently-used.xbel";
+	basename = "recently-used.xbel";
 
-	return g_build_filename (g_get_home_dir (), basename, NULL);
+	return g_build_filename (g_get_user_data_dir (), basename, NULL);
 }
 
 #define RECENTLY_USED_STORE_THROTTLE_MILLISECONDS 2000
