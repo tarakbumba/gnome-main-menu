@@ -1485,10 +1485,7 @@ get_search_argv (const gchar *search_txt)
 	argv = g_new0 (gchar *, argc + 1);
 
 	for (i = 0; i < argc; ++i) {
-		if (! strcmp (argv_parsed [i], "SEARCH_STRING"))
-			argv [i] = g_strdup ((search_txt == NULL) ? "" : search_txt);
-		else
-			argv [i] = g_strdup (argv_parsed [i]);
+		argv [i] = g_strdup_printf (argv_parsed [i], (search_txt == NULL) ? "" : search_txt);
 	}
 
 	argv [argc] = NULL;

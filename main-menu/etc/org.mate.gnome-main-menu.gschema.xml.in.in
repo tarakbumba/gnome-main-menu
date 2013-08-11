@@ -37,9 +37,9 @@
       <_description>.desktop file for the Network Manager editor utility</_description>
     </key>
     <key name="search-command" type="s">
-      <default>'tracker-needle SEARCH_STRING'</default>
+      <default>'mate-search-tool --named=\"%s\" --start'</default>
       <_summary>This is the command to execute when the search entry is used.</_summary>
-      <_description>This is the command to execute when the search entry is used.  SEARCH_STRING is replaced with the entered search text.</_description>
+      <_description>This is the command to execute when the search entry is used. '%s' is replaced with the entered search text.</_description>
     </key>
     <key name="urgent-close" type="b">
       <default>true</default>
