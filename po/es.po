@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: gnome-main-menu.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-04-23 18:19+0000\n"
-"PO-Revision-Date: 2013-04-25 17:55+0200\n"
+"POT-Creation-Date: 2013-08-11 19:33+0000\n"
+"PO-Revision-Date: 2013-08-14 13:38+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -182,19 +182,23 @@ msgid "This is the command to execute when the search entry is used."
 msgstr ""
 "Éste es el comando que se debe ejecutar al utilizar la entrada de búsqueda."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:12
-msgid ""
-"This is the command to execute when the search entry is used. SEARCH_STRING "
-"is replaced with the entered search text."
-msgstr ""
-"Éste es el comando que se debe ejecutar al utilizar la entrada de búsqueda. "
-"SEARCH_STRING se sustituye por el texto de búsqueda introducido."
-
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
+#, no-c-format
+#| msgid ""
+#| "This is the command to execute when the search entry is used. "
+#| "SEARCH_STRING is replaced with the entered search text."
+msgid ""
+"This is the command to execute when the search entry is used. '%s' is "
+"replaced with the entered search text."
+msgstr ""
+"Éste es el comando que se debe ejecutar al utilizar la entrada de búsqueda. «%"
+"s» se sustituye por el texto de búsqueda introducido."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
 msgid "if true, main menu is more anxious to close"
 msgstr "si el valor es true, el menú principal se cierra más deprisa"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
@@ -202,16 +206,16 @@ msgstr ""
 "si el valor es true, el menú principal se cerrará si se cumplen las "
 "siguientes condiciones adicionales: el elemento y la búsqueda se activan"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
 msgid "determines which types of files to display in the file area"
 msgstr ""
 "determina los tipos de archivos que deben aparecer en el área de archivos"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr "valores posibles = 0 [Aplicaciones], 1 [Documentos], 2 [Lugares]"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
@@ -219,7 +223,7 @@ msgstr ""
 "Éste es el comando que se debe ejecutar al activar el elemento de menú «Abrir "
 "en el gestor de archivos»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -229,7 +233,7 @@ msgstr ""
 "en el gestor de archivos». FILE_URI se sustituye con un URI correspondiente "
 "al nombre de la carpeta del archivo activado."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
@@ -237,7 +241,7 @@ msgstr ""
 "Éste es el comando que se debe ejecutar al activar el elemento de menú "
 "«Enviar a…»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -247,11 +251,11 @@ msgstr ""
 "«Enviar a…». DIRNAME y BASENAME se sustituyen por los componentes "
 "correspondientes del elemento activado."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
 msgid "determines the limit of items in the file-area."
 msgstr "determina los límites de elementos del área de archivos."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
 msgid ""
 "determines the limit of items in the file-area. The number of favorite items "
 "is not limited. This limit applies to the number of recent items, i.e. the "
@@ -266,7 +270,7 @@ msgstr ""
 "número de elementos favoritos excede «max_total_items»; se ignorará el límite "
 "de «min_recent_items»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
@@ -274,7 +278,7 @@ msgstr ""
 "determina el número mínimo de elementos en la sección «recientes» del área de "
 "archivos."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
@@ -282,11 +286,11 @@ msgstr ""
 "contiene la lista de archivos (incluidos los archivos .desktop) que deben "
 "excluirse de las listas «Aplicaciones recientes» y «Archivos recientes»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
 msgid "lock-down status for the application browser link"
 msgstr "estado de bloqueo para el enlace con el navegador de aplicaciones"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
@@ -294,49 +298,49 @@ msgstr ""
 "establezca el valor true si el enlace con el navegador de aplicaciones debe "
 "permanecer visible y activo."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
 msgid "lock-down status for the search area"
 msgstr "estado de bloqueo para el área de búsqueda"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
 msgid "set to true if the search area should be visible and active."
 msgstr ""
 "establezca el valor true si el área de búsqueda debe permanecer visible y "
 "activa."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
 msgid "lock-down status for the status area"
 msgstr "estado de bloqueo para el área de estado"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
 msgid "set to true if the status area should be visible and active."
 msgstr ""
 "establezca el valor true si el área de estado debe permanecer visible y "
 "activa."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
 msgid "lock-down status for the system area"
 msgstr "estado de bloqueo para el área de sistema"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
 msgid "set to true if the system area should be visible and active."
 msgstr ""
 "establezca el valor true si el área del sistema debe permanecer visible y "
 "activa."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
 msgid "set to true if the user is allowed to modify the list of system items."
 msgstr ""
 "establezca el valor true si se permite al usuario modificar la lista de "
 "elementos del sistema."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
 msgid "lock-down status for the user-specified apps section"
 msgstr ""
 "estado de bloqueo para la sección de aplicaciones especificadas por el "
 "usuario"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
@@ -344,12 +348,12 @@ msgstr ""
 "establezca el valor a true si se permite al usuario modificar la lista de "
 "especificadas por el usuario o aplicaciones «Favoritas»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
 msgid "lock-down status for the user-specified docs section"
 msgstr ""
 "estado de bloqueo para la sección de documentos especificadas por el usuario"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
@@ -357,12 +361,12 @@ msgstr ""
 "establezca el valor a true si se permite al usuario modificar la lista de "
 "especificadas por el usuario o documentos «Favoritos»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
 msgid "lock-down status for the user-specified dirs section"
 msgstr ""
 "estado de bloqueo para la sección de carpetas especificadas por el usuario"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
@@ -370,63 +374,51 @@ msgstr ""
 "establezca el valor a true si se permite al usuario modificar la lista de "
 "especificadas por el usuario o carpetas «Favoritos» o «Lugares»."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
-#| msgid "lock-down status for the application browser link"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
 msgid "lock-down status for the user applications"
 msgstr "estado de bloqueo para las aplicaciones del usuario"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
-#| msgid "set to true if the search area should be visible and active."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
 msgid "set to true if the user applications should be visible and active."
 msgstr ""
 "establecer a cierto si las aplicaciones del usuario deben ser visibles y "
 "estar activas."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
-#| msgid "lock-down status for the application browser link"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
 msgid "lock-down status for the recent applications"
 msgstr "estado de bloqueo para las aplicaciones recientes"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
-#| msgid ""
-#| "set to true if the link to the application browser should be visible and "
-#| "active."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
 msgid "set to true if the recent applications should be visible and active."
 msgstr ""
 "establecer a cierto si las aplicaciones recientes deben ser visibles y estar "
 "activas."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
-#| msgid "lock-down status for the search area"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
 msgid "lock-down status for the user documents"
 msgstr "estado de bloqueo para los documentos del usuario"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
-#| msgid "set to true if the search area should be visible and active."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
 msgid "set to true if the user documents should be visible and active."
 msgstr ""
 "establecer a cierto si los documentos del usuario deben ser visibles y estar "
 "activos."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
-#| msgid "lock-down status for the search area"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
 msgid "lock-down status for the recent documents"
 msgstr "estado de bloqueo para los documentos recientes"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
-#| msgid "set to true if the search area should be visible and active."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
 msgid "set to true if the recent documents should be visible and active."
 msgstr ""
 "establecer a cierto si los documentos recientes deben ser visibles y estar "
 "activos."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
-#| msgid "lock-down status for the search area"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
 msgid "lock-down status for the user directories"
 msgstr "estado de bloqueo para las carpetas del usuario"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
-#| msgid "set to true if the search area should be visible and active."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:50
 msgid "set to true if the user directories should be visible and active."
 msgstr ""
 "establecer a cierto si las carpetas del usuario deben ser visibles y estar "
@@ -485,7 +477,7 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Carpeta personal: %s Disponible / %s"
 
-#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2404
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2412
 #: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
 msgstr "Menú principal de GNOME"
@@ -498,7 +490,7 @@ msgstr "Menú _Abrir"
 msgid "_About"
 msgstr "_Acerca de"
 
-#: ../main-menu/src/main-menu-ui.c:2405
+#: ../main-menu/src/main-menu-ui.c:2413
 msgid "The GNOME Main Menu"
 msgstr "Menú principal de GNOME"
 
