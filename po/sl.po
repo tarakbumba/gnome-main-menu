@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: gnome-main-menu master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-05-01 18:24+0000\n"
-"PO-Revision-Date: 2013-05-04 22:02+0100\n"
+"POT-Creation-Date: 2013-08-14 15:07+0000\n"
+"PO-Revision-Date: 2013-08-17 15:35+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
 "Language: Slovenian\n"
@@ -173,19 +173,20 @@ msgstr ".desktop datoteka za pripomoček urejevalnika upravljalnika omrežja"
 msgid "This is the command to execute when the search entry is used."
 msgstr "Ta ukaz se izvede, ko je zagnano iskanje. "
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:12
-msgid ""
-"This is the command to execute when the search entry is used. SEARCH_STRING "
-"is replaced with the entered search text."
-msgstr ""
-"Ta ukaz se izvede, ko je zagnano iskanje. ISKLANI_NIZ je zamenjan z vnesenim "
-"besedilom iskanja."
-
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
+#, no-c-format
+msgid ""
+"This is the command to execute when the search entry is used. '%s' is "
+"replaced with the entered search text."
+msgstr ""
+"Ta ukaz se izvede, ko je zagnano iskanje. Niz '%s' je zamenjan z iskalnim "
+"besedilom."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
 msgid "if true, main menu is more anxious to close"
 msgstr "izbrana možnost določi ali naj se glavni meni hitro zapre"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
@@ -193,15 +194,15 @@ msgstr ""
 "izbrana možnost določi, da se bo glavni meni zaprl, kadar je omogočeno "
 "razpostavljanje oken in iskanje."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
 msgid "determines which types of files to display in the file area"
 msgstr "določa katere zvrsti datotek so prikazane v območju datotek"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr "možne vrednosti =0 [programi], 1 [dokumenti], 2 [mesta]"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
@@ -209,7 +210,7 @@ msgstr ""
 "Ta ukaz se izvede, ko je zagnan predmet menija \"Odpri v upravljalniku "
 "datotek\"."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -219,13 +220,13 @@ msgstr ""
 "datotek\". FILE_URI je zamenjan z uri, ki pripada imenu mape zagnane "
 "datoteke. "
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
 msgstr "Ta ukaz se izvede, ko je zagnan predmet menija \"Pošlji na ...\"."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -235,11 +236,11 @@ msgstr ""
 "OSNOVNOIME sta zamenjana s pripadajočimi dejavnimi razpostavljenimi "
 "sestavnimi deli. "
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
 msgid "determines the limit of items in the file-area."
 msgstr "določa največje število predmetov v območju datotek."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
 msgid ""
 "determines the limit of items in the file-area. The number of favorite items "
 "is not limited. This limit applies to the number of recent items, i.e. the "
@@ -253,14 +254,14 @@ msgstr ""
 "priljubljenih predmetov. V kolikor število najljubših predmetov preseže "
 "max_total_items - min_recent_items, je ta omejitev prezrta."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
 msgstr ""
 "določa najmanjše število predmetov v odseku \"nedavno\" v območju datotek."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
@@ -268,11 +269,11 @@ msgstr ""
 "vsebuje seznam datotek (vključujoč .desktop datoteke) za izključitev s "
 "seznamov \"Nedavno uporabljeni programi\" in \"Nedavne datoteke\"."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
 msgid "lock-down status for the application browser link"
 msgstr "zaklenjeno stanja povezave do brskalnika programov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
@@ -280,41 +281,41 @@ msgstr ""
 "izbrana možnost določa, da bo povezava do brskalnika programov vidna in "
 "dejavna."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
 msgid "lock-down status for the search area"
 msgstr "zaklenjeno stanja iskalnega območja"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
 msgid "set to true if the search area should be visible and active."
 msgstr "izbrana možnost določa, da bo iskalno območje vidno in dejavno"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
 msgid "lock-down status for the status area"
 msgstr "zaklenjeno stanja območja stanja"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
 msgid "set to true if the status area should be visible and active."
 msgstr "izbrana možnost določa, da bo območje stanja vidno in dejavno"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
 msgid "lock-down status for the system area"
 msgstr "zaklenjeno stanja sistemskega območja"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
 msgid "set to true if the system area should be visible and active."
 msgstr "izbrana možnost določa, da bo sistemsko območje vidno in dejavno"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
 msgid "set to true if the user is allowed to modify the list of system items."
 msgstr ""
 "izbrana možnost določa, da uporabnik lahko spreminja seznam sistemskih "
 "predmetov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
 msgid "lock-down status for the user-specified apps section"
 msgstr "zaklenjeno stanja oddelka uporabniško določenih programov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
@@ -322,11 +323,11 @@ msgstr ""
 "izbrana možnost določa, da uporabnik lahko spreminja seznam uporabniško-"
 "določenih ali \"Priljubljenih\" programov."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
 msgid "lock-down status for the user-specified docs section"
 msgstr "zaklenjeno stanja oddelka uporabniško določenih dokumentov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
@@ -334,11 +335,11 @@ msgstr ""
 "izbrana možnost določa, da uporabnik lahko spreminja seznam uporabniško-"
 "določenih ali \"Priljubljenih\" dokumentov."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
 msgid "lock-down status for the user-specified dirs section"
 msgstr "zaklenjeno stanja oddelka uporabniško določenih map"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
@@ -346,46 +347,46 @@ msgstr ""
 "izbrana možnost določa, da uporabnik lahko spreminja seznam uporabniško-"
 "določenih ali \"Priljubljenih\" dokumentov ali \"Mest\"."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
 msgid "lock-down status for the user applications"
 msgstr "zaklenjeno stanje uporabniških programov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
 msgid "set to true if the user applications should be visible and active."
 msgstr "izbrana možnost določa, da bodo uporabniški programi vidni in dejavni."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
 msgid "lock-down status for the recent applications"
 msgstr "zaklenjeno stanje nedavno uporabljenih programov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
 msgid "set to true if the recent applications should be visible and active."
 msgstr ""
 "izbrana možnost določa, da bodo nedavno uporabljeni programi vidni in "
 "dejavni."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
 msgid "lock-down status for the user documents"
 msgstr "zaklenjeno stanje iskalnega območja"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
 msgid "set to true if the user documents should be visible and active."
 msgstr ""
 "izbrana možnost določa, da bodo uporabniški dokumenti vidni in dejavni."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
 msgid "lock-down status for the recent documents"
 msgstr "zaklenjeno stanje nedavnih dokumentov"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
 msgid "set to true if the recent documents should be visible and active."
 msgstr "izbrana možnost določa, da bodo nedavni dokumenti vidni in dejavni."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
 msgid "lock-down status for the user directories"
 msgstr "zaklenjeno stanje uporabniških map"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:50
 msgid "set to true if the user directories should be visible and active."
 msgstr "izbrana možnost določa, da bodo uporabniške mape vidne in dejavne."
 
@@ -442,7 +443,7 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Domača mapa: %s Prosto / %s"
 
-#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2415
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2412
 #: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
 msgstr "Glavni meni GNOME"
@@ -455,7 +456,7 @@ msgstr "_Odpri meni"
 msgid "_About"
 msgstr "_O Programu"
 
-#: ../main-menu/src/main-menu-ui.c:2416
+#: ../main-menu/src/main-menu-ui.c:2413
 msgid "The GNOME Main Menu"
 msgstr "Glavni meni GNOME"
 
