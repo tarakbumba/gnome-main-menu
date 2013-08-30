@@ -4,14 +4,14 @@
 #
 # Kalman Kemenczy <kkemenczy at novell dot com>, 2006, 2007, 2010.
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2007, 2008, 2009, 2010.
-# Balázs Úr <urbalazs at gmail dot com>, 2012.
+# Balázs Úr <urbalazs at gmail dot com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-main-menu master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "main-menu&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-12-13 21:21+0000\n"
-"PO-Revision-Date: 2012-12-26 16:03+0100\n"
+"POT-Creation-Date: 2013-08-11 19:33+0000\n"
+"PO-Revision-Date: 2013-08-30 20:21+0200\n"
 "Last-Translator: Balázs Úr <urbalazs at gmail dot com>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "Language: \n"
@@ -160,7 +160,6 @@ msgid ".desktop file for the file browser"
 msgstr ".desktop fájl a fájlböngészőhöz"
 
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
-#| msgid ".desktop file for the gnome-system-monitor"
 msgid ".desktop file for the mate-system-monitor"
 msgstr ".desktop fájl a mate-system-monitor programhoz"
 
@@ -181,19 +180,23 @@ msgid "This is the command to execute when the search entry is used."
 msgstr ""
 "A rendszer ezt a parancsot hajtja végre a keresés bejegyzés használatakor."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:12
-msgid ""
-"This is the command to execute when the search entry is used. SEARCH_STRING "
-"is replaced with the entered search text."
-msgstr ""
-"A rendszer ezt a parancsot hajtja végre a keresés bejegyzés használatakor. A "
-"SEARCH_STRING helyére a beírt szöveg kerül."
-
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
+#, no-c-format
+#| msgid ""
+#| "This is the command to execute when the search entry is used. "
+#| "SEARCH_STRING is replaced with the entered search text."
+msgid ""
+"This is the command to execute when the search entry is used. '%s' is "
+"replaced with the entered search text."
+msgstr ""
+"A rendszer ezt a parancsot hajtja végre a keresés bejegyzés használatakor. "
+"A(z) „%s” helyére a beírt szöveg kerül."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
 msgid "if true, main menu is more anxious to close"
 msgstr "ha igaz, a főmenü hajlamosabb bezáródni"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
 msgid ""
 "if true, main menu will close under these additional conditions: tile is "
 "activated, search activated"
@@ -201,15 +204,15 @@ msgstr ""
 "ha igaz, a főmenü a következő esetekben is bezáródik: mozaik aktiválódik, "
 "keresés aktiválódik"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
 msgid "determines which types of files to display in the file area"
 msgstr "a fájlterületen megjelenítendő fájlok típusát adja meg"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr "lehetséges értékek = 0 [Alkalmazások], 1 [Dokumentumok], 2 [Helyek]"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated."
@@ -217,7 +220,7 @@ msgstr ""
 "Ez a parancs kerül végrehajtásra a „Megnyitás a fájlkezelőben ”menüelem "
 "aktiválásakor."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
 msgid ""
 "This is the command to execute when the \"Open in File Manager\" menu item "
 "is activated. FILE_URI is replaced with a uri corresponding to the dirname "
@@ -227,14 +230,14 @@ msgstr ""
 "menüelem aktiválásakor. A FILE_URI helyére az aktivált fájl könyvtárnevének "
 "megfelelő URI kerül."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated."
 msgstr ""
 "A rendszer ezt a parancsot hajtja végre a „Küldés…” menüelem aktiválásakor."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
 msgid ""
 "This is the command to execute when the \"Send To...\" menu item is "
 "activated. DIRNAME and BASENAME are replaced with the corresponding "
@@ -243,11 +246,11 @@ msgstr ""
 "A rendszer ezt a parancsot hajtja végre a „Küldés…” menüelem aktiválásakor. "
 "A DIRNAME és BASENAME helyére az aktivált cím megfelelő összetevői kerülnek."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
 msgid "determines the limit of items in the file-area."
 msgstr "a fájlterületen szereplő elemek számkorlátját határozza meg."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
 msgid ""
 "determines the limit of items in the file-area. The number of favorite items "
 "is not limited. This limit applies to the number of recent items, i.e. the "
@@ -262,7 +265,7 @@ msgstr ""
 "meghaladja a (max_total_items - min_recent_items) értéket, a program "
 "figyelmen kívül hagyja ezt a korlátot."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
 msgid ""
 "determines the minimum number of items in the \"recent\" section of the file-"
 "area."
@@ -270,7 +273,7 @@ msgstr ""
 "a fájlterület „legutóbbi” területén található elemek legkisebb számát adja "
 "meg."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
 msgid ""
 "contains the list of files (including .desktop files) to be excluded from "
 "the \"Recently Used Applications\" and \"Recent Files\" lists"
@@ -278,11 +281,11 @@ msgstr ""
 "A „Legutóbb használt alkalmazások” és a „Legutóbbi fájlok” listából "
 "kihagyandó fájlok listája (a .desktop fájlok is)"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
 msgid "lock-down status for the application browser link"
 msgstr "az alkalmazásböngésző hivatkozásának lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
 msgid ""
 "set to true if the link to the application browser should be visible and "
 "active."
@@ -290,48 +293,48 @@ msgstr ""
 "Állítsa igaz értékre, ha az alkalmazásböngésző hivatkozásának láthatónak és "
 "aktívnak kell lennie."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
 msgid "lock-down status for the search area"
 msgstr "a keresési terület lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
 msgid "set to true if the search area should be visible and active."
 msgstr ""
 "Állítsa igaz értékre, ha a keresési területnek láthatónak és aktívnak kell "
 "lennie."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
 msgid "lock-down status for the status area"
 msgstr "az állapotterület lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
 msgid "set to true if the status area should be visible and active."
 msgstr ""
 "Állítsa igaz értékre, ha az állapotterületnek láthatónak és aktívnak kell "
 "lennie."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
 msgid "lock-down status for the system area"
 msgstr "a rendszerterület lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
 msgid "set to true if the system area should be visible and active."
 msgstr ""
 "Állítsa igaz értékre, ha a rendszerterületnek láthatónak és aktívnak kell "
 "lennie."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
 msgid "set to true if the user is allowed to modify the list of system items."
 msgstr ""
 "Állítsa igaz értékre, ha a felhasználónak engedélyezett a rendszerelemek "
 "listájának módosítása."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
 msgid "lock-down status for the user-specified apps section"
 msgstr ""
 "a felhasználó által megadott alkalmazások területének lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" applications."
@@ -339,12 +342,12 @@ msgstr ""
 "Állítsa igaz értékre, ha a felhasználónak engedélyezett a felhasználó által "
 "megadott vagy „Kedvenc” alkalmazások listájának módosítása."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
 msgid "lock-down status for the user-specified docs section"
 msgstr ""
 "a felhasználó által megadott dokumentumok területének lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" documents."
@@ -352,11 +355,11 @@ msgstr ""
 "Állítsa igaz értékre, ha a felhasználónak engedélyezett a felhasználó által "
 "megadott vagy „Kedvenc” dokumentumok listájának módosítása."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
 msgid "lock-down status for the user-specified dirs section"
 msgstr "a felhasználó által megadott könyvtárak területének lezárási állapota"
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
 msgid ""
 "set to true if the user is allowed to modify the list of user-specified or "
 "\"Favorite\" directories or \"Places\"."
@@ -364,27 +367,67 @@ msgstr ""
 "Állítsa igaz értékre, ha a felhasználónak engedélyezett a felhasználó által "
 "megadott vagy „Kedvenc” könyvtárak, illetve a „Helyek” listájának módosítása."
 
-#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
-msgid "lock-down configuration of the file area"
-msgstr "a fájlterület lezárási beállítása"
-
 #: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
-msgid ""
-"contains the list (in no particular order) of allowable file tables to show "
-"in the file area. possible values: 0 - show the user-specified or \"Favorite"
-"\" applications table, 1 - show the recently used applications table, 2 - "
-"show the user-specified or \"Favorite\" documents table, 3 - show the "
-"recently used documents table, 4 - show the user-specified of \"Favorite\" "
-"directories or \"Places\" table, and 5 - show the recently used directories "
-"or \"Places\" table."
+#| msgid "lock-down status for the application browser link"
+msgid "lock-down status for the user applications"
+msgstr "a felhasználói alkalmazások lezárási állapota"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the user applications should be visible and active."
 msgstr ""
-"A fájlterületen megjelenítendő fájltáblák listáját tartalmazza "
-"(rendezetlenül). Lehetséges értékek: 0 - a felhasználó által megadott vagy "
-"„Kedvenc” alkalmazások táblája, 1 - a legutóbb használt alkalmazások tábla, "
-"2 - a felhasználó által megadott vagy „Kedvenc” dokumentumok tábla, 3 - a "
-"legutóbb használt dokumentumok tábla, 4 - a felhasználó által megadott vagy "
-"„Kedvenc” könyvtárak vagy a „Helyek” tábla; 5 - a legutóbb használt "
-"könyvtárak vagy a „Helyek” táblája."
+"Állítsa igaz értékre, ha a felhasználói alkalmazásoknak láthatónak és "
+"aktívnak kell lennie."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+#| msgid "lock-down status for the application browser link"
+msgid "lock-down status for the recent applications"
+msgstr "a legutóbbi alkalmazások lezárási állapota"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+#| msgid ""
+#| "set to true if the link to the application browser should be visible and "
+#| "active."
+msgid "set to true if the recent applications should be visible and active."
+msgstr ""
+"Állítsa igaz értékre, ha a legutóbbi alkalmazásoknak láthatónak és aktívnak "
+"kell lennie."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+#| msgid "lock-down status for the search area"
+msgid "lock-down status for the user documents"
+msgstr "a felhasználói dokumentumok lezárási állapota"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the user documents should be visible and active."
+msgstr ""
+"Állítsa igaz értékre, ha a felhasználói dokumentumoknak láthatónak és "
+"aktívnak kell lennie."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+#| msgid "lock-down status for the search area"
+msgid "lock-down status for the recent documents"
+msgstr "a legutóbbi dokumentumok lezárási állapota"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the recent documents should be visible and active."
+msgstr ""
+"Állítsa igaz értékre, ha a legutóbbi dokumentumoknak láthatónak és aktívnak "
+"kell lennie."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+#| msgid "lock-down status for the search area"
+msgid "lock-down status for the user directories"
+msgstr "a felhasználói könyvtárak lezárási állapota"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:50
+#| msgid "set to true if the search area should be visible and active."
+msgid "set to true if the user directories should be visible and active."
+msgstr ""
+"Állítsa igaz értékre, ha a felhasználói könyvtáraknak láthatónak és aktívnak "
+"kell lennie."
 
 #: ../main-menu/etc/system-items.xbel.in.h:1
 msgid "Help"
@@ -440,20 +483,20 @@ msgstr "%.1fb"
 msgid "Home: %s Free / %s"
 msgstr "Saját mappa: %s szabad / %s"
 
-#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2401
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2412
 #: ../main-menu/src/slab-window.ui.h:1
 msgid "GNOME Main Menu"
 msgstr "GNOME főmenü"
 
-#: ../main-menu/src/main-menu-ui.c:222
+#: ../main-menu/src/main-menu-ui.c:226
 msgid "_Open Menu"
 msgstr "_Menü megnyitása"
 
-#: ../main-menu/src/main-menu-ui.c:225
+#: ../main-menu/src/main-menu-ui.c:229
 msgid "_About"
 msgstr "_Névjegy"
 
-#: ../main-menu/src/main-menu-ui.c:2402
+#: ../main-menu/src/main-menu-ui.c:2413
 msgid "The GNOME Main Menu"
 msgstr "A GNOME főmenü"
 
@@ -472,7 +515,6 @@ msgstr "_Hálózat: nincs"
 
 #: ../main-menu/src/network-status-tile.c:219
 #: ../main-menu/src/network-status-tile.c:236
-#: ../main-menu/src/network-status-tile.c:244
 #, c-format
 msgid "Connected to: %s"
 msgstr "Csatlakoztatva: %s"
@@ -494,33 +536,28 @@ msgstr "_Hálózat: vezetékes"
 msgid "Networ_k: GSM"
 msgstr "_Hálózat: GSM"
 
-#: ../main-menu/src/network-status-tile.c:247
-msgid "Networ_k: CDMA"
-msgstr "_Hálózat: CDMA"
-
-#: ../main-menu/src/network-status-tile.c:350
+#: ../main-menu/src/network-status-tile.c:342
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Vezeték nélküli Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:355
+#: ../main-menu/src/network-status-tile.c:347
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Vezetékes Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:360
-#: ../main-menu/src/network-status-tile.c:365
+#: ../main-menu/src/network-status-tile.c:352
 #, c-format
 msgid "Mobile Ethernet (%s)"
 msgstr "Mobil Ethernet (%s)"
 
-#: ../main-menu/src/network-status-tile.c:369
-#: ../main-menu/src/network-status-tile.c:379
+#: ../main-menu/src/network-status-tile.c:356
+#: ../main-menu/src/network-status-tile.c:366
 #, c-format
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: ../main-menu/src/network-status-tile.c:377
+#: ../main-menu/src/network-status-tile.c:364
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
@@ -584,6 +621,29 @@ msgstr "Rendszer"
 #: ../main-menu/src/slab-window.ui.h:15
 msgid "Status"
 msgstr "Állapot"
+
+#~ msgid "lock-down configuration of the file area"
+#~ msgstr "a fájlterület lezárási beállítása"
+
+#~ msgid ""
+#~ "contains the list (in no particular order) of allowable file tables to "
+#~ "show in the file area. possible values: 0 - show the user-specified or "
+#~ "\"Favorite\" applications table, 1 - show the recently used applications "
+#~ "table, 2 - show the user-specified or \"Favorite\" documents table, 3 - "
+#~ "show the recently used documents table, 4 - show the user-specified of "
+#~ "\"Favorite\" directories or \"Places\" table, and 5 - show the recently "
+#~ "used directories or \"Places\" table."
+#~ msgstr ""
+#~ "A fájlterületen megjelenítendő fájltáblák listáját tartalmazza "
+#~ "(rendezetlenül). Lehetséges értékek: 0 - a felhasználó által megadott "
+#~ "vagy „Kedvenc” alkalmazások táblája, 1 - a legutóbb használt alkalmazások "
+#~ "tábla, 2 - a felhasználó által megadott vagy „Kedvenc” dokumentumok "
+#~ "tábla, 3 - a legutóbb használt dokumentumok tábla, 4 - a felhasználó "
+#~ "által megadott vagy „Kedvenc” könyvtárak vagy a „Helyek” tábla; 5 - a "
+#~ "legutóbb használt könyvtárak vagy a „Helyek” táblája."
+
+#~ msgid "Networ_k: CDMA"
+#~ msgstr "_Hálózat: CDMA"
 
 #~ msgid "New Applications"
 #~ msgstr "Új alkalmazások"
