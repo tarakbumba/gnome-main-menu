@@ -3,296 +3,442 @@
 # Copyright (C) 2005 SUSE Linux Products GmbH.
 # Copyright (C) 2002 SuSE Linux AG.
 # Copyright (C) 2001 SuSE GmbH.
-#
 # Bill Giannakopoulos <BillG@hellug.gr>, 2001.
 # Giannis Katsampirhs <giannis1_86@hotmail.com>, 2008.
 # Kostas Papadimas <pkst@gnome.org>, 2008.
+# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-main-menu&component=general\n"
-"POT-Creation-Date: 2010-06-28 13:19+0000\n"
-"PO-Revision-Date: 2012-07-02 18:03+0200\n"
-"Last-Translator: Tom Tryfonidis <tomtryf@gmail.com>\n"
-"Language-Team: Greek <team@gnome.gr>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
+"main-menu&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2013-12-18 20:54+0000\n"
+"PO-Revision-Date: 2013-12-23 08:42+0300\n"
+"Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
+"Language-Team: team@lists.gnome.gr\n"
+"Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.0\n"
 "X-Poedit-Language: Greek\n"
 "X-Poedit-Country: GREECE\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Project-Style: gnome\n"
 
 #: ../application-browser/etc/application-browser.desktop.in.in.h:1
-#: ../application-browser/src/application-browser.c:100
+#: ../application-browser/src/application-browser.c:102
 msgid "Application Browser"
 msgstr "Περιηγητής Εφαρμογών"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:1
-msgid "Exit shell on add or remove action performed"
-msgstr "Έξοδος από το κέλυφος στην προσθήκη ή στην αφαίρεση της εκτελεσμένης ενέργειας"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:2
-msgid "Exit shell on help action performed"
-msgstr "Τερματισμός του κελύφους στην εκτελεσμένη ενέργεια βοήθειας"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:3
-msgid "Exit shell on start action performed"
-msgstr "Τερματισμός του κελύφους στην εκτελεσμένη ενέργεια έναρξης"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:4
-msgid "Exit shell on upgrade or uninstall action performed"
-msgstr "Τερματισμός του κελύφους στην εκτελεσμένη ενέργεια ενημέρωσης ή απομάκρυνσης"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:5
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:1
 msgid "Filename of existing .desktop files"
 msgstr "Όνομα για τα τρέχοντα αρχεία .desktop"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:6
-msgid "Indicates whether to close the shell when a help action is performed"
-msgstr "Δείχνει αν θα τερματίζεται το κέλυφος όταν μια ενέργεια βοήθειας εκτελείται"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:7
-msgid "Indicates whether to close the shell when a start action is performed"
-msgstr "Δείχνει αν θα τερματίζεται το κέλυφος όταν μία αρχική ενέργεια εκτελείται"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:8
-msgid "Indicates whether to close the shell when an add or remove action is performed"
-msgstr "Δείχνει αν θα τερματίζεται το κέλυφος όταν μια ενέργεια προσθήκης ή αφαίρεσης εκτελείται"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:9
-msgid "Indicates whether to close the shell when an upgrade or uninstall action is performed"
-msgstr "Δείχνει αν θα τερματίζεται το κέλυφος όταν μια ενέργεια ενημέρωσης ή απομάκρυνσης εκτελείται"
-
-#: ../application-browser/etc/application-browser.schemas.in.h:10
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:2
 msgid "Max number of New Applications"
 msgstr "Μέγιστος αριθμός Νέων Εφαρμογών"
 
-#: ../application-browser/etc/application-browser.schemas.in.h:11
-msgid "The maximum number of applications that will be displayed in the New Applications category"
-msgstr "Ο μέγιστος αριθμός των εφαρμογών που θα εμφανίζονται στην κατηγορία Νέες εφαρμογές"
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:3
+msgid ""
+"The maximum number of applications that will be displayed in the New "
+"Applications category"
+msgstr ""
+"Ο μέγιστος αριθμός των εφαρμογών που θα εμφανίζονται στην κατηγορία Νέες "
+"εφαρμογές"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:4
+msgid "Exit shell on start action performed"
+msgstr "Τερματισμός του κελύφους στην εκτελεσμένη ενέργεια έναρξης"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:5
+msgid "Indicates whether to close the shell when a start action is performed"
+msgstr ""
+"Δείχνει αν θα τερματίζεται το κέλυφος όταν μία αρχική ενέργεια εκτελείται"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:6
+msgid "Exit shell on help action performed"
+msgstr "Τερματισμός του κελύφους στην εκτελεσμένη ενέργεια βοήθειας"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:7
+msgid "Indicates whether to close the shell when a help action is performed"
+msgstr ""
+"Δείχνει αν θα τερματίζεται το κέλυφος όταν μια ενέργεια βοήθειας εκτελείται"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:8
+msgid "Exit shell on add or remove action performed"
+msgstr ""
+"Έξοδος από το κέλυφος στην προσθήκη ή στην αφαίρεση της εκτελεσμένης "
+"ενέργειας"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:9
+msgid ""
+"Indicates whether to close the shell when an add or remove action is "
+"performed"
+msgstr ""
+"Δείχνει αν θα τερματίζεται το κέλυφος όταν μια ενέργεια προσθήκης ή "
+"αφαίρεσης εκτελείται"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:10
+msgid "Exit shell on upgrade or uninstall action performed"
+msgstr ""
+"Τερματισμός του κελύφους στην εκτελεσμένη ενέργεια ενημέρωσης ή απομάκρυνσης"
+
+#: ../application-browser/etc/org.mate.gnome-main-menu.application-browser.gschema.xml.in.in.h:11
+msgid ""
+"Indicates whether to close the shell when an upgrade or uninstall action is "
+"performed"
+msgstr ""
+"Δείχνει αν θα τερματίζεται το κέλυφος όταν μια ενέργεια ενημέρωσης ή "
+"απομάκρυνσης εκτελείται"
 
 #: ../application-browser/src/application-browser.c:63
 msgid "Hide on start (useful to preload the shell)"
 msgstr "Απόκρυψη κατά την εκκίνηση (χρήσιμο για προφόρτιση του κελύφους)"
 
-#: ../application-browser/src/application-browser.c:93
-msgid "New Applications"
-msgstr "Νέες εφαρμογές"
-
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Filter"
 msgstr "Φίλτρο"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Groups"
 msgstr "Ομάδες"
 
-#: ../application-browser/src/application-browser.c:98
+#: ../application-browser/src/application-browser.c:100
 msgid "Application Actions"
 msgstr "Ενέργειες εφαρμογής"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:1
-msgid "Default menu and application browser"
-msgstr "Προκαθορισμένο μενού και περιηγητής εφαρμογών"
+#: ../caja-main-menu/caja-main-menu.c:114
+#: ../caja-main-menu/caja-main-menu.c:119
+msgid "Add to Favorites"
+msgstr "Προσθήκη στα αγαπημένα"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:2
-#: ../main-menu/src/main-menu-ui.c:2420
-#: ../main-menu/src/main-menu.c:66
-#: ../main-menu/src/slab-window.ui.h:6
-msgid "GNOME Main Menu"
-msgstr "Κεντρικό μενού GNOME"
+#: ../caja-main-menu/caja-main-menu.c:115
+msgid "Add the current launcher to favorites"
+msgstr "Προσθήκη του τρέχοντος εκκινητή στα αγαπημένα"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:3
-msgid "GNOME Main Menu Factory"
-msgstr "Εργοστάσιο κύριου μενού του Gnome"
+#: ../caja-main-menu/caja-main-menu.c:120
+msgid "Add the current document to favorites"
+msgstr "Προσθήκη του τρέχοντος έγγραφου στα αγαπημένα"
 
-#: ../main-menu/etc/GNOME_MainMenu.server.in.in.h:4
-msgid "Main Menu"
-msgstr "Κεντρικό μενού"
+#: ../caja-main-menu/caja-main-menu.c:124
+#: ../caja-main-menu/caja-main-menu.c:129
+msgid "Remove from Favorites"
+msgstr "Αφαίρεση από τα αγαπημένα"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:1
-msgid "_About"
-msgstr "_Περί"
+#: ../caja-main-menu/caja-main-menu.c:125
+#: ../caja-main-menu/caja-main-menu.c:130
+msgid "Remove the current document from favorites"
+msgstr "Αφαίρεση του παρόντος εγγράφου από τα αγαπημένα"
 
-#: ../main-menu/etc/GNOME_MainMenu_ContextMenu.xml.h:2
-msgid "_Open Menu"
-msgstr "Άν_οιγμα του μενού"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:1
-#, fuzzy
-#| msgid ".desktop file for the YaST2 network_devices utility"
-msgid ".desktop file for the Network Manager editor utility"
-msgstr "Το αρχείο .desktop για το εργαλείο Network Manager"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:2
-msgid ".desktop file for the YaST2 network_devices utility"
-msgstr "Το αρχείο .desktop για το εργαλείο YaST2 των συσκευών δικτύου"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:3
-msgid ".desktop file for the file browser"
-msgstr "Το αρχείο .desktop για τον περιηγητή αρχείων"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:4
-msgid ".desktop file for the gnome-system-monitor"
-msgstr "Το αρχείο .desktop για την παρακολούθηση συστήματος του Gnome"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:5
-msgid ".desktop file for the net config tool"
-msgstr "Το αρχείο .desktop για το εργαλείο ρυθμίσεων δικτύου"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:6
-msgid ".desktop path for the application browser"
-msgstr "Το μονοπάτι .desktop για τον περιηγητή εφαρμογών"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:7
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated."
-msgstr "Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Άνοιγμα στο διαχειριστή αρχείων\" είναι ενεργοποιημένο."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:8
-msgid "This is the command to execute when the \"Open in File Manager\" menu item is activated. FILE_URI is replaced with a uri corresponding to the dirname of the activated file."
-msgstr "Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Άνοιγμα στο διαχειριστή αρχείων\" είναι ενεργοποιημένο. Η σελίδα αρχείων αντικαθίσταται με μια σελίδα σχετική με το όνομα του καταλόγου του ενεργοποιημένου αρχείου."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:9
-msgid "This is the command to execute when the \"Send To...\" menu item is activated."
-msgstr "Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Αποστολή σε\" είναι ενεργοποιημένο."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:10
-msgid "This is the command to execute when the \"Send To...\" menu item is activated. DIRNAME and BASENAME are replaced with the corresponding components of the activated tile."
-msgstr "Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Αποστολή σε\" είναι ενεργοποιημένο. Το όνομα καταλόγου και το βασικό όνομα αντικαθίστανται με σχετικά περιεχόμενα της ενεργοποιημένης παράθεσης."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:11
-msgid "This is the command to execute when the search entry is used."
-msgstr "Αυτή είναι η εντολή εκτέλεσης όταν η είσοδος αναζήτησης χρησιμοποιείται."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:12
-msgid "This is the command to execute when the search entry is used. SEARCH_STRING is replaced with the entered search text."
-msgstr "Αυτή είναι η εντολή εκτέλεσης όταν η είσοδος αναζήτησης χρησιμοποιείται. Το αλφαριθμητικό αναζήτησης αντικαθίσταται με το κείμενο αναζήτησης ποιυ εισάγεται."
-
-#: ../main-menu/etc/slab.schemas.in.in.h:13
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:1
 msgid "command to uninstall packages"
 msgstr "εντολή για απομάκρυνση πακέτων"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:14
-msgid "command to uninstall packages, PACKAGE_NAME is replaced by the name of the package in the command"
-msgstr "εντολή για απομάκρυνση πακέτων, το όνομα του πακέτου αντικαθίσταται με το όνομα του πακέτου στην εντολή"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:2
+msgid ""
+"command to uninstall packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"εντολή για απεγκατάσταση πακέτων, το PACKAGE_NAME (όνομα πακέτου) "
+"αντικαθίσταται με το όνομα του πακέτου στην εντολή"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:15
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:3
 msgid "command to upgrade packages"
 msgstr "εντολή για ενημέρωση πακέτων"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:16
-msgid "command to upgrade packages, PACKAGE_NAME is replaced by the name of the package in the command"
-msgstr "εντολή για ενημέρωση πακέτων, το όνομα πακέτου αντικαθίσταται με το όνομα του πακέτου στην εντολή"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:4
+msgid ""
+"command to upgrade packages, PACKAGE_NAME is replaced by the name of the "
+"package in the command"
+msgstr ""
+"εντολή για αναβάθμιση πακέτων, το PACKAGE_NAME (όνομα πακέτου) "
+"αντικαθίσταται με το όνομα του πακέτου στην εντολή"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:17
-msgid "contains the list (in no particular order) of allowable file tables to show in the file area. possible values: 0 - show the user-specified or \"Favorite\" applications table, 1 - show the recently used applications table, 2 - show the user-specified or \"Favorite\" documents table, 3 - show the recently used documents table, 4 - show the user-specified of \"Favorite\" directories or \"Places\" table, and 5 - show the recently used directories or \"Places\" table."
-msgstr "περιέχει τη λίστα (με μη συγκεκριμένη σειρά) των προσβάσιμων πινάκων αρχείων προς εμφάνιση στην περιοχή αρχείων. πιθανές τιμές: 0 - προβολή του καθορισμένου από το χρήστη ή \"Αγαπημένο\" πίνακα εφαρμογών, 1 - προβολή του πίνακα πρόσφατα χρησιμοποιημένων εφαρμογών, 2 - 3 - προβολή του πίνακα πρόσφατα χρησιμοποιημένων αρχείων, 4 -  προβολή του καθορισμένου από το χρήστη των \"Αγαπημένο\" καταλόγων ή  πίνακα \"Τοποθεσίες\" και, 5 - προβολή των πρόσφατα χρησιμοποιημένων καταλόγων ή του πίνακα \"Τοποθεσίες\"."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:5
+msgid ".desktop path for the application browser"
+msgstr "το μονοπάτι .desktop για τον περιηγητή εφαρμογών"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:18
-msgid "contains the list of files (including .desktop files) to be excluded from the \"Recently Used Applications\" and \"Recent Files\" lists"
-msgstr "περιέχει τη λίστα (συμπεριλαμβανομένων των αρχείων .desktop) που θα εξαχθεί από τις λίστες \"Πρόσφατα χρησιμοποιημένες εφαρμογές\" και \"Πρόσφατα αρχεία\""
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:6
+msgid ".desktop file for the file browser"
+msgstr "το αρχείο .desktop για τον περιηγητή αρχείων"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:19
-msgid "determines the limit of items in the file-area."
-msgstr "καθορίζει το όριο των αντικειμένων στην περιοχή αρχείων"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:7
+msgid ".desktop file for the mate-system-monitor"
+msgstr "το αρχείο .desktop για την παρακολούθηση συστήματος συντρόφου"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:20
-#| msgid ""
-#| "determines the limit of items in the file-area. The number favorite items "
-#| "is not limited. This limit applies to the number of recent items, i.e. "
-#| "the number of recent items displayed is limited to max_total_items - the "
-#| "number of favorite items. If the number of favorite items exceeds "
-#| "max_total_items - min_recent_items than this limit is ignored."
-msgid "determines the limit of items in the file-area. The number of favorite items is not limited. This limit applies to the number of recent items, i.e. the number of recent items displayed is limited to max_total_items - the number of favorite items. If the number of favorite items exceeds max_total_items - min_recent_items then this limit is ignored."
-msgstr "καθορίζει το όριο των αντικειμένων στην περιοχή αρχείων. Ο αριθμός των αγαπημένων αντικειμένων δεν είναι απεριόριστος. Αυτό το όριο εφαρμόζεται στον αριθμό των πρόσφατων αντικειμένων, π.χ. ο αριθμός των πρόσφατων αντικειμένων που θα εμφανιστούν είναι περιορισμένος στο μέγιστο αριθμό αντικειμένων - ο αριθμός των αγαπημένων αντικειμένων. Αν ο αριθμός των αγαπημένων αντικειμένων ξεπερνά το μέγιστο αριθμό αντικειμένων - τα ελάχιστα πρόσφατα αντικείμενα που αυτό το όριο παραβλέπεται."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:8
+msgid ".desktop file for the net config tool"
+msgstr "το αρχείο .desktop για το εργαλείο ρυθμίσεων δικτύου"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:21
-msgid "determines the minimum number of items in the \"recent\" section of the file-area."
-msgstr "καθορίζει τον ελάχιστο αριθμό των αντικειμένων στον τομέα \"recent\" της περιοχής αρχείων"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:9
+msgid ".desktop file for the YaST2 network_devices utility"
+msgstr ""
+"το αρχείο .desktop για το εργαλείο YaST2 των network_devices (συσκευές "
+"δικτύου)"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:22
-msgid "determines which types of files to display in the file area"
-msgstr "καθορίζει ποιοι τύποι αρχείων θα εμφανιστούν στην περιοχή των αρχείων"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:10
+msgid ".desktop file for the Network Manager editor utility"
+msgstr "το αρχείο .desktop για το εργαλείο επεξεργαστή διαχειριστή δικτύου"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:23
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:11
+msgid "This is the command to execute when the search entry is used."
+msgstr ""
+"Αυτή είναι η εντολή εκτέλεσης όταν η είσοδος αναζήτησης χρησιμοποιείται."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:13
+#, no-c-format
+msgid ""
+"This is the command to execute when the search entry is used. '%s' is "
+"replaced with the entered search text."
+msgstr ""
+"Αυτή είναι η εντολή εκτέλεσης όταν η είσοδος αναζήτησης χρησιμοποιείται. Το "
+"'%s' αντικαθίσταται με το εισερχόμενο κείμενο αναζήτησης."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:14
 msgid "if true, main menu is more anxious to close"
 msgstr "αν είναι αληθής, το κύριο μενού είναι πιο δύκολο να τερματίσει"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:24
-msgid "if true, main menu will close under these additional conditions: tile is activated, search activated"
-msgstr "αν είναι αληθής, το κύριο μενού θα τερματιστεί κάτω από αυτές τις πρόσθετες συνθήκες: η παράθεση και η αναζήτηση είναι ενεργοποιημένες"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:15
+msgid ""
+"if true, main menu will close under these additional conditions: tile is "
+"activated, search activated"
+msgstr ""
+"αν είναι αληθής, το κύριο μενού θα τερματιστεί κάτω από αυτές τις πρόσθετες "
+"συνθήκες: η παράθεση και η αναζήτηση είναι ενεργοποιημένες"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:25
-msgid "lock-down configuration of the file area"
-msgstr "Ρυθμίσεις κλειδώματος της περιοχής αρχείων"
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:16
+msgid "determines which types of files to display in the file area"
+msgstr "καθορίζει ποιοι τύποι αρχείων θα εμφανιστούν στην περιοχή των αρχείων"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:26
-msgid "lock-down status for the application browser link"
-msgstr "Κατάσταση κλειδώματος για το σύνδεσμο του περιηγητή εφαρμογών"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:27
-msgid "lock-down status for the search area"
-msgstr "Κατάσταση κλειδώματος για την περιοχή αναζήτησης"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:28
-msgid "lock-down status for the status area"
-msgstr "Κατάσταση κλειδώματος για την περιοχή κατάστασης"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:29
-msgid "lock-down status for the system area"
-msgstr "Κατάσταση κλειδώματος για την περιοχή συστήματος"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:30
-msgid "lock-down status for the user-specified apps section"
-msgstr "Κατάσταση κλειδώματος για τον καθορισμένο από το χρήστη τομέα εφαρμογών "
-
-#: ../main-menu/etc/slab.schemas.in.in.h:31
-msgid "lock-down status for the user-specified dirs section"
-msgstr "Κατάσταση κλειδώματος για τον καθορισμένο από το χρήστη τομέα καταλόγων"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:32
-msgid "lock-down status for the user-specified docs section"
-msgstr "Κατάσταση κλειδώματος για τον καθορισμένο από το χρήστη τομέα αρχείων"
-
-#: ../main-menu/etc/slab.schemas.in.in.h:33
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:17
 msgid "possible values = 0 [Applications], 1 [Documents], 2 [Places]"
 msgstr "πιθανές τιμές 0 [Εφαρμογές], 1[Αρχεία], 2[Τοποθεσίες]"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:34
-msgid "set to true if the link to the application browser should be visible and active."
-msgstr "καθορισμός ως αληθής αν ο σύνδεσμος του περιηγητή της εφαρμογής θα είναι ορατός και ενεργοποιημένος."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:18
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated."
+msgstr ""
+"Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Άνοιγμα στο "
+"διαχειριστή αρχείων\" είναι ενεργοποιημένο."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:35
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:19
+msgid ""
+"This is the command to execute when the \"Open in File Manager\" menu item "
+"is activated. FILE_URI is replaced with a uri corresponding to the dirname "
+"of the activated file."
+msgstr ""
+"Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Άνοιγμα στο "
+"διαχειριστή αρχείων\" είναι ενεργοποιημένο. Η FILE_URI αντικαθίσταται με μια "
+"σελίδα σχετική με το όνομα του καταλόγου του ενεργοποιημένου αρχείου."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:20
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated."
+msgstr ""
+"Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Αποστολή σε\" "
+"είναι ενεργοποιημένο."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:21
+msgid ""
+"This is the command to execute when the \"Send To...\" menu item is "
+"activated. DIRNAME and BASENAME are replaced with the corresponding "
+"components of the activated tile."
+msgstr ""
+"Αυτή είναι η εντολή εκτέλεσης όταν το αντικείμενο μενού \"Αποστολή σε\" "
+"είναι ενεργοποιημένο. Το όνομα καταλόγου και το βασικό όνομα αντικαθίστανται "
+"με σχετικά περιεχόμενα της ενεργοποιημένης παράθεσης."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:22
+msgid "determines the limit of items in the file-area."
+msgstr "καθορίζει το όριο των αντικειμένων στην περιοχή αρχείων."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:23
+msgid ""
+"determines the limit of items in the file-area. The number of favorite items "
+"is not limited. This limit applies to the number of recent items, i.e. the "
+"number of recent items displayed is limited to max_total_items - the number "
+"of favorite items. If the number of favorite items exceeds max_total_items - "
+"min_recent_items then this limit is ignored."
+msgstr ""
+"καθορίζει το όριο των αντικειμένων στην περιοχή αρχείων. Ο αριθμός των "
+"αγαπημένων αντικειμένων δεν είναι απεριόριστος. Αυτό το όριο εφαρμόζεται "
+"στον αριθμό των πρόσφατων αντικειμένων, δηλαδή ο αριθμός των πρόσφατων "
+"αντικειμένων που θα εμφανιστούν είναι περιορισμένος στο max_total_items "
+"(μέγιστο αριθμό αντικειμένων) - ο αριθμός των αγαπημένων αντικειμένων. Αν ο "
+"αριθμός των αγαπημένων αντικειμένων ξεπερνά το max_total_items - "
+"min_recent_items τότε αυτό το όριο παραβλέπεται."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:24
+msgid ""
+"determines the minimum number of items in the \"recent\" section of the file-"
+"area."
+msgstr ""
+"καθορίζει τον ελάχιστο αριθμό των αντικειμένων στον τομέα \"recent\" της "
+"περιοχής αρχείων."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:25
+msgid ""
+"contains the list of files (including .desktop files) to be excluded from "
+"the \"Recently Used Applications\" and \"Recent Files\" lists"
+msgstr ""
+"περιέχει τη λίστα (συμπεριλαμβανομένων των αρχείων .desktop) που θα εξαχθεί "
+"από τις λίστες \"Πρόσφατα χρησιμοποιημένες εφαρμογές\" και \"Πρόσφατα αρχεία"
+"\""
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:26
+msgid "lock-down status for the application browser link"
+msgstr "κατάσταση κλειδώματος για το σύνδεσμο του περιηγητή εφαρμογών"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:27
+msgid ""
+"set to true if the link to the application browser should be visible and "
+"active."
+msgstr ""
+"καθορισμός ως αληθής αν ο σύνδεσμος του περιηγητή της εφαρμογής θα είναι "
+"ορατός και ενεργοποιημένος."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:28
+msgid "lock-down status for the search area"
+msgstr "κατάσταση κλειδώματος για την περιοχή αναζήτησης"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:29
 msgid "set to true if the search area should be visible and active."
-msgstr "καθορισμός ως αληθής αν η περιοχή αναζήτησης θα είναι ορατή και ενεργοποιημένη."
+msgstr ""
+"καθορισμός ως αληθής αν η περιοχή αναζήτησης θα είναι ορατή και "
+"ενεργοποιημένη."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:36
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:30
+msgid "lock-down status for the status area"
+msgstr "κατάσταση κλειδώματος για την περιοχή κατάστασης"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:31
 msgid "set to true if the status area should be visible and active."
-msgstr "καθορισμός ως αληθής αν η περιοχή κατάστασης θα είναι ορατή και ενεργοποιημένη."
+msgstr ""
+"καθορισμός ως αληθής αν η περιοχή κατάστασης θα είναι ορατή και "
+"ενεργοποιημένη."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:37
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:32
+msgid "lock-down status for the system area"
+msgstr "κατάσταση κλειδώματος για την περιοχή συστήματος"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:33
 msgid "set to true if the system area should be visible and active."
-msgstr "καθορισμός ως αληθής αν η περιοχή συστήματος θα είναι ορατή και ενεργοποιημένη."
+msgstr ""
+"καθορισμός ως αληθής αν η περιοχή συστήματος θα είναι ορατή και "
+"ενεργοποιημένη."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:38
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:34
 msgid "set to true if the user is allowed to modify the list of system items."
-msgstr "καθορισμός ως αληθής αν ο χρήστης έχει την άδεια να μεταβάλλει τη λίστα των αντικειμένων του συστήματος."
+msgstr ""
+"καθορισμός ως αληθής αν ο χρήστης έχει την άδεια να μεταβάλλει τη λίστα των "
+"αντικειμένων του συστήματος."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:39
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" applications."
-msgstr "καθορισμός ως αληθής αν ο χρήστης έχει την άδεια να μεταβάλλει τη λίστα των καθορισμένων από τον χρήστη εφαρμογών \"Αγαπημένα\""
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:35
+msgid "lock-down status for the user-specified apps section"
+msgstr ""
+"κατάσταση κλειδώματος για τον καθορισμένο από το χρήστη τομέα εφαρμογών"
 
-#: ../main-menu/etc/slab.schemas.in.in.h:40
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" directories or \"Places\"."
-msgstr "καθορισμός ως αληθής αν ο χρήστης έχει την άδεια να μεταβάλλει τη λίστα των καθορισμένων από τον χρήστη ή τα \"Αγαπημένα\" ή τις \"Τοποθεσίες\"."
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:36
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" applications."
+msgstr ""
+"καθορισμός ως αληθής αν ο χρήστης επιτρέπεται να μεταβάλλει τη λίστα των "
+"εφαρμογών του χρήστη ή τα \"Αγαπημένα\"."
 
-#: ../main-menu/etc/slab.schemas.in.in.h:41
-msgid "set to true if the user is allowed to modify the list of user-specified or \"Favorite\" documents."
-msgstr "καθορισμός ως αληθής αν ο χρήστης έχει την άδεια να μεταβάλλει τη λίστα των καθορισμένων από τον χρήστη των αρχείων \"Αγαπημένα\""
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:37
+msgid "lock-down status for the user-specified docs section"
+msgstr "κατάσταση κλειδώματος για τον καθορισμένο από το χρήστη τομέα αρχείων"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:38
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" documents."
+msgstr ""
+"καθορισμός ως αληθής αν ο χρήστης επιτρέπεται να μεταβάλλει τη λίστα των "
+"εγγράφων χρήστη ή των \"Αγαπημένων\"."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:39
+msgid "lock-down status for the user-specified dirs section"
+msgstr ""
+"κατάσταση κλειδώματος για τον καθορισμένο από το χρήστη τομέα καταλόγων"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:40
+msgid ""
+"set to true if the user is allowed to modify the list of user-specified or "
+"\"Favorite\" directories or \"Places\"."
+msgstr ""
+"καθορισμός ως αληθής αν ο χρήστης έχει την άδεια να μεταβάλλει τη λίστα των "
+"καθορισμένων από τον χρήστη ή τα \"Αγαπημένα\" ή τις \"Τοποθεσίες\"."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:41
+msgid "lock-down status for the user applications"
+msgstr "κατάσταση κλειδώματος για τις εφαρμογές χρήστη"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:42
+msgid "set to true if the user applications should be visible and active."
+msgstr ""
+"καθορισμός ως αληθής αν οι εφαρμογές χρήστη πρέπει να είναι ορατές και "
+"ενεργές."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:43
+msgid "lock-down status for the recent applications"
+msgstr "κατάσταση κλειδώματος για τις πρόσφατες εφαρμογές"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:44
+msgid "set to true if the recent applications should be visible and active."
+msgstr ""
+"καθορισμός ως αληθής αν οι πρόσφατες εφαρμογές πρέπει να είναι ορατές και "
+"ενεργές."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:45
+msgid "lock-down status for the user documents"
+msgstr "κατάσταση κλειδώματος για τα έγγραφα του χρήστη"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:46
+msgid "set to true if the user documents should be visible and active."
+msgstr ""
+"καθορισμός ως αληθής αν τα έγγραφα χρήστη πρέπει να είναι ορατά και ενεργά."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:47
+msgid "lock-down status for the recent documents"
+msgstr "κατάσταση κλειδώματος για τα πρόσφατα έγγραφα"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:48
+msgid "set to true if the recent documents should be visible and active."
+msgstr ""
+"καθορισμός ως αληθής αν τα πρόσφατα έγγραφα πρέπει να είναι ορατά και ενεργά."
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:49
+msgid "lock-down status for the user directories"
+msgstr "κατάσταση κλειδώματος για τους καταλόγους χρήστη"
+
+#: ../main-menu/etc/org.mate.gnome-main-menu.gschema.xml.in.in.h:50
+msgid "set to true if the user directories should be visible and active."
+msgstr ""
+"καθορισμός ως αληθής αν οι κατάλογοι χρήστη πρέπει να είναι ορατοί και "
+"ενεργοί."
+
+#: ../main-menu/etc/system-items.xbel.in.h:1
+msgid "Help"
+msgstr "Βοήθεια"
+
+#: ../main-menu/etc/system-items.xbel.in.h:2
+msgid "Lock Screen"
+msgstr "Κλείδωμα Οθόνης"
+
+#: ../main-menu/etc/system-items.xbel.in.h:3
+msgid "Logout"
+msgstr "Αποσύνδεση"
+
+#: ../main-menu/etc/system-items.xbel.in.h:4
+msgid "Shutdown"
+msgstr "Τερματισμός"
 
 #: ../main-menu/etc/trigger-panel-run-dialog.desktop.in.in.h:1
-#| msgid "Recent Applications"
 msgid "Run Application"
 msgstr "Εκτέλεση εφαρμογής"
 
@@ -300,129 +446,110 @@ msgstr "Εκτέλεση εφαρμογής"
 msgid "Show the \"Run Application\" dialog"
 msgstr "Εμφάνιση του διαλόγου \"Εκτέλεση εφαρμογής\""
 
-#: ../main-menu/src/hard-drive-status-tile.c:99
+#: ../main-menu/src/hard-drive-status-tile.c:98
 msgid "_System Monitor"
 msgstr "Παρακολούθηση _συστήματος"
 
-#: ../main-menu/src/hard-drive-status-tile.c:212
+#: ../main-menu/src/hard-drive-status-tile.c:205
 #, c-format
 msgid "%.1fG"
 msgstr "%.1fG"
 
-#: ../main-menu/src/hard-drive-status-tile.c:214
+#: ../main-menu/src/hard-drive-status-tile.c:207
 #, c-format
 msgid "%.1fM"
 msgstr "%.1fM"
 
-#: ../main-menu/src/hard-drive-status-tile.c:216
+#: ../main-menu/src/hard-drive-status-tile.c:209
 #, c-format
 msgid "%.1fK"
 msgstr "%.1fK"
 
-#: ../main-menu/src/hard-drive-status-tile.c:218
+#: ../main-menu/src/hard-drive-status-tile.c:211
 #, c-format
 msgid "%.1fb"
 msgstr "%.1fb"
 
-#: ../main-menu/src/hard-drive-status-tile.c:239
+#: ../main-menu/src/hard-drive-status-tile.c:232
 #, c-format
 msgid "Home: %s Free / %s"
 msgstr "Αρχικός κατάλογος: %s Ελεύθερα / %s"
 
-#: ../main-menu/src/main-menu-migration.c:126
-#: ../main-menu/src/main-menu-migration.c:248
-#: ../main-menu/etc/system-items.xbel.in.h:1
-msgid "Help"
-msgstr "Βοήθεια"
+#: ../main-menu/src/main-menu.c:66 ../main-menu/src/main-menu-ui.c:2412
+#: ../main-menu/src/slab-window.ui.h:1
+msgid "GNOME Main Menu"
+msgstr "Κεντρικό μενού GNOME"
 
-#: ../main-menu/src/main-menu-migration.c:130
-#: ../main-menu/src/main-menu-migration.c:250
-#: ../main-menu/etc/system-items.xbel.in.h:3
-msgid "Logout"
-msgstr "Αποσύνδεση"
+#: ../main-menu/src/main-menu-ui.c:226
+msgid "_Open Menu"
+msgstr "Άν_οιγμα του μενού"
 
-#: ../main-menu/src/main-menu-migration.c:134
-#: ../main-menu/src/main-menu-migration.c:252
-#: ../main-menu/etc/system-items.xbel.in.h:4
-msgid "Shutdown"
-msgstr "Τερματισμός"
+#: ../main-menu/src/main-menu-ui.c:229
+msgid "_About"
+msgstr "_Περί"
 
-#: ../main-menu/src/main-menu-migration.c:192
-#: ../main-menu/etc/system-items.xbel.in.h:2
-msgid "Lock Screen"
-msgstr "Κλείδωμα Οθόνης"
-
-#: ../main-menu/src/main-menu-ui.c:2421
+#: ../main-menu/src/main-menu-ui.c:2413
 msgid "The GNOME Main Menu"
 msgstr "Το Κεντρικό Μενού του GNOME"
 
-#: ../main-menu/src/network-status-tile.c:89
+#: ../main-menu/src/network-status-tile.c:95
 msgid "Network: None"
 msgstr "Δίκτυο: Κανένα"
 
-#: ../main-menu/src/network-status-tile.c:92
-#: ../main-menu/src/network-status-tile.c:205
+#: ../main-menu/src/network-status-tile.c:98
+#: ../main-menu/src/network-status-tile.c:211
 msgid "Click to configure network"
 msgstr "Κάντε κλικ για την ρύθμιση του δικτύου"
 
-#: ../main-menu/src/network-status-tile.c:204
+#: ../main-menu/src/network-status-tile.c:210
 msgid "Networ_k: None"
 msgstr "Δί_κτυο: Κανένα"
 
-#: ../main-menu/src/network-status-tile.c:213
-#: ../main-menu/src/network-status-tile.c:230
-#: ../main-menu/src/network-status-tile.c:238
+#: ../main-menu/src/network-status-tile.c:219
+#: ../main-menu/src/network-status-tile.c:236
 #, c-format
 msgid "Connected to: %s"
 msgstr "Συνδεδεμένο στο: %s"
 
-#: ../main-menu/src/network-status-tile.c:216
+#: ../main-menu/src/network-status-tile.c:222
 msgid "Networ_k: Wireless"
 msgstr "Δί_κτυο: Ασύρματο"
 
-#: ../main-menu/src/network-status-tile.c:221
+#: ../main-menu/src/network-status-tile.c:227
 #, c-format
 msgid "Using ethernet (%s)"
 msgstr "Χρήση Ενσύρματου Δικτύου (%s)"
 
-#: ../main-menu/src/network-status-tile.c:225
+#: ../main-menu/src/network-status-tile.c:231
 msgid "Networ_k: Wired"
 msgstr "Δί_κτυο: Ενσύρματο"
 
-#: ../main-menu/src/network-status-tile.c:233
-#| msgid "Networ_k: None"
+#: ../main-menu/src/network-status-tile.c:239
 msgid "Networ_k: GSM"
 msgstr "Δί_κτυο: GSM"
 
-#: ../main-menu/src/network-status-tile.c:241
-#| msgid "Networ_k: None"
-msgid "Networ_k: CDMA"
-msgstr "Δί_κτυο: CDMA"
-
-#: ../main-menu/src/network-status-tile.c:344
+#: ../main-menu/src/network-status-tile.c:342
 #, c-format
 msgid "Wireless Ethernet (%s)"
 msgstr "Ασύρματο Δίκτυο (%s)"
 
-#: ../main-menu/src/network-status-tile.c:349
+#: ../main-menu/src/network-status-tile.c:347
 #, c-format
 msgid "Wired Ethernet (%s)"
 msgstr "Ενσύρματο Δίκτυο (%s)"
 
-#: ../main-menu/src/network-status-tile.c:354
-#: ../main-menu/src/network-status-tile.c:359
+#: ../main-menu/src/network-status-tile.c:352
 #, c-format
-#| msgid "Wired Ethernet (%s)"
 msgid "Mobile Ethernet (%s)"
 msgstr "Κινητό δίκτυο (%s)"
 
-#: ../main-menu/src/network-status-tile.c:363
-#: ../main-menu/src/network-status-tile.c:373
+#: ../main-menu/src/network-status-tile.c:356
+#: ../main-menu/src/network-status-tile.c:366
 #, c-format
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#: ../main-menu/src/network-status-tile.c:371
+#: ../main-menu/src/network-status-tile.c:364
 #, c-format
 msgid "%d Mb/s"
 msgstr "%d Mb/s"
@@ -431,86 +558,100 @@ msgstr "%d Mb/s"
 msgid "Computer"
 msgstr "Υπολογιστής"
 
-#: ../main-menu/src/slab-window.ui.h:1
-msgid "Applications"
-msgstr "Εφαρμογές"
-
 #: ../main-menu/src/slab-window.ui.h:2
-msgid "Documents"
-msgstr "Έγγραφα"
-
-#  progress stages
-#: ../main-menu/src/slab-window.ui.h:3
-msgid "Favorite Applications"
-msgstr "Αγαπημένες εφαρμογές"
-
-#: ../main-menu/src/slab-window.ui.h:4
-msgid "Favorite Documents"
-msgstr "Αγαπημένα έγγραφα"
-
-#  progress stages
-#: ../main-menu/src/slab-window.ui.h:5
-msgid "Favorite Places"
-msgstr "Αγαπημένες τοποθεσίες"
-
-#: ../main-menu/src/slab-window.ui.h:7
-msgid "More Applications..."
-msgstr "Περισσότερες εφαρμογές..."
-
-#: ../main-menu/src/slab-window.ui.h:8
-msgid "More Documents..."
-msgstr "Περισσότερα έγγραφα..."
-
-#: ../main-menu/src/slab-window.ui.h:9
-msgid "More Places..."
-msgstr "Περισσότερες Τοποθεσίες..."
-
-#: ../main-menu/src/slab-window.ui.h:10
-msgid "Places"
-msgstr "Τοποθεσίες"
-
-#: ../main-menu/src/slab-window.ui.h:11
-msgid "Recent Applications"
-msgstr "Πρόσφατες εφαρμογές"
-
-#: ../main-menu/src/slab-window.ui.h:12
-msgid "Recent Documents"
-msgstr "Πρόσφατα έγγραφα"
-
-#: ../main-menu/src/slab-window.ui.h:13
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: ../main-menu/src/slab-window.ui.h:14
-msgid "Status"
-msgstr "Κατάσταση"
+#: ../main-menu/src/slab-window.ui.h:3
+msgid "Applications"
+msgstr "Εφαρμογές"
 
-#: ../main-menu/src/slab-window.ui.h:15
+#: ../main-menu/src/slab-window.ui.h:4
+msgid "Documents"
+msgstr "Έγγραφα"
+
+#: ../main-menu/src/slab-window.ui.h:5
+msgid "Places"
+msgstr "Τοποθεσίες"
+
+#  progress stages
+#: ../main-menu/src/slab-window.ui.h:6
+msgid "Favorite Applications"
+msgstr "Αγαπημένες εφαρμογές"
+
+#: ../main-menu/src/slab-window.ui.h:7
+msgid "Recent Applications"
+msgstr "Πρόσφατες εφαρμογές"
+
+#: ../main-menu/src/slab-window.ui.h:8
+msgid "More Applications..."
+msgstr "Περισσότερες εφαρμογές..."
+
+#: ../main-menu/src/slab-window.ui.h:9
+msgid "Favorite Documents"
+msgstr "Αγαπημένα έγγραφα"
+
+#: ../main-menu/src/slab-window.ui.h:10
+msgid "Recent Documents"
+msgstr "Πρόσφατα έγγραφα"
+
+#: ../main-menu/src/slab-window.ui.h:11
+msgid "More Documents..."
+msgstr "Περισσότερα έγγραφα..."
+
+#  progress stages
+#: ../main-menu/src/slab-window.ui.h:12
+msgid "Favorite Places"
+msgstr "Αγαπημένες τοποθεσίες"
+
+#: ../main-menu/src/slab-window.ui.h:13
+msgid "More Places..."
+msgstr "Περισσότερες Τοποθεσίες..."
+
+#: ../main-menu/src/slab-window.ui.h:14
 msgid "System"
 msgstr "Σύστημα"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:114
-#: ../nautilus-main-menu/nautilus-main-menu.c:119
-msgid "Add to Favorites"
-msgstr "Προσθήκη στα αγαπημένα"
+#: ../main-menu/src/slab-window.ui.h:15
+msgid "Status"
+msgstr "Κατάσταση"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:115
-msgid "Add the current launcher to favorites"
-msgstr "Προσθήκη του τρέχοντος εκκινητή στα αγαπημένα"
+#~ msgid "New Applications"
+#~ msgstr "Νέες εφαρμογές"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:120
-msgid "Add the current document to favorites"
-msgstr "Προσθήκη του τρέχοντος έγγραφου στα αγαπημένα"
+#~ msgid "Default menu and application browser"
+#~ msgstr "Προκαθορισμένο μενού και περιηγητής εφαρμογών"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:124
-#: ../nautilus-main-menu/nautilus-main-menu.c:129
-msgid "Remove from Favorites"
-msgstr "Αφαίρεση από τα αγαπημένα"
+#~ msgid "GNOME Main Menu Factory"
+#~ msgstr "Εργοστάσιο κύριου μενού του Gnome"
 
-#: ../nautilus-main-menu/nautilus-main-menu.c:125
-#: ../nautilus-main-menu/nautilus-main-menu.c:130
-msgid "Remove the current document from favorites"
-msgstr "Αφαίρεση του παρόντος εγγράφου από τα αγαπημένα"
+#~ msgid "Main Menu"
+#~ msgstr "Κεντρικό μενού"
+
+#~ msgid ""
+#~ "contains the list (in no particular order) of allowable file tables to "
+#~ "show in the file area. possible values: 0 - show the user-specified or "
+#~ "\"Favorite\" applications table, 1 - show the recently used applications "
+#~ "table, 2 - show the user-specified or \"Favorite\" documents table, 3 - "
+#~ "show the recently used documents table, 4 - show the user-specified of "
+#~ "\"Favorite\" directories or \"Places\" table, and 5 - show the recently "
+#~ "used directories or \"Places\" table."
+#~ msgstr ""
+#~ "περιέχει τη λίστα (με μη συγκεκριμένη σειρά) των προσβάσιμων πινάκων "
+#~ "αρχείων προς εμφάνιση στην περιοχή αρχείων. πιθανές τιμές: 0 - προβολή "
+#~ "του καθορισμένου από το χρήστη ή \"Αγαπημένο\" πίνακα εφαρμογών, 1 - "
+#~ "προβολή του πίνακα πρόσφατα χρησιμοποιημένων εφαρμογών, 2 - 3 - προβολή "
+#~ "του πίνακα πρόσφατα χρησιμοποιημένων αρχείων, 4 -  προβολή του "
+#~ "καθορισμένου από το χρήστη των \"Αγαπημένο\" καταλόγων ή  πίνακα "
+#~ "\"Τοποθεσίες\" και, 5 - προβολή των πρόσφατα χρησιμοποιημένων καταλόγων ή "
+#~ "του πίνακα \"Τοποθεσίες\"."
+
+#~ msgid "lock-down configuration of the file area"
+#~ msgstr "Ρυθμίσεις κλειδώματος της περιοχής αρχείων"
+
+#~| msgid "Networ_k: None"
+#~ msgid "Networ_k: CDMA"
+#~ msgstr "Δί_κτυο: CDMA"
 
 #~ msgid "<b>Start %s</b>"
 #~ msgstr "<b>Έναρξη %s</b>"
@@ -633,8 +774,8 @@ msgstr "Αφαίρεση του παρόντος εγγράφου από τα α
 
 #~ msgid "No MIME type defined in the bookmark for URI '%s'"
 #~ msgstr ""
-#~ "Κανένας τύπος mime δεν καθορίστηκε στο σελιδοδείκτη για την ιστοσελίδα '%"
-#~ "s'"
+#~ "Κανένας τύπος mime δεν καθορίστηκε στο σελιδοδείκτη για την ιστοσελίδα "
+#~ "'%s'"
 
 #~ msgid "No private flag has been defined in bookmark for URI '%s'"
 #~ msgstr ""
