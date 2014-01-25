@@ -1,4 +1,5 @@
 AM_CPPFLAGS =						\
+	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	-DG_LOG_DOMAIN=\"Caja-Main-Menu\"		\
 	-DDATADIR=\"$(datadir)\"			\
 	-I$(top_srcdir)					\
@@ -17,6 +18,3 @@ libcaja_main_menu_la_SOURCES = \
 
 libcaja_main_menu_la_LDFLAGS = -module -avoid-version
 libcaja_main_menu_la_LIBADD  = $(CAJA_LIBS)
-
-AM_CPPFLAGS =							\
-	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"

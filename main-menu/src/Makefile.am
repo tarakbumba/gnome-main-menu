@@ -1,4 +1,8 @@
 AM_CPPFLAGS =								\
+	-DDATADIR=\""$(datadir)"\"					\
+	-DUIDIR=\""$(uidir)"\"						\
+	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
+	-DMATELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	$(MAIN_MENU_CFLAGS)						\
 	$(NETWORK_CFLAGS)						\
 	$(WARN_CFLAGS)
@@ -9,12 +13,6 @@ ui_DATA = slab-button.ui slab-window.ui
 libexec_PROGRAMS = main-menu
 
 bin_PROGRAMS = trigger-panel-run-dialog
-
-AM_CPPFLAGS =								\
-	-DDATADIR=\""$(datadir)"\"					\
-	-DUIDIR=\""$(uidir)"\"						\
-	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	-DMATELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
 main_menu_SOURCES =							\
 	main-menu.c							\

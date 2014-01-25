@@ -1,4 +1,5 @@
 AM_CPPFLAGS =							\
+	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	$(APPLICATION_BROWSER_CFLAGS)				\
 	$(WARN_CFLAGS)
 
@@ -9,6 +10,3 @@ application_browser_SOURCES =					\
 
 application_browser_LDADD =					\
 	$(APPLICATION_BROWSER_LIBS)
-
-AM_CPPFLAGS =							\
-	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
