@@ -232,6 +232,7 @@ static const GtkActionEntry applet_actions [] = {
 };
 
 static const gchar *main_menu_authors [] = {
+	"Stefano Karapetsas <stefano@karapetsas.com>",
 	"Jim Krehl <jimmyk@novell.com>",
 	"Scott Reeves <sreeves@novell.com>",
 	"Dan Winship <danw@novell.com>",
@@ -2415,7 +2416,9 @@ panel_menu_about_cb (GtkAction *action, gpointer user_data)
 			"authors", main_menu_authors,
 			"artists", main_menu_artists,
 			"logo-icon-name", "gnome-fs-client",
-			"copyright", "Copyright \xc2\xa9 2005-2007 Novell, Inc.",
+			"website", "http://www.mate-desktop.org/",
+			"copyright", "Copyright \xc2\xa9 2005-2007 Novell, Inc.\n"
+				"Copyright \xc2\xa9 2012-2014 Stefano Karapetsas",
 			NULL);
 
 		gtk_widget_show (priv->panel_about_dialog);
