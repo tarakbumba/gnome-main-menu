@@ -3,7 +3,7 @@ AC_INIT([gnome-main-menu], [1.7.0], [http://bugzilla.gnome.org/enter_bug.cgi?pro
 AC_CONFIG_SRCDIR([.])
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.9 no-dist-gzip dist-xz tar-ustar])
+AM_INIT_AUTOMAKE([1.9 no-dist-gzip dist-xz tar-ustar check-news])
 AM_MAINTAINER_MODE
 
 AC_SUBST([ACLOCAL_AMFLAGS], ["\${ACLOCAL_FLAGS}"])
