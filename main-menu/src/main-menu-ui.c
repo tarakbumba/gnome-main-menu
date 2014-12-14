@@ -80,8 +80,6 @@
 #define MATE_LOCKDOWN_SCHEMA            "org.mate.lockdown"
 #define DISABLE_TERMINAL_SETTINGS_KEY   "disable-command-line"
 #define DISABLE_LOCKSCREEN_SETTINGS_KEY "disable-lock-screen"
-
-#define PANEL_SCHEMA                    "org.mate.panel"
 #define DISABLE_LOGOUT_SETTINGS_KEY     "disable-log-out"
 
 G_DEFINE_TYPE (MainMenuUI, main_menu_ui, G_TYPE_OBJECT)
@@ -335,7 +333,7 @@ main_menu_ui_new (MatePanelApplet *applet)
 	priv->filearea_settings = g_settings_new (FILE_AREA_SCHEMA);
 	priv->lockdown_settings = g_settings_new (LOCKDOWN_SETTINGS_SCHEMA);
 	priv->mate_lockdown_settings = g_settings_new (MATE_LOCKDOWN_SCHEMA);
-	priv->panel_settings = g_settings_new (PANEL_SCHEMA);
+	priv->panel_settings = g_settings_new (MATE_LOCKDOWN_SCHEMA);
 
 	window_ui_path = g_build_filename (DATADIR, PACKAGE, "slab-window.ui", NULL);
 	button_ui_path = g_build_filename (DATADIR, PACKAGE, "slab-button.ui", NULL);
